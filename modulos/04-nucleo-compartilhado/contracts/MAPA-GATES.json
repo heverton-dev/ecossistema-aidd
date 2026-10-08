@@ -68,6 +68,12 @@
       "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_tickets.py",
       "caminho_final": "modulos/01-governanca-e-qualidade/gates/G_aidd_tickets.py"
     },
+    "G_aidd_visual_maps": {
+      "dono": "04-nucleo-compartilhado",
+      "transversal": true,
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_aidd_visual_maps.py",
+      "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_aidd_visual_maps.py"
+    },
     "G_amelhoria": {
       "dono": "01-governanca-e-qualidade",
       "transversal": false,

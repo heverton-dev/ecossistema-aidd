@@ -1,0 +1,35 @@
+<!-- Molde do mapa dos módulos VSA. Texto fixo aqui; listas entram por scripts/mapa_visual.py. -->
+<div class="wrap">
+
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de Montagem</a>
+<header>
+  <span class="eyebrow">Mapa Visual · Arquitetura de Fatias Verticais (VSA)</span>
+  <h1>Mapa dos Módulos VSA</h1>
+  <p class="lead">Depois da migração VSA, o código do ecossistema mora em <code>modulos/&lt;área&gt;/&lt;fatia&gt;/</code>. Este mapa mostra cada área, as fatias dentro dela, as ferramentas que moram em cada fatia (segundo o <code>MAPA-DONOS-FERRAMENTAS.json</code>) e quantos guardas e arquivos Python cada uma tem.</p>
+  {{TOTAIS}}
+</header>
+
+<section id="regra">
+  <span class="eyebrow">Regra de Montagem</span>
+  <h2>Como as Áreas se Organizam</h2>
+  <div class="grid3">
+    <div class="box"><h3>Área</h3><p>Pasta de primeiro nível em <code>modulos/</code>; a descrição é a primeira frase do <code>README.md</code> dela.</p></div>
+    <div class="box"><h3>Fatia</h3><p>Subpasta de uma área. Pode abrigar ferramentas (<code>aidd-*</code>), guardas (<code>gates/</code>) ou contratos.</p></div>
+    <div class="box"><h3>Fronteira</h3><p>Uma fatia não importa o interior de outra; o que é compartilhado mora no núcleo compartilhado.</p></div>
+  </div>
+</section>
+
+<section id="sem-dona">
+  <span class="eyebrow">Achado</span>
+  <h2>Fatias Sem Ferramenta Nem Guarda</h2>
+  {{SEM_DONA}}
+</section>
+
+<section id="lista">
+  <span class="eyebrow">Inventário</span>
+  <h2>Áreas e Fatias</h2>
+  {{LISTA}}
+</section>
+
+<footer>Compilado por <code>scripts/mapa_visual.py modulos</code> a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code> (função <code>coletar_modulos</code>). Para atualizar: <code>python scripts/catalogo_pecas.py</code> e depois <code>python scripts/mapa_visual.py modulos</code>.</footer>
+</div>

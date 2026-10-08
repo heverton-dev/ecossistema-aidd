@@ -275,18 +275,21 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
       <span class="tec">Sessão Interativa (Claude Code, Antigravity, OpenCode)</span>
       <p class="ana">Atua como coordenador executivo do ciclo de desenvolvimento. Interpreta as diretrizes do repositório, seleciona os procedimentos técnicos adequados, consulta serviços externos, aciona ferramentas locais e consolida entregáveis.</p>
       <p class="ex">Pode instanciar subagentes efêmeros com escopos circunscritos para preservar a integridade do contexto principal.</p>
+      <a class="mapa-link" href="mapa-15-agentes.html">Consultar o mapa dos modelos de agente entregues com o app →</a>
     </article>
     <article class="peca" style="--c:var(--c-trabalha)">
       <div class="top"><h3>O Motor Determinístico</h3></div>
       <span class="tec">Scripts e Automações (Python Puro / 0 LLM)</span>
       <p class="ana">Executa operações lógicas, matemáticas e transformações estruturais de arquivos. Sob uma mesma entrada, gera sempre rigorosamente a mesma saída, garantindo reprodutibilidade matemática absoluta.</p>
       <p class="ex">Exemplo prático: <code>scripts/catalogo_pecas.py</code> inspeciona e compila o estado real de todos os componentes do repositório.</p>
+      <a class="mapa-link" href="mapa-10-scripts.html">Consultar o mapa de scripts e de quem chama cada um →</a>
     </article>
     <article class="peca" style="--c:var(--c-trabalha)">
       <div class="top"><h3>A Ferramenta Especialista</h3></div>
       <span class="tec">Módulos de Domínio (tools/aidd-forge, planner, ops…)</span>
       <p class="ana">Unidade funcional autônoma dotada de contrato de entrada, processamento interno e contrato de saída. Concentra rotinas e inteligência dedicadas a uma etapa específica da engenharia de software.</p>
-      <p class="ex">O ecossistema dispõe de 8 ferramentas especializadas, acionadas via linha de comando: <code>python ecossistema.py &lt;ferramenta&gt;</code>.</p>
+      <p class="ex">Cada ferramenta especializada mora numa fatia de <code>modulos/</code> e é acionada via linha de comando: <code>python ecossistema.py &lt;ferramenta&gt;</code>.</p>
+      <a class="mapa-link" href="mapa-14-modulos.html">Consultar o mapa dos módulos VSA e das fatias onde cada ferramenta mora →</a>
     </article>
     <article class="peca" style="--c:var(--c-regra)">
       <div class="top"><h3>O Procedimento Operacional</h3></div>
@@ -317,19 +320,20 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
       <div class="top"><h3>O Portão de Qualidade</h3></div>
       <span class="tec">Quality Gate (gates/G_*.py)</span>
       <p class="ana">Auditor algorítmico independente que analisa conformidade, integridade e segurança, respondendo com veredito binário estrito (sucesso via exit 0 ou bloqueio via exit 1).</p>
-      <p class="ex">Exemplo: <code>G_SEGREDOS</code> bloqueia exposição de chaves privadas. O repositório mantém mais de 100 guardas vinculados à governança e ao pré-commit.</p>
+      <p class="ex">Exemplo: <code>G_SEGREDOS</code> bloqueia exposição de chaves privadas. O repositório mantém guardas vinculados à governança e ao pré-commit.</p>
     </article>
     <article class="peca" style="--c:var(--brick)">
       <div class="top"><h3>O Contrato de Interface</h3></div>
       <span class="tec">Contrato de Handoff (handoff-*.schema.json)</span>
       <p class="ana">Esquema formal em JSON Schema que parametriza os dados trafegados entre componentes adjacentes, prevenindo rupturas de integração ao longo da esteira.</p>
-      <p class="ex">Atualmente 9 contratos canônicos encontram-se versionados em <code>componentes/compartilhado/specs/</code>.</p>
+      <p class="ex">Os contratos canônicos encontram-se versionados em <code>componentes/compartilhado/specs/</code>.</p>
     </article>
     <article class="peca" style="--c:var(--brick)">
       <div class="top"><h3>A Esteira Orquestrada</h3></div>
       <span class="tec">Fluxo de Engenharia (Pipeline)</span>
       <p class="ana">Sequência ordenada de estágios de manufatura que define precedências, validações em barreiras de qualidade e condutas em caso de divergência.</p>
       <p class="ex">A Tríade Canônica implementa três variantes especializadas da mesma esteira arquitetural. Consulte a Parte 6.</p>
+      <a class="mapa-link" href="mapa-13-pipelines.html">Consultar o mapa dos pipelines, etapa por etapa →</a>
     </article>
   </div>
 </section>
@@ -370,7 +374,7 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
       <div class="top"><h3>A Gestão de Dependências Upstream</h3></div>
       <span class="tec">Homologação de Terceiros (gates/dependencias_externas.json)</span>
       <p class="ana">Gerencia a integração de skills comunitárias e servidores MCP externos. Cada dependência é catalogada com versão exata e hash de integridade, sendo auditada por validações determinísticas antes do uso.</p>
-      <p class="ex">39 dependências catalogadas em <code>gates/dependencias_externas.json</code>, verificáveis via <code>dependencia verify</code>.</p>
+      <p class="ex">Dependências catalogadas em <code>modulos/04-nucleo-compartilhado/contracts/dependencias_externas.json</code>, verificáveis via <code>dependencia verify</code>.</p>
       <a class="mapa-link" href="mapa-07-conexoes.html">Consultar o mapa de conexões, MCPs e ganchos →</a>
     </article>
     <article class="peca" style="--c:var(--brick)">
@@ -458,7 +462,7 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
   </div>
   <p>Os portões de qualidade exercem auditoria estritamente avaliativa e binária, sem efetuar mutações de código. Diante de qualquer violação, o portão emite diagnóstico objetivo, cabendo à ferramenta aplicar o ajuste e submeter nova validação.</p>
   <a class="mapa-link" href="mapa-04-guardas.html">Consultar o catálogo de portões e padrões de conformidade →</a>
-  <a class="mapa-link" href="mapa-01-leis.html">Consultar as 14 Leis Invioláveis e os portões que as provam →</a>
+  <a class="mapa-link" href="mapa-01-leis.html">Consultar as Leis Invioláveis e os portões que as provam →</a>
   <div class="ouro">
     <div class="box">
       <h3>Regra de Ouro 1: Segregação de Funções (quem constrói não audita)</h3>

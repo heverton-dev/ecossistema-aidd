@@ -1,0 +1,18 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 12. Target tool: aidd-visual-maps.
+DIMENSION: D12
+DELIVER: scripts/telemetria_mapas.py
+
+STEPS:
+- Write test first: tests/test_visual_maps_telemetria.py. Set AIDD_MEDICOES_DIR to tmp_path. Run mapa_visual.py leis --saida and catalogo_pecas.py --saida into tmp_path. Assert new line in aidd-visual-maps.jsonl with estagio, tipo, duracao_ms, arquivos_gravados, hash_catalogo, exit_code, llm_tokens. Run. Assert exit 1.
+- Implement scripts/telemetria_mapas.py with context manager medir(estagio, tipo). Use time.perf_counter. Append JSON line to secoes/medicoes/aidd-visual-maps.jsonl. Honor AIDD_MEDICOES_DIR override.
+- Record llm_tokens 0 explicitly.
+- Wrap main of scripts/catalogo_pecas.py, scripts/mapa_visual.py, scripts/compilar_mapas_nao_tecnicos.py, scripts/livro_mapas.py with medir, including --check runs.
+- Run tests/test_visual_maps_telemetria.py. Assert exit 0. Assert git status --porcelain secoes/ stays empty.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: scripts/telemetria_mapas.py

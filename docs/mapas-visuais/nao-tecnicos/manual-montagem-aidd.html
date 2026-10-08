@@ -261,18 +261,20 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
       <span class="tec">Sessão Interativa (Claude Code, Antigravity, OpenCode)</span>
       <p class="ana">É o coordenador de campo que segura as ferramentas com as mãos. Ele escuta seus comandos no chat, abre o manual certo da gaveta, aciona os robôs no terminal e junta as peças prontas na mesa.</p>
       <p class="ex">Ele pode convocar assistentes temporários (subagentes) para pesquisar na web ou no código sem poluir o espaço da conversa principal.</p>
+      <a class="mapa-link" href="mapa-15-agentes.html">Ver as fichas de função da equipe que viaja com o app →</a>
     </article>
     <article class="peca" style="--c:var(--c-trabalha)">
       <div class="top"><h3>O Robô Mecânico</h3></div>
       <span class="tec">Scripts Determinísticos (Python Puro / 0 IA)</span>
       <p class="ana">Uma máquina mecânica sem imaginação nem sentimentos. Ele aperta parafusos e confere arquivos com exatidão milimétrica: se você passar a mesma peça mil vezes, ele entregará rigorosamente o mesmo resultado mil vezes.</p>
       <p class="ex">Exemplo prático: <code>scripts/catalogo_pecas.py</code> varre o repositório inteiro e conta cada peça existente sem adivinhação.</p>
+      <a class="mapa-link" href="mapa-10-scripts.html">Ver o mapa dos robôs mecânicos (scripts) →</a>
     </article>
     <article class="peca" style="--c:var(--c-trabalha)">
       <div class="top"><h3>A Máquina da Fábrica</h3></div>
       <span class="tec">Ferramentas Especialistas (aidd-forge, planner, ops…)</span>
       <p class="ana">Uma estação completa de trabalho com alavanca própria no terminal. Uma prepara a base limpa, outra desenha a planta baixa e outra prepara o pacote para a nuvem.</p>
-      <p class="ex">Existem 8 ferramentas na fábrica. Você pode acionar qualquer uma pelo console: <code>python ecossistema.py &lt;ferramenta&gt;</code>.</p>
+      <p class="ex">Cada máquina mora numa rua do seu bairro na fábrica. Você pode acionar qualquer uma pelo console: <code>python ecossistema.py &lt;ferramenta&gt;</code>.</p>
     </article>
     <article class="peca" style="--c:var(--c-regra)">
       <div class="top"><h3>O Manual de Bolso</h3></div>
@@ -303,19 +305,20 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
       <div class="top"><h3>O Porteiro da Cancela</h3></div>
       <span class="tec">Portão de Qualidade (Quality Gate / gates/G_*.py)</span>
       <p class="ana">O fiscal que fica na cancela de saída. Ele inspeciona a peça com um scanner: luz verde (exit 0) a cancela abre e a peça passa; luz vermelha (exit 1) a cancela trava e a peça defeituosa volta para a bancada.</p>
-      <p class="ex">Exemplo: <code>G_SEGREDOS</code> impede que senhas vazem no código. Temos mais de 100 porteiros vigiando a governança e o commit.</p>
+      <p class="ex">Exemplo: <code>G_SEGREDOS</code> impede que senhas vazem no código. Há porteiros vigiando a governança e o commit.</p>
     </article>
     <article class="peca" style="--c:var(--brick)">
       <div class="top"><h3>O Pino de Encaixe</h3></div>
       <span class="tec">Contrato de Conexão (Handoff / *.schema.json)</span>
       <p class="ana">O formato milimétrico do pino e do furo que conecta dois blocos. Se o que sai da primeira máquina não tiver exatamente o formato exigido pela próxima, a peça não entra e o alarme soa.</p>
-      <p class="ex">Temos 9 contratos canônicos guardados em <code>componentes/compartilhado/specs/</code>.</p>
+      <p class="ex">Os contratos canônicos ficam guardados em <code>componentes/compartilhado/specs/</code>.</p>
     </article>
     <article class="peca" style="--c:var(--brick)">
       <div class="top"><h3>A Linha de Montagem</h3></div>
       <span class="tec">Esteira Automatizada (Pipeline)</span>
       <p class="ana">A esteira rolante da fábrica que leva o projeto da primeira até a última estação, parando em cada cancela de conferência antes de seguir viagem.</p>
-      <p class="ex">As três receitas prontas utilizam essa mesma linha de montagem com 7 estações de trabalho. Veja na Parte 6.</p>
+      <p class="ex">As três receitas prontas utilizam essa mesma linha de montagem, estação por estação. Veja na Parte 6.</p>
+      <a class="mapa-link" href="mapa-13-pipelines.html">Ver todas as linhas de montagem, estação por estação →</a>
     </article>
   </div>
 </section>
@@ -356,7 +359,7 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
       <div class="top"><h3>A Triagem de Peças de Terceiros</h3></div>
       <span class="tec">Selo de Homologação (gates/dependencias_externas.json)</span>
       <p class="ana">Antes de deixar entrar qualquer ferramenta ou conector baixado da internet, ela passa por um laboratório de testes: recebe número de série, selo de autenticidade e só aí é liberada para uso.</p>
-      <p class="ex">Temos 39 ferramentas externas catalogadas e conferidas com <code>dependencia verify</code>.</p>
+      <p class="ex">As ferramentas externas ficam catalogadas e conferidas com <code>dependencia verify</code>.</p>
       <a class="mapa-link" href="mapa-07-conexoes.html">Ver o mapa de conexões, MCPs e sensores →</a>
     </article>
     <article class="peca" style="--c:var(--brick)">
@@ -404,7 +407,8 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
   </div>
   <p class="nota"><b>A Fórmula Mágica:</b> O controle da esteira é mecânico e rigoroso como uma máquina de relógio. A inteligência generativa atua com liberdade criativa dentro da moldura, criando código limpo e moderno.</p>
   <p class="nota"><b>Sem Misturar Ferramentas:</b> Cada ferramenta consulta suas próprias cartilhas. As máquinas só conversam entre si entregando peças acabadas na esteira oficial, sem gambiarras nem atalhos por baixo do pano.</p>
-  <a class="mapa-link" href="mapa-02-ferramentas.html">Ver o mapa detalhado das 8 máquinas da fábrica →</a>
+  <a class="mapa-link" href="mapa-02-ferramentas.html">Ver o mapa detalhado das máquinas da fábrica →</a>
+  <a class="mapa-link" href="mapa-14-modulos.html">Ver a planta dos bairros (módulos) onde cada máquina mora →</a>
 </section>
 
 <section id="encaixe">
@@ -444,7 +448,7 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
   </div>
   <p>O porteiro é estritamente honesto e binário: ele não remenda a peça nem dá "jeitinho". Se a peça estiver com defeito, ele aponta a falha com precisão e devolve a peça para a máquina consertar antes de tentar passar de novo.</p>
   <a class="mapa-link" href="mapa-04-guardas.html">Ver o batalhão completo de guardas e porteiros →</a>
-  <a class="mapa-link" href="mapa-01-leis.html">Ver as 14 Leis e os guardas que as protegem →</a>
+  <a class="mapa-link" href="mapa-01-leis.html">Ver as Leis e os guardas que as protegem →</a>
   <div class="ouro">
     <div class="box">
       <h3>Regra de Ouro 1: Quem Monta Não Fiscaliza</h3>

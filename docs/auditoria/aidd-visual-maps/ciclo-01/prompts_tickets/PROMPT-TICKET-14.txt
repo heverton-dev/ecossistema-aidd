@@ -1,0 +1,19 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 14. Target tool: aidd-visual-maps.
+DIMENSION: D15
+DELIVER: componentes/compartilhado/skills/aidd-visual-maps/scripts/handoff.py
+
+STEPS:
+- Write test first: tests/test_visual_maps_manifesto.py. After visual-maps gerar require docs/mapas-visuais/MANIFESTO-MAPAS.json with hash_catalogo and per-map keys arquivo/versao/sha256/status. Require book handoff list for aidd-textbook. Run. Assert exit 1.
+- Implement componentes/compartilhado/skills/aidd-visual-maps/scripts/handoff.py with emitir_manifesto and conferir_manifesto. No timestamps in manifest. Write via gravar_lote.
+- Call conferir_manifesto from cli.py check.
+- Make gerar call aidd-textbook build for docs/livros/mapas-aidd/. Record result in manifest.
+- Update canonical SKILL.md. Add visual-maps check to Stopping Checklist. Make manual, gate and index claims true. Run components sync.
+- Run tests/test_visual_maps_manifesto.py. Assert exit 0. Flip one byte in a map. Assert check exit 1.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: componentes/compartilhado/skills/aidd-visual-maps/scripts/handoff.py

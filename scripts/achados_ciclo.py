@@ -23,9 +23,8 @@ from pathlib import Path
 RAIZ = Path(__file__).resolve().parent.parent
 if str(RAIZ) not in sys.path:
     sys.path.insert(0, str(RAIZ))
-from scripts.catalogo_pecas import DONAS_MOLDES
+from scripts.catalogo_pecas import DONAS_MOLDES, SAIDA_PADRAO as CATALOGO
 CICLO = RAIZ / "docs" / "auditoria" / "mapa-pecas" / "ciclo-01"
-CATALOGO = RAIZ / "docs" / "auditoria" / "mapa-pecas" / "catalogo-pecas.json"
 VERIFICADOS = CICLO / "achados-verificados.json"
 SAIDA_PADRAO = CICLO / "ACHADOS.json"
 GRAVIDADES = ("alta", "media", "baixa")

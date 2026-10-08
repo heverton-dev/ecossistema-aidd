@@ -1,0 +1,35 @@
+<!-- Molde não-técnico dos pipelines. Texto explicativo com analogias; listas via scripts/mapa_visual.py. -->
+<div class="wrap">
+
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de montagem</a>
+<header>
+  <span class="eyebrow">Mapa visual · As Linhas de Montagem</span>
+  <h1>Mapa das Linhas de Montagem (Pipelines)</h1>
+  <p class="lead">Uma fábrica não monta um carro em qualquer ordem: primeiro o chassi, depois o motor, por fim a pintura. Um <strong>pipeline</strong> é essa ordem fixa. Aqui estão todas as linhas de montagem do ecossistema, com cada estação na sequência em que trabalha.</p>
+  {{TOTAIS}}
+</header>
+
+<section id="regra">
+  <span class="eyebrow">Como Ler</span>
+  <h2>Os Tipos de Linha</h2>
+  <div class="grid3">
+    <div class="box"><h3>A fábrica principal</h3><p>A Tríade tem uma linha para cada jeito de começar um app: do zero, com motores prontos ou libertando um app de outra plataforma.</p></div>
+    <div class="box"><h3>A oficina</h3><p>Melhorar o próprio ecossistema segue uma linha curta: analisar, planejar e executar, nessa ordem.</p></div>
+    <div class="box"><h3>A inspeção</h3><p>Auditar, evoluir e adotar ferramentas de fora também seguem etapas fixas, escritas no manual de cada uma.</p></div>
+  </div>
+</section>
+
+<section id="sem-etapas">
+  <span class="eyebrow">Atenção</span>
+  <h2>Linhas Sem Estações Escritas</h2>
+  {{SEM_ETAPAS}}
+</section>
+
+<section id="lista">
+  <span class="eyebrow">Todas as Linhas</span>
+  <h2>Cada Linha, Estação por Estação</h2>
+  {{LISTA}}
+</section>
+
+<footer>Gerado deterministicamente a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Versão ilustrada voltada para visualização didática e conceitual.</footer>
+</div>

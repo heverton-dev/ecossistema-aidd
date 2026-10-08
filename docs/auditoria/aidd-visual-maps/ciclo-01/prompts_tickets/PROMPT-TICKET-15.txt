@@ -1,0 +1,19 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 15. Target tool: aidd-visual-maps.
+DIMENSION: D13
+DELIVER: modulos/04-nucleo-compartilhado/gates/G_aidd_visual_maps.py
+
+STEPS:
+- Write test first: tests/test_g_aidd_visual_maps.py. Point gate at fixtures: stale catalog, junk HTML, orphan file, English boilerplate in non-technical map, typed count in mold, missing manual link, manifest hash mismatch. Assert exit 1 each. Run. Assert exit 1 because gate file missing.
+- Implement modulos/04-nucleo-compartilhado/gates/G_aidd_visual_maps.py. Reuse catalogo_em_dia, arquivos_esperados, links_faltando_no_manual, conferir_manifesto, English and typed-count detectors. Print APROVADO or REPROVADO with one reason per line. Exit 0 or 1.
+- Register g-aidd-visual-maps in .pre-commit-config.yaml like g-aidd-diagnose. Update gate registry or count tests found by grep G_aidd_diagnose in tests/.
+- Time gate inside pre-commit. Report duration in builder report.
+- Check AGENTS.md for concurrent edits. Add aidd-visual-maps skill and gate entry.
+- Run tests/test_g_aidd_visual_maps.py. Assert exit 0. Run gate on real repo. Assert exit 0. Run pre-commit run g-aidd-visual-maps --all-files. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: modulos/04-nucleo-compartilhado/gates/G_aidd_visual_maps.py

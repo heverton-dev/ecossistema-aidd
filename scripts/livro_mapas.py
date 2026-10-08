@@ -20,10 +20,15 @@ from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(RAIZ / "scripts"))
+import catalogo_pecas as cp  # noqa: E402
 import mapa_visual as mv  # noqa: E402
+from gravacao_atomica_mapas import gravar_lote  # noqa: E402
+from resiliencia_mapas import ler_texto, relatar_falha  # noqa: E402
+from telemetria_mapas import Medicao, medir  # noqa: E402
 
 LIVRO = RAIZ / "docs" / "livros" / "mapas-aidd"
-CATALOGO = RAIZ / "docs" / "auditoria" / "mapa-pecas" / "catalogo-pecas.json"
+CATALOGO = cp.SAIDA_PADRAO
+CATALOGO_REL = CATALOGO.relative_to(cp.RAIZ).as_posix()
 ACHADOS = RAIZ / "docs" / "auditoria" / "mapa-pecas" / "ciclo-01" / "ACHADOS.json"
 SEP_ESQ = ":" + "-" * 38
 SEP_DIR = ":" + "-" * 44
@@ -43,6 +48,8 @@ PARTES = (
      ("moldes", "scripts")),
     ("IV", "A OFICINA", "Onde a fábrica é consertada: os planos, os ciclos de auditoria e a lente que os inspeciona.",
      ("oficina", "lente15d")),
+    ("V", "OS CAMINHOS, AS ÁREAS E A EQUIPE", "A visão de conjunto: as linhas de montagem de ponta a ponta, as áreas onde o código mora e os modelos de agente que viajam com o app.",
+     ("pipelines", "modulos", "agentes")),
 )
 
 TEXTO = {
@@ -84,6 +91,16 @@ TEXTO = {
     "lente15d": ("A lente 15-D é a lista de 15 perguntas que o Inspetor faz a uma ferramenta num ciclo de auditoria, "
                  "de contratos e gatilhos até a entrega final.",
                  "o Inspetor do ciclo 4F, com o guarda G_auditoria_15D de cada ferramenta", "`docs/auditoria/TEMPLATE-AUDITORIA-FERRAMENTA.md`"),
+    "pipelines": ("Um pipeline é a ordem fixa em que as peças trabalham: os fluxos da Tríade, a cadeia melhoria, plan e "
+                  "orchestrate e as skills que rodam um pipeline próprio (auditoria 4F, evolução, ingestão).",
+                  "o `G_ORQUESTRADOR_SINCRONO` para a Tríade e o `gate_fase` de cada fase nos pipelines de auditoria",
+                  "`scripts/orquestrador_sincrono.py` e `componentes/compartilhado/skills/`"),
+    "modulos": ("Um módulo VSA é uma área de `modulos/` dividida em fatias verticais; cada fatia abriga ferramentas, "
+                "guardas ou contratos, e não importa o interior de outra fatia.",
+                "o `G_MODULO_FRONTEIRA`, o `G_FRONTEIRA_FERRAMENTAS` e o `G_COPIA_UNICA_VSA`", "`modulos/`"),
+    "agentes": ("Um modelo de agente é a ficha de função de um subagente que vai junto com o app gerado. Cópias "
+                "idênticas em várias ferramentas são candidatas a fonte única.",
+                "nenhum guarda específico; o mapa compara as cópias por conteúdo", "`modulos/03-plataforma-e-entrega/**/templates/agents/`"),
 }
 
 FONTES_CATALOGO = {
@@ -91,6 +108,7 @@ FONTES_CATALOGO = {
     "guardas": "coletar_gates", "skills": "coletar_skills", "comandos": "coletar_comandos_slash",
     "conexoes": "coletar_mcps", "harnesses": "coletar_harnesses", "moldes": "coletar_moldes_entrega",
     "scripts": "coletar_scripts", "oficina": "coletar_oficina", "lente15d": "coletar_lente_15d",
+    "pipelines": "coletar_pipelines", "modulos": "coletar_modulos", "agentes": "coletar_agentes",
 }
 
 
@@ -144,6 +162,17 @@ def numeros(tipo: str, cat: dict) -> list[tuple[str, int]]:
         lente = cat["lente_15d"]
         return [("dimensões", len(lente["dimensoes"])), ("laudos lidos", len(lente["laudos"])),
                 ("marcações de falha", sum(1 for x in lente["laudos"] for v in x["dimensoes"].values() if v == "falha"))]
+    if tipo == "pipelines":
+        p = cat["pipelines"]
+        return [("pipelines", len(p)), ("fluxos da Tríade", sum(1 for x in p if x["id"].startswith("triade-"))),
+                ("sem etapas declaradas", sum(1 for x in p if not x["etapas"]))]
+    if tipo == "modulos":
+        m = cat["modulos"]
+        return [("áreas em modulos/", len(m)), ("fatias", sum(len(a["fatias"]) for a in m))]
+    if tipo == "agentes":
+        ag = cat["agentes"]
+        return [("modelos de agente", len(ag)), ("arquivos", sum(len(a["copias"]) for a in ag)),
+                ("com versões diferentes", sum(1 for a in ag if a["versoes_distintas"] > 1))]
     return []
 
 
@@ -164,12 +193,12 @@ def capitulo(n: int, tipo: str, titulo: str, para_que: str, cat: dict, achados: 
     feito = ("\n\nJá resolvido:\n\n" + "\n".join(f"- {_txt(x['titulo'])} (commit `{x.get('resolvido_em', '')}`)." for x in resolvidos)) \
         if resolvidos else ""
     fontes = [f"docs/mapas-visuais/{arquivo}", f"docs/mapas-visuais/moldes/{tipo}.html",
-              "docs/auditoria/mapa-pecas/catalogo-pecas.json", "docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json",
+              CATALOGO_REL, "docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json",
               "scripts/catalogo_pecas.py", "scripts/mapa_visual.py"]
     return (f"# Capítulo {n} — {titulo}\n\n{ficha}\n## {n}.1 O que é\n\n{oque}\n\n"
             f"Onde mora: {onde}. Quem confere: {quem}.\n\n"
             f"## {n}.2 Os números de hoje\n\n{tabela(('Medida', 'Valor'), [(r, str(v)) for r, v in numeros(tipo, cat)])}\n"
-            f"Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `{FONTES_CATALOGO[tipo]}`), "
+            f"Os números saem de `{CATALOGO_REL}` (função `{FONTES_CATALOGO[tipo]}`), "
             f"os mesmos do mapa `{arquivo}`.\n\n"
             f"## {n}.3 O que falta consertar\n\n{falhas}{feito}\n\n"
             f"O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`.\n\n"
@@ -261,7 +290,7 @@ def apendices(dados: dict) -> list[tuple[str, str]]:
 
 
 def gerar() -> dict[str, str]:
-    cat = json.loads(CATALOGO.read_text(encoding="utf-8"))
+    cat = json.loads(ler_texto(CATALOGO))
     dados = json.loads(ACHADOS.read_text(encoding="utf-8"))
     titulos = {t: (titulo, para_que) for t, titulo, para_que in mv.MAPAS_PREVISTOS}
     arquivos = {"00-frontmatter.md": frontmatter(cat, dados)}
@@ -280,7 +309,22 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description="Gera as partes do livro dos mapas.")
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args(argv)
-    partes = gerar()
+    with medir("livro", "partes", CATALOGO) as medicao:
+        medicao.exit_code = _gerar_ou_conferir(args, medicao)
+    return medicao.exit_code
+
+
+def _gerar_ou_conferir(args: argparse.Namespace, medicao: Medicao) -> int:
+    if args.check:
+        em_dia_cat, divergentes = cp.catalogo_em_dia(RAIZ, CATALOGO)
+        if not em_dia_cat:
+            print(f"[DESATUALIZADO] catálogo {CATALOGO} difere do repositório ({', '.join(divergentes)}). "
+                  "Rode: python scripts/catalogo_pecas.py")
+            return 1
+    try:
+        partes = gerar()
+    except (OSError, ValueError) as erro:
+        return relatar_falha(erro, "livro", "partes", CATALOGO)
     pasta = LIVRO / "partes"
     if args.check:
         velhas = [n for n, t in partes.items() if not (pasta / n).is_file() or (pasta / n).read_text(encoding="utf-8") != t]
@@ -293,15 +337,19 @@ def main(argv=None) -> int:
     if not manifesto.is_file():
         print(f"[ERRO] {manifesto} não existe. Crie antes com livro.py init {LIVRO}")
         return 1
-    pasta.mkdir(parents=True, exist_ok=True)
-    for velho in pasta.glob("*.md"):
-        if velho.name not in partes:
-            velho.unlink()
-    for nome, texto in partes.items():
-        (pasta / nome).write_text(texto, encoding="utf-8", newline="\n")
-    dados = json.loads(manifesto.read_text(encoding="utf-8"))
-    dados["partes"] = sorted(partes)
-    manifesto.write_text(json.dumps(dados, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
+    try:
+        dados = json.loads(manifesto.read_text(encoding="utf-8"))
+        dados["partes"] = sorted(partes)
+        # Partes e manifesto num lote só (tudo ou nada); as partes que saíram do livro só
+        # são apagadas depois que o lote novo foi gravado inteiro.
+        gravados = gravar_lote({**{pasta / nome: texto for nome, texto in partes.items()},
+                                manifesto: json.dumps(dados, ensure_ascii=False, indent=2) + "\n"})
+        medicao.arquivos_gravados = len(gravados)
+        for velho in pasta.glob("*.md"):
+            if velho.name not in partes:
+                velho.unlink()
+    except (OSError, ValueError) as erro:
+        return relatar_falha(erro, "livro", "partes", LIVRO)
     print(f"[OK] {len(partes)} partes gravadas em {pasta}")
     return 0
 

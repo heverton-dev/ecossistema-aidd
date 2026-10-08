@@ -1,0 +1,41 @@
+<!-- Molde do mapa dos agentes. Texto fixo aqui; listas entram por scripts/mapa_visual.py. -->
+<div class="wrap">
+
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de Montagem</a>
+<header>
+  <span class="eyebrow">Mapa Visual · Modelos de Agente</span>
+  <h1>Mapa dos Agentes</h1>
+  <p class="lead">Os modelos de agente (<code>templates/agents/*.md</code>) vão junto com o app gerado e dizem a cada subagente o que ele faz. Este mapa lista cada modelo, em que ferramentas ele aparece e se as cópias são idênticas: a versão é uma letra por conteúdo (mesma letra, mesmo arquivo byte a byte).</p>
+  {{TOTAIS}}
+</header>
+
+<section id="regra">
+  <span class="eyebrow">Regra de Montagem</span>
+  <h2>Como Ler as Versões</h2>
+  <div class="grid3">
+    <div class="box"><h3>Modelo</h3><p>Um nome de arquivo em <code>templates/agents/</code> dentro de <code>modulos/03-plataforma-e-entrega/</code>.</p></div>
+    <div class="box"><h3>Cópia idêntica</h3><p>O mesmo modelo em mais de uma ferramenta com a mesma letra: candidato a fonte única.</p></div>
+    <div class="box"><h3>Versões diferentes</h3><p>Mesmo nome com letras diferentes: o comportamento do agente depende de qual ferramenta entregou o app.</p></div>
+  </div>
+</section>
+
+<section id="copiados">
+  <span class="eyebrow">Achado</span>
+  <h2>Modelos Copiados Idênticos Entre Ferramentas</h2>
+  {{COPIADOS}}
+</section>
+
+<section id="divergentes">
+  <span class="eyebrow">Achado</span>
+  <h2>Modelos com Versões Diferentes</h2>
+  {{DIVERGENTES}}
+</section>
+
+<section id="lista">
+  <span class="eyebrow">Inventário</span>
+  <h2>Todos os Modelos de Agente</h2>
+  {{LISTA}}
+</section>
+
+<footer>Compilado por <code>scripts/mapa_visual.py agentes</code> a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code> (função <code>coletar_agentes</code>). Para atualizar: <code>python scripts/catalogo_pecas.py</code> e depois <code>python scripts/mapa_visual.py agentes</code>.</footer>
+</div>

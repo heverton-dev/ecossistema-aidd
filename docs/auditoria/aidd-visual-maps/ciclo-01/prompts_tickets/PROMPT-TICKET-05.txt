@@ -1,0 +1,19 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 5. Target tool: aidd-visual-maps.
+DIMENSION: D5
+DELIVER: tests/test_visual_maps_cobertura.py
+
+STEPS:
+- Write test first: tests/test_visual_maps_cobertura.py. Require map types pipelines, modulos, agentes in MAPAS_PREVISTOS and GERADORES. Require catalog keys pipelines, modulos, agentes. Run. Assert exit 1.
+- Add coletar_pipelines, coletar_modulos, coletar_agentes to scripts/catalogo_pecas.py. Derive pipelines from receita_triade and flow skill steps. Scan modulos/*/ for areas and slices. Hash agent templates under modulos/03-plataforma-e-entrega/*/templates/agents/. Group identical copies.
+- Add valores_pipelines, valores_modulos, valores_agentes to scripts/mapa_visual.py. Add molds in docs/mapas-visuais/moldes/ and docs/mapas-visuais/moldes-nao-tecnicos/. Add TITULOS entries.
+- Append three types to end of MAPAS_PREVISTOS. Keep existing numbers.
+- Regenerate catalog, all maps, index, book chapters in docs/livros/mapas-aidd/.
+- Run tests/test_visual_maps_cobertura.py, tests/test_mapa_visual.py, tests/test_livro_mapas.py. Assert exit 0. Run --check for every type. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: tests/test_visual_maps_cobertura.py

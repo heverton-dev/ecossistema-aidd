@@ -8,7 +8,7 @@ lang: pt-BR
 institute: "Ecossistema AIDD · mapa de peças, ciclo 01"
 eyebrow: "LIVRO DIDÁTICO"
 tagline: |
-  Os 12 mapas visuais do ecossistema, na ordem de leitura, com os números medidos e cada defeito encontrado.
+  Os 15 mapas visuais do ecossistema, na ordem de leitura, com os números medidos e cada defeito encontrado.
 toc: true
 toc-depth: 2
 abstract: |
@@ -17,7 +17,7 @@ abstract: |
   Cada capítulo corresponde a um mapa visual, na mesma ordem dos arquivos em docs/mapas-visuais/.
 
   Nada aqui é estimado. Os números vêm do catálogo de peças e os defeitos vêm do arquivo de achados, que
-  hoje registra 30 achados em aberto, 1 sob suspeita e 3 resolvidos.
+  hoje registra 31 achados em aberto, 0 sob suspeita e 14 resolvidos.
 ---
 
 # Como ler este livro
@@ -35,6 +35,7 @@ o que consertar primeiro. Quem só quer a lista de defeitos pode ir direto ao Ap
 | Parte II — As peças do dia a dia | 04, 05, 06, 07, 08 |
 | Parte III — O que vai junto e as máquinas | 09, 10 |
 | Parte IV — A oficina | 11, 12 |
+| Parte V — Os caminhos, as áreas e a equipe | 13, 14, 15 |
 
 Cada capítulo responde sempre às mesmas quatro perguntas: o que é, os números de hoje, o que falta consertar e
 de onde vieram as afirmações. O índice dos mapas, com o estado de cada um, está em `docs/mapas-visuais/mapa-00-indice.html`.
@@ -58,7 +59,7 @@ O nível macro: as leis que governam a casa, as fábricas que produzem e a recei
 #ficha(
   ("Mapa", "mapa-01-leis.html"),
   ("Para que serve", "cada lei do AGENTS.md e o guarda que a prova, e onde a prova é fraca"),
-  ("Achados em aberto", "4"),
+  ("Achados em aberto", "2"),
 )
 ```
 
@@ -72,18 +73,20 @@ Onde mora: `AGENTS.md`, seção 2. Quem confere: o meta-guarda `G_LEI_DECLARA_PO
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| leis | 13 |
-| declarações de guarda | 32 |
-| declarações que o meta-guarda não lê | 10 |
+| leis | 14 |
+| declarações de guarda | 71 |
+| declarações que o meta-guarda não lê | 0 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_leis`), os mesmos do mapa `mapa-01-leis.html`.
 
 ## 1.3 O que falta consertar
 
-- **Média** · 10 declarações de lei que o meta-guarda não lê (`CAT-declaracoes-invisiveis`).
-- **Média** · 7 guardas declarados em lei que não rodam no commit (`CAT-declarados-fora-do-commit`).
-- **Média** · G_HANDOFF_MELHORIA reprova com o handoff-melhoria.json versionado (`VER-008`).
-- **Baixa** · 22 guardas da raiz que nenhuma lei declara (`CAT-guardas-sem-lei`).
+- **Média** · 5 guardas declarados em lei que não rodam no commit (`CAT-declarados-fora-do-commit`).
+- **Baixa** · 1 guardas da raiz que nenhuma lei declara (`CAT-guardas-sem-lei`).
+
+Já resolvido:
+
+- G_HANDOFF_MELHORIA reprova com o handoff-melhoria.json versionado (commit `ciclo-01`).
 
 O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`.
 
@@ -101,14 +104,14 @@ O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditor
 ```{=typst}
 #ficha(
   ("Mapa", "mapa-02-ferramentas.html"),
-  ("Para que serve", "as 8 ferramentas, seus comandos de CLI e as tarefas com mais de uma dona"),
-  ("Achados em aberto", "4"),
+  ("Para que serve", "as ferramentas, seus comandos de CLI e as tarefas com mais de uma dona"),
+  ("Achados em aberto", "0"),
 )
 ```
 
 ## 2.1 O que é
 
-Uma ferramenta é uma pequena fábrica especialista em `tools/aidd-<nome>/`, chamada pelo painel `ecossistema.py`. Cada uma deveria fazer um trabalho só.
+Uma ferramenta é uma pequena fábrica especialista em `modulos/<fatia>/.../aidd-<nome>/`, chamada pelo painel `ecossistema.py`. Cada uma deveria fazer um trabalho só.
 
 Onde mora: `tools/`. Quem confere: o `G_TESTES_REAIS` (pytest de cada ferramenta) e o `G_DISCIPLINA_TESTE_FERRAMENTA`.
 
@@ -117,18 +120,19 @@ Onde mora: `tools/`. Quem confere: o `G_TESTES_REAIS` (pytest de cada ferramenta
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | ferramentas | 8 |
-| comandos de CLI | 69 |
-| verbos em mais de uma ferramenta | 20 |
-| tarefas com várias donas | 10 |
+| comandos de CLI | 74 |
+| verbos em mais de uma ferramenta | 0 |
+| tarefas com várias donas | 0 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_ferramentas`), os mesmos do mapa `mapa-02-ferramentas.html`.
 
 ## 2.3 O que falta consertar
 
-- **Alta** · 100 arquivos idênticos copiados entre ferramentas (`CAT-arquivos-identicos`).
-- **Média** · 10 tarefas feitas por mais de uma ferramenta (`CAT-tarefas-varias-donas`).
-- **Baixa** · 20 verbos de CLI em mais de uma ferramenta (`CAT-verbos-repetidos`).
-- **Baixa** · forge audit: AGENTS.md genérico (G04) e forge init ainda cria .agent/ (`VER-010`).
+Nenhum achado em aberto para este mapa.
+
+Já resolvido:
+
+- forge audit: AGENTS.md genérico (G04) e forge init ainda cria .agent/ (commit `ciclo-01`).
 
 O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`.
 
@@ -147,7 +151,7 @@ O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditor
 #ficha(
   ("Mapa", "mapa-03-encaixes.html"),
   ("Para que serve", "as etapas da Tríade, os contratos entre elas e onde cada fluxo quebra"),
-  ("Achados em aberto", "10"),
+  ("Achados em aberto", "0"),
 )
 ```
 
@@ -162,25 +166,23 @@ Onde mora: `scripts/orquestrador_sincrono.py` e `componentes/compartilhado/specs
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | etapas na receita | 7 |
-| chamadas conferidas | 9 |
-| chamadas que quebram | 2 |
-| etapas sem ferramenta | 2 |
-| contratos | 8 |
+| chamadas conferidas | 13 |
+| chamadas que quebram | 0 |
+| etapas sem ferramenta | 0 |
+| contratos | 9 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `verificar_encaixes`), os mesmos do mapa `mapa-03-encaixes.html`.
 
 ## 3.3 O que falta consertar
 
-- **Alta** · Chamada da receita não encaixa: ecossistema.py bridge scan \-\-dir <var> (`CAT-encaixe-ecossistema-py-bridge-scan-dir-var`).
-- **Alta** · Chamada da receita não encaixa: ecossistema.py factory curate \-\-dominio <var> \-\-output <var> (`CAT-encaixe-ecossistema-py-factory-curate-dominio-var-output-var`).
-- **Alta** · Etapa da receita não chama ferramenta: etapa_06_ops (`CAT-etapa-sem-ferramenta-etapa-06-ops`).
-- **Alta** · Etapa da receita não chama ferramenta: etapa_07_auditoria (`CAT-etapa-sem-ferramenta-etapa-07-auditoria`).
-- **Alta** · A validação de contrato aprova quando não consegue conferir (`VER-001`).
-- **Alta** · Etapa 7 grava CONFORME_100_POR_CENTO sem rodar guarda nenhum (`VER-002`).
-- **Alta** · Etapa 3 do Fluxo 02 chama o factory sem o PLANO-INFRAESTRUTURA.json que ele exige (`VER-003`).
-- **Média** · Etapa mexe por dentro de uma ferramenta: etapa_02_planner (`CAT-atalho-interno-etapa-02-planner`).
-- **Média** · Etapa mexe por dentro de uma ferramenta: etapa_03_engine (`CAT-atalho-interno-etapa-03-engine`).
-- **Média** · O \-\-dry-run do orquestrador grava README-USUARIO.md no disco (`VER-004`).
+Nenhum achado em aberto para este mapa.
+
+Já resolvido:
+
+- A validação de contrato aprova quando não consegue conferir (commit `ciclo-01`).
+- Etapa 7 grava CONFORME_100_POR_CENTO sem rodar guarda nenhum (commit `ciclo-01`).
+- Etapa 3 do Fluxo 02 chama o factory sem o PLANO-INFRAESTRUTURA.json que ele exige (commit `ciclo-01`).
+- O \-\-dry-run do orquestrador grava README-USUARIO.md no disco (commit `ciclo-01`).
 
 O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`.
 
@@ -203,7 +205,7 @@ O nível meso: quem confere, quem ensina, os botões, as conexões e para onde t
 #ficha(
   ("Mapa", "mapa-04-guardas.html"),
   ("Para que serve", "todos os guardas, onde moram e quem prova que morde"),
-  ("Achados em aberto", "3"),
+  ("Achados em aberto", "1"),
 )
 ```
 
@@ -217,18 +219,21 @@ Onde mora: `gates/` e `tools/<f>/gates/`. Quem confere: o próprio pre-commit e 
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| guardas (nomes) | 87 |
-| no ecossistema | 54 |
-| rodam no commit | 43 |
+| guardas (nomes) | 105 |
+| no ecossistema | 72 |
+| rodam no commit | 67 |
 | com versões diferentes | 10 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_gates`), os mesmos do mapa `mapa-04-guardas.html`.
 
 ## 4.3 O que falta consertar
 
-- **Alta** · Corrida entre testes no G_PORTAO_PROVA_QUE_MORDE (`VER-005`).
 - **Média** · 10 guardas com o mesmo nome e código diferente (`CAT-gates-versoes`).
-- **Baixa** · O detect-secrets grava o caminho absoluto da máquina no .secrets.baseline (`VER-011`).
+
+Já resolvido:
+
+- Corrida entre testes no G_PORTAO_PROVA_QUE_MORDE (commit `ciclo-01`).
+- O detect-secrets grava o caminho absoluto da máquina no .secrets.baseline (commit `ciclo-01`).
 
 O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`.
 
@@ -247,7 +252,7 @@ O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditor
 #ficha(
   ("Mapa", "mapa-05-skills.html"),
   ("Para que serve", "todas as skills nossas, os terceiros e como criar uma"),
-  ("Achados em aberto", "2"),
+  ("Achados em aberto", "0"),
 )
 ```
 
@@ -261,20 +266,21 @@ Onde mora: `componentes/compartilhado/skills/`. Quem confere: o `G_SKILL_FORMATO
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| skills nossas | 38 |
-| nomes de terceiros registrados | 20 |
-| com "Use when" | 38 |
+| skills nossas | 44 |
+| nomes de terceiros registrados | 15 |
+| com "Use when" | 44 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_skills`), os mesmos do mapa `mapa-05-skills.html`.
 
 ## 5.3 O que falta consertar
 
-- **Média** · 6 testes falhando na aidd-orca, fora do pre-commit (`VER-006`).
-- **Baixa** · 2 testes falhando na aidd-improvement, fora do pre-commit (`VER-007`).
+Nenhum achado em aberto para este mapa.
 
 Já resolvido:
 
+- 6 testes falhando na aidd-orca, fora do pre-commit (commit `ciclo-01`).
 - Skills repetidas, nomes misturados e terceiros copiados na fonte única (commit `9d66a5e`).
+- 2 testes falhando na aidd-improvement, fora do pre-commit (commit `ciclo-01`).
 
 O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`.
 
@@ -307,8 +313,8 @@ Onde mora: `componentes/compartilhado/comandos/`. Quem confere: a conferência d
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| comandos slash | 17 |
-| apontam para skill que existe | 17 |
+| comandos slash | 19 |
+| apontam para skill que existe | 19 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_comandos_slash`), os mesmos do mapa `mapa-06-comandos.html`.
 
@@ -337,7 +343,7 @@ O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditor
 #ficha(
   ("Mapa", "mapa-07-conexoes.html"),
   ("Para que serve", "os MCPs (telefones para fora) e os hooks (alarmes)"),
-  ("Achados em aberto", "1"),
+  ("Achados em aberto", "0"),
 )
 ```
 
@@ -351,15 +357,15 @@ Onde mora: `.mcp.json` e `.claude/settings.json`. Quem confere: o `dependencia v
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| MCPs que o agente usa | 6 |
-| MCPs dentro das ferramentas | 3 |
-| hooks | 3 |
+| MCPs que o agente usa | 11 |
+| MCPs dentro das ferramentas | 5 |
+| hooks | 5 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_mcps`), os mesmos do mapa `mapa-07-conexoes.html`.
 
 ## 7.3 O que falta consertar
 
-- **Baixa** · 3 MCPs das ferramentas que nenhum agente deste repositório usa (`CAT-mcps-internos`).
+Nenhum achado em aberto para este mapa.
 
 O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`.
 
@@ -378,7 +384,7 @@ O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditor
 #ficha(
   ("Mapa", "mapa-08-harnesses.html"),
   ("Para que serve", "para onde cada peça é copiada em cada programa de agente"),
-  ("Achados em aberto", "1"),
+  ("Achados em aberto", "0"),
 )
 ```
 
@@ -386,20 +392,20 @@ O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditor
 
 Um harness é o programa onde o agente trabalha (Claude Code, OpenCode, Cursor e outros). Cada um lê as peças de uma pasta própria, gerada a partir de uma fonte única.
 
-Onde mora: `gates/manifesto_harnesses.json`. Quem confere: o `components verify`, o `G_HARNESS_COMPAT` e o `G_UNIVERSAL_HARNESS`.
+Onde mora: `modulos/04-nucleo-compartilhado/contracts/manifesto_harnesses.json`. Quem confere: o `components verify`, o `G_HARNESS_COMPAT` e o `G_UNIVERSAL_HARNESS`.
 
 ## 8.2 Os números de hoje
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | harnesses | 7 |
-| pastas legadas versionadas | 1 |
+| pastas legadas versionadas | 0 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_harnesses`), os mesmos do mapa `mapa-08-harnesses.html`.
 
 ## 8.3 O que falta consertar
 
-- **Média** · Pasta legada ainda versionada: .gemini/skills (`CAT-pasta-legada-gemini-skills`).
+Nenhum achado em aberto para este mapa.
 
 Já resolvido:
 
@@ -426,7 +432,7 @@ O nível micro: os moldes que viajam com o app e os scripts que fazem o trabalho
 #ficha(
   ("Mapa", "mapa-09-moldes.html"),
   ("Para que serve", "o que cada ferramenta entrega junto com o app gerado"),
-  ("Achados em aberto", "1"),
+  ("Achados em aberto", "0"),
 )
 ```
 
@@ -440,14 +446,14 @@ Onde mora: `tools/<f>/templates/`. Quem confere: os guardas de entrega gerados p
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| moldes | 24 |
-| arquivos de molde | 494 |
+| moldes | 21 |
+| arquivos de molde | 355 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_moldes_entrega`), os mesmos do mapa `mapa-09-moldes.html`.
 
 ## 9.3 O que falta consertar
 
-- **Média** · 7 moldes de entrega com o mesmo nome em várias ferramentas (`CAT-moldes-repetidos`).
+Nenhum achado em aberto para este mapa.
 
 O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`.
 
@@ -466,7 +472,7 @@ O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditor
 #ficha(
   ("Mapa", "mapa-10-scripts.html"),
   ("Para que serve", "cada script de scripts/, o que faz e quem o chama"),
-  ("Achados em aberto", "2"),
+  ("Achados em aberto", "1"),
 )
 ```
 
@@ -480,16 +486,19 @@ Onde mora: `scripts/`. Quem confere: nenhum guarda específico; o mapa mede quem
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| scripts | 24 |
-| chamados pelo painel | 15 |
-| nenhum código chama | 3 |
+| scripts | 52 |
+| chamados pelo painel | 19 |
+| nenhum código chama | 4 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_scripts`), os mesmos do mapa `mapa-10-scripts.html`.
 
 ## 10.3 O que falta consertar
 
-- **Baixa** · 3 scripts que nenhum código chama (`CAT-scripts-sem-chamador`).
-- **Média** · O .githooks/pre-commit pode falhar sem mensagem (`VER-009`).
+- **Baixa** · 4 scripts que nenhum código chama (`CAT-scripts-sem-chamador`).
+
+Já resolvido:
+
+- O .githooks/pre-commit pode falhar sem mensagem (commit `ciclo-01`).
 
 O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`.
 
@@ -512,7 +521,7 @@ Onde a fábrica é consertada: os planos, os ciclos de auditoria e a lente que o
 #ficha(
   ("Mapa", "mapa-11-oficina.html"),
   ("Para que serve", "todos os planos e ciclos de auditoria, com as fases cumpridas"),
-  ("Achados em aberto", "2"),
+  ("Achados em aberto", "25"),
 )
 ```
 
@@ -528,14 +537,37 @@ Onde mora: `docs/planos/` e `docs/auditoria/`. Quem confere: o `scripts/atualiza
 | :-------------------------------------- | :-------------------------------------------- |
 | planos | 37 |
 | em execução | 11 |
-| ciclos de auditoria | 4 |
+| ciclos de auditoria | 51 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_oficina`), os mesmos do mapa `mapa-11-oficina.html`.
 
 ## 11.3 O que falta consertar
 
-- **Baixa** · Ciclo de auditoria sem todos os documentos: mapa-pecas/ciclo-01 (`CAT-ciclo-mapa-pecas-ciclo-01`).
-- **Baixa** · Ciclo de auditoria sem todos os documentos: skills-pocock/ciclo-01 (`CAT-ciclo-skills-pocock-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-componentes/ciclo-01 (`CAT-ciclo-aidd-componentes-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-dependencias/ciclo-01 (`CAT-ciclo-aidd-dependencias-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-dispatch-runner/ciclo-01 (`CAT-ciclo-aidd-dispatch-runner-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-enterprise-runner/ciclo-01 (`CAT-ciclo-aidd-enterprise-runner-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-forge-runner/ciclo-01 (`CAT-ciclo-aidd-forge-runner-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-freedom-runner/ciclo-01 (`CAT-ciclo-aidd-freedom-runner-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-livro-texto/ciclo-01 (`CAT-ciclo-aidd-livro-texto-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-master-runner/ciclo-01 (`CAT-ciclo-aidd-master-runner-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-mcp/ciclo-01 (`CAT-ciclo-aidd-mcp-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-open-runner/ciclo-01 (`CAT-ciclo-aidd-open-runner-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-ops-runner/ciclo-01 (`CAT-ciclo-aidd-ops-runner-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-orca/ciclo-01 (`CAT-ciclo-aidd-orca-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-orchestrator-runner/ciclo-01 (`CAT-ciclo-aidd-orchestrator-runner-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-pipeline-runner/ciclo-01 (`CAT-ciclo-aidd-pipeline-runner-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-pure-runner/ciclo-01 (`CAT-ciclo-aidd-pure-runner-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-session/ciclo-01 (`CAT-ciclo-aidd-session-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-skills/ciclo-02 (`CAT-ciclo-aidd-skills-ciclo-02`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-visual-maps/ciclo-01 (`CAT-ciclo-aidd-visual-maps-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: calibracao-pipeline/ciclo-01 (`CAT-ciclo-calibracao-pipeline-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: code-review-graph/ciclo-01 (`CAT-ciclo-code-review-graph-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: fluxo-01-runner/ciclo-01 (`CAT-ciclo-fluxo-01-runner-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: fluxo-02-runner/ciclo-01 (`CAT-ciclo-fluxo-02-runner-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: fluxo-03-runner/ciclo-01 (`CAT-ciclo-fluxo-03-runner-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: fronteiras-ferramentas/ciclo-01 (`CAT-ciclo-fronteiras-ferramentas-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: modularizacao-vsa/ciclo-03 (`CAT-ciclo-modularizacao-vsa-ciclo-03`).
 
 O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`.
 
@@ -554,7 +586,7 @@ O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditor
 #ficha(
   ("Mapa", "mapa-12-lente15d.html"),
   ("Para que serve", "as 15 dimensões de auditoria e como cada ferramenta se saiu"),
-  ("Achados em aberto", "1"),
+  ("Achados em aberto", "2"),
 )
 ```
 
@@ -569,14 +601,15 @@ Onde mora: `docs/auditoria/TEMPLATE-AUDITORIA-FERRAMENTA.md`. Quem confere: o In
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | dimensões | 15 |
-| laudos lidos | 2 |
-| marcações de falha | 7 |
+| laudos lidos | 44 |
+| marcações de falha | 11 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_lente_15d`), os mesmos do mapa `mapa-12-lente15d.html`.
 
 ## 12.3 O que falta consertar
 
-- **Média** · 7 dimensões 15-D com falha no laudo de aidd-melhoria (`CAT-15d-aidd-melhoria`).
+- **Média** · 1 dimensões 15-D com falha no laudo de aidd-orca (`CAT-15d-aidd-orca`).
+- **Média** · 3 dimensões 15-D com falha no laudo de aidd-visual-maps (`CAT-15d-aidd-visual-maps`).
 
 O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`.
 
@@ -584,6 +617,132 @@ O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditor
 
 - `docs/mapas-visuais/mapa-12-lente15d.html`
 - `docs/mapas-visuais/moldes/lente15d.html`
+- `docs/auditoria/mapa-pecas/catalogo-pecas.json`
+- `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`
+- `scripts/catalogo_pecas.py`
+- `scripts/mapa_visual.py`
+
+# PARTE V — OS CAMINHOS, AS ÁREAS E A EQUIPE
+
+A visão de conjunto: as linhas de montagem de ponta a ponta, as áreas onde o código mora e os modelos de agente que viajam com o app.
+
+# Capítulo 13 — Mapa dos pipelines
+
+```{=typst}
+#ficha(
+  ("Mapa", "mapa-13-pipelines.html"),
+  ("Para que serve", "os caminhos de ponta a ponta: a Tríade, a oficina e a auditoria, etapa por etapa"),
+  ("Achados em aberto", "0"),
+)
+```
+
+## 13.1 O que é
+
+Um pipeline é a ordem fixa em que as peças trabalham: os fluxos da Tríade, a cadeia melhoria, plan e orchestrate e as skills que rodam um pipeline próprio (auditoria 4F, evolução, ingestão).
+
+Onde mora: `scripts/orquestrador_sincrono.py` e `componentes/compartilhado/skills/`. Quem confere: o `G_ORQUESTRADOR_SINCRONO` para a Tríade e o `gate_fase` de cada fase nos pipelines de auditoria.
+
+## 13.2 Os números de hoje
+
+| Medida | Valor |
+| :-------------------------------------- | :-------------------------------------------- |
+| pipelines | 9 |
+| fluxos da Tríade | 3 |
+| sem etapas declaradas | 2 |
+
+Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_pipelines`), os mesmos do mapa `mapa-13-pipelines.html`.
+
+## 13.3 O que falta consertar
+
+Nenhum achado em aberto para este mapa.
+
+O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`.
+
+## 13.4 Rastreabilidade do capítulo
+
+- `docs/mapas-visuais/mapa-13-pipelines.html`
+- `docs/mapas-visuais/moldes/pipelines.html`
+- `docs/auditoria/mapa-pecas/catalogo-pecas.json`
+- `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`
+- `scripts/catalogo_pecas.py`
+- `scripts/mapa_visual.py`
+
+# Capítulo 14 — Mapa dos módulos VSA
+
+```{=typst}
+#ficha(
+  ("Mapa", "mapa-14-modulos.html"),
+  ("Para que serve", "as áreas de modulos/, as fatias de cada uma e as ferramentas que moram nelas"),
+  ("Achados em aberto", "0"),
+)
+```
+
+## 14.1 O que é
+
+Um módulo VSA é uma área de `modulos/` dividida em fatias verticais; cada fatia abriga ferramentas, guardas ou contratos, e não importa o interior de outra fatia.
+
+Onde mora: `modulos/`. Quem confere: o `G_MODULO_FRONTEIRA`, o `G_FRONTEIRA_FERRAMENTAS` e o `G_COPIA_UNICA_VSA`.
+
+## 14.2 Os números de hoje
+
+| Medida | Valor |
+| :-------------------------------------- | :-------------------------------------------- |
+| áreas em modulos/ | 4 |
+| fatias | 11 |
+
+Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_modulos`), os mesmos do mapa `mapa-14-modulos.html`.
+
+## 14.3 O que falta consertar
+
+Nenhum achado em aberto para este mapa.
+
+O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`.
+
+## 14.4 Rastreabilidade do capítulo
+
+- `docs/mapas-visuais/mapa-14-modulos.html`
+- `docs/mapas-visuais/moldes/modulos.html`
+- `docs/auditoria/mapa-pecas/catalogo-pecas.json`
+- `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`
+- `scripts/catalogo_pecas.py`
+- `scripts/mapa_visual.py`
+
+# Capítulo 15 — Mapa dos agentes
+
+```{=typst}
+#ficha(
+  ("Mapa", "mapa-15-agentes.html"),
+  ("Para que serve", "os modelos de agente que viajam com o app e as cópias idênticas entre ferramentas"),
+  ("Achados em aberto", "0"),
+)
+```
+
+## 15.1 O que é
+
+Um modelo de agente é a ficha de função de um subagente que vai junto com o app gerado. Cópias idênticas em várias ferramentas são candidatas a fonte única.
+
+Onde mora: `modulos/03-plataforma-e-entrega/**/templates/agents/`. Quem confere: nenhum guarda específico; o mapa compara as cópias por conteúdo.
+
+## 15.2 Os números de hoje
+
+| Medida | Valor |
+| :-------------------------------------- | :-------------------------------------------- |
+| modelos de agente | 9 |
+| arquivos | 18 |
+| com versões diferentes | 0 |
+
+Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_agentes`), os mesmos do mapa `mapa-15-agentes.html`.
+
+## 15.3 O que falta consertar
+
+Nenhum achado em aberto para este mapa.
+
+O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`.
+
+## 15.4 Rastreabilidade do capítulo
+
+- `docs/mapas-visuais/mapa-15-agentes.html`
+- `docs/mapas-visuais/moldes/agentes.html`
 - `docs/auditoria/mapa-pecas/catalogo-pecas.json`
 - `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`
 - `scripts/catalogo_pecas.py`
@@ -606,53 +765,59 @@ O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditor
 
 # Apêndice B — Estado honesto
 
-Tabela consolidada de todos os achados dos mapas, gerada de `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`. Em aberto por gravidade: 9 alta, 13 média, 9 baixa. Cada achado em aberto traz no arquivo o texto pronto para abrir o fluxo de melhoria (`pedido_melhoria`).
+Tabela consolidada de todos os achados dos mapas, gerada de `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`. Em aberto por gravidade: 0 alta, 4 média, 27 baixa. Cada achado em aberto traz no arquivo o texto pronto para abrir o fluxo de melhoria (`pedido_melhoria`).
 
-## Em aberto (30)
+## Em aberto (31)
 
 | Achado | Gravidade · mapa |
 | :-------------------------------------- | :-------------------------------------------- |
-| 100 arquivos idênticos copiados entre ferramentas (`CAT-arquivos-identicos`) | Alta · ferramentas |
-| Chamada da receita não encaixa: ecossistema.py bridge scan \-\-dir <var> (`CAT-encaixe-ecossistema-py-bridge-scan-dir-var`) | Alta · encaixes |
-| Chamada da receita não encaixa: ecossistema.py factory curate \-\-dominio <var> \-\-output <var> (`CAT-encaixe-ecossistema-py-factory-curate-dominio-var-output-var`) | Alta · encaixes |
-| Etapa da receita não chama ferramenta: etapa_06_ops (`CAT-etapa-sem-ferramenta-etapa-06-ops`) | Alta · encaixes |
-| Etapa da receita não chama ferramenta: etapa_07_auditoria (`CAT-etapa-sem-ferramenta-etapa-07-auditoria`) | Alta · encaixes |
+| 1 dimensões 15-D com falha no laudo de aidd-orca (`CAT-15d-aidd-orca`) | Média · lente15d |
+| 3 dimensões 15-D com falha no laudo de aidd-visual-maps (`CAT-15d-aidd-visual-maps`) | Média · lente15d |
+| 5 guardas declarados em lei que não rodam no commit (`CAT-declarados-fora-do-commit`) | Média · leis |
+| 10 guardas com o mesmo nome e código diferente (`CAT-gates-versoes`) | Média · guardas |
+| Ciclo de auditoria sem todos os documentos: aidd-componentes/ciclo-01 (`CAT-ciclo-aidd-componentes-ciclo-01`) | Baixa · oficina |
+| Ciclo de auditoria sem todos os documentos: aidd-dependencias/ciclo-01 (`CAT-ciclo-aidd-dependencias-ciclo-01`) | Baixa · oficina |
+| Ciclo de auditoria sem todos os documentos: aidd-dispatch-runner/ciclo-01 (`CAT-ciclo-aidd-dispatch-runner-ciclo-01`) | Baixa · oficina |
+| Ciclo de auditoria sem todos os documentos: aidd-enterprise-runner/ciclo-01 (`CAT-ciclo-aidd-enterprise-runner-ciclo-01`) | Baixa · oficina |
+| Ciclo de auditoria sem todos os documentos: aidd-forge-runner/ciclo-01 (`CAT-ciclo-aidd-forge-runner-ciclo-01`) | Baixa · oficina |
+| Ciclo de auditoria sem todos os documentos: aidd-freedom-runner/ciclo-01 (`CAT-ciclo-aidd-freedom-runner-ciclo-01`) | Baixa · oficina |
+| Ciclo de auditoria sem todos os documentos: aidd-livro-texto/ciclo-01 (`CAT-ciclo-aidd-livro-texto-ciclo-01`) | Baixa · oficina |
+| Ciclo de auditoria sem todos os documentos: aidd-master-runner/ciclo-01 (`CAT-ciclo-aidd-master-runner-ciclo-01`) | Baixa · oficina |
+| Ciclo de auditoria sem todos os documentos: aidd-mcp/ciclo-01 (`CAT-ciclo-aidd-mcp-ciclo-01`) | Baixa · oficina |
+| Ciclo de auditoria sem todos os documentos: aidd-open-runner/ciclo-01 (`CAT-ciclo-aidd-open-runner-ciclo-01`) | Baixa · oficina |
+| Ciclo de auditoria sem todos os documentos: aidd-ops-runner/ciclo-01 (`CAT-ciclo-aidd-ops-runner-ciclo-01`) | Baixa · oficina |
+| Ciclo de auditoria sem todos os documentos: aidd-orca/ciclo-01 (`CAT-ciclo-aidd-orca-ciclo-01`) | Baixa · oficina |
+| Ciclo de auditoria sem todos os documentos: aidd-orchestrator-runner/ciclo-01 (`CAT-ciclo-aidd-orchestrator-runner-ciclo-01`) | Baixa · oficina |
+| Ciclo de auditoria sem todos os documentos: aidd-pipeline-runner/ciclo-01 (`CAT-ciclo-aidd-pipeline-runner-ciclo-01`) | Baixa · oficina |
+| Ciclo de auditoria sem todos os documentos: aidd-pure-runner/ciclo-01 (`CAT-ciclo-aidd-pure-runner-ciclo-01`) | Baixa · oficina |
+| Ciclo de auditoria sem todos os documentos: aidd-session/ciclo-01 (`CAT-ciclo-aidd-session-ciclo-01`) | Baixa · oficina |
+| Ciclo de auditoria sem todos os documentos: aidd-skills/ciclo-02 (`CAT-ciclo-aidd-skills-ciclo-02`) | Baixa · oficina |
+| Ciclo de auditoria sem todos os documentos: aidd-visual-maps/ciclo-01 (`CAT-ciclo-aidd-visual-maps-ciclo-01`) | Baixa · oficina |
+| Ciclo de auditoria sem todos os documentos: calibracao-pipeline/ciclo-01 (`CAT-ciclo-calibracao-pipeline-ciclo-01`) | Baixa · oficina |
+| Ciclo de auditoria sem todos os documentos: code-review-graph/ciclo-01 (`CAT-ciclo-code-review-graph-ciclo-01`) | Baixa · oficina |
+| Ciclo de auditoria sem todos os documentos: fluxo-01-runner/ciclo-01 (`CAT-ciclo-fluxo-01-runner-ciclo-01`) | Baixa · oficina |
+| Ciclo de auditoria sem todos os documentos: fluxo-02-runner/ciclo-01 (`CAT-ciclo-fluxo-02-runner-ciclo-01`) | Baixa · oficina |
+| Ciclo de auditoria sem todos os documentos: fluxo-03-runner/ciclo-01 (`CAT-ciclo-fluxo-03-runner-ciclo-01`) | Baixa · oficina |
+| Ciclo de auditoria sem todos os documentos: fronteiras-ferramentas/ciclo-01 (`CAT-ciclo-fronteiras-ferramentas-ciclo-01`) | Baixa · oficina |
+| Ciclo de auditoria sem todos os documentos: modularizacao-vsa/ciclo-03 (`CAT-ciclo-modularizacao-vsa-ciclo-03`) | Baixa · oficina |
+| 1 guardas da raiz que nenhuma lei declara (`CAT-guardas-sem-lei`) | Baixa · leis |
+| 4 scripts que nenhum código chama (`CAT-scripts-sem-chamador`) | Baixa · scripts |
+
+## Resolvidos (14)
+
+| Achado | Gravidade · mapa |
+| :-------------------------------------- | :-------------------------------------------- |
 | A validação de contrato aprova quando não consegue conferir (`VER-001`) | Alta · encaixes |
 | Etapa 7 grava CONFORME_100_POR_CENTO sem rodar guarda nenhum (`VER-002`) | Alta · encaixes |
 | Etapa 3 do Fluxo 02 chama o factory sem o PLANO-INFRAESTRUTURA.json que ele exige (`VER-003`) | Alta · encaixes |
 | Corrida entre testes no G_PORTAO_PROVA_QUE_MORDE (`VER-005`) | Alta · guardas |
-| 7 dimensões 15-D com falha no laudo de aidd-melhoria (`CAT-15d-aidd-melhoria`) | Média · lente15d |
-| Etapa mexe por dentro de uma ferramenta: etapa_02_planner (`CAT-atalho-interno-etapa-02-planner`) | Média · encaixes |
-| Etapa mexe por dentro de uma ferramenta: etapa_03_engine (`CAT-atalho-interno-etapa-03-engine`) | Média · encaixes |
-| 10 declarações de lei que o meta-guarda não lê (`CAT-declaracoes-invisiveis`) | Média · leis |
-| 7 guardas declarados em lei que não rodam no commit (`CAT-declarados-fora-do-commit`) | Média · leis |
-| 10 guardas com o mesmo nome e código diferente (`CAT-gates-versoes`) | Média · guardas |
-| 7 moldes de entrega com o mesmo nome em várias ferramentas (`CAT-moldes-repetidos`) | Média · moldes |
-| Pasta legada ainda versionada: .gemini/skills (`CAT-pasta-legada-gemini-skills`) | Média · harnesses |
-| 10 tarefas feitas por mais de uma ferramenta (`CAT-tarefas-varias-donas`) | Média · ferramentas |
+| O sync de componentes puxava skills dos harnesses de volta para a fonte (`VER-013`) | Alta · harnesses |
 | O \-\-dry-run do orquestrador grava README-USUARIO.md no disco (`VER-004`) | Média · encaixes |
 | 6 testes falhando na aidd-orca, fora do pre-commit (`VER-006`) | Média · skills |
 | G_HANDOFF_MELHORIA reprova com o handoff-melhoria.json versionado (`VER-008`) | Média · leis |
-| Ciclo de auditoria sem todos os documentos: mapa-pecas/ciclo-01 (`CAT-ciclo-mapa-pecas-ciclo-01`) | Baixa · oficina |
-| Ciclo de auditoria sem todos os documentos: skills-pocock/ciclo-01 (`CAT-ciclo-skills-pocock-ciclo-01`) | Baixa · oficina |
-| 22 guardas da raiz que nenhuma lei declara (`CAT-guardas-sem-lei`) | Baixa · leis |
-| 3 MCPs das ferramentas que nenhum agente deste repositório usa (`CAT-mcps-internos`) | Baixa · conexoes |
-| 3 scripts que nenhum código chama (`CAT-scripts-sem-chamador`) | Baixa · scripts |
-| 20 verbos de CLI em mais de uma ferramenta (`CAT-verbos-repetidos`) | Baixa · ferramentas |
+| O .githooks/pre-commit pode falhar sem mensagem (`VER-009`) | Média · scripts |
+| Skills repetidas, nomes misturados e terceiros copiados na fonte única (`VER-012`) | Média · skills |
+| Comandos /aidd-livro-texto e /planner sem skill válida (`VER-014`) | Média · comandos |
 | 2 testes falhando na aidd-improvement, fora do pre-commit (`VER-007`) | Baixa · skills |
 | forge audit: AGENTS.md genérico (G04) e forge init ainda cria .agent/ (`VER-010`) | Baixa · ferramentas |
 | O detect-secrets grava o caminho absoluto da máquina no .secrets.baseline (`VER-011`) | Baixa · guardas |
-
-## Sob suspeita (1)
-
-| Achado | Gravidade · mapa |
-| :-------------------------------------- | :-------------------------------------------- |
-| O .githooks/pre-commit pode falhar sem mensagem (`VER-009`) | Média · scripts |
-
-## Resolvidos (3)
-
-| Achado | Gravidade · mapa |
-| :-------------------------------------- | :-------------------------------------------- |
-| O sync de componentes puxava skills dos harnesses de volta para a fonte (`VER-013`) | Alta · harnesses |
-| Skills repetidas, nomes misturados e terceiros copiados na fonte única (`VER-012`) | Média · skills |
-| Comandos /aidd-livro-texto e /planner sem skill válida (`VER-014`) | Média · comandos |

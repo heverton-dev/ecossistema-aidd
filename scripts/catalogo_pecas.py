@@ -34,6 +34,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import mapa_gates  # noqa: E402  (dono e caminho de cada gate)
+from escopo_escrita_mapas import ForaDoEscopo, garantir_escopo  # noqa: E402
+from gravacao_atomica_mapas import gravar_lote  # noqa: E402
+from resiliencia_mapas import ler_texto, relatar_falha  # noqa: E402  (retry de I/O e falha em JSON)
+from telemetria_mapas import Medicao, medir  # noqa: E402  (uma linha JSON por execução)
 from pastas_ferramentas import ferramenta_do_caminho, pastas  # noqa: E402  (ciclo-03 VSA)
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -239,39 +243,68 @@ def coletar_comandos_slash() -> list[dict]:
     return comandos
 
 
+def _nome_mcp(nome: str) -> str:
+    """mobbin_mcp e mobbin-mcp são o mesmo servidor: compara sem caixa e com '_' = '-'."""
+    return nome.lower().replace("_", "-")
+
+
 def coletar_mcps(ferramentas: list[dict]) -> dict:
-    registrados = []
+    """MCPs registrados no .mcp.json e MCPs de código próprio, unidos sem duplicar.
+
+    Código próprio = os `mcps/*/server.py` de cada ferramenta, as pastas
+    componentes/compartilhado/mcps/*/server.py e os servidores do .mcp.json cujo
+    argumento é um .py do repositório. Duplicata = mesmo caminho ou mesmo nome.
+    """
+    servidores = {}
     mcp_json = RAIZ / ".mcp.json"
     if mcp_json.is_file():
-        registrados = sorted(json.loads(_ler(mcp_json)).get("mcpServers", {}))
+        servidores = json.loads(_ler(mcp_json)).get("mcpServers", {})
+    registrados = sorted(servidores)
     configs = " ".join(_ler(RAIZ / n) for n in (".mcp.json", "opencode.jsonc", "mimocode.jsonc")
                        if (RAIZ / n).is_file())
-    internos = []
-    for f in ferramentas:
-        for caminho in f["mcps_proprios"]:
-            nome = Path(caminho).parent.name
-            internos.append({
-                "id": nome, "ferramenta": f["id"], "caminho": caminho,
-                "registrado_em_config": nome in configs or caminho in configs,
-            })
+    candidatos = [(Path(c).parent.name, f["id"], c) for f in ferramentas for c in f["mcps_proprios"]]
+    candidatos += [(p.parent.name, "componentes", _rel(p)) for p in sorted((COMPARTILHADO / "mcps").glob("*/server.py"))]
+    for nome, dados in sorted(servidores.items()):
+        for arg in dados.get("args") or []:
+            if str(arg).endswith(".py") and (RAIZ / str(arg)).is_file():
+                caminho = Path(str(arg)).as_posix()
+                candidatos.append((nome, ferramenta_do_caminho(caminho) or caminho.split("/")[0], caminho))
+    internos, vistos = [], set()
+    for nome, dona, caminho in candidatos:
+        if caminho in vistos or _nome_mcp(nome) in vistos:
+            continue
+        vistos |= {caminho, _nome_mcp(nome)}
+        internos.append({"id": nome, "ferramenta": dona, "caminho": caminho,
+                         "registrado_em_config": nome in configs or caminho in configs})
     return {"registrados_mcp_json": registrados, "internos_das_ferramentas": internos}
 
 
 def coletar_hooks() -> list[dict]:
-    settings = RAIZ / ".claude" / "settings.json"
-    if not settings.is_file():
-        return []
+    """Gatilhos do .claude/settings.json e todo .claude/hooks/*.py que nenhum gatilho chama.
+
+    Nunca lê o .claude/settings.local.json: ele não é versionado (não existe nas
+    worktrees nem nas outras máquinas), então o catálogo mudaria de máquina para
+    máquina e o --check de frescor (catalogo_em_dia) quebraria.
+    """
     hooks = []
-    for evento, grupos in json.loads(_ler(settings)).get("hooks", {}).items():
-        for grupo in grupos:
-            for h in grupo.get("hooks", []):
-                comando = h.get("command", "")
-                script = re.search(r"[\w./-]+\.(py|sh|cmd)", comando)
-                hooks.append({
-                    "evento": evento,
-                    "matcher": grupo.get("matcher", ""),
-                    "script": script.group(0) if script else comando[:80],
-                })
+    settings = RAIZ / ".claude" / "settings.json"
+    if settings.is_file():
+        for evento, grupos in json.loads(_ler(settings)).get("hooks", {}).items():
+            for grupo in grupos:
+                for h in grupo.get("hooks", []):
+                    comando = h.get("command", "")
+                    script = re.search(r"[\w./-]+\.(py|sh|cmd)", comando)
+                    hooks.append({
+                        "evento": evento,
+                        "matcher": grupo.get("matcher", ""),
+                        "script": script.group(0) if script else comando[:80],
+                        "status": "ligado no settings.json",
+                    })
+    ligados = {Path(h["script"]).name for h in hooks}
+    for p in sorted((RAIZ / ".claude" / "hooks").glob("*.py")):
+        if p.name not in ligados:
+            hooks.append({"evento": "sem gatilho", "matcher": "", "script": _rel(p),
+                          "status": "sem gatilho no settings.json"})
     return hooks
 
 
@@ -669,10 +702,14 @@ def _chamadas_do_no(no: ast.AST) -> tuple[list[list[str]], list[str]]:
     return chamadas, internos
 
 
+# Número do fluxo (self.fluxo no orquestrador) -> nome do fluxo da Tríade.
+FLUXOS_TRIADE = {1: "pure", 2: "open", 3: "freedom"}
+
+
 def coletar_receita() -> dict:
     arvore = ast.parse(_ler(ORQUESTRADOR))
     metodos = {n.name: n for n in ast.walk(arvore) if isinstance(n, ast.FunctionDef)}
-    fluxos = {1: "pure", 2: "open", 3: "freedom"}
+    fluxos = FLUXOS_TRIADE
     etapas = []
     for nome in sorted(n for n in metodos if n.startswith("etapa_")):
         metodo = metodos[nome]
@@ -694,6 +731,126 @@ def coletar_receita() -> dict:
             "chama_alguma_ferramenta": bool(chamadas),
         })
     return {"arquivo": _rel(ORQUESTRADOR), "etapas": etapas}
+
+
+# ── Pipelines, módulos VSA e agentes ─────────────────────────────────────
+
+RE_PASSO_DE_FLUXO = re.compile(r"Step (\d+) of the (.+?) flow", re.IGNORECASE)
+RE_SKILL_PIPELINE = re.compile(r"\bruns the\b[^.]*\bpipeline\b", re.IGNORECASE)
+RE_FASE = re.compile(r"^###\s+Phase\s+\d+:\s*(.+)$", re.MULTILINE)
+RE_SECAO_DE_ETAPAS = re.compile(r"^##\s+(?:Execution|Steps|Workflow|Protocol)\b.*$", re.MULTILINE)
+RE_ITEM_NUMERADO = re.compile(r"^\d+\.\s+(.+)$")
+
+
+def _etapas_da_skill(texto: str) -> list[str]:
+    """Etapas declaradas no SKILL.md: os títulos '### Phase N: x' ou, sem eles, os itens
+    numerados de primeiro nível da primeira seção Execution/Steps/Workflow/Protocol."""
+    fases = [f.strip() for f in RE_FASE.findall(texto)]
+    if fases:
+        return fases
+    secao = RE_SECAO_DE_ETAPAS.search(texto)
+    if not secao:
+        return []
+    etapas = []
+    for linha in texto[secao.end():].splitlines():
+        if linha.startswith("## "):
+            break
+        item = RE_ITEM_NUMERADO.match(linha)
+        if item:
+            frase = re.split(r"(?<=[\w`)\]])(?:\.\s+(?=[A-Z])|:\s)", item.group(1).replace("**", ""), maxsplit=1)[0]
+            etapas.append(frase.strip().rstrip(".:")[:90])
+    return etapas
+
+
+def coletar_pipelines(receita: dict) -> list[dict]:
+    """Pipelines do ecossistema, sem lista digitada:
+      - um por fluxo da Tríade, com as etapas da receita (orquestrador_sincrono.py) e a
+        chamada que cada etapa faz naquele fluxo;
+      - cada cadeia declarada nas skills ('Step N of the <x> flow'), na ordem dos passos;
+      - cada skill que 'runs the ... pipeline', com as etapas do próprio SKILL.md."""
+    pipelines = []
+    for fluxo in FLUXOS_TRIADE.values():
+        etapas = []
+        for e in receita["etapas"]:
+            # Fluxo sem ramo próprio (o 'else' do orquestrador) fica com as chamadas que
+            # nenhum ramo de fluxo reivindica.
+            dos_outros = [c for chamadas in e["chamadas_por_fluxo"].values() for c in chamadas]
+            chamadas = e["chamadas_por_fluxo"].get(fluxo) or [c for c in e["chamadas_cli"] if c not in dos_outros]
+            etapas.append({"titulo": e["descricao"], "peca": e["etapa"],
+                           "chamada": " ".join(chamadas[0]) if chamadas else ""})
+        pipelines.append({"id": f"triade-{fluxo}", "origem": receita["arquivo"], "etapas": etapas})
+    cadeias = defaultdict(list)
+    por_descricao = []
+    for skill_md in sorted((COMPARTILHADO / "skills").glob("*/SKILL.md")):
+        texto = _ler(skill_md)
+        descricao = _frontmatter(texto, "description")
+        passo = RE_PASSO_DE_FLUXO.search(descricao)
+        if passo:
+            cadeias[passo.group(2).strip()].append((int(passo.group(1)), skill_md.parent.name, _rel(skill_md)))
+        elif RE_SKILL_PIPELINE.search(descricao):
+            por_descricao.append({"id": skill_md.parent.name, "origem": _rel(skill_md),
+                                  "etapas": [{"titulo": t, "peca": skill_md.parent.name, "chamada": ""}
+                                             for t in _etapas_da_skill(texto)]})
+    for nome, passos in sorted(cadeias.items()):
+        pipelines.append({"id": nome, "origem": ", ".join(origem for _, _, origem in sorted(passos)),
+                          "etapas": [{"titulo": f"passo {n}", "peca": skill, "chamada": ""}
+                                     for n, skill, _ in sorted(passos)]})
+    return pipelines + por_descricao
+
+
+def _primeira_frase_readme(pasta: Path) -> str:
+    readme = pasta / "README.md"
+    if not readme.is_file():
+        return ""
+    return next((x.strip() for x in _ler(readme).splitlines() if x.strip() and not x.startswith(("#", ">"))), "")
+
+
+def coletar_modulos() -> list[dict]:
+    """Cada área de modulos/ (fatia vertical do VSA) e as subpastas dela: ferramentas que
+    moram ali (MAPA-DONOS-FERRAMENTAS.json), guardas e arquivos .py."""
+    donas = pastas()
+    areas = []
+    for area in sorted(p for p in (RAIZ / "modulos").iterdir() if p.is_dir() and not p.name.startswith(("_", "."))):
+        fatias = []
+        for fatia in sorted(p for p in area.iterdir() if p.is_dir() and p.name not in IGNORAR
+                            and not p.name.startswith(("_", "."))):
+            rel = _rel(fatia)
+            py = _py_vivos(fatia)
+            fatias.append({
+                "id": fatia.name,
+                "caminho": rel,
+                "ferramentas": sorted(n for n, pasta in donas.items() if pasta == rel or pasta.startswith(rel + "/")),
+                "guardas": len([p for p in py if p.name.startswith("G_")]),
+                "arquivos_py": len([p for p in py if "test" not in p.name]),
+            })
+        areas.append({"id": area.name, "caminho": _rel(area), "descricao": _primeira_frase_readme(area),
+                      "fatias": fatias})
+    return areas
+
+
+def coletar_agentes() -> list[dict]:
+    """Templates de agentes (templates/agents/*.md) da área de plataforma e entrega, agrupados
+    por nome; versão por conteúdo (A, B…), como nos guardas: mesma letra = cópia idêntica."""
+    base = RAIZ / "modulos" / "03-plataforma-e-entrega"
+    por_nome = defaultdict(list)
+    for pasta in sorted(base.rglob("templates/agents")):
+        if pasta.is_dir() and not _ignorado(pasta.relative_to(RAIZ)):
+            for arq in sorted(pasta.glob("*.md")):
+                por_nome[arq.stem].append(arq)
+    agentes = []
+    for nome, arquivos in sorted(por_nome.items()):
+        versoes = {}
+        for arq in arquivos:
+            versoes.setdefault(_hash(arq), chr(ord("A") + len(versoes)))
+        titulo = next((x.lstrip("# ").strip() for x in _ler(arquivos[0]).splitlines() if x.startswith("#")), "")
+        agentes.append({
+            "id": nome,
+            "papel": titulo,
+            "copias": [{"caminho": _rel(a), "ferramenta": ferramenta_do_caminho(_rel(a)) or "", "versao": versoes[_hash(a)]}
+                       for a in arquivos],
+            "versoes_distintas": len(versoes),
+        })
+    return agentes
 
 
 # ── Encaixe dinâmico (via --help real) ───────────────────────────────────
@@ -845,6 +1002,9 @@ def gerar(com_encaixe: bool = True) -> dict:
         "contratos": coletar_contratos(),
         "receita_triade": receita,
         "encaixes": verificar_encaixes(receita, ferramentas) if com_encaixe else None,
+        "pipelines": coletar_pipelines(receita),
+        "modulos": coletar_modulos(),
+        "agentes": coletar_agentes(),
     }
     catalogo["achados"] = achar_repeticoes(ferramentas, skills, gates, receita)
     catalogo["achados"]["declaracoes_de_lei_invisiveis_ao_meta_gate"] = declaracoes_invisiveis
@@ -869,10 +1029,55 @@ def gerar(com_encaixe: bool = True) -> dict:
         "gates_arquivos": sum(len(g["copias"]) for g in gates),
         "contratos": len(catalogo["contratos"]),
         "etapas_receita": len(receita["etapas"]),
+        "pipelines": len(catalogo["pipelines"]),
+        "modulos": len(catalogo["modulos"]),
+        "agentes": len(catalogo["agentes"]),
         "encaixes_quebrados": None if not com_encaixe
         else sum(1 for e in catalogo["encaixes"] if not e["encaixa"]),
     }
     return catalogo
+
+
+def _texto(catalogo: dict) -> str:
+    return json.dumps(catalogo, ensure_ascii=False, indent=2) + "\n"
+
+
+# Uma varredura por processo para o mesmo arquivo em disco (chave: caminho, mtime, tamanho):
+# o índice pergunta o frescor uma vez por mapa, e cada varredura custa segundos.
+_FRESCOR: dict[tuple, tuple[bool, list[str]]] = {}
+
+
+def catalogo_em_dia(raiz: Path = RAIZ, caminho: Path | None = None) -> tuple[bool, list[str]]:
+    """Gera o catálogo em memória e compara com o JSON em disco.
+
+    Devolve (em_dia, chaves de primeiro nível que divergem). A varredura é sempre do
+    checkout deste script, então `raiz` tem de ser RAIZ (num repositório de teste, roda
+    o script da própria cópia). Catálogo gravado com --sem-encaixe (encaixes = null) é
+    comparado com uma geração também sem encaixes.
+    """
+    if Path(raiz).resolve() != RAIZ:
+        raise ValueError(f"catalogo_em_dia varre {RAIZ}; para {raiz}, rode o scripts/catalogo_pecas.py de lá")
+    caminho = Path(caminho or SAIDA_PADRAO)
+    if not caminho.is_file():
+        return False, ["<arquivo ausente>"]
+    estado = caminho.stat()
+    chave = (str(caminho.resolve()), estado.st_mtime_ns, estado.st_size)
+    if chave not in _FRESCOR:
+        atual = ler_texto(caminho)
+        try:
+            disco = json.loads(atual)
+        except ValueError:
+            disco = {}
+        memoria = gerar(com_encaixe=not isinstance(disco, dict) or disco.get("encaixes") is not None)
+        texto = _texto(memoria)
+        if atual == texto:
+            _FRESCOR[chave] = (True, [])
+        else:
+            disco = disco if isinstance(disco, dict) else {}
+            memoria = json.loads(texto)  # mesma forma do disco (tuplas viram listas)
+            divergentes = sorted(k for k in set(disco) | set(memoria) if disco.get(k) != memoria.get(k))
+            _FRESCOR[chave] = (False, divergentes or ["<formatação>"])
+    return _FRESCOR[chave]
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -881,17 +1086,31 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--sem-encaixe", action="store_true")
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args(argv)
+    with medir("catalogo", "catalogo", args.saida) as medicao:
+        medicao.exit_code = _gerar_ou_conferir(args, medicao)
+    return medicao.exit_code
 
-    texto = json.dumps(gerar(com_encaixe=not args.sem_encaixe), ensure_ascii=False, indent=2) + "\n"
+
+def _gerar_ou_conferir(args: argparse.Namespace, medicao: Medicao) -> int:
+    if not args.check:
+        try:
+            garantir_escopo(args.saida)
+        except ForaDoEscopo as erro:
+            print(f"[ERRO] {erro}")
+            return 1
+    texto = _texto(gerar(com_encaixe=not args.sem_encaixe))
     if args.check:
-        atual = args.saida.read_text(encoding="utf-8") if args.saida.is_file() else ""
+        atual = ler_texto(args.saida) if args.saida.is_file() else ""
         if atual != texto:
             print(f"[DESATUALIZADO] {args.saida} difere do código. Rode: python scripts/catalogo_pecas.py")
             return 1
         print(f"[OK] {args.saida} em dia com o código.")
         return 0
-    args.saida.parent.mkdir(parents=True, exist_ok=True)
-    args.saida.write_text(texto, encoding="utf-8", newline="\n")
+    try:
+        gravar_lote({args.saida: texto})
+        medicao.arquivos_gravados = 1
+    except (OSError, ValueError) as erro:
+        return relatar_falha(erro, "catalogo", "catalogo", args.saida)
     print(f"[OK] Catálogo gravado em {args.saida}")
     return 0
 
