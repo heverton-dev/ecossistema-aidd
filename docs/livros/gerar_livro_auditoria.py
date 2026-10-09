@@ -3,11 +3,12 @@
 Gerador determinístico do Livro Visual de Auditoria do Ecossistema AIDD.
 
 Tudo o que é contagem ou catálogo é lido do disco no momento da geração — skills em
-componentes/compartilhado/skills/, portões em gates/, componentes nas 6 famílias de
-componentes/compartilhado/ — para o livro nunca congelar números que mudam a cada
-commit. As fichas das 8 ferramentas macro são o registro histórico da auditoria de
-22/09/2026 (docs/auditoria/historico_auditorias/); erros factuais conhecidos nelas são
-corrigidos na hora de embutir e listados na errata do livro.
+componentes/compartilhado/skills/, portões do MAPA-GATES.json (cada um na fatia dona,
+ciclo-03 VSA), componentes nas 6 famílias de componentes/compartilhado/ — para o livro
+nunca congelar números que mudam a cada commit. As fichas das 8 ferramentas macro são o
+registro histórico da auditoria de 22/09/2026 (docs/auditoria/historico_auditorias/);
+erros factuais conhecidos nelas são corrigidos na hora de embutir e listados na errata do
+livro. Os links apontam para o repositório por caminho relativo à pasta docs/livros/.
 
 Uso:  python docs/livros/gerar_livro_auditoria.py [DD-MM-AAAA]
 """
@@ -33,6 +34,25 @@ DATA_EXTENSO = f"{int(_d)} de {MESES[int(_m) - 1]} de {_a}"
 LIVRO_PATH = ROOT_DIR / "docs" / "livros" / f"{DATA}_O-GRANDE-LIVRO-VISUAL-DA-AUDITORIA-AIDD.md"
 PRE_COMMIT = (ROOT_DIR / ".pre-commit-config.yaml").read_text(encoding="utf-8")
 
+sys.path.insert(0, str(ROOT_DIR / "scripts"))
+import mapa_gates  # noqa: E402  (ciclo-03 VSA: cada gate na fatia dona)
+from pastas_ferramentas import pastas  # noqa: E402
+
+MAPA_GATES = mapa_gates.carregar(ROOT_DIR)
+GATES_VIGENTES = sorted((ROOT_DIR / info["caminho"] for info in MAPA_GATES.values()
+                         if (ROOT_DIR / info["caminho"]).is_file()), key=lambda p: p.name.lower())
+PASTAS_DE_GATES = sorted({p.parent for p in GATES_VIGENTES})
+PASTAS_FERRAMENTAS = pastas()
+
+
+def _rel(caminho: Path) -> str:
+    return caminho.relative_to(ROOT_DIR).as_posix()
+
+
+def _link(rel: str) -> str:
+    """Link relativo a docs/livros/ (o livro mora lá), igual em qualquer checkout."""
+    return f"../../{rel}"
+
 # Nomes errados nas fichas históricas de 22/09 -> nome real no disco (errata do livro).
 ERRATA_FICHAS = {
     "`G_BLOQUEAR_SEGREDO`": "`G_BLOQUEAR_SEGREDOS`",
@@ -41,7 +61,7 @@ ERRATA_FICHAS = {
     "`G_FACTORY_OUTPUT` (verificação do manifesto de entrega), `G_FACTORY_DETERMINISTIC` "
     "(garantia de zero LLM nas fases 1, 4, 5 e 6).":
         "`G_FACTORY_ANALYSIS`, `G_FACTORY_COMPOSE`, `G_FACTORY_ENV`, `G_FACTORY_INIT_DB`, "
-        "`G_FACTORY_INTEGRATION` e `G_FACTORY_MVP` (em `tools/aidd-open/gates/`). "
+        f"`G_FACTORY_INTEGRATION` e `G_FACTORY_MVP` (em `{PASTAS_FERRAMENTAS['aidd-open']}/gates/`). "
         "`G_FACTORY_INPUT`, `G_FACTORY_OUTPUT` e `G_FACTORY_DETERMINISTIC` são rótulos de "
         "invariante no `AGENTS.md`, não arquivos de portão.",
     "catálogo de ferramentas (`data/catalogo_ferramentas.json`)":
@@ -80,7 +100,8 @@ def _hook_do_portao(nome: str) -> str:
     sem_comentarios = "\n".join(l for l in PRE_COMMIT.splitlines() if not l.lstrip().startswith("#"))
     bloco = next((b for b in re.split(r"\n\s*- id:", sem_comentarios) if f"gates/{nome}.py" in b), None)
     if bloco is None:
-        return "Não está no `.pre-commit-config.yaml`: roda sob demanda (`python gates/" + nome + ".py`)."
+        rel = MAPA_GATES[nome]["caminho"] if nome in MAPA_GATES else f"gates/{nome}.py"
+        return f"Não está no `.pre-commit-config.yaml`: roda sob demanda (`python {rel}`)."
     if re.search(r"stages:\s*\[?\s*manual", bloco):
         return "Registrado no `.pre-commit-config.yaml` com `stages: [manual]` (roda só quando chamado)."
     return "Roda automaticamente no commit via `.pre-commit-config.yaml`."
@@ -93,9 +114,9 @@ catalogo = {
         if (d / "SKILL.md").is_file()
     ],
     "gates": [
-        {"id": g.name, "descricao": _missao_do_portao(g), "flags": _flags_do_portao(g),
+        {"id": g.name, "caminho": _rel(g), "descricao": _missao_do_portao(g), "flags": _flags_do_portao(g),
          "hook": _hook_do_portao(g.stem)}
-        for g in sorted((ROOT_DIR / "gates").glob("G_*.py"), key=lambda x: x.name.lower())
+        for g in GATES_VIGENTES
     ],
 }
 FAMILIAS = ("comandos", "hooks", "security", "skills", "specs", "src-core")
@@ -124,7 +145,7 @@ CHAMADAS_ESCRITA = {"write_text", "write_bytes", "unlink", "rmtree", "rmdir", "m
                     "copyfile", "copy2", "copytree"}
 # Nomes ambíguos (str.replace, list.remove, dict.copy) só contam quando chamados em os/shutil.
 CHAMADAS_ESCRITA_OS = {"remove", "replace", "rename", "move", "copy"}
-NOMES_LOCAIS = ({p.stem for p in (ROOT_DIR / "gates").glob("*.py")}
+NOMES_LOCAIS = ({p.stem for pasta in PASTAS_DE_GATES for p in pasta.glob("*.py")}
                 | {p.stem for p in (ROOT_DIR / "scripts").glob("*.py")}
                 | {p.stem for p in (DIR_COMPARTILHADO / "src-core").glob("*.py")})
 COMANDOS_TEXTO = {c.stem: c.read_text(encoding="utf-8", errors="replace")
@@ -166,8 +187,8 @@ def _analise_portao(gate_py: Path) -> dict:
                                  ("JSON Schema", {"jsonschema"}), ("subprocesso", {"subprocess"}),
                                  ("YAML", {"yaml"}), ("hash criptográfico", {"hashlib", "hmac"}))
                if usa & mods]
-    teste = next((t.relative_to(ROOT_DIR).as_posix() for base in ("gates", "tests")
-                  for t in (ROOT_DIR / base).glob(f"test_{gate_py.stem.lower()}*.py")), None)
+    teste = next((_rel(t) for pasta in (gate_py.parent, ROOT_DIR / "tests")
+                  for t in pasta.glob(f"test_{gate_py.stem.lower()}*.py")), None)
     return {"escritas": sorted(escritas), "imports": sorted(imports), "try": n_try, "print": n_print,
             "tecnica": tecnica, "teste": teste}
 
@@ -193,7 +214,7 @@ TERMOS_15D = {
 def _dimensoes_skill(s_id: str, s_desc: str, scripts: list) -> list:
     md = (DIR_SKILLS / s_id / "SKILL.md").read_text(encoding="utf-8", errors="replace")
     comandos = sorted(c for c, txt in COMANDOS_TEXTO.items() if c == s_id or s_id in txt)
-    gate_proprio = sorted(g.name for g in (ROOT_DIR / "gates").glob("G_*.py")
+    gate_proprio = sorted(g.name for g in GATES_VIGENTES
                           if s_id.replace("-", "_").lower() in g.stem.lower())
     mcps = sorted(set(re.findall(r"codebase-memory-mcp|context7|graphify|chrome", md)))
     c = {d: _cita(md, g, t) for d, (g, t) in TERMOS_15D.items()}
@@ -223,7 +244,7 @@ def _dimensoes_skill(s_id: str, s_desc: str, scripts: list) -> list:
 
 
 def _dimensoes_portao(g: dict) -> list:
-    a = _analise_portao(ROOT_DIR / "gates" / g["id"])
+    a = _analise_portao(ROOT_DIR / g["caminho"])
     flags = ("flags " + ", ".join(f"`{f}`" for f in g["flags"])) if g["flags"] else "sem flags (roda sobre o repositório inteiro)"
     escrita = ("grava ou remove arquivos (" + ", ".join(f"`{e}`" for e in a["escritas"]) + ")") if a["escritas"] \
         else "nenhuma chamada de escrita ou remoção de arquivo no próprio código"
@@ -345,42 +366,42 @@ metaforas_macro = {
     "aidd-forge": {
         "nome": "AIDD Forge — O Altar da Fundação e os Guardiões das Leis",
         "festa": "O Mestre Ferreiro que prepara o chão da oficina, coloca a bigorna, estende as regras na parede e tranca a porta para ninguém entrar bagunçando.",
-        "caminho": "tools/aidd-forge"
+        "caminho": PASTAS_FERRAMENTAS["aidd-forge"]
     },
     "aidd-planner": {
         "nome": "AIDD Planner — A Mesa do Arquiteto e o Livro de Receitas",
         "festa": "O Grande Arquiteto que escuta o sonho do cliente, desenha a planta baixa em papel milimetrado com todas as medidas, cores e quartos, e entrega uma receita que qualquer cozinheiro consegue seguir.",
-        "caminho": "tools/aidd-planner"
+        "caminho": PASTAS_FERRAMENTAS["aidd-planner"]
     },
     "aidd-pure": {
         "nome": "AIDD Generator — O Trem Autônomo de 8 Vagões (Fluxo 01: Do Zero Puro)",
         "festa": "Um trem mágico com 8 vagões sequenciais. Ele recebe a ideia pura em uma ponta e, vagão por vagão (pesquisa, desenho, teste, programação), entrega uma cidade inteira de brinquedo montada e funcionando.",
-        "caminho": "tools/aidd-pure"
+        "caminho": PASTAS_FERRAMENTAS["aidd-pure"]
     },
     "aidd-open": {
         "nome": "AIDD Factory — A Linha de Montagem de Peças Prontas (Fluxo 02: Open-Source)",
         "festa": "O Mestre Montador que pega os melhores motores de brinquedo já inventados no mundo (motores abertos) e os conecta perfeitamente com cabos fortes para criar um veículo superpotente sem reinventar a roda.",
-        "caminho": "tools/aidd-open"
+        "caminho": PASTAS_FERRAMENTAS["aidd-open"]
     },
     "aidd-freedom": {
         "nome": "AIDD Bridge — A Ponte da Libertação (Fluxo 03: Desacoplamento Low-Code)",
         "festa": "O Chaveiro Libertador que resgata os brinquedos que estavam presos em gaiolas com cadeados caros de empresas distantes (Lovable, Supabase), limpando-os para funcionarem livres no quintal da sua própria casa.",
-        "caminho": "tools/aidd-freedom"
+        "caminho": PASTAS_FERRAMENTAS["aidd-freedom"]
     },
     "aidd-master": {
         "nome": "AIDD Master — O Maestro da Harmonização Monolítica VSA",
         "festa": "O Maestro da Orquestra que garante que todos os instrumentos (fatias verticais) toquem em harmonia perfeita no mesmo salão, sem um bater no outro e com uma barreira invisível de segurança.",
-        "caminho": "tools/aidd-master"
+        "caminho": PASTAS_FERRAMENTAS["aidd-master"]
     },
     "aidd-enterprise": {
         "nome": "AIDD Enterprise — O Cofre de Alta Segurança e Selos Criptográficos",
         "festa": "O Inspetor do Cofre do Rei que confere o carimbo de ouro (assinatura digital SHA-256) em cada documento e garante que nenhum espião consiga alterar uma única linha de código.",
-        "caminho": "tools/aidd-enterprise"
+        "caminho": PASTAS_FERRAMENTAS["aidd-enterprise"]
     },
     "aidd-ops": {
         "nome": "AIDD Ops — A Usina de Força e a Torre de Vigilância",
         "festa": "O Chefe dos Engenheiros que constrói a usina de energia (servidor VPS), liga os motores (Docker), tranca as portas com chaves fortes (SSH seguro) e coloca câmeras de vigilância 24 horas por dia (Uptime Kuma).",
-        "caminho": "tools/aidd-ops"
+        "caminho": PASTAS_FERRAMENTAS["aidd-ops"]
     }
 }
 
@@ -412,8 +433,8 @@ for idx, t in enumerate(tools_order, 1):
 {ponte}
 
 ### Na Casa (A Foto Técnica e a Ficha Histórica de 22/09/2026)
-- **Caminho Físico no Disco:** [`{m['caminho']}`](file:///{Path(ROOT_DIR / m['caminho']).resolve().as_posix()})
-- **Arquivo Canônico de Regras:** [`{m['caminho']}/AGENTS.md`](file:///{Path(ROOT_DIR / m['caminho'] / 'AGENTS.md').resolve().as_posix()})
+- **Caminho Físico no Disco:** [`{m['caminho']}`]({_link(m['caminho'])})
+- **Arquivo Canônico de Regras:** [`{m['caminho']}/AGENTS.md`]({_link(m['caminho'] + '/AGENTS.md')})
 
 > **Nota de leitura:** ficha histórica de {DATA_FICHAS}, na matriz antiga de **11 dimensões** (correspondência com a Lente 15-D no início desta parte); {('laudo 15-D: ' + ', '.join(_laudos_15d(Path(m['caminho']).name))) if _laudos_15d(Path(m['caminho']).name) else 'esta ferramenta ainda não passou por um ciclo 15-D.'}
 
@@ -445,7 +466,7 @@ for s_idx, s in enumerate(catalogo["skills"], 1):
     partes.append(f"""
 ### {s_idx}. Micro-Ferramenta: `{s_id}`
 - **Foto / Identidade:** `{s_id}`
-- **Caminho no Disco:** [`{s_path}`](file:///{Path(ROOT_DIR / s_path).resolve().as_posix()})
+- **Caminho no Disco:** [`{s_path}`]({_link(s_path)})
 - **O que Faz (Missão Única):** {s_desc}
 - **Lente 15-D desta Micro-Ferramenta:**
 {_lista_15d(_dimensoes_skill(s_id, s_desc, scripts))}
@@ -459,7 +480,7 @@ partes.append(f"""
 Imagine {N_GATES} cães de guarda robóticos sentados na saída da fábrica. Cada um tem um sensor diferente. Um cheira se tem segredo vazando, outro mede a espessura da parede, outro confere se tem botão quebrado e outro morde o pneu para ver se está furado. Se um único guarda latir (der exit 1), o portão de saída se tranca imediatamente e ninguém sai até consertar!
 
 ## Na Casa (A Matriz dos {N_GATES} Quality Gates Canônicos)
-Localização canônica: `gates/G_*.py`
+Localização canônica: a pasta `gates/` da fatia dona de cada portão, registrada em `modulos/04-nucleo-compartilhado/contracts/MAPA-GATES.json` (ciclo-03 VSA, decisão C; a pasta `gates/` da raiz deixou de existir).
 
 Cada guarda também é lido pela **Lente 15-D**. Aqui a evidência vem do próprio código Python, por AST: flags do `argparse`, chamadas que gravam ou apagam arquivos, módulos do repositório importados, blocos `try`, saídas `print` e se o `.pre-commit-config.yaml` o chama. Um portão é de estágio único, então D6 a D9 descrevem uma passada só.
 """)
@@ -467,11 +488,11 @@ Cada guarda também é lido pela **Lente 15-D**. Aqui a evidência vem do própr
 for g_idx, g in enumerate(catalogo["gates"], 1):
     g_id = g["id"]
     g_desc = g["descricao"]
-    g_path = f"gates/{g_id}"
+    g_path = g["caminho"]
     partes.append(f"""
 ### {g_idx}. Guarda Incorruptível: `{g_id}`
 - **Foto / Identidade:** `{g_id}`
-- **Caminho no Disco:** [`{g_path}`](file:///{Path(ROOT_DIR / g_path).resolve().as_posix()})
+- **Caminho no Disco:** [`{g_path}`]({_link(g_path)})
 - **Missão de Segurança:** {g_desc}
 - **Lente 15-D deste Quality Gate:**
 {_lista_15d(_dimensoes_portao(g))}
@@ -587,5 +608,6 @@ No Ecossistema AIDD, nenhuma linha de código nasce sem plano, nenhuma ferrament
 *Fim da Auditoria Canônica — {DATA_EXTENSO}.*
 """)
 
-LIVRO_PATH.write_text("\n".join(partes), encoding="utf-8")
+with open(LIVRO_PATH, "w", encoding="utf-8", newline="\n") as saida:
+    saida.write("\n".join(partes))
 print(f"[SUCESSO] Livro gerado com sucesso em: {LIVRO_PATH}")

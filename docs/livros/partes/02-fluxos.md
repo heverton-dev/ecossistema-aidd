@@ -194,7 +194,7 @@ na raiz da pasta de trabalho — a mesma regra do `--pasta ../proj_clinica`.
 
 `scripts/orquestrador_sincrono.py` (etapas 1 a 7, mapa de fluxos, validação de
 esquema); `componentes/compartilhado/specs/*.schema.json`; `AGENTS.md` §3;
-`gates/G_ORQUESTRADOR_SINCRONO.py`; `ecossistema.py` (`cmd_pure`, `cmd_open`,
+`modulos/04-nucleo-compartilhado/gates/G_ORQUESTRADOR_SINCRONO.py`; `ecossistema.py` (`cmd_pure`, `cmd_open`,
 `cmd_freedom`, `cmd_run_fluxo`).
 
 # Capítulo 7 — Fluxo 01: `aidd-pure` (do zero puro)
@@ -304,7 +304,7 @@ vez de tentar casar o texto com um dos cinco nichos fixos.
 
 O `AGENTS.md` do factory é explícito sobre o regime de cada fase:
 
-| Fases            | Regime                        | Portão real (`tools/aidd-open/gates/`)             |
+| Fases            | Regime                        | Portão real (`modulos/02-triade-motores/fluxo-02-open/core/aidd-open/gates/`)             |
 | :--------------- | :---------------------------- | :----------------------------------------------------- |
 | 1                | 100% determinístico, zero LLM | `G_FACTORY_ANALYSIS` (valida `factory_analysis.json`)  |
 | 4, 5, 6          | 100% determinístico, zero LLM | `G_FACTORY_COMPOSE`, `G_FACTORY_INIT_DB`, `G_FACTORY_ENV` |
@@ -553,11 +553,11 @@ Antes que qualquer fatia seja mesclada no repositório principal, a barreira
 ## 11.6 Rastreabilidade do capítulo
 
 `componentes/compartilhado/specs/vsa-topological-dispatch.schema.json`;
-`gates/G_DISPATCH_PIPELINE_VSA.py`; `gates/test_g_dispatch_pipeline_vsa.py`;
-`tools/aidd-master/scripts/dispatch_pipeline.py`;
-`tools/aidd-master/scripts/engine_router.py`;
-`tools/aidd-master/scripts/vsa_join_barrier.py`;
-`tools/aidd-planner/aidd_planner/core/planner_engine.py` (`compilar_grafo_topologico_vsa`);
+`modulos/03-plataforma-e-entrega/gates/G_DISPATCH_PIPELINE_VSA.py`; `gates/test_g_dispatch_pipeline_vsa.py`;
+`modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/dispatch_pipeline.py`;
+`modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/engine_router.py`;
+`modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/vsa_join_barrier.py`;
+`modulos/01-governanca-e-qualidade/core/aidd-planner/aidd_planner/core/planner_engine.py` (`compilar_grafo_topologico_vsa`);
 `componentes/compartilhado/skills/aidd-dispatch-runner/SKILL.md`;
 `ecossistema.py` (`cmd_dispatch`).
 
@@ -691,5 +691,5 @@ O pipeline está em uso real, mas ainda amadurecendo.
 `docs/auditoria/aidd-diagnose/ciclo-01/`; `docs/auditoria/skills-pocock/ciclo-01/`;
 `componentes/compartilhado/skills/aidd-auditor-4f-runner/SKILL.md`;
 `componentes/compartilhado/skills/aidd-evolucao-runner/SKILL.md`;
-`gates/G_amelhoria.py`; `gates/G_HANDOFF_MELHORIA.py`;
+`modulos/01-governanca-e-qualidade/gates/G_amelhoria.py`; `modulos/01-governanca-e-qualidade/gates/G_HANDOFF_MELHORIA.py`;
 `ecossistema.py` (`cmd_audit_4f`, `cmd_evolucao`).

@@ -216,7 +216,7 @@ a rota mais curta para cada assunto.
 
 | Assunto                                  | Arquivo                                                         |
 | :--------------------------------------- | :---------------------------------------------------------------- |
-| As treze leis invioláveis                | `AGENTS.md` §2                                                   |
+| As catorze leis invioláveis              | `AGENTS.md` §2                                                   |
 | A Tríade Canônica                        | `AGENTS.md` §3                                                   |
 | Catálogo detalhado de portões e comandos | `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md`                  |
 | Padrão-Ouro de stack                     | `docs/protocolos/PADRAO-OURO-STACK-TECNOLOGICA.md`               |
@@ -230,15 +230,15 @@ a rota mais curta para cada assunto.
 | Fatiamento de contexto                   | `core/context_slicer.py`                                         |
 | Roteador MCP dinâmico                    | `core/mcp_dynamic_router.py`                                     |
 | Livro-razão cognitivo                    | `core/cognitive_ledger.py`                                       |
-| Orçamento de tokens por fase             | `tools/aidd-pure/config/token_budgets.json`                 |
-| Auditoria de tokenomics                  | `tools/aidd-pure/scripts/gates/G_TOKENOMICS.py`             |
-| Micro-ambientes das 8 fases              | `tools/aidd-pure/scripts/phases/phase_*/AGENTS.md`          |
+| Orçamento de tokens por fase             | `modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/config/token_budgets.json`                 |
+| Auditoria de tokenomics                  | `modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/gates/G_TOKENOMICS.py`             |
+| Micro-ambientes das 8 fases              | `modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/phases/phase_*/AGENTS.md`          |
 | Configuração dos portões no commit       | `.pre-commit-config.yaml`                                        |
 | Hooks de assistente                      | `.claude/settings.json`                                          |
 | Hooks canônicos compartilhados           | `componentes/compartilhado/hooks/`                               |
-| Manifesto multi-harness                  | `gates/manifesto_harnesses.json`                                 |
-| Baseline do núcleo compartilhado         | `gates/baseline_nucleo_compartilhado.json`                       |
-| Despacho topológico VSA em worktrees     | `tools/aidd-master/scripts/dispatch_pipeline.py`                 |
+| Manifesto multi-harness                  | `modulos/04-nucleo-compartilhado/contracts/manifesto_harnesses.json`                                 |
+| Baseline do núcleo compartilhado         | `modulos/04-nucleo-compartilhado/contracts/baseline_nucleo_compartilhado.json`                       |
+| Despacho topológico VSA em worktrees     | `modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/dispatch_pipeline.py`                 |
 | Pipeline de auditoria 4F e de evolução   | `scripts/orquestrador_4f.py`, `docs/protocolos/PIPELINE-AUDITORIA-4F.md` |
 | Commit do usuário (`faz-commit`)         | `scripts/faz_commit.py`                                          |
 | Registro de sessões de IA                | `scripts/gestor_sessoes.py`, `secoes/historico_sessoes.json`     |
@@ -256,18 +256,18 @@ vermelho ou aguardando decisão.
 
 | Item                                                          | Estado                                                                    | Onde está registrado                                                        |
 | :------------------------------------------------------------ | :-------------------------------------------------------------------------- | :--------------------------------------------------------------------------- |
-| `G_QUARTETO_SINE_QUA_NON` auto-descoberta                     | Cobre 2 de 3 fluxos canônicos com exemplo real (falta saída real do Fluxo 02/03) | `gates/G_QUARTETO_SINE_QUA_NON.py`, saída do próprio portão                 |
+| `G_QUARTETO_SINE_QUA_NON` auto-descoberta                     | Cobre 2 de 3 fluxos canônicos com exemplo real (falta saída real do Fluxo 02/03) | `G_QUARTETO_SINE_QUA_NON.py` (fatia `03-plataforma-e-entrega`), saída do próprio portão |
 | Campos de telemetria do orquestrador síncrono                 | **RESOLVIDO** (21/09/2026): payloads de handoff e fatias são derivados dinamicamente de `PLANNER.json` e `dispatch_pipeline.py` | `scripts/orquestrador_sincrono.py`, `ISSUE-MESO-0007`                        |
 | Discovery Engine completo do `aidd-open`                   | Só o subconjunto determinístico (nicho dinâmico) está implementado         | `docs/features/v2_arquitetura-aidd-ops-factory.md` §7.1 e §9.1              |
 | `.gemini/skills/` como mecanismo                              | Sincronizado, mas `confirmado: false` — o mecanismo real são as extensões  | `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` §5                          |
 | Freebuff                                                      | Instalado, sem modo não interativo para validação automatizada             | `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` §5                          |
-| 10 portões globais fora do `.pre-commit-config.yaml`           | Rodam só sob demanda; `audit` verde não cobre esses dez (lista no capítulo 5, §5.3). O décimo, `G_GESTOR_SESSOES`, entrou em 24/09/2026 | `.pre-commit-config.yaml`, `gates/`                                          |
+| 5 portões fora do `.pre-commit-config.yaml` (09/10/2026)       | Rodam só sob demanda; `audit` verde não cobre esses cinco (lista no capítulo 5, §5.3). Os dez que estavam fora em 25/09/2026 já rodam no commit | `.pre-commit-config.yaml`, `MAPA-GATES.json`                                 |
 | Pipeline de auditoria 4F                                      | Em uso real; ciclo `aidd-diagnose/ciclo-01` com a Fase 3 pronta numa branch fora da `main`, sem `gate_final` aprovado nem Fase 4 | `docs/auditoria/aidd-diagnose/ciclo-01/`, branch `audit/evolucao-aidd-diagnose-ciclo-01` |
 | Plano `skills-pocock/ciclo-01`                                | Rascunho com 13 tickets; não executado; depende do merge do `aidd-diagnose` | `docs/auditoria/skills-pocock/ciclo-01/`                                     |
 | `faz-commit` com mais de uma sessão aberta                    | `git add -A` leva o trabalho de outra sessão junto (caso real: commit `a1ea899`) | `scripts/faz_commit.py`                                                      |
 | Commit por fase com `--no-verify` e merge pelo orquestrador   | Escolha deliberada no código, ainda em revisão                             | `scripts/orquestrador_4f.py`                                                 |
 | Compressor de prosa (`sandeco-token-reduce`)                  | **REMOVIDO** (20/09/2026) — nunca esteve ligado ao pipeline                | `docs/issues/saneamento-governanca/` (ISSUE-0008)                            |
-| Portões `G_FACTORY_INPUT/OUTPUT/DETERMINISTIC`                 | São rótulos de invariante no `AGENTS.md` da factory, não arquivos; a cobrança real está nos 6 portões de `tools/aidd-open/gates/` | `tools/aidd-open/AGENTS.md`, `tools/aidd-open/gates/`                  |
+| Portões `G_FACTORY_INPUT/OUTPUT/DETERMINISTIC`                 | São rótulos de invariante no `AGENTS.md` da factory, não arquivos; a cobrança real está nos 6 portões de `gates/` do `aidd-open` | `AGENTS.md` e `gates/` do `aidd-open` (`modulos/02-triade-motores/fluxo-02-open/core/aidd-open/`) |
 
 ```{=typst}
 #painel("Por que este apêndice existe")[

@@ -152,8 +152,8 @@ governado pelas mesmas leis dos sistemas nascidos aqui.
 
 ## 17.8 Rastreabilidade
 
-`tools/aidd-freedom/AGENTS.md`; `tools/aidd-freedom/aidd_freedom/pipeline_bridge.py`;
-`tools/aidd-freedom/aidd_freedom/` (13 módulos); `tools/aidd-freedom/gates/` (4 portões);
+`modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom/AGENTS.md`; `modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom/aidd_freedom/pipeline_bridge.py`;
+`modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom/aidd_freedom/` (13 módulos); `modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom/gates/` (4 portões);
 `ecossistema.py::cmd_freedom_motor`; `scripts/orquestrador_sincrono.py::etapa_03_engine`.
 
 # Capítulo 18 — `aidd-master`: o harmonizador modular
@@ -327,7 +327,7 @@ em worktrees efêmeras.
 da ferramenta no cofre canônico.
 
 **Hooks e regras.** `G_DRIFT_NUCLEO_COMPARTILHADO` audita a linhagem compartilhada com o
-`aidd-enterprise` contra `gates/baseline_nucleo_compartilhado.json`.
+`aidd-enterprise` contra `modulos/04-nucleo-compartilhado/contracts/baseline_nucleo_compartilhado.json`.
 
 **Entrega.** Entrega ao ecossistema a **definição executável de arquitetura correta** —
 os seus portões são a especificação operacional do que o AIDD considera um sistema bem
@@ -335,13 +335,13 @@ construído.
 
 ## 18.8 Rastreabilidade
 
-`tools/aidd-master/AGENTS.md`; `tools/aidd-master/scripts/aidd.py` (22 subcomandos);
-`tools/aidd-master/scripts/dispatch_pipeline.py`;
-`tools/aidd-master/scripts/engine_router.py`;
-`tools/aidd-master/scripts/vsa_join_barrier.py`;
-`tools/aidd-master/scripts/orchestrator_pipeline.py`;
-`tools/aidd-master/scripts/run_all.py`; `tools/aidd-master/scripts/gates/` (12 portões);
-`tools/aidd-master/CAPABILITIES.json` e a assinatura Ed25519;
+`modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/AGENTS.md`; `modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/aidd.py` (22 subcomandos);
+`modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/dispatch_pipeline.py`;
+`modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/engine_router.py`;
+`modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/vsa_join_barrier.py`;
+`modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/orchestrator_pipeline.py`;
+`modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/run_all.py`; `modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/gates/` (12 portões);
+`modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/CAPABILITIES.json` e a assinatura Ed25519;
 `componentes/compartilhado/specs/handoff-master-to-enterprise.schema.json`;
 `componentes/compartilhado/specs/vsa-topological-dispatch.schema.json`.
 
@@ -388,7 +388,7 @@ dessincronizados entre assistentes.
 No ecossistema, o enterprise é o **par de linhagem do master**. As duas ferramentas
 compartilham arquivos de núcleo, e essa duplicação é deliberada e auditada: o portão
 `G_DRIFT_NUCLEO_COMPARTILHADO` mantém um baseline em
-`gates/baseline_nucleo_compartilhado.json` e reprova divergência não documentada entre
+`modulos/04-nucleo-compartilhado/contracts/baseline_nucleo_compartilhado.json` e reprova divergência não documentada entre
 as duas linhagens.
 
 É também a ferramenta que responde pela conformidade regulada: projetos que precisam
@@ -477,7 +477,7 @@ do ecossistema.
 #painel("Conformidade da Honestidade de Rótulo")[
   `G_HONESTIDADE_ROTULO` foi plenamente reabilitado e roda como portão obrigatório em
   todo commit (`always_run: true`). As mensagens de saída de todos os scripts de portão
-  em `gates/`, `tools/aidd-master` e `tools/aidd-enterprise` foram alinhadas à linguagem
+  nas pastas `gates/` das fatias e nas pastas do `aidd-master` e do `aidd-enterprise` foram alinhadas à linguagem
   técnica factual, auditando com zero termos proibidos.
 ]
 ```
@@ -487,12 +487,12 @@ verificável — e o registro honesto de onde ela ainda não está.
 
 ## 19.8 Rastreabilidade
 
-`tools/aidd-enterprise/AGENTS.md`; `tools/aidd-enterprise/scripts/aidd.py`;
-`tools/aidd-enterprise/scripts/run_all.py`;
-`tools/aidd-enterprise/scripts/gates/G_INJECT.py`;
-`tools/aidd-enterprise/scripts/injector/`;
+`modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/AGENTS.md`; `modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/scripts/aidd.py`;
+`modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/scripts/run_all.py`;
+`componentes/compartilhado/injetor/G_INJECT.py` e `componentes/compartilhado/injetor/`
+(o injetor é peça do almoxarifado, com dono `aidd-enterprise`);
 `componentes/compartilhado/src-core/assinatura_manifesto.py`;
-`gates/G_DRIFT_NUCLEO_COMPARTILHADO.py` e `gates/baseline_nucleo_compartilhado.json`.
+`modulos/04-nucleo-compartilhado/gates/G_DRIFT_NUCLEO_COMPARTILHADO.py` e `modulos/04-nucleo-compartilhado/contracts/baseline_nucleo_compartilhado.json`.
 
 # Capítulo 20 — `aidd-ops`: a infraestrutura agêntica
 
@@ -567,7 +567,7 @@ antes de qualquer correção emergencial em incidente de produção.
 
 ### O núcleo operacional
 
-| Módulo de `src/core/`   | Responsabilidade                                                       |
+| Módulo de `src/core_ops/` | Responsabilidade                                                       |
 | :---------------------- | :----------------------------------------------------------------------- |
 | `ssh_runner.py`         | Execução remota via SSH                                                  |
 | `cofre_credenciais.py`  | Cofre local com `sops` + `age`                                           |
@@ -675,7 +675,7 @@ usuário, um sistema em produção com observabilidade real.
 
 ## 20.8 Rastreabilidade
 
-`tools/aidd-ops/AGENTS.md`; `tools/aidd-ops/scripts/pipeline_ops.py`;
-`tools/aidd-ops/scripts/phases/` (3 fases); `tools/aidd-ops/src/core/` (7 módulos);
-`tools/aidd-ops/templates/infra/`; `tools/aidd-ops/ansible/playbooks/hardening.yml`;
-`tools/aidd-ops/gates/`; `tools/aidd-ops/data/catalogo_nichos.json`.
+`modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/AGENTS.md`; `modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/scripts/pipeline_ops.py`;
+`modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/scripts/phases_ops/` (3 fases); `modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/src/core_ops/` (7 módulos);
+`modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/templates/infra/`; `modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/ansible/playbooks/hardening.yml`;
+`modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/gates/`; `modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/data/catalogo_nichos.json`.

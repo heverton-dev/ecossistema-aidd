@@ -2,13 +2,18 @@
 """
 tests/test_mapas_e_livros_em_dia.py
 
-Gate de conformidade do Ticket 23 (D14 - Documentação Viva / DoD 14):
+Gate de conformidade do Ticket 23 (D14 - Documentação Viva / DoD 14) do fronteiras-ferramentas
+ciclo-01, ampliado no Ticket 22 do ciclo-03 da VSA (D15 / DoD 8):
 1. Os 13 mapas visuais passam no `scripts/mapa_visual.py TYPE --check` com exit code 0.
 2. O livro mais recente de cada série (LIVRO-ECOSSISTEMA-AIDD, O-GRANDE-LIVRO-VISUAL, MINI-LIVRO)
-   possui data >= data do fechamento do ciclo (2026-10-04).
+   possui data >= data do fechamento do ciclo-03 da VSA (2026-10-08).
 3. Os livros atuais não citam `aidd-generator`, `aidd-factory` ou `aidd-bridge` fora da tabela
    ou nota explícita de nomes antigos / apelidos.
 4. O verificador determinístico de livros (`livro.py check docs/livros`) passa sem achados.
+5. Os livros atuais não citam `tools/aidd-*` (pasta extinta no Ticket 5), salvo as fichas
+   históricas de 22/09/2026 que o Livro Visual embute como registro.
+6. O laudo revisado do ciclo-03 traz, para cada achado do DIAGNOSTICO.md, o comando de prova e o
+   exit code; o padrão de arquitetura VSA está marcado como implementado, com os desvios.
 """
 
 from __future__ import annotations
@@ -23,7 +28,30 @@ import pytest
 
 RAIZ = Path(__file__).resolve().parent.parent
 DIR_LIVROS = RAIZ / "docs" / "livros"
-DATA_CORTE = date(2026, 10, 4)
+DATA_CORTE = date(2026, 10, 8)
+SERIES = ("LIVRO-ECOSSISTEMA-AIDD", "O-GRANDE-LIVRO-VISUAL-DA-AUDITORIA-AIDD", "MINI-LIVRO-DO-ZERO-AO-APP-PRONTO")
+CICLO_VSA = RAIZ / "docs" / "auditoria" / "modularizacao-vsa" / "ciclo-03"
+PADRAO_VSA = RAIZ / "docs" / "padroes" / "ARQUITETURA-MODULARIZACAO-VSA-ECOSSISTEMA.md"
+# Fichas históricas de 22/09/2026 embutidas no Livro Visual (registro do que foi auditado em tools/).
+MARCAS_FICHA_HISTORICA = (
+    "**ferramenta:** `tools/aidd-",
+    "**comando executado:** `pytest tools/aidd-",
+    "bilhetes (rules / agents.md)",
+    "8 ferramentas da pasta `tools/`",
+)
+
+
+def _livros_mais_recentes() -> list[Path]:
+    padrao = re.compile(r"^(\d{2})-(\d{2})-(\d{4})_(.+)\.md$")
+    recentes: dict[str, tuple[date, Path]] = {}
+    for arquivo in DIR_LIVROS.glob("*.md"):
+        m = padrao.match(arquivo.name)
+        if not m or m.group(4) not in SERIES:
+            continue
+        data = date(int(m.group(3)), int(m.group(2)), int(m.group(1)))
+        if m.group(4) not in recentes or data > recentes[m.group(4)][0]:
+            recentes[m.group(4)] = (data, arquivo)
+    return [recentes[s][1] for s in SERIES if s in recentes]
 
 TIPOS_MAPA = [
     "indice",
@@ -78,11 +106,8 @@ def test_livros_atuais_sem_nomes_obsoletos_fora_de_apelidos():
     nomes_antigos = ["aidd-generator", "aidd-factory", "aidd-bridge"]
     padrao_antigo = re.compile(r"\b(aidd-generator|aidd-factory|aidd-bridge)\b", re.IGNORECASE)
 
-    arquivos_alvo = [
-        DIR_LIVROS / "04-10-2026_LIVRO-ECOSSISTEMA-AIDD.md",
-        DIR_LIVROS / "04-10-2026_O-GRANDE-LIVRO-VISUAL-DA-AUDITORIA-AIDD.md",
-        DIR_LIVROS / "04-10-2026_MINI-LIVRO-DO-ZERO-AO-APP-PRONTO.md",
-    ]
+    arquivos_alvo = _livros_mais_recentes()
+    assert len(arquivos_alvo) == len(SERIES)
 
     for arq in arquivos_alvo:
         assert arq.exists(), f"Arquivo do livro atual não encontrado: {arq}"
@@ -126,3 +151,32 @@ def test_livro_check_sem_achados():
     cmd = [sys.executable, str(script_livro), "check", str(DIR_LIVROS)]
     proc = subprocess.run(cmd, cwd=RAIZ, capture_output=True, text=True, encoding="utf-8")
     assert proc.returncode == 0, f"Falha no livro.py check: {proc.stdout}\n{proc.stderr}"
+
+
+def test_livros_atuais_sem_caminho_tools_fora_das_fichas_historicas():
+    """Ticket 22 (ciclo-03 VSA): `tools/` saiu no Ticket 5; os livros apontam para `modulos/`."""
+    for arq in _livros_mais_recentes():
+        for idx, linha in enumerate(arq.read_text(encoding="utf-8").splitlines(), 1):
+            if "tools/aidd-" not in linha:
+                continue
+            assert any(m in linha.lower() for m in MARCAS_FICHA_HISTORICA), (
+                f"{arq.name}:{idx} cita a pasta extinta tools/: '{linha.strip()[:160]}'")
+
+
+def test_laudo_revisado_vsa_com_prova_de_cada_achado():
+    """Ticket 22 (ciclo-03 VSA): cada achado do DIAGNOSTICO.md tem comando de prova e exit code."""
+    achados = re.findall(r"^### (\d+)\. ", (CICLO_VSA / "DIAGNOSTICO.md").read_text(encoding="utf-8"), re.M)
+    laudo = CICLO_VSA / "LAUDO-REVISADO.md"
+    assert laudo.is_file(), "falta docs/auditoria/modularizacao-vsa/ciclo-03/LAUDO-REVISADO.md"
+    secoes = re.split(r"^### ", laudo.read_text(encoding="utf-8"), flags=re.M)
+    for numero in achados:
+        secao = next((s for s in secoes if s.startswith(f"{numero}. ")), None)
+        assert secao, f"laudo sem a seção do achado {numero}"
+        assert re.search(r"`[^`]+`.*\bexit [0-9]\b", secao), f"achado {numero} sem comando de prova com exit code"
+
+
+def test_padrao_vsa_implementado_com_desvios():
+    texto = PADRAO_VSA.read_text(encoding="utf-8")
+    status = next(linha for linha in texto.splitlines() if linha.startswith("> **Status:**"))
+    assert "Implementado" in status, status
+    assert "Implementação real e desvios registrados" in texto

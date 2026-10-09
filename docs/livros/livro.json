@@ -1,7 +1,7 @@
 {
   "versao_manifesto": "1.0",
   "titulo": "Ecossistema AIDD",
-  "nome_base": "06-10-2026_LIVRO-ECOSSISTEMA-AIDD",
+  "nome_base": "09-10-2026_LIVRO-ECOSSISTEMA-AIDD",
   "pasta_partes": "partes",
   "template": "livro-aidd.typst",
   "partes": [
@@ -55,8 +55,14 @@
       "hash_fonte": "12683eb4c87f9d8307d24080a7c30be08aa6a3793e24119cc8b13d37d067a781",
       "palavras": 28270,
       "nota": ""
+    },
+    {
+      "data": "2026-10-09",
+      "hash_fonte": "0ba2e22c6755f44d72fd0dc5aabb2f18b38c476d3a056601a4f4470b3d23cf12",
+      "palavras": 29222,
+      "nota": "Ciclo-03 da modularizacao VSA (Bloco 8, T22): caminhos tools/ -> modulos/<fatia> e gates/ da raiz -> pasta gates/ da fatia dona; tabela 1.5 remedida em 09/10 (8 ferramentas, 72 portoes no MAPA-GATES, 172 G_*.py, 68 hooks, 44 skills, 637 modulos nas ferramentas, 548 testes); tabelas 5.2 e 22.3 com os 72 portoes; 5.3 com 65 portoes no commit, 2 manuais e 5 fora; Lei 14 Graph-First; esqueleto de app so no aidd-master (T23)"
     }
   ],
-  "hash_fonte": "12683eb4c87f9d8307d24080a7c30be08aa6a3793e24119cc8b13d37d067a781",
-  "ultima_compilacao": "2026-10-06"
+  "hash_fonte": "0ba2e22c6755f44d72fd0dc5aabb2f18b38c476d3a056601a4f4470b3d23cf12",
+  "ultima_compilacao": "2026-10-09"
 }

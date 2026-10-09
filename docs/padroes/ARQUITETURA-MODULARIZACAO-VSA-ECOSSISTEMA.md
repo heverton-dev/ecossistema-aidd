@@ -1,6 +1,6 @@
 # Arquitetura de Modularização VSA + Monólito Modular no Ecossistema AIDD
 
-> **Status:** Proposta Arquitetural & Especificação Canônica  
+> **Status:** Implementado no ciclo-03 da modularização VSA (08/10/2026), com os desvios registrados na seção 8. Laudo com o comando de prova de cada item: `docs/auditoria/modularizacao-vsa/ciclo-03/LAUDO-REVISADO.md`.  
 > **Objetivo:** Erradicar a dispersão de contexto, o desperdício de tokens e a fragilidade de manutenção através da autocontenção por Domínio de Capacidade.
 
 ---
@@ -177,6 +177,26 @@ Para garantir que a arquitetura não sofra degradação ou acoplamento acidental
   - Eliminação da injeção estática e desenfreada de dezenas de skills irrelevantes no prompt de sistema. Cada módulo passa a declarar apenas as skills e MCPs estritamente necessários para sua execução. Skills especializadas ou de uso esporádico (ex: utilitários científicos, manipuladores office) são isoladas em plugins sob demanda e desativadas do perfil de desenvolvimento padrão, erradicando a queima silenciosa de 10.000 a 20.000 tokens a cada mensagem.
 
 ---
+
+## 8. Implementação real e desvios registrados (ciclo-03, 08/10/2026)
+
+Decisões do usuário que guiaram a implementação (ciclo-03, `DIAGNOSTICO.md`): **A** — `modulos/` é a cópia canônica e `tools/` sai; **B** — gate sai só com 0 ou 1, a escala 0–5 vale só para scripts e CLIs; **C** — cada gate mora na fatia dona, sem cópia.
+
+1. **Mapa estrutural (§3):** cada ferramenta ficou numa pasta própria dentro da fatia: `01-governanca-e-qualidade/core/aidd-forge` e `core/aidd-planner`; `02-triade-motores/fluxo-0N-*/core/aidd-*`; `03-plataforma-e-entrega/{fatiamento-master,blindagem-enterprise,operacoes-ops}/aidd-*`. `quarteto-studios/`, `04/cli`, `04/sync` e `04/utilitarios` não existem: as cascas só com `__init__.py` saíram no Ticket 6. Os contratos comuns ficam em `04-nucleo-compartilhado/contracts/` (`MAPA-FATIAS.json` é a fonte única das 7 fatias; `MAPA-GATES.json`, a dos gates).
+2. **Autocontenção (§4.1 e §4.3):** cada fatia e cada ferramenta tem `AGENTS.md` (< 400 tokens) e `README.md` (< 500); `core/`, `skills/` e `gates/` só existem onde a fatia tem esse conteúdo (decisão do usuário de 08/10/2026, Ticket 17). Os MCPs de domínio moram na ferramenta (`aidd-pure/mcps/`, `aidd-ops/mcps/`); o do Mobbin, que é compartilhado, em `componentes/compartilhado/mcps/`.
+3. **Fronteira (§7.2):** cada fatia expõe `interface.py` com `__all__` (Ticket 10). O `G_MODULO_FRONTEIRA` vigia `sys.path`, caminho literal, `tools/` e import cruzado (Ticket 11) e bloqueia por padrão desde o Ticket 20. Os acoplamentos que ainda existem estão na `allowlist_modulo_fronteira.json`, cada um com data e motivo, e o teto só desce (50 em 08/10/2026).
+4. **Micro-gates (§7.3):** um comando por ferramenta em `scripts/micro_gates.py` (Ticket 16). A bateria final é o `python ecossistema.py audit`, que roda os hooks do `.pre-commit-config.yaml`; não são "54 macro-gates".
+5. **Retrocompatibilidade (§7.4), desvio consciente:** não há proxies em `tools/` nem em `gates/`. `tools/` saiu no Ticket 5 (fica só `tools/LEIA-ME.md` por um ciclo) e a pasta `gates/` da raiz deixou de existir no Ticket 8. Os nomes antigos de comando da CLI continuam como apelido. Motivo: proxy em pasta manteria a duplicação viva e confundiria os gates.
+6. **Subgrafos (§7.5):** os 6 nomes do padrão e a regra "consultar primeiro o subgrafo da fatia" no `AGENTS.md` raiz (Ticket 19); o codebase-memory caiu de 39 para 8 projetos.
+7. **Skills (§7.6):** cada skill tem um dono só e o `components sync` lê as skills das fatias (Ticket 18).
+8. **Exit codes (decisão B):** gates saem só com 0 ou 1 (Lei #2, `G_SAIDA_BINARIA`); a escala 0–5 de `scripts/exit_codes.py` vale só para scripts e CLIs (Ticket 15). O anexo abaixo pedia 0–5 em todos os gates: foi superado.
+9. **Esqueleto enterprise × master (Ticket 23, Bloco 9):** o app de demonstração (`src/` fora de `src/core`, `alembic/`, `alembic.ini`, `alembic_models.py`) ficou só no `aidd-master`, dono da construção; o `aidd-enterprise` só blinda. O pacote `application` do enterprise virou `application_enterprise` e o `allowlist_pacotes_repetidos.json` ficou só com o `core`, núcleo vendorizado por exceção do usuário.
+
+---
+
+## Anexo histórico: prompt de execução do ciclo-02 (vsa-migration) — não seguir
+
+> Mantido só como registro. Ele pedia execução sem pausa, merge automático na main, `worktree remove --force` e a escala 0–5 em todos os gates. O ciclo-03 seguiu as decisões A, B e C e as regras de execução do usuário (sem merge sem aprovação, sem `--force`, gates só 0/1).
 
 Fully execute end-to-end VSA architecture, deterministic exit codes rollout, and full self-healing implementation with zero manual pauses.
 

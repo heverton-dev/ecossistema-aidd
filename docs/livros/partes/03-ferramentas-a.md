@@ -81,8 +81,8 @@ deterministicamente dez tipos de artefato — `skill`, `mcp`, `rule`, `spec`, `r
 É o **auditor de conformidade de governança**: `forge audit` verifica se um projeto
 está aderente às regras, e `forge conform` aplica correções automáticas.
 
-É o **sincronizador multi-harness**: `tools/aidd-forge/aidd_forge/core/harness_sync.py` e `tools/aidd-forge/aidd_forge/core/harness_manifest.py`
-mantêm a paridade entre os dez ambientes de assistente, e o `tools/aidd-forge/aidd_forge/core/agents_md_anchor.py`
+É o **sincronizador multi-harness**: `modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/core/harness_sync.py` e `modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/core/harness_manifest.py`
+mantêm a paridade entre os dez ambientes de assistente, e o `modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/core/agents_md_anchor.py`
 garante que o `AGENTS.md` permaneça a âncora canônica com os arquivos-ponteiro dos
 demais assistentes apontando para ele.
 
@@ -167,7 +167,7 @@ Python puro operando sobre templates, AST e sistema de arquivos.
 instalação editável), sistema de arquivos. Nenhuma API externa.
 
 **Hooks e regras.** O forge é a ferramenta que **instala** hooks —
-`.githooks/pre-commit` via `tools/aidd-forge/aidd_forge/core/git_hooks.py`. As regras que segue: Zero Stubs,
+`.githooks/pre-commit` via `modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/core/git_hooks.py`. As regras que segue: Zero Stubs,
 mônada `Result`, purga de contexto, rollback atômico e os sete portões.
 
 **Entrega.** Entrega um diretório governado. O formato da entrega é o próprio sistema
@@ -229,9 +229,9 @@ resultado.
 
 ## 13.8 Rastreabilidade
 
-`tools/aidd-forge/AGENTS.md`; `tools/aidd-forge/aidd_forge/cli.py`;
-`tools/aidd-forge/aidd_forge/core/` (23 módulos);
-`tools/aidd-forge/aidd_forge/templates/gates/` (12 portões);
+`modulos/01-governanca-e-qualidade/core/aidd-forge/AGENTS.md`; `modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/cli.py`;
+`modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/core/` (23 módulos);
+`modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/` (12 portões);
 `ecossistema.py::cmd_forge` e `_reparar_instalacao_editable_aidd_forge`;
 `scripts/orquestrador_sincrono.py::etapa_01_forge`.
 
@@ -279,9 +279,9 @@ O orquestrador roda `planner init --fluxo N --nome --slug --dominio --pasta`, l�
 
 No ecossistema, o planner é o **guardião da Lei #10**: nenhum plano passa sem
 `/docs`, `/webhooks`, `/mcp` e `/docs/guia` marcados como `ativo: true`. O portão
-`G_PLANNER_SINE_QUA_NON` (local, em `tools/aidd-planner/gates/`) reprova qualquer
+`G_PLANNER_SINE_QUA_NON` (local, em `modulos/01-governanca-e-qualidade/core/aidd-planner/gates/`) reprova qualquer
 plano que tente nascer sem o Quarteto; desde 20/09/2026 ele é complementado pelo
-`gates/G_QUARTETO_SINE_QUA_NON.py` na raiz, que audita a presença real dos 4 pilares
+`modulos/03-plataforma-e-entrega/gates/G_QUARTETO_SINE_QUA_NON.py` na raiz, que audita a presença real dos 4 pilares
 no deliverable já gerado, não só na intenção declarada no plano.
 
 É também o ponto onde a Lei #7 (Desenvolvedor no Controle) tem a sua expressão mais
@@ -295,7 +295,7 @@ ecossistema mudou o próprio código para respeitá-la.
   `fase_3_sizing` que o `contrato_factory.py` valida contra
   `plano-infraestrutura.schema.json` — nunca um formato próprio.
 
-  A implementação (`exportar_para_fluxo_factory` em `src/core/planner_engine.py`)
+  A implementação (`exportar_para_fluxo_factory` em `src/core_planner/planner_engine.py`)
   reutiliza `pipeline_ops.montar_plano_em_memoria(texto,
   ferramentas_planejadas=payload_especifico_fluxo.ferramentas_opensource)`, que é o
   caminho do "nicho dinâmico" do `aidd-ops`, em vez de tentar casar o pedido com um dos
@@ -307,9 +307,9 @@ ecossistema mudou o próprio código para respeitá-la.
 ## 14.4 Como foi pensada, está estruturada e configurada
 
 A ferramenta é enxuta por desenho: `src/cli.py` com quatro subcomandos e
-`src/core/planner_engine.py` mais `src/core/design_system.py` como núcleo. O contrato
-é o `schemas/planner_schema.json`, e a validação é feita por três portões dedicados em
-`gates/`.
+`src/core_planner/planner_engine.py` mais `src/core_planner/design_system.py` como núcleo. O contrato
+é o `schemas/planner_schema.json`, e a validação é feita por três portões dedicados na
+pasta `gates/` da própria ferramenta.
 
 Os quatro invariantes arquiteturais declarados no `AGENTS.md` são: **Zero Stubs**
 (nunca produzir `TODO`, `FIXME` ou marcador de espaço em `PLANNER.json` — todas as
@@ -401,9 +401,9 @@ consumir sem tradução. É o que torna possível trocar o motor sem reescrever 
 
 ## 14.8 Rastreabilidade
 
-`tools/aidd-planner/AGENTS.md`; `tools/aidd-planner/src/cli.py`;
-`tools/aidd-planner/src/core/planner_engine.py`;
-`tools/aidd-planner/schemas/planner_schema.json`; `tools/aidd-planner/gates/`;
+`modulos/01-governanca-e-qualidade/core/aidd-planner/AGENTS.md`; `modulos/01-governanca-e-qualidade/core/aidd-planner/src/cli.py`;
+`modulos/01-governanca-e-qualidade/core/aidd-planner/src/core_planner/planner_engine.py`;
+`modulos/01-governanca-e-qualidade/core/aidd-planner/schemas/planner_schema.json`; `modulos/01-governanca-e-qualidade/core/aidd-planner/gates/`;
 `componentes/compartilhado/specs/handoff-planner-to-engine.schema.json`;
 `scripts/orquestrador_sincrono.py::etapa_02_planner`.
 
@@ -447,7 +447,7 @@ No ecossistema, o gerador cumpre dois papéis além de gerar software.
 
 É o **laboratório de tokenomics**: `config/token_budgets.json`, `G_TOKENOMICS`,
 `benchmark_tokenomics.py`, `caveman_linter.py` e
-`tools/aidd-pure/scripts/core/pipeline_state.py` estão todos aqui. As técnicas de economia de tokens do
+`modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/core_pure/pipeline_state.py` estão todos aqui. As técnicas de economia de tokens do
 ecossistema são desenvolvidas e medidas neste contexto.
 
 É o **laboratório de engenharia agêntica**: Fleet Discovery (descoberta automática dos
@@ -501,7 +501,7 @@ Os portões de fase são nomeados por letra e número, e são específicos:
 
 `scripts/fsm_engine.py` implementa o `GeneratorFSMEngine`, que valida o artefato de
 saída de cada fase contra JSON Schema Draft 2020-12 **antes** de permitir a transição
-para a fase N+1. `scripts/core/pipeline_state.py` grava atomicamente o estado em
+para a fase N+1. `scripts/core_pure/pipeline_state.py` grava atomicamente o estado em
 `.aidd/cache/_pipeline_state.json` com validação estrita e implementa `--resume`:
 retomada que pula fases completas com artefatos válidos, sem reconsumo de tokens.
 
@@ -549,7 +549,7 @@ Fase 8, `_validar_contrato_ast` roda antes do pytest real.
 **Ferramentas acessadas.** API do GitHub e do HuggingFace (Fase 1, via `requests`);
 provedor de LLM configurado, sempre através de `solicitar_llm()` de
 `utils_delegacao.py` — nunca chamada direta a `litellm`; `pytest` (Fase 8);
-`Repomix` via `tools/aidd-pure/scripts/core/repomix_runner.py` para empacotamento de contexto; Typst (Fase 6,
+`Repomix` via `modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/core_pure/repomix_runner.py` para empacotamento de contexto; Typst (Fase 6,
 geração de PDF); MCP de sistema de arquivos; MCP verificador de CVE em `mcps/`.
 
 **Hooks e regras.** Prompt em inglês com saída em PT-BR (tríade Caveman, auditada pelo
@@ -610,13 +610,13 @@ fase, custo em dólares e resultado de pytest.
 
 ## 15.8 Rastreabilidade
 
-`tools/aidd-pure/AGENTS.md` e `AGENTS-WORKFLOW.md`;
-`tools/aidd-pure/scripts/pipeline_completo.py`;
-`tools/aidd-pure/scripts/phases/` (8 micro-ambientes + 8 módulos de fase);
-`tools/aidd-pure/scripts/fsm_engine.py`;
-`tools/aidd-pure/scripts/core/pipeline_state.py`;
-`tools/aidd-pure/config/token_budgets.json`;
-`tools/aidd-pure/scripts/gates/` (10 portões).
+`modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/AGENTS.md` e `AGENTS-WORKFLOW.md`;
+`modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/pipeline_completo.py`;
+`modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/phases/` (8 micro-ambientes + 8 módulos de fase);
+`modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/fsm_engine.py`;
+`modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/core_pure/pipeline_state.py`;
+`modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/config/token_budgets.json`;
+`modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/gates/` (10 portões).
 
 # Capítulo 16 — `aidd-open`: o integrador multi-serviço
 
@@ -673,13 +673,13 @@ AST e `bandit`.
 O `AGENTS.md` declara cinco invariantes: contrato de entrada único
 (rótulo `G_FACTORY_INPUT`), contrato de saída único (rótulo `G_FACTORY_OUTPUT`), fases
 determinísticas explicitamente demarcadas (rótulo `G_FACTORY_DETERMINISTIC` para as
-fases 1, 4, 5 e 6) — rótulos cobrados pelos portões reais de `gates/` —, Zero
+fases 1, 4, 5 e 6) — rótulos cobrados pelos portões reais de `gates/` da ferramenta —, Zero
 Stubs, e **reuso obrigatório do núcleo compartilhado** — `result.py` e
 `escritor_atomico.py` vêm de `componentes/compartilhado/src-core/`, não são
 reimplementados.
 
 A estrutura reflete isso: `scripts/contrato_factory.py` guarda os contratos,
-`scripts/pipeline_factory.py` orquestra, e `scripts/phases/` contém os módulos de fase
+`scripts/pipeline_factory.py` orquestra, e `scripts/phases_open/` contém os módulos de fase
 (`01_analisador.py`, `04_compose.py`, `05_init_db.py`, `06_env.py`,
 `09_integracao.py`). `templates/`, `schemas/`, `data/` e `gates/` completam.
 
@@ -763,8 +763,8 @@ mecânica — e, portanto, majoritariamente determinística.
 
 ## 16.8 Rastreabilidade
 
-`tools/aidd-open/AGENTS.md`; `tools/aidd-open/scripts/contrato_factory.py`;
-`tools/aidd-open/scripts/pipeline_factory.py`;
-`tools/aidd-open/scripts/phases/`; `tools/aidd-open/gates/`;
+`modulos/02-triade-motores/fluxo-02-open/core/aidd-open/AGENTS.md`; `modulos/02-triade-motores/fluxo-02-open/core/aidd-open/scripts/contrato_factory.py`;
+`modulos/02-triade-motores/fluxo-02-open/core/aidd-open/scripts/pipeline_factory.py`;
+`modulos/02-triade-motores/fluxo-02-open/core/aidd-open/scripts/phases_open/`; `modulos/02-triade-motores/fluxo-02-open/core/aidd-open/gates/`;
 `componentes/compartilhado/specs/plano-infraestrutura.schema.json`;
 `docs/features/v2_arquitetura-aidd-ops-factory.md`.

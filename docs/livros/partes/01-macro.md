@@ -25,9 +25,10 @@ software assistida por agentes** que transforma uma intenção em linguagem natu
 um sistema completo, testado, auditado e implantado, usando oito ferramentas
 especializadas encadeadas por contratos formais, submetidas a portões determinísticos
 de qualidade e operáveis a partir de qualquer assistente de IA ou de um terminal. Quem
-quiser conferir cada "inspetor" com as próprias mãos encontra os 65 scripts de portão
-em `gates/*.py` — cada um roda isolado com `python gates/G_<nome>.py` e devolve código
-de saída 0 (aprova) ou 1 (bloqueia), sem meio-termo.
+quiser conferir cada "inspetor" com as próprias mãos encontra os 72 scripts de portão
+listados em `modulos/04-nucleo-compartilhado/contracts/MAPA-GATES.json`, cada um na pasta
+`gates/` da fatia dona — cada um roda isolado com `python modulos/<fatia>/gates/G_<nome>.py`
+e devolve código de saída 0 (aprova) ou 1 (bloqueia), sem meio-termo.
 
 A sigla AIDD é lida no repositório como *AI-Driven Development* — desenvolvimento
 dirigido por inteligência artificial — e o guia da família está em
@@ -59,13 +60,15 @@ morre quando qualquer um dos três muda.
 ]
 ```
 
-## 1.3 As treze leis invioláveis
+## 1.3 As catorze leis invioláveis
 
-O `AGENTS.md` da raiz é a lei fundamental. Ele define treze invariantes que valem para
-todo agente, toda ferramenta e todo fluxo. Não são recomendações: desde 20/09/2026,
-100% delas têm ao menos um portão determinístico correspondente que bloqueia o commit
-quando violada — três leis (#3, #9 e #10) têm mais de um portão, cada um cobrindo uma
-fatia diferente da mesma exigência.
+O `AGENTS.md` da raiz é a lei fundamental. Ele define catorze invariantes que valem para
+todo agente, toda ferramenta e todo fluxo. Não são recomendações: desde 20/09/2026, as
+treze primeiras têm ao menos um portão determinístico correspondente que bloqueia o
+commit quando violada — três leis (#3, #9 e #10) têm mais de um portão, cada um cobrindo
+uma fatia diferente da mesma exigência. A décima quarta (Graph-First) entrou em
+02/10/2026 com o portão `G_GRAPH_FIRST`, que lê o histórico do agente no pipeline 4F e
+não roda no commit.
 
 | Lei  | Nome                                | O que exige, na prática                                                                                                    |
 | :---- | :------------------------------ | :------------------------------------------------------------------------------------------------------------------------- |
@@ -82,6 +85,7 @@ fatia diferente da mesma exigência.
 | 11  | Padrão-Ouro de Stack                    | Frontend em Next.js + TypeScript + Tailwind; backend Python puro + SQLite WAL; API em OpenAPI 3.1 — salvo pedido explícito. |
 | 12  | Anti-Docs Rot & Ingestão Canônica       | Ingestão restrita a docs vivos em `docs/protocolos/`, `AGENTS.md` e schemas; links quebrados barrados por `G_DOCS_ROT.py`.   |
 | 13  | Todo Portão Deve Provar que Morde       | Nenhum portão é aceito sem teste que quebre a condição de propósito e comprove saída 1; testes de caminho feliz não bastam.  |
+| 14  | Graph-First Obrigatório                 | O agente pesquisa o código primeiro pelo grafo (`codebase-memory-mcp`) e só depois por busca textual ou leitura de arquivo.   |
 
 As leis 1, 5 e 8 são as que mais aparecem no restante deste livro, porque são elas que
 explicam por que o ecossistema tem a forma que tem: é a Lei 1 que empurra o trabalho
@@ -109,8 +113,9 @@ observabilidade e infraestrutura). Nenhuma dessas oito equipes decide sozinha co
 antes da anterior terminar: quem obriga a ordem são os portões de qualidade e os
 contratos formais descritos na seção seguinte.
 
-Tecnicamente, o ecossistema é um monorepo com oito ferramentas em `tools/`, cada uma
-com o próprio `AGENTS.md`, os próprios portões e o próprio ciclo de testes. Qualquer
+Tecnicamente, o ecossistema é um monorepo com oito ferramentas em `modulos/`, divididas em
+quatro fatias verticais (VSA, capítulo 3), cada uma com o próprio `AGENTS.md`, os próprios
+portões e o próprio ciclo de testes. Qualquer
 leitor cético pode conferir a ordem real de execução em
 `scripts/orquestrador_sincrono.py:9-11`, onde os três fluxos estão escritos
 literalmente como `[FORGE -> PLANNER] -> GENERATOR -> [MASTER -> ENTERPRISE -> OPS]` e
@@ -140,42 +145,47 @@ variações — terreno e planta sempre antes da construção, nunca depois.
 
 ## 1.5 A dimensão real do repositório
 
-Os números a seguir foram remedidos no repositório em 25/09/2026, direto do disco (`git ls-files`, contagem de pastas e saída dos próprios portões), e não estimados.
+Os números a seguir foram remedidos no repositório em 09/10/2026, depois do ciclo-03 da modularização VSA, direto do disco (`git ls-files`, contagem de pastas e saída dos próprios portões), e não estimados.
 
 | Métrica                                                                 | Valor medido |
 | :---------------------------------------------------------------------- | -----------: |
-| Ferramentas homologadas em `tools/`                                     |            8 |
-| Portões de qualidade globais em `gates/` (arquivos `G_*.py`)            |           51 |
-| Portões `G_*.py` em todo o repositório (globais + locais de ferramenta) |          178 |
-| Hooks registrados em `.pre-commit-config.yaml`                          |           41 |
-| Habilidades (skills) canônicas em `componentes/compartilhado/skills/`   |           70 |
-| Comandos canônicos em `componentes/compartilhado/comandos/`             |           16 |
-| Módulos do núcleo compartilhado em `componentes/compartilhado/src-core/`|           34 |
-| Esquemas formais de handoff em `componentes/compartilhado/specs/`       |            8 |
-| Diretórios de harness sincronizados na raiz                             |           10 |
-| Módulos Python rastreados nas ferramentas (`tools/`)                    |        1.220 |
-| Módulos Python de portões e scripts da raiz (`gates/` + `scripts/`)     |          133 |
-| Arquivos de teste (`test_*.py`) rastreados pelo git                     |          395 |
-| Dependências externas declaradas e verificadas (`dependencia verify`)   |           39 |
-| Portões que provam reprovação (exit 1), via `G_PORTAO_PROVA_QUE_MORDE.py` (o meta-portão não conta a si mesmo) | 50/50 |
-| Leis Invioláveis com portão declarado `provado`, via `G_LEI_DECLARA_PORTAO.py` |    13/13 |
+| Ferramentas homologadas em `modulos/` (quatro fatias verticais)          |            8 |
+| Portões do ecossistema no `MAPA-GATES.json` (cada um na pasta `gates/` da fatia dona) |   72 |
+| Portões `G_*.py` em todo o repositório (ecossistema, ferramentas, moldes e auditorias) |  172 |
+| Hooks registrados em `.pre-commit-config.yaml`                          |           68 |
+| Habilidades (skills) canônicas em `componentes/compartilhado/skills/`   |           44 |
+| Comandos canônicos em `componentes/compartilhado/comandos/`             |           19 |
+| Módulos do núcleo compartilhado em `componentes/compartilhado/src-core/`|           36 |
+| Esquemas formais de handoff em `componentes/compartilhado/specs/` (`*.schema.json`) |  9 |
+| Harnesses declarados em `manifesto_harnesses.json`                      |            7 |
+| Módulos Python rastreados nas oito ferramentas (`modulos/`)             |          637 |
+| Módulos Python de portões e scripts (pastas `gates/` das fatias + `scripts/`) |    213 |
+| Arquivos de teste (`test_*.py`) rastreados pelo git                     |          548 |
+| Dependências externas declaradas e verificadas (`dependencia verify`)   |           66 |
+| Portões que provam reprovação (exit 1), via `G_PORTAO_PROVA_QUE_MORDE.py` (o meta-portão não conta a si mesmo) | 71/71 |
+| Leis Invioláveis com portão declarado `provado`, via `G_LEI_DECLARA_PORTAO.py` |    14/14 |
 
 ```{=typst}
 #painel("Leitura honesta dos números")[
   As edições anteriores deste livro diziam 1.520 arquivos de teste. Esse número contava
   também cópias que não estão no git (ambientes virtuais, pastas geradas e pacotes de
-  habilidades de terceiros). Contando só o que o git rastreia, são 395; no disco inteiro,
-  com as cópias, são cerca de 700. Os 1.220 módulos de `tools/` também incluem código de
-  exemplo e o sandbox de teste do forge. Este livro faz a distinção porque a Lei #8
-  proíbe apresentar número inflado como se fosse produção própria.
+  habilidades de terceiros). Contando só o que o git rastreia, eram 395 em 25/09/2026 e
+  são 548 hoje. Em 25/09/2026 as ferramentas somavam 1.220 módulos em `tools/`, contando
+  o código de exemplo do `aidd-enterprise` e o sandbox de teste do forge; os dois saíram
+  do repositório no ciclo-03 da modularização VSA (Ticket 6), junto com a pasta `tools/`
+  inteira (Ticket 5). O app de demonstração que o `aidd-enterprise` repetia do
+  `aidd-master` saiu no Ticket 23, e as oito ferramentas em `modulos/` somam hoje 637. Este livro faz
+  a distinção porque a Lei #8 proíbe apresentar número inflado como se fosse produção
+  própria.
 ]
 ```
 
 ## 1.6 Rastreabilidade do capítulo
 
-`AGENTS.md` (leis 1 a 13, tríade canônica, dispatch de contexto); `README.md` (mapa do
+`AGENTS.md` (leis 1 a 14, tríade canônica, dispatch de contexto); `README.md` (mapa do
 repositório, tabela das oito ferramentas); `ecossistema.py` (roteamento de comandos);
-`gates/` (portões globais); `componentes/compartilhado/specs/` (esquemas de handoff);
+`modulos/04-nucleo-compartilhado/contracts/MAPA-GATES.json` (dono e caminho de cada
+portão); `componentes/compartilhado/specs/` (esquemas de handoff);
 `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` (catálogo detalhado de portões e
 comandos).
 
@@ -263,12 +273,12 @@ A regra de isolamento cognitivo — presente no `AGENTS.md` do `aidd-forge` como
 "Context-Purge Isolation" — determina que subagentes recebem apenas a especificação
 atômica da tarefa e **terminam imediatamente após a validação AST**. Não há agente de
 longa duração acumulando contexto. A implementação vive em
-`tools/aidd-forge/aidd_forge/core/subagent_purger.py` e, no lado do gerador, em
+`modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/core/subagent_purger.py` e, no lado do gerador, em
 `scripts/phases/utils_subagente_ephemero.py`.
 
 ### 2.2.4 Zero headless: o agente não trabalha escondido
 
-A Lei #7 tem um portão dedicado, `gates/G_ZERO_HEADLESS.py`, que impede a execução de
+A Lei #7 tem um portão dedicado, `modulos/04-nucleo-compartilhado/gates/G_ZERO_HEADLESS.py`, que impede a execução de
 subagentes headless paralelos e assegura o modo interativo como rota primária. A
 motivação está documentada na memória do projeto: houve um incidente real em que um
 agente autônomo sobreviveu ao fechamento do aplicativo de orquestração, commitou e fez
@@ -335,10 +345,10 @@ economia de tokens — e é por isso que os capítulos 2 e 4 deste livro se toca
 
 `AGENTS.md` §1, §2 e §6; `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` §3;
 `componentes/compartilhado/specs/*.schema.json`;
-`tools/aidd-pure/scripts/phases/phase_*/AGENTS.md`;
-`tools/aidd-pure/config/token_budgets.json`;
-`tools/aidd-pure/scripts/gates/G_TOKENOMICS.py`; `gates/G_ZERO_HEADLESS.py`;
-`tools/aidd-forge/aidd_forge/core/subagent_purger.py`.
+`modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/phases/phase_*/AGENTS.md`;
+`modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/config/token_budgets.json`;
+`modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/gates/G_TOKENOMICS.py`; `modulos/04-nucleo-compartilhado/gates/G_ZERO_HEADLESS.py`;
+`modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/core/subagent_purger.py`.
 
 # Capítulo 3 — Arquitetura do ecossistema
 
@@ -352,16 +362,29 @@ ecossistema-aidd/
 ├── MEMORY.md                  A memória viva consolidada do projeto
 ├── ecossistema.py             A CLI unificada: ponto único de entrada
 ├── core/                      Otimizadores cognitivos do meta-repositório
-├── gates/                     51 portões determinísticos globais
+├── modulos/                   As 4 fatias verticais (VSA): as 8 ferramentas e os portões
+│   ├── 01-governanca-e-qualidade/   aidd-forge, aidd-planner e portões de governança
+│   ├── 02-triade-motores/           fluxo-01-pure, fluxo-02-open e fluxo-03-freedom
+│   ├── 03-plataforma-e-entrega/     aidd-master, aidd-enterprise e aidd-ops
+│   └── 04-nucleo-compartilhado/     contratos (MAPA-FATIAS, MAPA-GATES) e portões transversais
 ├── scripts/                   Orquestrador síncrono e gestores (componentes, deps)
 ├── componentes/               O cofre canônico: skills, comandos, specs, src-core
-├── tools/                     As 8 ferramentas homologadas
+├── tools/                     Só o LEIA-ME.md de transição (pasta extinta no ciclo-03)
 └── docs/                      Protocolos, planos, manuais, relatórios, livros
 ```
 
+Até 06/10/2026 havia uma pasta `gates/` na raiz e as ferramentas moravam em `tools/`. O
+ciclo-03 da modularização VSA (06 a 08/10/2026) levou cada ferramenta e cada portão para
+a fatia dona: `MAPA-FATIAS.json` diz onde fica cada ferramenta, `MAPA-GATES.json` diz onde
+fica cada portão, e cada fatia só fala com outra pelo seu `interface.py` (portão
+`G_MODULO_FRONTEIRA`). O desenho completo está em
+`docs/padroes/ARQUITETURA-MODULARIZACAO-VSA-ECOSSISTEMA.md`.
+
 A regra que governa essa topologia é a de **fonte física canônica**: um componente
 (habilidade, comando, hook, MCP) nasce em `componentes/<ferramenta ou
-compartilhado>/<tipo>/` e é *distribuído* para as pastas de cada assistente por
+compartilhado>/<tipo>/` — ou, no caso de uma habilidade que só uma ferramenta usa, na
+pasta `skills/` da ferramenta dona em `modulos/` (Ticket 18 do ciclo-03) — e é
+*distribuído* para as pastas de cada assistente por
 `python ecossistema.py components sync --tipo todos`. As pastas `.claude/`, `.opencode/`,
 `.gemini/`, `.agents/`, `.cursor/`, `.mimocode/` e as demais são **destinos gerados**,
 nunca fontes. Editar um destino diretamente é um erro que o portão
@@ -376,7 +399,7 @@ seriam invisíveis num diagrama ingênuo.
 
 **Isolamento de importação.** Cada ferramenta é executada como subprocesso com
 `PYTHONPATH` apontando para o próprio diretório — `cmd_forge` exporta
-`PYTHONPATH=tools/aidd-forge`, `cmd_master` exporta `tools/aidd-master`, e assim por
+`PYTHONPATH=modulos/01-governanca-e-qualidade/core/aidd-forge`, `cmd_master` exporta `modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master`, e assim por
 diante. Ferramentas com módulos de mesmo nome não colidem.
 
 **Autorrecuperação antes de qualquer importação de terceiro.** Duas guardas rodam antes
@@ -392,7 +415,7 @@ derrubava a ferramenta inteira com `UnicodeEncodeError` antes de terminar o pipe
 
 | Grupo de comandos | Comandos                                                                   | Destino                                                          |
 | :---------------- | :-------------------------------------------------------------------------- | :--------------------------------------------------------------- |
-| Ferramentas       | `forge`, `planner`, `generate`, `factory`, `bridge`, `master`, `enterprise`, `ops` | Subprocesso isolado em `tools/<ferramenta>`                      |
+| Ferramentas       | `forge`, `planner`, `generate`, `factory`, `bridge`, `master`, `enterprise`, `ops` | Subprocesso isolado na pasta da ferramenta em `modulos/`         |
 | Fluxos            | `pure`, `open`, `bridge` (com flags de fluxo), `run-fluxo`                  | `scripts/orquestrador_sincrono.py`                               |
 | Evolução          | `melhoria`, `plan`, `orchestrate`                                           | Habilidades donas das três etapas                                |
 | Governança        | `audit`, `status`, `harness`, `preflight-host`                              | `pre-commit`, portões globais, diagnóstico de host               |
@@ -417,7 +440,7 @@ ferramentas e dos projetos gerados. Os principais, por família:
 
 O portão `G_DRIFT_NUCLEO_COMPARTILHADO` compara os arquivos de núcleo compartilhados
 por linhagem entre `aidd-master` e `aidd-enterprise` contra o baseline em
-`gates/baseline_nucleo_compartilhado.json` e reprova divergência não documentada.
+`modulos/04-nucleo-compartilhado/contracts/baseline_nucleo_compartilhado.json` e reprova divergência não documentada.
 
 ## 3.4 A arquitetura alvo dos sistemas gerados
 
@@ -491,9 +514,9 @@ multi-harness da raiz permanecem sincronizados entre si.
 ## 3.6 Rastreabilidade do capítulo
 
 `ecossistema.py` (linhas 1–190 para as guardas e 188–380 para o roteamento);
-`componentes/compartilhado/src-core/`; `gates/G_DRIFT_NUCLEO_COMPARTILHADO.py`;
-`gates/G_UNIVERSAL_HARNESS.py`; `gates/G_PROTOCOL_FALLBACK.py`;
-`gates/G_FRONTEND_LAYERS.py`; `gates/G_ISOLATION_AUDIT.py`;
+`componentes/compartilhado/src-core/`; `modulos/04-nucleo-compartilhado/gates/G_DRIFT_NUCLEO_COMPARTILHADO.py`;
+`modulos/04-nucleo-compartilhado/gates/G_UNIVERSAL_HARNESS.py`; `modulos/04-nucleo-compartilhado/gates/G_PROTOCOL_FALLBACK.py`;
+`modulos/02-triade-motores/fluxo-01-pure/gates/G_FRONTEND_LAYERS.py`; `modulos/03-plataforma-e-entrega/gates/G_ISOLATION_AUDIT.py`;
 `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` §5;
 `docs/protocolos/PADRAO-OURO-STACK-TECNOLOGICA.md`.
 
@@ -523,7 +546,7 @@ modelo**. As Fases 1, 5, 6 e 7 do `aidd-pure` declaram consumo zero porque são
 Python puro. As Fases 1, 4, 5 e 6 do `aidd-open` são 100% determinísticas por
 contrato — o `AGENTS.md` da ferramenta chama essa invariante de `G_FACTORY_DETERMINISTIC`,
 mas ela é um rótulo de regra, não um arquivo: quem cobra de fato são os seis portões
-reais em `tools/aidd-open/gates/` (`G_FACTORY_ANALYSIS`, `G_FACTORY_COMPOSE`,
+reais em `modulos/02-triade-motores/fluxo-02-open/core/aidd-open/gates/` (`G_FACTORY_ANALYSIS`, `G_FACTORY_COMPOSE`,
 `G_FACTORY_ENV`, `G_FACTORY_INIT_DB`, `G_FACTORY_INTEGRATION`, `G_FACTORY_MVP`). Todo o `aidd-forge`, todo o `aidd-master`, todo o
 `aidd-enterprise` e o pipeline de três fases do `aidd-ops` operam sem chamada de
 modelo. Os 177 arquivos `G_*.py` do repositório são, sem exceção, determinísticos: leem
@@ -556,7 +579,7 @@ verifica que o código entregue está completo. Comprimir a saída para o usuár
 permitido — a economia acontece na entrada e no raciocínio, nunca na qualidade do que
 é entregue.
 
-O linter estático `tools/aidd-pure/scripts/core/caveman_linter.py` audita, por
+O linter estático `modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/core_pure/caveman_linter.py` audita, por
 AST e sem gastar um único token, se as constantes de prompt das fases seguem a tríade
 ENTRADA (inglês) → COT (caveman) → SAÍDA (PT-BR).
 
@@ -600,13 +623,13 @@ arquivos alterados e vereditos de portões, permitindo recuperação de sessão 
 depender de histórico volátil. `get_latest_session_state()` devolve os dez eventos mais
 recentes de uma sessão.
 
-O `tools/aidd-pure/scripts/core/pipeline_state.py` do gerador adiciona retomada inteligente: com `--resume`, o
+O `modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/core_pure/pipeline_state.py` do gerador adiciona retomada inteligente: com `--resume`, o
 pipeline pula fases já completas cujos artefatos são válidos, evitando reconsumo de
 tokens em trabalho já feito.
 
 ## 4.7 Mecanismo 6 — Orçamento formal e auditoria de tokenomics
 
-`tools/aidd-pure/config/token_budgets.json` declara o teto por fase e o limiar de
+`modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/config/token_budgets.json` declara o teto por fase e o limiar de
 alerta de desvio (1,2 — vinte por cento acima do orçamento).
 
 | Fase | Nome           | Orçamento | Natureza declarada                                   |
@@ -655,12 +678,12 @@ consumir mais contexto do que três fases inteiras do pipeline.
 
 `componentes/compartilhado/src-core/caveman_protocol.py`; `core/context_slicer.py`;
 `core/mcp_dynamic_router.py`; `core/cognitive_ledger.py`;
-`tools/aidd-pure/config/token_budgets.json`;
-`tools/aidd-pure/scripts/gates/G_TOKENOMICS.py`;
-`tools/aidd-pure/scripts/core/caveman_linter.py`;
-`tools/aidd-pure/scripts/core/pipeline_state.py`;
+`modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/config/token_budgets.json`;
+`modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/gates/G_TOKENOMICS.py`;
+`modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/core_pure/caveman_linter.py`;
+`modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/core_pure/pipeline_state.py`;
 `docs/issues/saneamento-governanca/08-compressor-sandeco-ligar-ou-remover.md`;
-`tools/aidd-pure/scripts/benchmark_tokenomics.py`; `AGENTS.md` §1 e Lei #4.
+`modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/benchmark_tokenomics.py`; `AGENTS.md` §1 e Lei #4.
 
 # Capítulo 5 — Governança executável: portões, hooks e auditoria
 
@@ -673,10 +696,19 @@ Binária — e é o que dá ao ecossistema a propriedade mais importante da sua 
 **a regra não depende de alguém lembrar dela**.
 
 Todo portão obedece a três invariantes de construção: é determinístico (zero chamada de
-modelo), é executável isoladamente (`python gates/G_X.py`) e tem teste próprio — o
-diretório `gates/` contém, ao lado de cada portão relevante, o seu `test_g_*.py`.
+modelo), é executável isoladamente (`python modulos/<fatia>/gates/G_X.py`) e tem teste
+próprio — a pasta `gates/` da fatia dona contém, ao lado de cada portão, o seu
+`test_g_*.py`.
 
-## 5.2 Os 51 portões globais
+## 5.2 Os 72 portões do ecossistema
+
+Cada portão mora na pasta `gates/` da fatia dona e está registrado, com dono e caminho,
+em `modulos/04-nucleo-compartilhado/contracts/MAPA-GATES.json` (ciclo-03 da modularização
+VSA, decisão C; a pasta `gates/` da raiz deixou de existir em 07/10/2026). Em 09/10/2026
+são 72: 20 em `01-governanca-e-qualidade`, 5 em `fluxo-01-pure`, 2 em `fluxo-02-open`, 2
+em `fluxo-03-freedom`, 8 em `03-plataforma-e-entrega` e 35 em `04-nucleo-compartilhado`
+(os transversais). Os 21 portões que ficam dentro das próprias ferramentas estão no
+capítulo 22.
 
 | Portão                             | O que audita                                                                                  |
 | :--------------------------------- | :---------------------------------------------------------------------------------------------- |
@@ -690,7 +722,7 @@ diretório `gates/` contém, ao lado de cada portão relevante, o seu `test_g_*.
 | `G_ZERO_HEADLESS`                  | Execução de subagentes headless paralelos; garante o modo interativo como rota primária          |
 | `G_INFRA_COMPOSE`                  | Integridade, sintaxe e segurança de orquestrações Docker Compose (Checkov + PyYAML)               |
 | `G_HADOLINT`                       | Boas práticas OCI, segurança e sintaxe de todos os Dockerfiles                                   |
-| `G_TESTES_REAIS`                   | Roda `pytest` de verdade em cada `tools/<ferramenta>`; falha se qualquer suíte tiver `failed > 0` |
+| `G_TESTES_REAIS`                   | No `audit`, roda `pytest` de verdade nas 8 ferramentas de `modulos/` e na bateria `tests/`; falha se qualquer suíte tiver `failed > 0` |
 | `G_DEPENDENCIAS_PIN_HASH`          | Pin exato (`==`), hash SHA-256 por pacote nos lockfiles e `pip install --require-hashes` no CI   |
 | `G_HONESTIDADE_ROTULO`             | Lei #8: termos de marketing proibidos em `print()`/`raise()` dos scripts de portão                |
 | `G_ARQUITETURA_DELIVERABLE`        | Conformidade com Clean Architecture/DDD via AST                                                  |
@@ -714,9 +746,9 @@ diretório `gates/` contém, ao lado de cada portão relevante, o seu `test_g_*.
 | `G_IDIOMA_LEI_4`                   | Densidade de prosa em PT-BR nos caminhos que devem ser inglês compacto (tickets, skills, núcleo)  |
 | `G_LIVRO_EVIDENCIA`                | Rastreabilidade e evidência de um livro-texto gerado — roda sob demanda, não a cada commit deste repositório |
 | `G_DETERMINISMO_LEI_1`             | Por AST: SDK de LLM conhecido importado em rota declarada mecânica (Lei #1)                        |
-| `G_SAIDA_BINARIA`                  | Por AST: todo portão em `gates/` sai estritamente via `sys.exit(0)` ou `sys.exit(1)` (Lei #2)      |
+| `G_SAIDA_BINARIA`                  | Por AST: todo portão do `MAPA-GATES.json` sai estritamente via `sys.exit(0)` ou `sys.exit(1)` (Lei #2) |
 | `G_ESTRUTURA_ESTADO`               | Artefatos de estado do orquestrador (`flight_plan.json`, logs `.jsonl`) contra o formato esperado (Lei #3) |
-| `G_DISCIPLINA_TESTE_FERRAMENTA`    | Alteração em `tools/<ferramenta>/` sem relatório contemporâneo em `docs/teste-end-to-end/` (Lei #9) |
+| `G_DISCIPLINA_TESTE_FERRAMENTA`    | Alteração numa ferramenta (`modulos/**/aidd-<nome>/`) sem relatório contemporâneo em `docs/teste-end-to-end/` (Lei #9) |
 | `G_QUARTETO_SINE_QUA_NON`          | Presença real dos 4 pilares (`/docs`, `/webhooks`, `/mcp`, `/docs/guia`) num deliverable gerado (Lei #10) |
 | `G_STACK_PADRAO_OURO`              | Dependências de frontend/backend gerado contra o padrão-ouro, com respeito a override explícito (Lei #11) |
 | `G_ANT_LOCKIN_LEGADO`              | Resíduo de Lovable/Supabase/Firebase numa entrega ou legado, com allowlist explícita; nunca apaga |
@@ -731,26 +763,51 @@ diretório `gates/` contém, ao lado de cada portão relevante, o seu `test_g_*.
 | `G_amelhoria`                      | Rótulo honesto do `aidd-melhoria`: veta "refatoração concluída" em análise que só sugere           |
 | `G_HANDOFF_MELHORIA`               | Handoff `melhoria → plan`: JSON válido, esquema `handoff-melhoria.schema.json` e assinatura HMAC  |
 | `G_GESTOR_SESSOES`                 | Contrato do registro de sessões de IA (`scripts/gestor_sessoes.py`): funções, gravação isolada e recusa de ID inválido (desde 24/09/2026) |
+| `G_COPIA_UNICA_VSA`                | Uma peça, um lugar: ferramenta, portão ou habilidade com o mesmo nome em mais de um lugar (ciclo-03 VSA; bloqueia desde o Ticket 20) |
+| `G_MODULO_FRONTEIRA`               | Por AST: `sys.path`, caminho literal, `tools/` e import que atravessam fatias fora do `interface.py`; allowlist datada que só diminui |
+| `G_FRONTEIRA_FERRAMENTAS`          | Arquivo que a ferramenta não pode conter (`MAPA-DONOS-FERRAMENTAS.json`) e cópia de peça do almoxarifado; no commit, modo aviso |
+| `G_GRAPH_FIRST`                    | Lei #14: reprova o agente que pesquisou o código de uma worktree sem chamar o `codebase-memory-mcp` (lê o histórico do agente) |
+| `G_NOVE_CAMADAS_MERCADO`           | As 9 Camadas de Mercado do padrão-ouro num projeto ou molde (Leis #1 e #11)                      |
+| `G_TEMPLATE_TANSTACK_OFFLINE`      | Integridade do molde canônico TanStack Offline (Leis #1, #6, #10 e #11)                          |
+| `G_SKILL_FORMATO`                  | Formato de cada habilidade da fonte única contra `docs/protocolos/CONVENCAO-AUTORIA-SKILLS.md` (§5.1 a §5.3) |
+| `G_PROVA_SKILLS_POCOCK`            | Uso real das habilidades do ciclo `skills-pocock`: roda cada uma sem interação e confere o artefato (manual: gasta tokens) |
+| `G_mapa_pecas`                     | Catálogo de peças e mapas visuais em dia com o repositório (Lei #8)                              |
+| `G_aidd_visual_maps`               | Conferências dos mapas: catálogo em dia, HTML órfão, frase em inglês, contagem digitada, manual e manifesto |
+| `G_aidd_diagnose`                  | Relatório de causa-raiz da habilidade `aidd-diagnose`: critérios científicos e rótulo honesto     |
+| `G_aidd_enterprise`                | Contratos de componentes do `aidd-enterprise`                                                    |
+| `G_aidd_forge`                     | Bootstrap do `aidd-forge` (Leis #8 e #13)                                                         |
+| `G_aidd_grill`                     | Entrevista socrática da habilidade `aidd-grill`                                                  |
+| `G_aidd_handoff`                   | Artefato de handoff de sessão (Lei #9)                                                            |
+| `G_aidd_plan`                      | Pasta de um plano: estrutura e cercas de código dos arquivos                                     |
+| `G_aidd_planner_runner`            | Projetos do Planner                                                                               |
+| `G_aidd_session`                   | Integridade do histórico de sessões (`secoes/historico_sessoes.json` e `secoes/INDICE-SESSOES.md`) |
+| `G_aidd_spec`                      | Especificação técnica da habilidade `aidd-spec`                                                   |
+| `G_aidd_tdd`                       | Ciclo TDD da habilidade `aidd-tdd`                                                                |
+| `G_aidd_tickets`                   | Decomposição em tickets da habilidade `aidd-tickets`                                             |
 
 ## 5.3 A execução: `pre-commit` como runner
 
 `python ecossistema.py audit` delega a `pre-commit run --all-files`. A configuração em
-`.pre-commit-config.yaml` registra 41 hooks, todos **locais** (`repo: local`,
+`.pre-commit-config.yaml` registra 68 hooks, todos **locais** (`repo: local`,
 `language: system`) — o que torna a auditoria hermética, offline e independente de
 assistente ou sistema operacional, em conformidade com a Lei #6.
 
-As regras de gatilho são três: `always_run: true` roda em todo commit;
-`files: ^tools/` roda apenas quando um arquivo correspondente está no stage (é o caso
-de `G_TESTES_REAIS`, que roda pytest de verdade); e `stages: [manual]` roda apenas sob
-demanda explícita.
+As regras de gatilho são três: `always_run: true` roda em todo commit; `files:` roda
+apenas quando um arquivo que casa com o padrão está no stage; e `stages: [manual]` roda
+apenas sob demanda explícita. O `G_TESTES_REAIS` ainda usa `files: ^tools/`, padrão de
+antes do ciclo-03: com a pasta `tools/` reduzida ao `LEIA-ME.md`, ele quase nunca dispara
+no commit e roda inteiro no `audit`, que passa todos os arquivos. No commit, quem roda
+as suítes é o hook `g-micro-gates-diff`, só das ferramentas tocadas (Ticket 16 do
+ciclo-03).
 
-Nem todo portão global está nessa lista. Em 25/09/2026, dos 51 portões de `gates/`, 40
-rodam no commit, 1 fica em `stages: [manual]` (`G_LIVRO_EVIDENCIA`) e 10 **não estão
-registrados** no `.pre-commit-config.yaml`: `G_DISPATCH_PIPELINE_VSA`, `G_DOCS_ROT`, `G_ESCRITOR_ATOMICO`, `G_GESTOR_SESSOES`, `G_HANDOFF_MELHORIA`, `G_ORQUESTRADOR_SINCRONO`, `G_SUPPLY_CHAIN`, `G_TEMPLATE_FORGE_ROT`, `G_TRANSACTION_LOG_LRU` e `G_amelhoria`. Esses dez só rodam quando alguém
-os chama (à mão, por um orquestrador ou por um teste). Portanto, `python ecossistema.py
-audit` verde não prova que eles passaram. O décimo, `G_GESTOR_SESSOES`, entrou em
-24/09/2026 junto com o registro de sessões e repetiu o mesmo padrão: o portão existe,
-mas ninguém o ligou ao commit.
+Nem todo portão está nessa lista. Em 09/10/2026, dos 72 portões do `MAPA-GATES.json`,
+65 estão registrados para o commit (um deles é o `G_TESTES_REAIS`, com o filtro acima), 2
+ficam em `stages: [manual]` (`G_LIVRO_EVIDENCIA` e `G_PROVA_SKILLS_POCOCK`) e 5 **não
+estão registrados** no `.pre-commit-config.yaml`: `G_GRAPH_FIRST`, `G_aidd_handoff`,
+`G_aidd_plan`, `G_aidd_planner_runner` e `G_aidd_session`. Esses cinco só rodam quando
+alguém os chama (à mão, pelo pipeline 4F, por uma habilidade ou por um teste). Portanto,
+`python ecossistema.py audit` verde não prova que eles passaram. Os dez que estavam fora
+em 25/09/2026, entre eles o `G_GESTOR_SESSOES`, já rodam no commit.
 
 ```{=typst}
 #painel("Zero portões pendentes por causa raiz desconhecida — o estado honesto em 20/09/2026")[
@@ -764,9 +821,10 @@ mas ninguém o ligou ao commit.
   movendo as chamadas SQL para a camada de infraestrutura. Ambos voltaram a
   `always_run: true` e aprovam com exit 0.
 
-  O único portão que ainda roda em `stages: [manual]` é *G_LIVRO_EVIDENCIA* — por
-  desenho, não por pendência: ele audita o livro-texto de um projeto *gerado* pelo
-  ecossistema, não este repositório, então não há sentido em rodá-lo a cada commit daqui.
+  Em 09/10/2026 dois portões rodam em `stages: [manual]`, os dois por desenho, não por
+  pendência: *G_LIVRO_EVIDENCIA* audita o livro-texto de um projeto *gerado* pelo
+  ecossistema, não este repositório; *G_PROVA_SKILLS_POCOCK* chama o modelo de verdade,
+  gasta tokens e depende de rede.
 ]
 ```
 
@@ -776,7 +834,7 @@ O ecossistema usa hooks em três camadas distintas, e confundi-las gera erro de
 diagnóstico.
 
 **Hooks de git** (`.githooks/pre-commit`, instalados pelo `aidd-forge` via
-`tools/aidd-forge/aidd_forge/core/git_hooks.py`): interceptam o commit e executam os portões. É a camada que
+`modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/core/git_hooks.py`): interceptam o commit e executam os portões. É a camada que
 transforma a Lei #2 em bloqueio real.
 
 **Hooks de assistente** (`.claude/settings.json` e equivalentes): reagem a eventos do
@@ -815,7 +873,8 @@ cuidam da ponta humana dessa passagem.
 **O `faz-commit`** (`scripts/faz_commit.py`) é o botão de "salvar e enviar" do usuário.
 Pense no caixa de supermercado que passa tudo o que está na esteira: ele faz
 `git add -A`, gera a mensagem a partir do diff (por IA, se houver chave de API, ou
-pedindo ao usuário), faz o commit — que dispara os 41 hooks do pre-commit — e o push.
+pedindo ao usuário), faz o commit — que dispara os hooks do pre-commit (68 registrados
+em 09/10/2026) — e o push.
 
 - **Painel compacto:** cada portão ocupa uma linha, com o progresso ao vivo dentro da
   própria linha (o `G_TESTES_REAIS` escreve o andamento no arquivo apontado por
@@ -841,17 +900,19 @@ pedindo ao usuário), faz o commit — que dispara os 41 hooks do pre-commit —
 ]
 ```
 
-**O registro de sessões** (`scripts/gestor_sessoes.py`, habilidades `aidd-sessao` e
+**O registro de sessões** (`scripts/gestor_sessoes.py`, habilidades `aidd-session` e
 `sessao`) é o livro de ponto das sessões de IA. Cada sessão pode ser gravada com ID,
 harness, título e data em `secoes/historico_sessoes.json`, com um espelho legível em
 `secoes/INDICE-SESSOES.md`. Pela CLI: `python ecossistema.py sessao registrar|listar|buscar`
 (apelidos `session` e `sessoes`). O portão `G_GESTOR_SESSOES` confere o contrato do
-gestor (funções, gravação num ambiente isolado e recusa de ID vazio com exit 1), mas
-ainda não roda no commit (§5.3).
+gestor (funções, gravação num ambiente isolado e recusa de ID vazio com exit 1) e roda
+no commit; o `G_aidd_session` confere a integridade dos dois arquivos, mas roda só sob
+demanda (§5.3).
 
 ## 5.7 Rastreabilidade do capítulo
 
-`gates/` (51 portões + suítes de teste); `.pre-commit-config.yaml` (linhas 1–66 para a
-documentação das decisões, 67–220 para os hooks); `.claude/settings.json`;
+`modulos/04-nucleo-compartilhado/contracts/MAPA-GATES.json` e as pastas `gates/` das
+fatias (72 portões + suítes de teste); `.pre-commit-config.yaml` (cabeçalho com as
+decisões e os 68 hooks); `.claude/settings.json`;
 `componentes/compartilhado/hooks/`; `scripts/gestor_dependencias.py`;
 `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` §4.

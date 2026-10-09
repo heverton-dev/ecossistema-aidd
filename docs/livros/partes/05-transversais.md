@@ -80,7 +80,7 @@ As sete habilidades anti-*vibe coding* descritas no capítulo 2 — `/aidd-grill
 `dependencia-runner` (dependências de terceiros); `aidd-skills` e
 `skill-creator-runner` (criação de habilidades); `aidd-mcp` e `mcp-creator-runner`
 (servidores MCP); `explore-codebase`, `refactor-safely`, `review-changes`,
-`debug-issue`. Desde 24/09/2026, `aidd-sessao` e `sessao` registram o ID e os dados de
+`debug-issue`. Desde 24/09/2026, `aidd-session` e `sessao` registram o ID e os dados de
 cada sessão de IA (capítulo 5, §5.6).
 
 ### Habilidades de domínio externo
@@ -131,42 +131,45 @@ Há ainda o modo de reparo: `components sync --tipo todos --force` restaura dest
 
 # Capítulo 22 — O catálogo completo de portões
 
-## 22.1 A distribuição dos 186 portões
+## 22.1 A distribuição dos 172 portões
 
-O repositório tem 186 arquivos `G_*.py` rastreados pelo git (contagem de 04/10/2026).
-Eles se distribuem em camadas:
+O repositório tem 172 arquivos `G_*.py` rastreados pelo git (contagem de 09/10/2026; eram
+186 em 04/10/2026). Eles se distribuem em camadas:
 
 | Camada                  | Onde                                   | Quantidade | Papel                                               |
 | :---------------------- | :------------------------------------- | ---------: | :---------------------------------------------------- |
-| Portões globais         | `gates/`                               |         65 | Auditam o ecossistema inteiro                        |
-| Portões de ferramenta   | `tools/<ferramenta>/gates/` ou `scripts/gates/` | 21 | Auditam a ferramenta e o que ela produz        |
+| Portões do ecossistema  | pastas `gates/` das fatias (`MAPA-GATES.json`) | 72 | Auditam o ecossistema inteiro (capítulo 5)          |
+| Portões de ferramenta   | `gates/` ou `scripts/gates/` dentro da pasta da ferramenta | 21 | Auditam a ferramenta e o que ela produz |
 | Portões compartilhados/injetor | `componentes/compartilhado/{gates,injetor}/` | 28 | Fonte canônica de distribuição e variantes          |
-| Portões-template        | `templates/gates/` do forge            |         12 | São injetados nos projetos gerados                   |
-| Exemplos de referência  | `tools/aidd-enterprise/materiais-extras/examples/` | 38 | Cópias dentro de projetos-exemplo (não rodam no commit) |
-| Auditoria 15-D          | `docs/auditoria/`                      |         13 | `G_*.py` de auditorias de ciclos e ferramentas        |
-| Sandbox de teste        | `tools/aidd-forge/sandbox-forge-teste/gates/` e fixtures | 9 | Alvo de teste da injeção e conformidade             |
+| Portões-template        | `aidd_forge/templates/gates/` do forge |         12 | São injetados nos projetos gerados                   |
+| Auditoria 15-D          | `docs/auditoria/`                      |         38 | `G_*.py` de auditorias de ciclos e ferramentas        |
+| Fixture de teste        | `tests/fixtures/forge_conforme/gates/` |          1 | Projeto mínimo usado pelos testes                    |
 | Portões de projeto      | Projetos gerados                       |   variável | Cópias dos templates, ativas no projeto do usuário   |
 
-A contagem de 186 inclui as cópias distribuídas — o número de portões **distintos** é
-menor, e a dedup do núcleo compartilhado mantém sob controle a paridade entre ferramentas.
+A contagem de 172 inclui as cópias distribuídas (moldes, variantes do injetor e evidência
+de auditoria) — o número de portões **distintos** é menor. Fora dessas peças, o
+`G_COPIA_UNICA_VSA` reprova portão com o mesmo nome em duas pastas. O ciclo-03 da
+modularização VSA tirou do repositório os portões copiados nos exemplos de
+`materiais-extras/` do `aidd-enterprise` (pasta arquivada fora do repositório) e no
+sandbox de teste do forge (Ticket 6, 07/10/2026).
 
 ## 22.2 Portões por ferramenta
 
 | Ferramenta        | Portões locais                                                                                          |
 | :---------------- | :-------------------------------------------------------------------------------------------------------- |
-| `aidd-forge`      | `G_BLOQUEAR_SEGREDOS`, `G_CONTRACTS`, `G_CYBERSECURITY_OWASP`, `G_ESTRUTURA_AST`, `G_HARNESS_COMPAT`, `G_INJECT`, `G_PERFORMANCE`, `G_TESTES_REAIS` |
+| `aidd-forge`      | Nenhum dentro da ferramenta. Os 12 moldes de `aidd_forge/templates/gates/` vão para os projetos: `G_BLOQUEAR_SEGREDOS`, `G_CONTRACTS`, `G_CYBERSECURITY_OWASP`, `G_DETERMINISMO_LEI_1`, `G_ESTRUTURA_AST`, `G_HARNESS_COMPAT`, `G_INJECT`, `G_PERFORMANCE`, `G_QUARTETO_SINE_QUA_NON`, `G_SAIDA_BINARIA`, `G_STACK_PADRAO_OURO`, `G_TESTES_REAIS` |
 | `aidd-planner`    | `G_PLANNER_SCHEMA`, `G_PLANNER_SINE_QUA_NON`, `G_PLANNER_COERENCIA_FLUXO`                               |
-| `aidd-pure`  | `G_TOKENOMICS`, `G_CYBERSECURITY_OWASP`, `G_SANDBOX_NIVEL_1`, `G_SESSAO_HERMETICA`, `G_BLOQUEAR_SEGREDOS`, `G_INTEGRACAO_CROSS_SCRIPT`, `G_VERIFICAR_LLM_PRONTO`, `G_INJECT`, `G_HARNESS_COMPAT`, `AUDITAR_COMPARATIVO_HARNESS` |
+| `aidd-pure`  | `G_SANDBOX_NIVEL_1`, `G_SESSAO_HERMETICA`, `G_INTEGRACAO_CROSS_SCRIPT`, `G_VERIFICAR_LLM_PRONTO` e `G_TOKENOMICS`; `G_INJECT` e `G_HARNESS_COMPAT` vêm do almoxarifado (variantes `aidd-pure` em `componentes/compartilhado/`) |
 | `aidd-open`    | `G_FACTORY_ANALYSIS`, `G_FACTORY_COMPOSE`, `G_FACTORY_ENV`, `G_FACTORY_INIT_DB`, `G_FACTORY_INTEGRATION`, `G_FACTORY_MVP` |
 | `aidd-freedom`     | `G_BRIDGE_VENDOR_LOCKIN`, `G_BRIDGE_DOCKER_OCI`, `G_BRIDGE_POSTGRESQL`, `G_BRIDGE_VSA_COMPAT`           |
-| `aidd-master`     | `G_ESTRUTURA`, `G_SEGREDOS`, `G_SEGURANCA`, `G_TESTES`, `G_QUALIDADE`, `G_CONTRACTS`, `G_CHAOS`, `G_HARNESS_COMPAT`, `G_ARQUITETURA`, `G_INJECT`, `G_AST_BOUNDED_CONTEXT`, `G_PERFORMANCE` |
-| `aidd-enterprise` | A mesma bateria do master, com `G_INJECT` estendido para verificação criptográfica                      |
+| `aidd-master`     | `G_AST_IMPORT_GUARD` (em `scripts/gates/`). A bateria do projeto gerado (`G_ESTRUTURA`, `G_SEGREDOS`, `G_SEGURANCA`, `G_TESTES`, `G_QUALIDADE`, `G_CONTRACTS`, `G_CHAOS`, `G_HARNESS_COMPAT`, `G_ARQUITETURA`, `G_PERFORMANCE`) vem do almoxarifado, `componentes/compartilhado/gates/`; o `G_INJECT` é a variante `aidd-master` do injetor |
+| `aidd-enterprise` | Nenhum dentro da ferramenta; usa as mesmas peças do almoxarifado que o master                          |
 | `aidd-ops`        | `G_OPS_MVP`, `G_OPS_SSH`                                                                                |
 
 ## 22.3 As categorias de auditoria
 
-Os 65 portões globais podem ser lidos por intenção, e essa leitura revela a estratégia
-de qualidade do ecossistema:
+Os 72 portões do ecossistema podem ser lidos por intenção, e essa leitura revela a
+estratégia de qualidade do ecossistema:
 
 | Categoria                | Portões                                                                                     |
 | :----------------------- | :-------------------------------------------------------------------------------------------- |
@@ -181,7 +184,11 @@ de qualidade do ecossistema:
 | **Pipeline & Meso-Camada**| `G_PIPELINE_HANDOFF` (Leis #1, #2, #5), `G_DISPATCH_PIPELINE_VSA` (Kahn DAG & Worktrees)     |
 | **Evolução e auditoria** | `G_amelhoria` (rótulo honesto do `aidd-melhoria`), `G_HANDOFF_MELHORIA` (handoff `melhoria → plan` assinado) |
 | **Usabilidade e entrega** | `G_LAYOUT_ENTREGA`, `G_PACOTE_CORE`, `G_RESUMO_USUARIO`, `G_USER_FACING_PTBR`, `G_ANT_LOCKIN_LEGADO`, `G_SYNC_CMD_ROT` |
-| **Anti-rot por Lei** (fecham as Leis 1, 2, 3, 4, 9, 10, 11) | `G_DETERMINISMO_LEI_1`, `G_SAIDA_BINARIA`, `G_MIGRATION_ROT`, `G_ESTRUTURA_ESTADO`, `G_IDIOMA_LEI_4`, `G_ENV_ROT`, `G_SKILL_ROT`, `G_DISCIPLINA_TESTE_FERRAMENTA`, `G_CONTRACT_ROT`, `G_QUARTETO_SINE_QUA_NON`, `G_STACK_PADRAO_OURO`, `G_TEMPLATE_FORGE_ROT` |
+| **Anti-rot por Lei** (fecham as Leis 1, 2, 3, 4, 9, 10, 11) | `G_DETERMINISMO_LEI_1`, `G_SAIDA_BINARIA`, `G_MIGRATION_ROT`, `G_ESTRUTURA_ESTADO`, `G_IDIOMA_LEI_4`, `G_ENV_ROT`, `G_SKILL_ROT`, `G_DISCIPLINA_TESTE_FERRAMENTA`, `G_CONTRACT_ROT`, `G_QUARTETO_SINE_QUA_NON`, `G_STACK_PADRAO_OURO`, `G_TEMPLATE_FORGE_ROT`, `G_NOVE_CAMADAS_MERCADO`, `G_TEMPLATE_TANSTACK_OFFLINE` |
+| **Fronteiras VSA** (ciclo-03) | `G_COPIA_UNICA_VSA`, `G_MODULO_FRONTEIRA`, `G_FRONTEIRA_FERRAMENTAS`                        |
+| **Graph-First** (Lei #14) | `G_GRAPH_FIRST`                                                                              |
+| **Habilidades da casa**  | `G_SKILL_FORMATO`, `G_PROVA_SKILLS_POCOCK` e um portão por habilidade: `G_aidd_diagnose`, `G_aidd_enterprise`, `G_aidd_forge`, `G_aidd_grill`, `G_aidd_handoff`, `G_aidd_plan`, `G_aidd_planner_runner`, `G_aidd_session`, `G_aidd_spec`, `G_aidd_tdd`, `G_aidd_tickets` |
+| **Mapas e catálogo**     | `G_mapa_pecas`, `G_aidd_visual_maps`                                                         |
 
 Três portões merecem nota especial porque auditam coisas que a maioria dos projetos não
 audita.
@@ -191,8 +198,8 @@ contra as flags realmente definidas em `add_argument` nos pontos de entrada argp
 ferramentas. Ele impede que a mensagem de erro sugira uma flag que não existe — um
 defeito comum e invisível para teste funcional.
 
-`G_TESTES_REAIS` roda `pytest` de verdade em cada `tools/<ferramenta>` e falha se
-qualquer suíte tiver `failed > 0`. É a Lei #8 tornada mecânica: não se pode alegar suíte
+`G_TESTES_REAIS` roda `pytest` de verdade nas oito ferramentas de `modulos/` e na
+bateria `tests/`, e falha se qualquer suíte tiver `failed > 0`. É a Lei #8 tornada mecânica: não se pode alegar suíte
 verde sem suíte verde.
 
 `G_LLM_PROMPT_SHIELD` audita, por AST, se os clientes de modelo de linguagem usam
@@ -212,7 +219,9 @@ que a execução se apoie em artefato residual de uma execução anterior.
 
 ## 22.5 Rastreabilidade
 
-`gates/` (65 portões e suítes); `tools/*/gates/` e `tools/*/scripts/gates/`;
+`modulos/04-nucleo-compartilhado/contracts/MAPA-GATES.json` e as pastas `gates/` das
+fatias (72 portões e suítes); `gates/` e `scripts/gates/` dentro das pastas das
+ferramentas;
 `.pre-commit-config.yaml`; `docs/protocolos/PROTOCOLO-TESTES-FERRAMENTAS.md`;
 `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` §4.
 
@@ -258,7 +267,7 @@ uma refatoração.
 
 ## 23.3 O manifesto de harness
 
-`gates/manifesto_harnesses.json` (13 KB) é o registro canônico de qual componente deve
+`modulos/04-nucleo-compartilhado/contracts/manifesto_harnesses.json` (14 KB) é o registro canônico de qual componente deve
 existir em qual assistente, em qual caminho. `G_COMPONENTE_AGNOSTICO` audita todo
 componente novo ou modificado contra esse manifesto, e `scripts/harness_hygiene.py`
 mantém a higiene dos diretórios.
@@ -273,9 +282,9 @@ validação automatizada.
 
 `AGENTS.md` Lei #6; `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` §5;
 `docs/protocolos/05-09-2026_protocolo-agnosticidade-componentes.md`;
-`gates/manifesto_harnesses.json`; `gates/G_UNIVERSAL_HARNESS.py`;
-`gates/G_COMPONENTE_AGNOSTICO.py`; `gates/G_PROTOCOL_FALLBACK.py`;
-`tools/aidd-pure/scripts/phases/utils_delegacao.py`.
+`modulos/04-nucleo-compartilhado/contracts/manifesto_harnesses.json`; `modulos/04-nucleo-compartilhado/gates/G_UNIVERSAL_HARNESS.py`;
+`modulos/02-triade-motores/fluxo-02-open/gates/G_COMPONENTE_AGNOSTICO.py`; `modulos/04-nucleo-compartilhado/gates/G_PROTOCOL_FALLBACK.py`;
+`modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/phases/utils_delegacao.py`.
 
 # Capítulo 24 — Síntese: a economia de tokens ponta a ponta
 
@@ -288,21 +297,24 @@ dispersamente. É o eixo "economia de tokens" visto simultaneamente nos três n�
 | :------------------------------- | :-------- | :-------------------------------------------------- | :------------------------------------------------------------- |
 | Determinismo obrigatório         | Macro     | Lei #1; 145 portões; 5 das 7 etapas de fluxo       | Elimina a chamada em vez de baratear                          |
 | Protocolo Caveman tri-fase       | Macro     | `componentes/compartilhado/src-core/caveman_protocol.py`                     | 30–50% de redução na entrada, em contagem BPE                 |
-| Linter de Caveman                | Micro     | `tools/aidd-pure/scripts/core/caveman_linter.py`         | Garante a tríade ENTRADA/COT/SAÍDA por AST, sem gastar token  |
+| Linter de Caveman                | Micro     | `aidd-pure`: `scripts/core_pure/caveman_linter.py` | Garante a tríade ENTRADA/COT/SAÍDA por AST, sem gastar token  |
 | Fatiamento de contexto           | Macro     | `core/context_slicer.py`                           | Payload de assinaturas abaixo de 150 tokens                   |
 | Grafo antes de busca textual     | Macro     | `AGENTS.md` §1; MCP `code-review-graph`            | Evita leitura de arquivo inteiro e `grep` exploratório        |
 | Descarregamento de esquema MCP   | Macro     | `core/mcp_dynamic_router.py`                       | Remove milhares de tokens fixos do prompt de sistema          |
 | Estado em arquivo                | Meso      | Handoffs JSON; `cognitive_ledger.py`               | Substitui histórico conversacional por ~5k tokens tipados     |
-| Retomada inteligente             | Micro     | `tools/aidd-pure/scripts/core/pipeline_state.py`         | `--resume` pula fase completa com artefato válido             |
-| Micro-ambiente por fase          | Micro     | `tools/aidd-pure/scripts/phases/phase_*/AGENTS.md`       | Só as regras da fase corrente entram em memória               |
-| Orçamento formal por fase        | Micro     | `tools/aidd-pure/config/token_budgets.json`              | Teto declarado + limiar de desvio de 1,2                      |
+| Retomada inteligente             | Micro     | `aidd-pure`: `scripts/core_pure/pipeline_state.py` | `--resume` pula fase completa com artefato válido             |
+| Micro-ambiente por fase          | Micro     | `aidd-pure`: `scripts/phases/phase_*/AGENTS.md`    | Só as regras da fase corrente entram em memória               |
+| Orçamento formal por fase        | Micro     | `aidd-pure`: `config/token_budgets.json`           | Teto declarado + limiar de desvio de 1,2                      |
 | Auditoria de tokenomics          | Micro     | `G_TOKENOMICS`                                     | Reprova estouro de orçamento e rótulo desonesto de medição    |
-| Benchmark real                   | Micro     | `tools/aidd-pure/scripts/benchmark_tokenomics.py`        | Mede com `tiktoken` contra baseline legada                    |
-| Purga de contexto de subagente   | Macro     | `tools/aidd-forge/aidd_forge/core/subagent_purger.py`                    | Subagente morre após validação AST                            |
+| Benchmark real                   | Micro     | `aidd-pure`: `scripts/benchmark_tokenomics.py`     | Mede com `tiktoken` contra baseline legada                    |
+| Purga de contexto de subagente   | Macro     | `aidd-forge`: `aidd_forge/core/subagent_purger.py` | Subagente morre após validação AST                            |
 | Disciplina de terminal           | Macro     | `AGENTS.md` §1                                     | `tail`/`grep` obrigatórios; zero despejo de log ou lockfile   |
 | Edição por busca e substituição  | Macro     | `AGENTS.md` §1                                     | Nunca reescrever arquivo inteiro na saída                     |
 | Executor silencioso              | Macro     | `AGENTS.md` §1                                     | Status de uma linha; zero repetição de código na conversa     |
-| Protocolo delegado               | Macro     | `tools/aidd-pure/scripts/phases/utils_delegacao.py`      | Usa o modelo da sessão; zero custo adicional de API           |
+| Protocolo delegado               | Macro     | `aidd-pure`: `scripts/phases/utils_delegacao.py`   | Usa o modelo da sessão; zero custo adicional de API           |
+
+Caminhos com o nome da ferramenta na frente são relativos à pasta dela em `modulos/`: `aidd-pure` fica em
+`modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/` e `aidd-forge` em `modulos/01-governanca-e-qualidade/core/aidd-forge/`.
 
 ## 24.2 Onde o token é realmente gasto
 
