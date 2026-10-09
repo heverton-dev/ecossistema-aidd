@@ -3,9 +3,11 @@
 Inventário de capacidades (fronteiras-ferramentas ciclo-01, Ticket 3).
 
 Regras:
-  - Órfão = existia na foto e não existe mais em lugar nenhum de tools/ e componentes/.
+  - Órfão = existia na foto e não existe mais em lugar nenhum de modulos/ e componentes/.
   - Remover a cópia que tinha uma função a mais reprova; remover cópia idêntica, mover ou
     renomear arquivo não reprova.
+  - Pasta que saiu inteira do repositório (pastas_removidas, com motivo) aceita os órfãos dela;
+    se a pasta ainda existe em qualquer layout, reprova (ciclo-03 VSA, DoD 1).
   - Nomes antigos da tabela de apelidos (Ticket 4) são traduzidos antes de comparar, em
     qualquer caixa; comando de CLI só depois de 'ecossistema.py '; prosa .md não conta linha.
   - INVENTARIO-ANTES.json não pode ter nada que o detect-secrets acuse (1.033 achados
@@ -174,9 +176,10 @@ def test_comparar_sem_foto_reprova(repo):
     assert _rodar(repo, "comparar", FOTO).returncode == 1
 
 
-def _aceitos(repo, itens):
+def _aceitos(repo, itens, pastas=None):
     caminho = repo / "ORFAOS-ACEITOS.json"
-    caminho.write_text(json.dumps({"aceitos": itens}, ensure_ascii=False), encoding="utf-8")
+    dados = {"aceitos": itens} if pastas is None else {"aceitos": itens, "pastas_removidas": pastas}
+    caminho.write_text(json.dumps(dados, ensure_ascii=False), encoding="utf-8")
     return str(caminho)
 
 
@@ -199,3 +202,52 @@ def test_orfao_aceito_sem_motivo_reprova(repo):
     aceitos = _aceitos(repo, [{"arquivo": "modulos/ferramenta-velha/pacote_velho/gate.py",
                                "item": "linha: return 'so nesta copia'", "motivo": ""}])
     assert _rodar(repo, "comparar", FOTO, "--aceitos", aceitos).returncode == 1
+
+
+EXTRAS = "modulos/ferramenta-velha/materiais-extras"
+
+
+def _fotografar_com_pasta_extra(repo):
+    """Pasta de material extra com capacidade só dela (o materiais-extras/ do aidd-enterprise)."""
+    _escrever(repo, f"{EXTRAS}/rascunho.py", "def so_no_rascunho():\n    return 'material extra'\n")
+    _git(repo, "add", ".")
+    _fotografar(repo)
+
+
+def test_pasta_removida_aceita_com_motivo_nao_reprova(repo):
+    """Ciclo-03 VSA, DoD 1: pasta arquivada fora do repo entra inteira com um motivo; órfão fora dela reprova."""
+    _fotografar_com_pasta_extra(repo)
+    _git(repo, "rm", "-q", "-r", EXTRAS)
+    pastas = [{"prefixo": f"{EXTRAS}/", "motivo": "arquivada fora do repo com OK do usuário"}]
+
+    res = _rodar(repo, "comparar", FOTO, "--aceitos", _aceitos(repo, [], pastas))
+    assert res.returncode == 0, res.stdout
+    assert "1 pasta(s) removida(s)" in res.stdout
+
+    gate = repo / "modulos/ferramenta-velha/pacote_velho/gate.py"
+    gate.write_text(gate.read_text(encoding="utf-8").replace("'so nesta copia'", "None"), encoding="utf-8")
+    res = _rodar(repo, "comparar", FOTO, "--aceitos", _aceitos(repo, [], pastas))
+    assert res.returncode == 1
+    assert "so nesta copia" in res.stdout
+
+
+def test_pasta_removida_sem_motivo_reprova(repo):
+    _fotografar_com_pasta_extra(repo)
+    _git(repo, "rm", "-q", "-r", EXTRAS)
+    pastas = [{"prefixo": f"{EXTRAS}/", "motivo": " "}]
+
+    res = _rodar(repo, "comparar", FOTO, "--aceitos", _aceitos(repo, [], pastas))
+    assert res.returncode == 1
+    assert "so_no_rascunho" in res.stdout
+
+
+def test_pasta_aceita_como_removida_que_ainda_existe_reprova(repo):
+    """A foto guarda o layout antigo: a pasta que só mudou de lugar (tools/ -> modulos/<fatia>/) não saiu."""
+    _fotografar_com_pasta_extra(repo)
+    (repo / "modulos/02-fatia").mkdir()
+    _git(repo, "mv", "modulos/ferramenta-velha", "modulos/02-fatia/ferramenta-velha")
+    pastas = [{"prefixo": f"{EXTRAS}/", "motivo": "arquivada fora do repo com OK do usuário"}]
+
+    res = _rodar(repo, "comparar", FOTO, "--aceitos", _aceitos(repo, [], pastas))
+    assert res.returncode == 1, res.stdout
+    assert "ainda existe" in res.stdout

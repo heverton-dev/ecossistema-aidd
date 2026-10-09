@@ -1,7 +1,18 @@
 {
-  "descricao": "Órfãos aceitos de INVENTARIO-ANTES.json (fronteiras ciclo-01) no ciclo-03 VSA. Lista só pode diminuir; órfão novo fora dela reprova.",
+  "descricao": "Órfãos aceitos de INVENTARIO-ANTES.json (fronteiras ciclo-01) no ciclo-03 VSA. Só entra órfão com motivo e commit citado; órfão novo fora da lista reprova. 09/10 (Bloco 8, DoD 1, com OK do usuário): +143 linhas reescritas nos Tickets 6, 8 e 10 e 2 pastas removidas no Ticket 6.",
   "gerado_em": "2026-10-06",
-  "total": 579,
+  "revisado_em": "2026-10-09",
+  "total": 722,
+  "pastas_removidas": [
+    {
+      "prefixo": "tools/aidd-enterprise/materiais-extras/",
+      "motivo": "ciclo-03 T6 (bc73ec28): pasta arquivada fora do repositório com OK do usuário, em C:\\Users\\trcnologia\\arquivo-historico\\aidd-enterprise-materiais-extras (635/635 arquivos)"
+    },
+    {
+      "prefixo": "tools/aidd-generator/output-clinica/.aidd/cache/",
+      "motivo": "ciclo-03 T6 (bc73ec28): cache de execução do aidd-generator, versionado por engano e apagado como lixo versionado"
+    }
+  ],
   "aceitos": [
     {
       "arquivo": "tools/aidd-master/tests/unit/test_provision_project.py",
@@ -2897,6 +2908,721 @@
       "arquivo": "tools/aidd-planner/tests/test_vsa_compiler.py",
       "item": "linha: _ROOT_DIR = os.path.dirname(_ECOSSISTEMA_DIR)",
       "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-enterprise/scripts/cli.py",
+      "item": "linha: \"gates/G_aidd_enterprise.py\",",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-forge/scripts/cli.py",
+      "item": "linha: \"gates/G_aidd_forge.py\",",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-orca/scripts/gate_auditor.py",
+      "item": "linha: # Root-level files/dirs that trigger the meta-audit (ecossistema.py audit)",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): comentário reescrito junto com ROOT_SCOPED_PREFIXES, que ganhou as pastas de gates das fatias; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-orca/scripts/gate_auditor.py",
+      "item": "linha: ROOT_SCOPED_PREFIXES = (\"gates/\", \"scripts/\")",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-orca/tests/test_gate_auditor.py",
+      "item": "linha: \"gates/G_SEGREDOS.py\",",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-orca/tests/test_gate_auditor.py",
+      "item": "linha: tools, root = resolve_commands([\"gates/G_SEGREDOS.py\"])",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/scripts/compose_suite.py",
+      "item": "linha: docs_template_path = os.path.join(templates_v2, \"docs.html\")",
+      "motivo": "ciclo-03 T6 (bc73ec28): a última cópia da linha estava em aidd-enterprise/materiais-extras/fix_compose.py, arquivada no T6; o compose_suite.py já usa molde(templates_v2, \"docs.html\")"
+    },
+    {
+      "arquivo": "tools/aidd-factory/gates/G_FACTORY_MVP.py",
+      "item": "linha: \"scripts/phases/01_analisador.py\",",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/gates/G_FACTORY_MVP.py",
+      "item": "linha: \"scripts/phases/04_compose.py\",",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/gates/G_FACTORY_MVP.py",
+      "item": "linha: \"scripts/phases/05_init_db.py\",",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/gates/G_FACTORY_MVP.py",
+      "item": "linha: \"scripts/phases/06_env.py\",",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/gates/G_FACTORY_MVP.py",
+      "item": "linha: \"scripts/phases/__init__.py\",",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/gates/G_FACTORY_MVP.py",
+      "item": "linha: \"src/core/__init__.py\",",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/gates/G_FACTORY_MVP.py",
+      "item": "linha: \"src/core/escritor_atomico.py\",",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/gates/G_FACTORY_MVP.py",
+      "item": "linha: \"src/core/result.py\",",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/gates/G_FACTORY_MVP.py",
+      "item": "linha: \"src/core/vsa_generator.py\",",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/scripts/phases/01_analisador.py",
+      "item": "linha: sys.path.insert(0, os.path.join(_AIDD_OPS_ROOT, \"scripts\", \"phases\"))",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/scripts/pipeline_factory.py",
+      "item": "linha: from core.escritor_atomico import escrever_json_atomico",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/scripts/pipeline_factory.py",
+      "item": "linha: from core.gateway_generator import gerar_gateway",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/scripts/pipeline_factory.py",
+      "item": "linha: from core.swagger_generator import gerar_swagger",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/scripts/pipeline_factory.py",
+      "item": "linha: from core.vsa_generator import gerar_aplicacao_vsa",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/scripts/pipeline_factory.py",
+      "item": "linha: sys.path.insert(0, os.path.join(_FACTORY_ROOT, \"scripts\", \"phases\"))",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/tests/test_pipeline_factory.py",
+      "item": "linha: from core.gateway_generator import gerar_gateway",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/tests/test_pipeline_factory.py",
+      "item": "linha: from core.vsa_generator import gerar_aplicacao_vsa",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/tests/test_pipeline_factory.py",
+      "item": "linha: sys.path.insert(0, os.path.join(_FACTORY_ROOT, \"scripts\", \"phases\"))",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-forge/aidd_forge/commands/slash_router.py",
+      "item": "linha: As pastas de destino vem de `gates/manifesto_harnesses.json` (fonte unica",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-forge/aidd_forge/commands/slash_router.py",
+      "item": "linha: e `gates/G_HARNESS_COMPAT.py`) via `aidd_forge.core.harness_manifest` —",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-forge/aidd_forge/core/audit_checks.py",
+      "item": "linha: confirmada em `gates/manifesto_harnesses.json` (via `harness_manifest`).\"\"\"",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-forge/aidd_forge/core/harness_manifest.py",
+      "item": "linha: Le `gates/manifesto_harnesses.json` (fonte unica de harnesses do ecossistema,",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-forge/aidd_forge/core/harness_manifest.py",
+      "item": "linha: candidato = Path(__file__).resolve().parents[4] / \"gates\" / \"manifesto_harnesses.json\"",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-forge/aidd_forge/core/harness_manifest.py",
+      "item": "linha: ja usada por `scripts/gestor_componentes.py` e `gates/G_HARNESS_COMPAT.py`) em",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-forge/tests/unit/test_injector_profiles.py",
+      "item": "linha: # Raiz real do monorepo possui gates/manifesto_harnesses.json",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-forge/tests/unit/test_injector_profiles.py",
+      "item": "linha: assert (monorepo_root / \"gates\" / \"manifesto_harnesses.json\").exists(), (",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-forge/tests/unit/test_injector_profiles.py",
+      "item": "linha: f\"Destino canonico resolveu para raiz invalida: {monorepo_root} (gates/manifesto_harnesses.json nao existe)\"",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-forge/tests/unit/test_slash_router.py",
+      "item": "linha: # Derivado de gates/manifesto_harnesses.json (tipos_componente.command) —",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/aidd_inject.py",
+      "item": "linha: from scripts.core.injector.injetor import injetar, ResultadoInjecao",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/aidd_inject.py",
+      "item": "linha: from scripts.core.injector.profiles_registry import PROJETOS_SUPORTADOS",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/core/caveman_linter.py",
+      "item": "linha: python -m scripts.core.caveman_linter scripts/phases/  # lint all .py in dir",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/core/caveman_linter.py",
+      "item": "linha: python -m scripts.core.caveman_linter scripts/phases/02_analisador.py",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/core/injector/__init__.py",
+      "item": "linha: from scripts.core.injector.injetor import ResultadoInjecao, injetar",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/core/injector/__init__.py",
+      "item": "linha: from scripts.core.injector.injetor import injetar",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/core/injector/injetor.py",
+      "item": "linha: from scripts.core.injector import scaffolds",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/core/injector/injetor.py",
+      "item": "linha: from scripts.core.injector.contrato import validar_request",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/core/injector/injetor.py",
+      "item": "linha: from scripts.core.injector.detector_camada import detectar_tipo",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/core/injector/injetor.py",
+      "item": "linha: from scripts.core.injector.materializador import materializar",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/core/injector/injetor.py",
+      "item": "linha: from scripts.core.injector.profiles_registry import (",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/core/injector/injetor.py",
+      "item": "linha: from scripts.core.injector.sincronizador_harness import sincronizar",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/core/injector/sincronizador_harness.py",
+      "item": "linha: \"decisoes\": [\"Materializado via Injetor Universal de Componentes (scripts/core/injector/)\"],",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/gates/G_INJECT.py",
+      "item": "linha: from scripts.core.injector.contrato import validar_request, carregar_schema, TIPOS_VALIDOS",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/gates/G_INJECT.py",
+      "item": "linha: from scripts.core.injector.materializador import materializar",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/gates/G_INJECT.py",
+      "item": "linha: from scripts.core.injector.profiles_registry import PROFILES, resolver_rota",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/gates/G_INJECT.py",
+      "item": "linha: with mock.patch(\"scripts.core.injector.materializador.os.replace\", side_effect=_replace_com_falha_na_segunda_chamada):",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/phases/08_implementador.py",
+      "item": "linha: from core.repomix_runner import empacotar_repositorio, repomix_disponivel, comparar_empacotamento_tokens",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/phases/08_implementador.py",
+      "item": "linha: gate_py = pai / 'gates' / 'G_ARQUITETURA_DELIVERABLE.py'",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/pipeline_completo.py",
+      "item": "linha: from core.pipeline_state import (",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/pipeline_completo.py",
+      "item": "linha: from core.repomix_runner import empacotar_repositorio, repomix_disponivel",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/tests/test_aidd_inject_cli.py",
+      "item": "linha: from scripts.core.injector import injetor as _injetor_mod",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/tests/test_gate_inject.py",
+      "item": "linha: import scripts.core.injector.contrato as contrato_mod",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/tests/test_injector_core.py",
+      "item": "linha: assert (ecossistema_root / \"gates\" / \"manifesto_harnesses.json\").exists(), (",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/tests/test_injector_core.py",
+      "item": "linha: f\"Raiz calculada invalida: {ecossistema_root} (gates/manifesto_harnesses.json nao existe)\"",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/tests/test_injector_core.py",
+      "item": "linha: from scripts.core.injector.contrato import (",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/tests/test_injector_core.py",
+      "item": "linha: from scripts.core.injector.detector_camada import detectar_tipo",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/tests/test_injector_core.py",
+      "item": "linha: from scripts.core.injector.profiles_registry import (",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/tests/test_injector_core.py",
+      "item": "linha: import scripts.core.injector.injetor as injetor_mod",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/tests/test_injector_materializer.py",
+      "item": "linha: from scripts.core.injector.materializador import materializar",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/tests/test_injector_materializer.py",
+      "item": "linha: with mock.patch(\"scripts.core.injector.materializador.os.replace\", side_effect=replace_com_falha_na_primeira):",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/tests/test_injector_materializer.py",
+      "item": "linha: with mock.patch(\"scripts.core.injector.materializador.os.replace\", side_effect=replace_com_falha_na_segunda):",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/tests/test_injector_sincronizador.py",
+      "item": "linha: from scripts.core.injector.sincronizador_harness import sincronizar",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/tests/test_maquina_estados_e_resume.py",
+      "item": "linha: from core.pipeline_state import (",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/tests/test_repomix_runner.py",
+      "item": "linha: CORE_DIR = Path(__file__).parent.parent / 'scripts' / 'core'",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/tests/test_scaffold_mcp_sdk.py",
+      "item": "linha: from scripts.core.injector.scaffolds import gerar_mcp",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/tests/unit/test_caveman_prompts.py",
+      "item": "linha: from scripts.core.caveman_linter import (",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/tests/unit/test_orca_fleet.py",
+      "item": "linha: # Path setup para importar scripts/core",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/tests/unit/test_orca_fleet.py",
+      "item": "linha: @patch('core.detector.detectar_ferramentas')",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/tests/unit/test_orca_fleet.py",
+      "item": "linha: @patch('core.detector.detectar_orca_ade')",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/tests/unit/test_orca_fleet.py",
+      "item": "linha: @patch('core.detector.shutil.which')",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/tests/unit/test_orca_fleet.py",
+      "item": "linha: @patch('core.orca_fleet.executar_deteccao_completa')",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/tests/unit/test_orca_fleet.py",
+      "item": "linha: from core.detector import (",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/tests/unit/test_orca_fleet.py",
+      "item": "linha: from core.orca_fleet import (",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/compose_suite.py",
+      "item": "linha: docs_template_path = os.path.join(templates_v2, \"docs.html\")",
+      "motivo": "ciclo-03 T6 (bc73ec28): a última cópia da linha estava em aidd-enterprise/materiais-extras/fix_compose.py, arquivada no T6; o compose_suite.py já usa molde(templates_v2, \"docs.html\")"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/dispatch_pipeline.py",
+      "item": "linha: gate_script = self.repo_root / \"gates\" / \"G_DISPATCH_PIPELINE_VSA.py\"",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/orchestrator_pipeline.py",
+      "item": "linha: # Se for apenas o nome de um arquivo python em gates/",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/orchestrator_pipeline.py",
+      "item": "linha: gate_path = self.repo_root / \"gates\" / cmd",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/orchestrator_pipeline.py",
+      "item": "linha: gate_script = self.repo_root / \"gates\" / \"G_PIPELINE_HANDOFF.py\"",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/integration/test_scaffold_gate_arquitetura_deliverable.py",
+      "item": "linha: GATE_PATH = os.path.join(REPO_ROOT, \"gates\", \"G_ARQUITETURA_DELIVERABLE.py\")",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_dispatch_pipeline.py",
+      "item": "linha: \"quality_gates\": [\"python gates/G_SAIDA_BINARIA.py\"]",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_drift_gate_blind_spot.py",
+      "item": "linha: GATE_PATH = os.path.join(DOS_ROOT, \"gates\", \"G_DRIFT_NUCLEO_COMPARTILHADO.py\")",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_engine_router.py",
+      "item": "linha: \"quality_gates\": [\"python gates/G_SAIDA_BINARIA.py\"]",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/ansible/ansible.cfg",
+      "item": "linha: ; por isso o SSHRunner (src/core/ssh_runner.py) detecta ausencia do binario",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/ansible/playbooks/hardening.yml",
+      "item": "linha: # Tags fechadas (devem espelhar TAGS_PERMITIDAS em src/core/ssh_runner.py):",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/ansible/playbooks/hardening.yml",
+      "item": "linha: # em src/core/ssh_runner.py) por uma colecao Ansible testada e mantida:",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/gates/G_OPS_MVP.py",
+      "item": "linha: os.path.join(\"scripts\", \"phases\", \"01_intake.py\"),",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/gates/G_OPS_MVP.py",
+      "item": "linha: os.path.join(\"scripts\", \"phases\", \"02_curadoria.py\"),",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/gates/G_OPS_MVP.py",
+      "item": "linha: os.path.join(\"scripts\", \"phases\", \"03_sizing.py\"),",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/gates/G_OPS_MVP.py",
+      "item": "linha: os.path.join(\"src\", \"core\", \"result.py\"),",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/gates/G_OPS_SSH.py",
+      "item": "linha: SSH_RUNNER_PATH = os.path.join(TOOL_ROOT, \"src\", \"core\", \"ssh_runner.py\")",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/scripts/contrato_plano.py",
+      "item": "linha: from core.result import Result  # noqa: E402",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/scripts/pipeline_ops.py",
+      "item": "linha: from core.cofre_credenciais import CofreCredenciais",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/scripts/pipeline_ops.py",
+      "item": "linha: from core.compose_preflight import ComposePreflightValidator",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/scripts/pipeline_ops.py",
+      "item": "linha: from core.coolify import CoolifyClient",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/scripts/pipeline_ops.py",
+      "item": "linha: from core.coolify import CoolifyManager",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/scripts/pipeline_ops.py",
+      "item": "linha: from core.preflight import PreflightRunner",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/scripts/pipeline_ops.py",
+      "item": "linha: from core.ssh_runner import SSHRunner",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/scripts/pipeline_ops.py",
+      "item": "linha: from core.uptime_kuma import UptimeKumaManager",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/scripts/pipeline_ops.py",
+      "item": "linha: from phases import __init__ as _phases_init  # noqa: F401",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/scripts/pipeline_ops.py",
+      "item": "linha: sys.path.insert(0, os.path.join(_SCRIPTS_DIR, \"phases\"))",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/tests/test_cofre_credenciais.py",
+      "item": "linha: from src.core.cofre_credenciais import CofreCredenciais",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/tests/test_coolify.py",
+      "item": "linha: from src.core.coolify import CoolifyClient, CoolifyManager  # noqa: E402",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/tests/test_helm_integration.py",
+      "item": "linha: pelo sizing REAL (Fase 3 — scripts/phases/03_sizing.py) são injetados sem",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/tests/test_helm_integration.py",
+      "item": "linha: sys.path.insert(0, os.path.join(TOOL_ROOT, \"scripts\", \"phases\"))",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/tests/test_pipeline_ops.py",
+      "item": "linha: sys.path.insert(0, os.path.join(TOOL_ROOT, \"scripts\", \"phases\"))",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/tests/test_preflight.py",
+      "item": "linha: from src.core.preflight import PreflightRunner",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/tests/test_ssh_runner.py",
+      "item": "linha: @patch(\"src.core.ssh_runner.paramiko\")",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/tests/test_ssh_runner.py",
+      "item": "linha: @patch(\"src.core.ssh_runner.shutil.which\", return_value=\"/usr/bin/ansible-playbook\")",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/tests/test_ssh_runner.py",
+      "item": "linha: @patch(\"src.core.ssh_runner.shutil.which\", return_value=None)",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/tests/test_ssh_runner.py",
+      "item": "linha: @patch(\"src.core.ssh_runner.subprocess.run\")",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/tests/test_ssh_runner.py",
+      "item": "linha: caminho_real = os.path.join(TOOL_ROOT, \"src\", \"core\", \"ssh_runner.py\")",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/tests/test_ssh_runner.py",
+      "item": "linha: from src.core.ssh_runner import SSHRunner, TAGS_PERMITIDAS, ORDEM_BOOTSTRAP",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/tests/test_uptime_kuma.py",
+      "item": "linha: from src.core.uptime_kuma import UptimeKumaManager",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: from src.core.planner_engine import (",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: sys.path.insert(0, os.path.join(_planner_root, \"src\", \"core\"))",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/core/planner_engine.py",
+      "item": "linha: \"comando_validacao\": \"python gates/G_QUARTETO_SINE_QUA_NON.py\",",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/core/planner_engine.py",
+      "item": "linha: \"gates/G_QUARTETO_SINE_QUA_NON.py\",",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/core/planner_engine.py",
+      "item": "linha: \"gates/G_SAIDA_BINARIA.py\",",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/core/planner_engine.py",
+      "item": "linha: \"gates/G_TESTES_REAIS.py\",",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/core/planner_engine.py",
+      "item": "linha: \"python gates/G_QUARTETO_SINE_QUA_NON.py\",",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/core/planner_engine.py",
+      "item": "linha: \"quality_gates\": [\"python gates/G_SAIDA_BINARIA.py\", \"python gates/G_TESTES_REAIS.py\"],",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/gates/G_PLANNER_SCHEMA.py",
+      "item": "linha: from src.core.planner_engine import validar_plano",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: from src.core.planner_engine import (",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: sys.path.insert(0, os.path.join(_planner_root, \"src\", \"core\"))",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/core/planner_engine.py",
+      "item": "linha: \"comando_validacao\": \"python gates/G_QUARTETO_SINE_QUA_NON.py\",",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/core/planner_engine.py",
+      "item": "linha: \"gates/G_QUARTETO_SINE_QUA_NON.py\",",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/core/planner_engine.py",
+      "item": "linha: \"gates/G_SAIDA_BINARIA.py\",",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/core/planner_engine.py",
+      "item": "linha: \"gates/G_TESTES_REAIS.py\",",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/core/planner_engine.py",
+      "item": "linha: \"python gates/G_QUARTETO_SINE_QUA_NON.py\",",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/core/planner_engine.py",
+      "item": "linha: \"quality_gates\": [\"python gates/G_SAIDA_BINARIA.py\", \"python gates/G_TESTES_REAIS.py\"],",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/tests/test_planner.py",
+      "item": "linha: assert \"gates/G_SAIDA_BINARIA.py\" in manifesto[\"barreira_sincronizacao\"]",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/tests/test_planner.py",
+      "item": "linha: assert \"gates/G_TESTES_REAIS.py\" in manifesto[\"barreira_sincronizacao\"]",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/tests/test_planner.py",
+      "item": "linha: assert \"python gates/G_QUARTETO_SINE_QUA_NON.py\" in step_quarteto[\"comando_validacao\"]",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/tests/test_planner.py",
+      "item": "linha: from src.core.design_system import gerar_design_system",
+      "motivo": "ciclo-03 T10 (36c3c148, casca aidd_planner): import src.core reescrito para o core_planner; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/tests/test_planner.py",
+      "item": "linha: from src.core.planner_engine import (",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/tests/test_planner.py",
+      "item": "linha: gate_script = os.path.join(_ROOT_DIR, \"gates\", \"G_PIPELINE_HANDOFF.py\")",
+      "motivo": "ciclo-03 T8 (2e0e2722, gates na fatia dona): caminho da pasta gates/ da raiz reescrito para a pasta de gates da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/tests/test_vsa_compiler.py",
+      "item": "linha: from src.core.planner_engine import (",
+      "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
     }
   ]
 }

@@ -12,6 +12,9 @@ comparar  lista o que existia na foto e não existe mais em lugar nenhum; exit 1
           (NOMES-ANTIGOS.json, Ticket 4) são traduzidos antes de comparar; linhas comparam sem
           caixa (o nome antigo em maiúsculas é o mesmo nome) e .md fica só no nível de arquivo, porque
           a prosa é reescrita junto com o nome (195 linhas "órfãs" na Fase 4, nenhuma capacidade).
+          Pasta que saiu inteira do repositório (arquivada ou lixo apagado) entra no --aceitos
+          como pastas_removidas [{prefixo, motivo}]: os órfãos da foto sob o prefixo contam como
+          aceitos, mas a pasta não pode existir mais em layout nenhum (ciclo-03 VSA, DoD 1).
 
 Só entram arquivos rastreados pelo git: espelhos de harness e lixo local ficam de fora.
 """
@@ -118,9 +121,31 @@ def carregar_aceitos(caminho):
     return {(a["arquivo"], a["item"]): a["motivo"] for a in dados.get("aceitos", []) if a.get("motivo", "").strip()}
 
 
-def comparar(raiz, foto_json, apelidos, aceitos=None):
+def carregar_pastas_removidas(caminho):
+    """{prefixo/: motivo} de pastas que saíram inteiras do repositório; sem motivo não vale (Lei #7)."""
+    if caminho is None:
+        return {}
+    dados = json.loads(Path(caminho).read_text(encoding="utf-8"))
+    return {p["prefixo"].rstrip("/") + "/": p["motivo"] for p in dados.get("pastas_removidas", [])
+            if p.get("motivo", "").strip()}
+
+
+def _pasta_ainda_existe(prefixo, arquivos):
+    """A foto guarda o layout antigo (tools/aidd-x/...): a pasta segue viva se o caminho depois da
+    primeira pasta aparece em algum arquivo rastreado de agora, em qualquer layout."""
+    cauda = "/" + prefixo.split("/", 1)[1]
+    return any(cauda in "/" + rel for rel in arquivos)
+
+
+def comparar(raiz, foto_json, apelidos, aceitos=None, pastas_removidas=None):
     if not foto_json.is_file() or not caminho_linhas(foto_json).is_file():
         print(f"[-] FALHA: foto incompleta: {foto_json} e {caminho_linhas(foto_json).name} são obrigatórios.")
+        return 1
+    pastas = pastas_removidas or {}
+    presentes = arquivos_rastreados(raiz) if pastas else []
+    vivas = sorted(p for p in pastas if _pasta_ainda_existe(p, presentes))
+    if vivas:
+        print(f"[-] FALHA: pasta aceita como removida ainda existe no repositório: {', '.join(vivas)}")
         return 1
     antes = json.loads(foto_json.read_text(encoding="utf-8"))
     with gzip.open(caminho_linhas(foto_json), "rb") as gz:
@@ -134,13 +159,16 @@ def comparar(raiz, foto_json, apelidos, aceitos=None):
     linhas_agora = {linha.lower() for meta in linhas.values() for linha in meta["linhas_unicas"]}
 
     aceitos = aceitos or {}
-    orfas, ja_aceitos = [], 0
+    removidas = tuple(pastas)
+    orfas, ja_aceitos, de_pastas = [], 0, 0
     for rel, meta in sorted(antes.items()):
         for tipo, rotulo in TIPOS.items():
             for nome in meta[tipo]:
                 if (tipo, _traduzir(nome, trocas)) not in capacidades_agora:
                     if (rel, f"{rotulo} {nome}") in aceitos:
                         ja_aceitos += 1
+                    elif rel.startswith(removidas):
+                        de_pastas += 1
                     else:
                         orfas.append(f"{rel}: {rotulo} {nome}")
     for rel, meta in sorted(linhas_antes.items()):
@@ -150,11 +178,14 @@ def comparar(raiz, foto_json, apelidos, aceitos=None):
             if _traduzir(linha.lower(), trocas_sem_caixa) not in linhas_agora:
                 if (rel, f"linha: {linha}") in aceitos:
                     ja_aceitos += 1
+                elif rel.startswith(removidas):
+                    de_pastas += 1
                 else:
                     orfas.append(f"{rel}: linha {linha[:120]!r}")
 
     if not orfas:
         print(f"[OK] comparar: zero órfão fora da lista ({ja_aceitos} aceito(s) com motivo; "
+              f"{de_pastas} item(ns) de {len(pastas)} pasta(s) removida(s); "
               f"{len(antes)} arquivo(s) na foto, {len(indice)} agora).")
         return 0
     print(f"[-] FALHA: {len(orfas)} órfão(s): existiam na foto e não existem mais em lugar nenhum.")
@@ -175,7 +206,8 @@ def main(argv=None):
     c.add_argument("foto", help="caminho do INVENTARIO-ANTES.json")
     c.add_argument("--repo", default=".", help="raiz do repositório (padrão: .)")
     c.add_argument("--aceitos", default=None,
-                   help="JSON {aceitos: [{arquivo, item, motivo}]} de órfãos aceitos com motivo")
+                   help="JSON {aceitos: [{arquivo, item, motivo}], pastas_removidas: [{prefixo, motivo}]} "
+                        "de órfãos aceitos com motivo")
     c.add_argument("--apelidos", default=None,
                    help=f"tabela de nomes antigos (padrão: {TABELA_APELIDOS}, se existir)")
     args = p.parse_args(argv)
@@ -188,7 +220,7 @@ def main(argv=None):
     aceitos_json = None
     if args.aceitos:
         aceitos_json = Path(args.aceitos) if Path(args.aceitos).is_absolute() else raiz / args.aceitos
-    return comparar(raiz, foto_json, apelidos, carregar_aceitos(aceitos_json))
+    return comparar(raiz, foto_json, apelidos, carregar_aceitos(aceitos_json), carregar_pastas_removidas(aceitos_json))
 
 
 if __name__ == "__main__":
