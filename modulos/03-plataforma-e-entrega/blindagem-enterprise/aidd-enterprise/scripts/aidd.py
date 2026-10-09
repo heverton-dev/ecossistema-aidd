@@ -19,7 +19,7 @@ import os
 import sys
 import types
 
-# Adiciona a raiz do tool ao sys.path para que `application` (pacote de Use Cases) seja importável.
+# Adiciona a raiz do tool ao sys.path para que `application_enterprise` (pacote de Use Cases) seja importável.
 _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _ROOT not in sys.path:
     sys.path.insert(0, _ROOT)
@@ -29,30 +29,30 @@ import click  # noqa: E402
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 
-from application.commands.setup import ensure_environment, cmd_setup  # noqa: E402
-from application.commands.init import cmd_init  # noqa: E402
-from application.commands.compose import cmd_compose, cmd_compose_orca  # noqa: E402
-from application.commands.add_module import cmd_add_module, cmd_refine_module  # noqa: E402
-from application.commands.test_cmd import cmd_test  # noqa: E402
-from application.commands.audit import cmd_audit  # noqa: E402
-from application.commands.bench import cmd_bench  # noqa: E402
-from application.commands.heal import cmd_heal  # noqa: E402
-from application.commands.deploy import cmd_deploy  # noqa: E402
-from application.commands.export_frontend import cmd_export_frontend  # noqa: E402
-from application.commands.scaffold_infra import cmd_scaffold_infra  # noqa: E402
-from application.pecas_catalogo import carregar_injetor  # noqa: E402
+from application_enterprise.commands.setup import ensure_environment, cmd_setup  # noqa: E402
+from application_enterprise.commands.init import cmd_init  # noqa: E402
+from application_enterprise.commands.compose import cmd_compose, cmd_compose_orca  # noqa: E402
+from application_enterprise.commands.add_module import cmd_add_module, cmd_refine_module  # noqa: E402
+from application_enterprise.commands.test_cmd import cmd_test  # noqa: E402
+from application_enterprise.commands.audit import cmd_audit  # noqa: E402
+from application_enterprise.commands.bench import cmd_bench  # noqa: E402
+from application_enterprise.commands.heal import cmd_heal  # noqa: E402
+from application_enterprise.commands.deploy import cmd_deploy  # noqa: E402
+from application_enterprise.commands.export_frontend import cmd_export_frontend  # noqa: E402
+from application_enterprise.commands.scaffold_infra import cmd_scaffold_infra  # noqa: E402
+from application_enterprise.pecas_catalogo import carregar_injetor  # noqa: E402
 
 # Injetor pela peça selada do almoxarifado (Ticket 18 / D3).
 _injetor = carregar_injetor()
 _tentar_injecao_por_linguagem_natural = _injetor._tentar_injecao_por_linguagem_natural
 _cmd_inject_impl = _injetor.cmd_inject
-from application.commands.plan import (  # noqa: E402
+from application_enterprise.commands.plan import (  # noqa: E402
     cmd_plan,
     cmd_apply,
     parse_natural_language_intent,
 )
-from application.commands.status import cmd_status  # noqa: E402
-from application.commands.verificar_drift import cmd_verificar_drift  # noqa: E402
+from application_enterprise.commands.status import cmd_status  # noqa: E402
+from application_enterprise.commands.verificar_drift import cmd_verificar_drift  # noqa: E402
 
 
 def cmd_inject(args):

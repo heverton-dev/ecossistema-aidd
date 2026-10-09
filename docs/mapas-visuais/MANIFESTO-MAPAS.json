@@ -1,7 +1,7 @@
 {
   "ferramenta": "aidd-visual-maps",
   "catalogo": "docs/auditoria/mapa-pecas/catalogo-pecas.json",
-  "hash_catalogo": "008842df34d3e586685fb692cef4203abbc682ef80d4fab550997496d7126c5f",
+  "hash_catalogo": "3121a550c4b2709ba8d3db67f006e28a97e653600c7c2126520885151af19cf6",
   "mapas": [
     {
       "tipo": "leis",
@@ -21,14 +21,14 @@
       "tipo": "ferramentas",
       "arquivo": "docs/mapas-visuais/mapa-02-ferramentas.html",
       "versao": "tecnica",
-      "sha256": "7ad016a6674001dcfa881348f4c80aca3d4932ef7e5672bda97bef6ba2c1c565",
+      "sha256": "768725bc1479ef26c204fda4527f90e2a3299746a9bccc215438c866272b1ce2",
       "status": "concluido"
     },
     {
       "tipo": "ferramentas",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-02-ferramentas.html",
       "versao": "nao-tecnica",
-      "sha256": "9d2293bfe0fa8871e5ab326a1399e4f2bb086fc6b4cfd14680554b8942bc52e8",
+      "sha256": "4a450a6c475c3a7be45c5007067e82c0298afe1710e174f5f50f2fc9614c0f3d",
       "status": "concluido"
     },
     {
@@ -189,14 +189,14 @@
       "tipo": "modulos",
       "arquivo": "docs/mapas-visuais/mapa-14-modulos.html",
       "versao": "tecnica",
-      "sha256": "7004f010b44d3acab6fbc7b49e6708ad9738fbac2eaf167554bb809db4374951",
+      "sha256": "25b3d6c90dcfe28540468aed330c99fb07ac7272c8e6326a0149e0b44402775b",
       "status": "concluido"
     },
     {
       "tipo": "modulos",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-14-modulos.html",
       "versao": "nao-tecnica",
-      "sha256": "fe4686aeb8336e1d670e61527a89c9446203784839288d4866b8b49d85fcc71e",
+      "sha256": "66ca814b1a9bca2d92c0b27d3952e3487f23d5321ce00a6f00170a9a2549e516",
       "status": "concluido"
     },
     {
@@ -269,7 +269,7 @@
       "comando": "python componentes/compartilhado/skills/aidd-textbook/scripts/livro.py build docs/livros/mapas-aidd",
       "exit_code": 0,
       "pdf": "docs/livros/mapas-aidd/26-09-2026_LIVRO-MAPAS-AIDD.pdf",
-      "sha256": "787dc999d1a0100cf51bba94fd5cbf8277143ae70004ed4887efab3c6294aa60"
+      "sha256": "52e9a7e552aab467419857f047fae818f4975b765c8b34e0770fd68584c0f603"
     }
   }
 }

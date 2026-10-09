@@ -1552,3 +1552,20 @@
   - `python scripts/cli_modularizacao_vsa.py verify` → exit 1 antes (23 violações), exit 0 depois.
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 08/10/2026.
+
+## 51. Modularização VSA ciclo-03, Bloco 9 (Ticket 23): esqueleto de app só no `aidd-master`
+
+- **Objetivo da Correção:**
+  O app de demonstração (`src/` fora de `src/core`, `alembic/`, `alembic.ini`, `alembic_models.py`) era cópia byte a byte entre `aidd-enterprise` e `aidd-master`: 40 arquivos idênticos. Decisão do usuário (09/10): a maquete fica no master, dono da construção; o enterprise só blinda.
+- **Ferramentas Tocadas:** `aidd-enterprise` (saem os 40 arquivos e 2 testes que só exercitavam o app; lista e blobs em `docs/auditoria/modularizacao-vsa/ciclo-03/REMOCAO-ESQUELETO.md`; o conteúdo segue no master). O pacote `application` virou `application_enterprise`. A peça compartilhada `injetor/inject.py` passou a achar o `setup` pelo pacote da âncora (selo do `CATALOGO.json` atualizado). `aidd-master` sem mudança de código.
+- **O que executou:**
+  1. `tests/test_esqueleto_unico_enterprise_master.py` (novo).
+  2. `G_MIGRATION_ROT` sem o alvo do enterprise; `allowlist_modulo_fronteira.json` com teto 52 → 51; `allowlist_pacotes_repetidos.json` só com `core` (núcleo vendorizado, exceção do usuário no DoD 4).
+  3. Catálogo de peças, mapas, livro, status de testes e baseline de segredos regenerados.
+- **Resultados de Testes (09/10/2026):**
+  - `pytest tests/test_esqueleto_unico_enterprise_master.py` → exit 1 antes (3 failed, 40 arquivos idênticos), exit 0 depois (com `test_interfaces_fatias.py`: 20 passed).
+  - Suíte do `aidd-enterprise` → 341 → 338 passed, exit 0 (os 3 do `test_modulo1` seguem no master); suíte do `aidd-master` → 417 passed, exit 0.
+  - `G_DRIFT_NUCLEO_COMPARTILHADO`, `G_MODULO_FRONTEIRA` (bloqueio, 51 perdoados, 0 mortos), `G_COPIA_UNICA_VSA` e `G_MIGRATION_ROT` (1 alvo) → exit 0.
+- **Achados (sem correção neste ticket):** o `pytest.ini` das ferramentas tem `testpaths = tests/unit`, então `tests/integration/` e a raiz de `tests/` não rodam na suíte; 4 testes `test_gate_drift_*` em `test_fronteira_enterprise.py` já falham na main e ficam fora de qualquer suíte.
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 09/10/2026.

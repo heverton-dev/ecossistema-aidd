@@ -482,7 +482,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-enterprise",
       "versao": "1.0.0",
-      "sha256": "sha256-1e1b559aa9038dc517ff23ee7afb5c7546a586ac84d80a34d0b4ccb56197a367",
+      "sha256": "sha256-7b9621d3fdd5b846f20a6b1316e47cb0de7b12e527eaf87b18ca076056542fcc",
       "consumidores": [
         "aidd-enterprise",
         "aidd-master"

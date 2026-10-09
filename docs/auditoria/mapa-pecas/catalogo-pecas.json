@@ -56,7 +56,7 @@
       ],
       "gates_proprios": [],
       "mcps_proprios": [],
-      "arquivos_py": 157
+      "arquivos_py": 124
     },
     {
       "id": "aidd-forge",
@@ -6229,7 +6229,7 @@
             "aidd-enterprise"
           ],
           "guardas": 0,
-          "arquivos_py": 159
+          "arquivos_py": 126
         },
         {
           "id": "fatiamento-master",

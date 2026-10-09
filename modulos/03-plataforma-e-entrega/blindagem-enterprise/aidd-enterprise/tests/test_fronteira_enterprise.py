@@ -3,7 +3,7 @@
 
 Fronteiras validadas:
 1. Os caminhos de código do enterprise (CLI `scripts/aidd.py` e os Use Cases
-   em `application/`) não importam `compose_suite`, `provision_project`,
+   em `application_enterprise/`) não importam `compose_suite`, `provision_project`,
    `scaffold_infra`, `openapi_to_ts`, `scripts/add_module` nem
    `subagent_engine`, e não leem `templates/core` / `templates/v2` nem
    arquivos de infra (Dockerfile, docker-compose, deploy.sh, nginx). As
@@ -76,10 +76,10 @@ PASTAS_TEMPLATE_PROIBIDAS = {"core", "v2"}
 
 def _caminhos_de_codigo() -> list[Path]:
     arquivos = [ENTERPRISE_DIR / "scripts" / "aidd.py"]
-    arquivos += sorted((ENTERPRISE_DIR / "application").rglob("*.py"))
-    # application/commands/inject.py é a cópia antiga do injetor (catálogo: copias
+    arquivos += sorted((ENTERPRISE_DIR / "application_enterprise").rglob("*.py"))
+    # application_enterprise/commands/inject.py é a cópia antiga do injetor (catálogo: copias
     # de injetor/inject.py); fica no disco até o Ticket 19 e não é mais importada.
-    return [a for a in arquivos if a != ENTERPRISE_DIR / "application" / "commands" / "inject.py"]
+    return [a for a in arquivos if a != ENTERPRISE_DIR / "application_enterprise" / "commands" / "inject.py"]
 
 
 def _violacoes_estaticas(caminho: Path) -> list[str]:
@@ -97,9 +97,9 @@ def _violacoes_estaticas(caminho: Path) -> list[str]:
         else:
             nomes = []
         for nome in nomes:
-            # application.commands.<x> são os Use Cases do próprio enterprise (ex.: o
+            # application_enterprise.commands.<x> são os Use Cases do próprio enterprise (ex.: o
             # scaffold_infra que delega ao dono), não as cópias de scripts/.
-            proprio = nome.startswith("application.")
+            proprio = nome.startswith("application_enterprise.")
             if nome in MODULOS_PROIBIDOS or (not proprio and nome.split(".")[-1] in MODULOS_PROIBIDOS):
                 achados.append(f"{rel}:{no.lineno} importa {nome}")
             if isinstance(no, ast.ImportFrom) and no.module == "add_module":
@@ -190,7 +190,7 @@ class _SaidaFalsa(list):
 
 
 def _instalar_popen_falso(monkeypatch, codigo=0):
-    delegacao = importlib.import_module("application.commands.delegacao")
+    delegacao = importlib.import_module("application_enterprise.commands.delegacao")
     falso = type("PopenFalso", (_PopenFalso,), {"chamadas": [], "codigo": codigo})
     monkeypatch.setattr(delegacao.subprocess, "Popen", falso)
     return falso
@@ -203,7 +203,7 @@ def chamadas_delegadas(monkeypatch):
 
 @pytest.mark.parametrize("comando,funcao,args,esperado", CASOS_DELEGACAO, ids=[c[0] for c in CASOS_DELEGACAO])
 def test_comando_de_construcao_e_delegado_ao_master(chamadas_delegadas, tmp_path, capsys, comando, funcao, args, esperado):
-    commands = importlib.import_module("application.commands")
+    commands = importlib.import_module("application_enterprise.commands")
     alvo = str(tmp_path / "projeto")
     modulos_antes = set(sys.modules)
     getattr(commands, funcao)(args(alvo))
@@ -220,14 +220,14 @@ def test_comando_de_construcao_e_delegado_ao_master(chamadas_delegadas, tmp_path
 
 
 def test_plan_delegado_preserva_injecao_por_linguagem_natural_local(chamadas_delegadas, tmp_path):
-    commands = importlib.import_module("application.commands")
+    commands = importlib.import_module("application_enterprise.commands")
     commands.cmd_plan("crie um crm", base_dir=str(tmp_path), auto_apply=True)
     assert [c["cmd"][2:] for c in chamadas_delegadas] == [["plan", "crie um crm", "--dir", str(tmp_path), "--apply"]]
 
 
 def test_delegacao_propaga_exit_code_do_dono(monkeypatch, tmp_path):
     _instalar_popen_falso(monkeypatch, codigo=3)
-    commands = importlib.import_module("application.commands")
+    commands = importlib.import_module("application_enterprise.commands")
     with pytest.raises(SystemExit) as exc:
         commands.cmd_heal(_ns(dir=str(tmp_path)))
     assert exc.value.code == 3
@@ -254,7 +254,7 @@ def test_cli_real_init_delega_e_nao_gera_infra(tmp_path):
 # =============================================================================
 
 def test_injetor_vem_da_peca_do_almoxarifado():
-    pecas = importlib.import_module("application.pecas_catalogo")
+    pecas = importlib.import_module("application_enterprise.pecas_catalogo")
     injetor = pecas.carregar_injetor()
 
     peca_inject = caminho_peca("injetor/inject.py").resolve()
@@ -265,7 +265,7 @@ def test_injetor_vem_da_peca_do_almoxarifado():
         origem = Path(sys.modules[modulo].__spec__.origin).resolve()
         assert origem == caminho_peca(peca).resolve(), f"{modulo} veio de {origem}"
 
-    commands = importlib.import_module("application.commands")
+    commands = importlib.import_module("application_enterprise.commands")
     assert commands.cmd_inject is injetor.cmd_inject
     assert commands.run_inject is injetor.run_inject
     aidd = importlib.import_module("aidd")
@@ -273,7 +273,7 @@ def test_injetor_vem_da_peca_do_almoxarifado():
 
 
 def test_injetor_da_peca_ancora_no_enterprise():
-    pecas = importlib.import_module("application.pecas_catalogo")
+    pecas = importlib.import_module("application_enterprise.pecas_catalogo")
     injetor = pecas.carregar_injetor()
     assert injetor._projeto_padrao() == "aidd-enterprise"
     assert Path(injetor._core_src_path()).resolve() == (ENTERPRISE_DIR / "src" / "core").resolve()
@@ -293,7 +293,7 @@ def _raiz_fake_com_peca(tmp_path: Path, conteudo: bytes, sha_catalogo: str) -> P
 
 
 def test_selo_sha256_recusa_peca_adulterada(tmp_path):
-    pecas = importlib.import_module("application.pecas_catalogo")
+    pecas = importlib.import_module("application_enterprise.pecas_catalogo")
     original = b"VALOR = 1\n"
     raiz = _raiz_fake_com_peca(tmp_path, b"VALOR = 2  # adulterada\n", hashlib.sha256(original).hexdigest())
     with pytest.raises(pecas.ErroSeloPeca) as exc:
@@ -302,7 +302,7 @@ def test_selo_sha256_recusa_peca_adulterada(tmp_path):
 
 
 def test_selo_sha256_aceita_peca_integra(tmp_path):
-    pecas = importlib.import_module("application.pecas_catalogo")
+    pecas = importlib.import_module("application_enterprise.pecas_catalogo")
     conteudo = b"VALOR = 1\n"
     raiz = _raiz_fake_com_peca(tmp_path, conteudo, hashlib.sha256(conteudo).hexdigest())
     caminho = pecas.verificar_selo("injetor/inject.py", raiz=raiz)

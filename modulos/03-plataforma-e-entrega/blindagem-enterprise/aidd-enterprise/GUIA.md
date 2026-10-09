@@ -11,7 +11,7 @@
 O **AIDD Master Enterprise** eleva o ecossistema de desenvolvimento assistido por IA ao nível máximo de robustez, determinismo e alta performance. Ele resolve definitivamente falhas e alucinações de geração ao impor regras mecânicas inegociáveis:
 
 - **Isolamento de Domínios (Vertical Slices):** Cada domínio de negócio reside em seu próprio pacote (`src/modules/<dominio>/`), estruturado em Clean Architecture — `domain/` (entidades e regras puras), `application/` (casos de uso), `infrastructure/` (SQL isolado) e `interfaces/` (rotas finas) — com `models.py`/`services.py`/`routes.py` mantidos como fachadas finas de compatibilidade, testes `pytest` e componente UI.
-- **CLI Fina + Camada de Aplicação:** `scripts/aidd.py` é uma casca fina de parsing (Click); toda a lógica de comando vive em `application/commands/` como Use Cases testáveis isoladamente.
+- **CLI Fina + Camada de Aplicação:** `scripts/aidd.py` é uma casca fina de parsing (Click); toda a lógica de comando vive em `application_enterprise/commands/` como Use Cases testáveis isoladamente.
 - **Núcleo Compartilhado Único:** `src/core/` é sincronizado a partir da fonte única `componentes/compartilhado/src-core/` — zero duplicação silenciosa com o AIDD Master.
 - **Banco de Dados Poliglota & Resiliente:** Suporte nativo a SQLite em modo WAL concorrente, PostgreSQL e Supabase via `DatabaseAdapter` e isolamento multi-tenant por Row-Level Security (RLS).
 - **Subagentes Efêmeros com Context-Purge:** Composição de módulos via subagentes isolados que consomem apenas suas fatias específicas (~1.200 tokens) e têm o contexto purgado imediatamente após o build.
@@ -41,7 +41,7 @@ O **AIDD Master Enterprise** opera sob a Supremacia Agnóstica como pilar de seg
 ```
 aidd-master-enterprise/
 ├── scripts/
-│   ├── aidd.py               # CLI fina (parsing Click) — delega tudo para application/commands/
+│   ├── aidd.py               # CLI fina (parsing Click) — delega tudo para application_enterprise/commands/
 │   ├── compose_suite.py      # Motor de Composição Enterprise Modular
 │   ├── add_module.py         # Gerador atômico de Fatias Verticais (já no molde Clean Architecture)
 │   ├── provision_project.py  # Provisionador de projetos modulares
@@ -58,7 +58,7 @@ aidd-master-enterprise/
 │       ├── G_SEGURANCA.py
 │       ├── G_CHAOS.py
 │       └── G_HARNESS_COMPAT.py
-├── application/
+├── application_enterprise/
 │   └── commands/             # Use Cases da CLI — um arquivo por comando, testável isoladamente
 ├── src/                      # Código-fonte operacional do framework
 │   ├── core/                 # Shared Kernel (sincronizado de componentes/compartilhado/src-core/)

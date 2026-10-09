@@ -5,12 +5,19 @@
 # sincronizar). cmd_inject atende as duas CLIs: --content-file com listas por vírgula (enterprise) e
 # --conteudo-file/--projeto com --mcp-args/--mcp-env em JSON (master).
 
+import importlib
 import json
 import os
 from pathlib import Path
 import sys
 
-from application.commands.setup import ensure_environment
+
+def ensure_environment():
+    """Use Case `setup` da ferramenta que carregou a peça. A âncora (`__file__`) é
+    <ferramenta>/<pacote de Use Cases>/commands/inject.py, e o pacote tem nome único por fatia
+    (`application` no aidd-master, `application_enterprise` no aidd-enterprise; ciclo-03 T23)."""
+    pacote = Path(__file__).resolve().parent.parent.name
+    return importlib.import_module(f"{pacote}.commands.setup").ensure_environment()
 
 
 def _core_src_path() -> str:

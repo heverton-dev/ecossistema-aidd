@@ -1,6 +1,6 @@
 {
   "descricao": "Acoplamentos entre fatias perdoados com data. So pode diminuir (G_MODULO_FRONTEIRA).",
-  "teto": 52,
+  "teto": 51,
   "entradas": [
     {
       "arquivo": "modulos/01-governanca-e-qualidade/core/aidd-forge/tests/test_almoxarifado.py",
@@ -159,13 +159,6 @@
     {
       "arquivo": "modulos/02-triade-motores/fluxo-03-freedom/gates/G_MIGRATION_ROT.py",
       "tipo": "caminho",
-      "alvo": "blindagem-enterprise",
-      "data": "2026-10-07",
-      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
-    },
-    {
-      "arquivo": "modulos/02-triade-motores/fluxo-03-freedom/gates/G_MIGRATION_ROT.py",
-      "tipo": "caminho",
       "alvo": "fatiamento-master",
       "data": "2026-10-07",
       "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
@@ -178,14 +171,14 @@
       "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
     },
     {
-      "arquivo": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/application/pecas_catalogo.py",
+      "arquivo": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/application_enterprise/pecas_catalogo.py",
       "tipo": "caminho",
       "alvo": "01-governanca-e-qualidade",
       "data": "2026-10-07",
       "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
     },
     {
-      "arquivo": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/application/pecas_catalogo.py",
+      "arquivo": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/application_enterprise/pecas_catalogo.py",
       "tipo": "import",
       "alvo": "01-governanca-e-qualidade",
       "data": "2026-10-07",
