@@ -1,8 +1,8 @@
 {
-  "descricao": "Órfãos aceitos de INVENTARIO-ANTES.json (fronteiras ciclo-01) no ciclo-03 VSA. Só entra órfão com motivo e commit citado; órfão novo fora da lista reprova. 09/10 (Bloco 8, DoD 1, com OK do usuário): +143 linhas reescritas nos Tickets 6, 8 e 10 e 2 pastas removidas no Ticket 6.",
+  "descricao": "Órfãos aceitos de INVENTARIO-ANTES.json (fronteiras ciclo-01) no ciclo-03 VSA. Só entra órfão com motivo e commit citado; órfão novo fora da lista reprova. 09/10 (Bloco 8, DoD 1, com OK do usuário): +143 linhas reescritas nos Tickets 6, 8 e 10 e 2 pastas removidas no Ticket 6; +2 linhas reescritas no Ticket 23 (pacote application_enterprise).",
   "gerado_em": "2026-10-06",
   "revisado_em": "2026-10-09",
-  "total": 722,
+  "total": 724,
   "pastas_removidas": [
     {
       "prefixo": "tools/aidd-enterprise/materiais-extras/",
@@ -3623,6 +3623,16 @@
       "arquivo": "tools/aidd-planner/tests/test_vsa_compiler.py",
       "item": "linha: from src.core.planner_engine import (",
       "motivo": "ciclo-03 T10 (462532b0, pacotes sem nome repetido): import/caminho reescrito para o pacote de nome único da fatia; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/scripts/aidd.py",
+      "item": "linha: from application.commands.scaffold_infra import cmd_scaffold_infra  # noqa: E402",
+      "motivo": "ciclo-03 T23 (d9f81a43, esqueleto só no master): import reescrito para o pacote application_enterprise, que o T23 criou; a última cópia da linha estava no scripts/aidd.py do enterprise; nenhuma função, classe ou teste se perdeu"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/aidd.py",
+      "item": "linha: from application.commands.scaffold_infra import cmd_scaffold_infra  # noqa: E402",
+      "motivo": "ciclo-03 T23 (d9f81a43, esqueleto só no master): import reescrito para o pacote application_enterprise, que o T23 criou; a última cópia da linha estava no scripts/aidd.py do enterprise; nenhuma função, classe ou teste se perdeu"
     }
   ]
 }

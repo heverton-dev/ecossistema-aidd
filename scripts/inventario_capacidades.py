@@ -131,7 +131,7 @@ def carregar_pastas_removidas(caminho):
 
 
 def _pasta_ainda_existe(prefixo, arquivos):
-    """A foto guarda o layout antigo (tools/aidd-x/...): a pasta segue viva se o caminho depois da
+    """A foto guarda o caminho do layout de antes da VSA: a pasta segue viva se o caminho depois da
     primeira pasta aparece em algum arquivo rastreado de agora, em qualquer layout."""
     cauda = "/" + prefixo.split("/", 1)[1]
     return any(cauda in "/" + rel for rel in arquivos)
