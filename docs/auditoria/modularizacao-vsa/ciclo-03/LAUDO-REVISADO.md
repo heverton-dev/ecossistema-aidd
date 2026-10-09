@@ -94,7 +94,8 @@
 - Antes: `python ecossistema.py audit` com exit 1 (62 aprovados, 1 reprovado: `G_SEGREDOS` regravava o `.secrets.baseline`), 1.360 s.
 - Provas:
   - `python ecossistema.py audit` sobre a `main` `ee9e15f1` (08/10, 17:48–18:20) → exit 0; 66 aprovados, 0 reprovados; `G_TESTES_REAIS` com 3.689 testes passando, 0 falhas.
-- Estado: resolvido (`G_SEGREDOS` idempotente no Ticket 9). O `gate_final` do Bloco 8 fica registrado no `PROMPT-CONTINUACAO.md`.
+  - `gate_final` do Bloco 8: `python ecossistema.py audit` sobre `3c36348f`, já sobre o T23 (09/10, 16:32–17:06, TEMP em `aidd-tmp`) → exit 0; 66 aprovados, 0 reprovados, 33min42s (`G_SEGREDOS` 7min07s, `G_TESTES_REAIS` 24min05s).
+- Estado: resolvido (`G_SEGREDOS` idempotente no Ticket 9). O `gate_final` do Bloco 8 também fica registrado no `PROMPT-CONTINUACAO.md`.
 
 ## Critérios de aceite (DOD.md)
 
