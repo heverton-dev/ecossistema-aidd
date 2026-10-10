@@ -2608,69 +2608,193 @@ body {
     touch-action: pan-y;
   }
 
-  /* KANBAN TRILHA */
-  .kanban-cabecalho {
+  /* QUANDO KANBAN ESTÁ ATIVO NO MOBILE: OCULTA NAVEGAÇÃO PRINCIPAL PARA MÁXIMA ALTURA */
+  body.kanban-ativo .barra-navegacao-secao {
+    display: none !important;
+  }
+
+  body.kanban-ativo .conteudo-principal {
+    padding-top: 0.25rem;
+    height: calc(100vh - 58px);
+    display: flex;
     flex-direction: column;
-    align-items: stretch;
+  }
+
+  /* KANBAN TRILHA OPERACIONAL MOBILE */
+  .kanban-wrapper {
+    flex: 1;
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .kanban-cabecalho {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.4rem 0.65rem;
+    margin-bottom: 0.35rem;
     gap: 0.5rem;
-    padding: 0.65rem;
   }
 
   .kanban-cabecalho-esquerda {
-    justify-content: space-between;
-    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .btn-voltar {
+    min-height: 38px;
+    padding: 0.35rem 0.65rem;
+    font-size: 0.775rem;
+    flex-shrink: 0;
+  }
+
+  .kanban-titulo-bloco {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .badge-fluxo-ativo {
+    display: none;
+  }
+
+  .kanban-titulo-texto {
+    font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .kanban-cabecalho-centro {
+    width: auto;
+    flex-shrink: 0;
+  }
+
+  .caixa-busca-kanban {
+    width: 120px;
+  }
+
+  .caixa-busca-kanban .input-busca {
+    min-height: 36px;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.45rem 0.25rem 1.6rem;
   }
 
   .kanban-cabecalho-direita {
     display: none;
   }
 
+  /* ESTEIRA COMPACTA EM LINHA */
   .esteira-topologica-visual {
+    padding: 0.25rem 0.5rem;
+    margin-bottom: 0.35rem;
+    gap: 0.35rem;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    padding-bottom: 0.5rem;
     scrollbar-width: none;
-    scroll-snap-type: x proximity;
-  }
-
-  .esteira-passo {
-    scroll-snap-align: start;
+    border-radius: var(--raio-p);
     flex-shrink: 0;
   }
 
-  .barra-atalhos-colunas {
+  .passo-esteira {
+    padding: 0.15rem 0.4rem;
+    font-size: 0.685rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .seta-esteira {
+    font-size: 0.6rem;
+    flex-shrink: 0;
+  }
+
+  /* BARRA DE TABS / ATALHOS DE COLUNAS NO MOBILE */
+  #kanban-atalhos-colunas {
+    display: flex;
+    gap: 0.4rem;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    scroll-snap-type: x proximity;
-    padding-bottom: 0.3rem;
+    padding: 0.2rem 0.1rem 0.4rem 0.1rem;
+    margin-bottom: 0.45rem;
+    scroll-snap-type: x mandatory;
+    flex-shrink: 0;
   }
 
-  .btn-atalho-coluna {
-    min-height: 40px;
+  .chip-coluna-atalho {
+    min-height: 38px;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.775rem;
+    white-space: nowrap;
+    flex-shrink: 0;
     scroll-snap-align: start;
-    padding: 0.4rem 0.75rem;
+    border-radius: 999px;
   }
 
-  .kanban-quadro {
+  .chip-coluna-atalho.ativa {
+    background: var(--bg-destaque);
+    border-color: var(--c-vivo);
+    color: var(--c-vivo);
+    font-weight: 600;
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.25);
+  }
+
+  /* TRILHA E COLUNAS KANBAN EM TELA CHEIA RESPONSIVA */
+  .kanban-trilha {
+    flex: 1;
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    gap: 0.75rem;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: x mandatory;
-    gap: 0.75rem;
-    padding: 0.65rem;
-    padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 1.5rem));
+    scroll-padding: 0.5rem;
+    padding: 0.25rem 0.25rem max(1.5rem, env(safe-area-inset-bottom, 1.5rem)) 0.25rem;
   }
 
-  .coluna-kanban {
-    min-width: 88vw;
-    width: 88vw;
-    max-width: 88vw;
+  .kanban-coluna {
+    min-width: 90vw !important;
+    width: 90vw !important;
+    max-width: 90vw !important;
     scroll-snap-align: center;
+    height: 100%;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-superficie);
+    border: 1px solid var(--borda-base);
+    border-radius: var(--raio-m);
+    box-sizing: border-box;
   }
 
-  .cartao-kanban {
+  .coluna-topo {
+    padding: 0.65rem 0.85rem;
+    background: var(--bg-elevado);
+    border-bottom: 1px solid var(--borda-suave);
+    border-top-left-radius: var(--raio-m);
+    border-top-right-radius: var(--raio-m);
+    flex-shrink: 0;
+  }
+
+  .coluna-corpo {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0.65rem;
+    gap: 0.65rem;
+  }
+
+  .cartao-execucao {
     padding: 0.85rem;
     touch-action: pan-y;
+    border-radius: var(--raio-m);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
   }
 
   /* GAVETA LATERAL (FULLSCREEN NO SMARTPHONE) */

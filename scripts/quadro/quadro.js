@@ -474,6 +474,7 @@ async function abrirKanban(pipeId) {
   
   if (grade) grade.classList.add("escondido");
   if (kanban) kanban.classList.remove("escondido");
+  document.body.classList.add("kanban-ativo");
 
   const bannerTexto = document.getElementById("texto-fluxo-ativo");
   const bannerEl = document.getElementById("banner-fluxo-ativo");
@@ -487,6 +488,7 @@ function fecharKanban() {
   ESTADO_GLOBAL.pipelineSelecionado = null;
   ESTADO_GLOBAL.filtroKanban = "";
   ESTADO_GLOBAL.cacheKanbanJson = "";
+  document.body.classList.remove("kanban-ativo");
 
   const cKanban = document.getElementById("campo-busca-kanban");
   if (cKanban) cKanban.value = "";
@@ -616,7 +618,10 @@ async function carregarKanban(pipeId) {
           (col.id === "concluido" && cartoes.length > 0 ? " concluidos-destaque" : "");
         chip.title = `Rolar até a coluna ${col.titulo} (${cartoes.length} execuções)`;
         chip.onclick = () => {
-          elCol.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+          barraAtalhos.querySelectorAll(".chip-coluna-atalho").forEach(c => c.classList.remove("ativa"));
+          chip.classList.add("ativa");
+          elCol.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
+          tocarSom("clique");
         };
 
         const chipTxt = document.createElement("span");
