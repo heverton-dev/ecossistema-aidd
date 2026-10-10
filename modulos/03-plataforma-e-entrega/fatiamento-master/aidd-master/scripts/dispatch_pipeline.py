@@ -221,8 +221,10 @@ class VSADispatchPipeline:
                 return False
             self.log(f"[INTEGRIDADE] SHA-256 verificado com sucesso: {sha_declarado[:12]}...")
 
-        # Validação formal via Quality Gate G_DISPATCH_PIPELINE_VSA
-        gate_script = self.repo_root / "modulos" / "03-plataforma-e-entrega" / "gates" / "G_DISPATCH_PIPELINE_VSA.py"
+        # Validação formal via Quality Gate G_DISPATCH_PIPELINE_VSA (T-004)
+        gate_script = ECOSSISTEMA_DIR / "modulos" / "03-plataforma-e-entrega" / "gates" / "G_DISPATCH_PIPELINE_VSA.py"
+        if not gate_script.is_file():
+            gate_script = self.repo_root / "modulos" / "03-plataforma-e-entrega" / "gates" / "G_DISPATCH_PIPELINE_VSA.py"
         if gate_script.is_file():
             # Salva temporário se for compilado sob demanda
             temp_manifest = self.dispatch_path
@@ -353,6 +355,20 @@ class VSADispatchPipeline:
             )
             if res2.returncode != 0:
                 raise RuntimeError(f"Falha ao criar worktree para fatia {slice_id}: {res.stderr or res2.stderr}")
+
+        # T-001: Garantir presença incondicional de __init__.py nas worktrees efêmeras
+        (worktree_path / "src").mkdir(parents=True, exist_ok=True)
+        (worktree_path / "src" / "__init__.py").touch(exist_ok=True)
+        (worktree_path / "src" / "slices").mkdir(parents=True, exist_ok=True)
+        (worktree_path / "src" / "slices" / "__init__.py").touch(exist_ok=True)
+        (worktree_path / "src" / "slices" / clean_id).mkdir(parents=True, exist_ok=True)
+        (worktree_path / "src" / "slices" / clean_id / "__init__.py").touch(exist_ok=True)
+        (worktree_path / "tests").mkdir(parents=True, exist_ok=True)
+        (worktree_path / "tests" / "__init__.py").touch(exist_ok=True)
+        (worktree_path / "tests" / "slices").mkdir(parents=True, exist_ok=True)
+        (worktree_path / "tests" / "slices" / "__init__.py").touch(exist_ok=True)
+        (worktree_path / "tests" / "slices" / clean_id).mkdir(parents=True, exist_ok=True)
+        (worktree_path / "tests" / "slices" / clean_id / "__init__.py").touch(exist_ok=True)
 
         active = ActiveSliceWorktree(slice_id=slice_id, branch_name=branch_name, worktree_path=worktree_path)
         self.active_worktrees.append(active)
@@ -724,10 +740,12 @@ class VSADispatchPipeline:
                 check=False,
             )
             if status_proc.stdout.strip():
-                self.log("Detectadas alterações pendentes no repositório base. Realizando checkpoint preventivo antes do despacho...")
+                self.log("Detectadas alterações pendentes no repositório base. Realizando checkpoint preventivo antes do despacho (T-002)...")
+                subprocess.run(["git", "config", "user.name", "AIDD Master Bot"], cwd=str(self.repo_root), check=False)
+                subprocess.run(["git", "config", "user.email", "aidd-bot@ecosystem.local"], cwd=str(self.repo_root), check=False)
                 subprocess.run(["git", "add", "-A"], cwd=str(self.repo_root), check=False)
                 subprocess.run(
-                    ["git", "commit", "--no-verify", "-m", "chore(vsa): checkpoint do estado do repositório antes do dispatch"],
+                    ["git", "commit", "--no-verify", "-m", "chore(master): checkpoint pre-dispatch [auto]"],
                     cwd=str(self.repo_root),
                     check=False,
                 )

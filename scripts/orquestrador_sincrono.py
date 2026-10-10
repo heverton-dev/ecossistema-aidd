@@ -321,9 +321,11 @@ class OrquestradorSincrono:
             return False
 
         if not self.dry_run:
+            subprocess.run(["git", "config", "user.name", "AIDD Master Bot"], cwd=str(self.pasta), check=False)
+            subprocess.run(["git", "config", "user.email", "aidd-bot@ecosystem.local"], cwd=str(self.pasta), check=False)
             subprocess.run(["git", "add", "-A"], cwd=str(self.pasta), check=False)
             subprocess.run(
-                ["git", "commit", "--no-verify", "-m", "chore(master): fatiamento inicial do monólito modular"],
+                ["git", "commit", "--no-verify", "-m", "chore(master): checkpoint pre-dispatch [auto]"],
                 cwd=str(self.pasta),
                 check=False,
             )
@@ -407,7 +409,7 @@ class OrquestradorSincrono:
         alvo_ui = next((p for p in candidatos_ui if p.is_dir()), None)
         if alvo_ui:
             self.log(f"Frontend detectado em {alvo_ui}. Acionando /impeccable-full mandatório...", "INFO")
-            launcher_cmd = Path(ECOSSISTEMA_DIR) / ".claude" / "skills" / "impeccable" / "scripts" / "impeccable.cmd"
+            launcher_cmd = ROOT_DIR / ".claude" / "skills" / "impeccable" / "scripts" / "impeccable.cmd"
             if launcher_cmd.is_file():
                 cmd_imp = [str(launcher_cmd), "signals"]
                 self._executar_comando(cmd_imp, cwd=str(self.pasta))

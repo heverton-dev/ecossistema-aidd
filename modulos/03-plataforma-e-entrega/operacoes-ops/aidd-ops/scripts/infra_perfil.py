@@ -288,14 +288,6 @@ def renderizar_compose(
             f"DATABASE_URL=postgresql://{USUARIO_BANCO}:{SENHA_BANCO}@db:{PORTA_BANCO}/{banco}"
         )
         depende["db"] = {"condition": "service_healthy"}
-    else:
-        # T-005: Suporte soberano a SQLite WAL
-        ambiente.append("DATABASE_URL=sqlite:////app/data/suite.db")
-        ambiente.append("DB_PATH=/app/data/suite.db")
-        vols = app.get("volumes") or []
-        if "app_data:/app/data" not in vols:
-            vols.append("app_data:/app/data")
-        app["volumes"] = vols
     if "fila" in servicos:
         ambiente.append(f"REDIS_URL=redis://fila:{PORTA_FILA}/0")
         ambiente.append(f"AIDD_FILAS={','.join(perfil['filas'])}")

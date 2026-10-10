@@ -598,6 +598,8 @@ def compilar_grafo_topologico_vsa(plano: Dict[str, Any]) -> Dict[str, Any]:
             f"src/slices/{slug_bc}/service.py",
             f"tests/slices/test_{slug_bc}.py",
         ]
+        if fluxo_alvo == "fluxo_02_factory":
+            arquivos_alvo.insert(1, f"src/slices/{slug_bc}/adapter.py")
 
         grafo_fatias.append({
             "slice_id": slice_id,

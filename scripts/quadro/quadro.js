@@ -31,6 +31,35 @@ const ESTADO_GLOBAL = {
 };
 
 // ==========================================
+// FORMATAÇÃO LIMPA CONTRA TRANSBORDO DE TEXTO
+// ==========================================
+function formatarTituloExecucao(texto) {
+  if (!texto) return "-";
+  const str = String(texto).trim();
+  // Se for comando do ecossistema, simplifica para exibição limpa
+  if (str.startsWith("ecossistema.py ") || str.startsWith("python ecossistema.py ")) {
+    const limpo = str.replace(/^(python\s+)?ecossistema\.py\s+/, "");
+    const partes = limpo.split(/\s+/);
+    const subcomando = partes[0] || "execução";
+    const alvo = partes.find(p => !p.startsWith("-") && p !== subcomando) || "";
+    const nomeAlvo = alvo ? alvo.split(/[\\/]/).pop() : "";
+    return `${subcomando}${nomeAlvo ? ' · ' + nomeAlvo : ''}`;
+  }
+  // Se tiver caminho de arquivo longo no Windows/Linux
+  if (str.includes("\\") || str.includes("/")) {
+    const nomeBase = str.split(/[\\/]/).pop();
+    if (nomeBase && nomeBase.length < str.length) {
+      return nomeBase;
+    }
+  }
+  // Se tiver mais de 55 caracteres, trunca preservando início e fim
+  if (str.length > 55) {
+    return str.slice(0, 26) + "..." + str.slice(-22);
+  }
+  return str;
+}
+
+// ==========================================
 // 1. GESTÃO DE TEMA (DARK / LIGHT)
 // ==========================================
 function aplicarTema(tema) {
@@ -673,7 +702,8 @@ async function carregarKanban(pipeId) {
 
           const titCard = document.createElement("div");
           titCard.className = "cartao-titulo";
-          titCard.textContent = cartao.titulo || cartao.chave;
+          titCard.textContent = formatarTituloExecucao(cartao.titulo || cartao.chave);
+          titCard.title = cartao.titulo || cartao.chave;
           elCard.appendChild(titCard);
 
           if (cartao.gate_atual) {
@@ -836,8 +866,8 @@ async function abrirGaveta(runId) {
       const st = ex.status || 'desconhecido';
       const classeBadge = st === 'concluido' ? 'sucesso' : (st === 'falhou' || st === 'interrompido' ? 'falha' : (st === 'executando' ? 'vivo' : 'alerta'));
       titGaveta.innerHTML = `
-        <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
-          <span>${ex.titulo || ex.run_id}</span>
+        <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;max-width:100%;">
+          <span title="${ex.titulo || ex.run_id}">${formatarTituloExecucao(ex.titulo || ex.run_id)}</span>
           <span class="badge-corp ${classeBadge}">${st.toUpperCase()}</span>
         </div>
       `;

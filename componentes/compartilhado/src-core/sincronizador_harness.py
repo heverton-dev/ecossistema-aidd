@@ -157,7 +157,7 @@ def _upsert_secao_componentes(caminho: str, payload: Dict[str, Any]) -> Result:
         else:
             conteudo = ""
 
-        linha = f"| `{payload['nome']}` | {payload['descricao']} | `{payload['tipo']}` | {_timestamp()} |"
+        linha = f"| `{payload['nome']}` | {payload['descricao']} | `{payload['tipo']}` | runtime |"
 
         if _MARCADOR_TABELA_INICIO not in conteudo:
             secao = (

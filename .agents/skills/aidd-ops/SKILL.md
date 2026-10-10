@@ -44,5 +44,4 @@ Prove each item with the exit code read from a file (`> x.log 2>&1; echo $? > x.
 
 ## References
 
-- Integration plan: `docs/planos/feitos/PLAN-0004-integracao-aidd-ops/00-PROCESSO-E-DECISOES.md`
 - Architecture: `docs/features/06-09-2026_feature-arquitetura-aidd-ops.md`
