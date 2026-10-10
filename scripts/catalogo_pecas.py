@@ -765,40 +765,49 @@ def _etapas_da_skill(texto: str) -> list[str]:
     return etapas
 
 
-def coletar_pipelines(receita: dict) -> list[dict]:
-    """Pipelines do ecossistema, sem lista digitada:
-      - um por fluxo da Tríade, com as etapas da receita (orquestrador_sincrono.py) e a
-        chamada que cada etapa faz naquele fluxo;
-      - cada cadeia declarada nas skills ('Step N of the <x> flow'), na ordem dos passos;
-      - cada skill que 'runs the ... pipeline', com as etapas do próprio SKILL.md."""
+def coletar_pipelines(receita: dict | None = None) -> list[dict]:
+    """Lê os pipelines diretamente do contrato único e vivo PIPELINES.json (D0)."""
+    caminho = RAIZ / "modulos" / "04-nucleo-compartilhado" / "contracts" / "PIPELINES.json"
+    if not caminho.exists():
+        return []
+    dados = json.loads(_ler(caminho))
     pipelines = []
-    for fluxo in FLUXOS_TRIADE.values():
+    for pipe in dados.get("pipelines", []):
         etapas = []
-        for e in receita["etapas"]:
-            # Fluxo sem ramo próprio (o 'else' do orquestrador) fica com as chamadas que
-            # nenhum ramo de fluxo reivindica.
-            dos_outros = [c for chamadas in e["chamadas_por_fluxo"].values() for c in chamadas]
-            chamadas = e["chamadas_por_fluxo"].get(fluxo) or [c for c in e["chamadas_cli"] if c not in dos_outros]
-            etapas.append({"titulo": e["descricao"], "peca": e["etapa"],
-                           "chamada": " ".join(chamadas[0]) if chamadas else ""})
-        pipelines.append({"id": f"triade-{fluxo}", "origem": receita["arquivo"], "etapas": etapas})
-    cadeias = defaultdict(list)
-    por_descricao = []
-    for skill_md in sorted((COMPARTILHADO / "skills").glob("*/SKILL.md")):
-        texto = _ler(skill_md)
-        descricao = _frontmatter(texto, "description")
-        passo = RE_PASSO_DE_FLUXO.search(descricao)
-        if passo:
-            cadeias[passo.group(2).strip()].append((int(passo.group(1)), skill_md.parent.name, _rel(skill_md)))
-        elif RE_SKILL_PIPELINE.search(descricao):
-            por_descricao.append({"id": skill_md.parent.name, "origem": _rel(skill_md),
-                                  "etapas": [{"titulo": t, "peca": skill_md.parent.name, "chamada": ""}
-                                             for t in _etapas_da_skill(texto)]})
-    for nome, passos in sorted(cadeias.items()):
-        pipelines.append({"id": nome, "origem": ", ".join(origem for _, _, origem in sorted(passos)),
-                          "etapas": [{"titulo": f"passo {n}", "peca": skill, "chamada": ""}
-                                     for n, skill, _ in sorted(passos)]})
-    return pipelines + por_descricao
+        for et in pipe.get("etapas", []):
+            etapas.append({
+                "id": et.get("id", ""),
+                "peca": et.get("peca", et.get("id", "")),
+                "titulo": et.get("titulo", ""),
+                "chamada": et.get("chamada", "")
+            })
+        item = dict(pipe)
+        item["origem"] = pipe.get("origem", pipe.get("comando", "modulos/04-nucleo-compartilhado/contracts/PIPELINES.json"))
+        item["etapas"] = etapas
+        pipelines.append(item)
+    return pipelines
+
+
+def verificar_contrato_vivo_pipelines(pipelines_extras: list[str] | None = None) -> list[str]:
+    """Detector do contrato vivo (D0): compara pipelines conhecidos contra PIPELINES.json."""
+    caminho = RAIZ / "modulos" / "04-nucleo-compartilhado" / "contracts" / "PIPELINES.json"
+    if not caminho.exists():
+        return ["Contrato PIPELINES.json nao encontrado"]
+    dados = json.loads(_ler(caminho))
+    declarados = {pipe.get("id") for pipe in dados.get("pipelines", [])}
+    conhecidos = {
+        "pure", "open", "freedom",
+        "auditoria-4f", "evolucao", "melhoria-plan-orchestrate",
+        "aidd-ingest", "aidd-ops", "aidd-pipeline",
+        "bateria-gates", "despacho-vsa", "run-plan"
+    }
+    if pipelines_extras:
+        conhecidos.update(pipelines_extras)
+    divergencias = []
+    for pipe in sorted(conhecidos):
+        if pipe not in declarados:
+            divergencias.append(f"Pipeline '{pipe}' detectado no codigo mas nao declarado em PIPELINES.json")
+    return divergencias
 
 
 def _primeira_frase_readme(pasta: Path) -> str:

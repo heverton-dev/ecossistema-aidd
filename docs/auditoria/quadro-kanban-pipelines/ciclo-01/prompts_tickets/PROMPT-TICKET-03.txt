@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 3. Target tool: quadro-kanban-pipelines.
+DIMENSION: D13
+DELIVER: tests/test_pipelines_detector_vivo.py
+
+STEPS:
+- Write tests/test_pipelines_detector_vivo.py injecting an unregistered mock pipeline command into check routines.
+- Assert the check routine flags contract divergence and rejects validation.
+- Implement dynamic comparison logic in scripts/catalogo_pecas.py to compare detected pipelines with PIPELINES.json contract.
+- Re-run pytest tests/test_pipelines_detector_vivo.py and assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: tests/test_pipelines_detector_vivo.py

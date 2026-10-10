@@ -447,7 +447,7 @@ Onde mora: `tools/<f>/templates/`. Quem confere: os guardas de entrega gerados p
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | moldes | 21 |
-| arquivos de molde | 367 |
+| arquivos de molde | 355 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_moldes_entrega`), os mesmos do mapa `mapa-09-moldes.html`.
 
@@ -486,9 +486,9 @@ Onde mora: `scripts/`. Quem confere: nenhum guarda específico; o mapa mede quem
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| scripts | 52 |
-| chamados pelo painel | 19 |
-| nenhum código chama | 4 |
+| scripts | 59 |
+| chamados pelo painel | 22 |
+| nenhum código chama | 5 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_scripts`), os mesmos do mapa `mapa-10-scripts.html`.
 
@@ -537,7 +537,7 @@ Onde mora: `docs/planos/` e `docs/auditoria/`. Quem confere: o `scripts/atualiza
 | :-------------------------------------- | :-------------------------------------------- |
 | planos | 37 |
 | em execução | 11 |
-| ciclos de auditoria | 51 |
+| ciclos de auditoria | 54 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_oficina`), os mesmos do mapa `mapa-11-oficina.html`.
 
@@ -643,9 +643,9 @@ Onde mora: `scripts/orquestrador_sincrono.py` e `componentes/compartilhado/skill
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| pipelines | 9 |
-| fluxos da Tríade | 3 |
-| sem etapas declaradas | 2 |
+| pipelines | 12 |
+| fluxos da Tríade | 0 |
+| sem etapas declaradas | 0 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_pipelines`), os mesmos do mapa `mapa-13-pipelines.html`.
 

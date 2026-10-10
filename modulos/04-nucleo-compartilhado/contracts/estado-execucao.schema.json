@@ -1,0 +1,222 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EstadoExecucao",
+  "description": "Contrato de estado de execucao do Quadro Kanban AIDD",
+  "type": "object",
+  "required": [
+    "schema",
+    "run_id",
+    "pipeline",
+    "chave",
+    "titulo",
+    "status",
+    "processo",
+    "etapas",
+    "historico",
+    "seq",
+    "atualizado_em"
+  ],
+  "properties": {
+    "schema": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string",
+      "maxLength": 120
+    },
+    "pipeline": {
+      "type": "string"
+    },
+    "chave": {
+      "type": "string"
+    },
+    "titulo": {
+      "type": "string"
+    },
+    "comando": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "pai": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "processo": {
+      "type": "object",
+      "required": [
+        "pid",
+        "inicio"
+      ],
+      "properties": {
+        "pid": {
+          "type": "integer"
+        },
+        "inicio": {
+          "type": "string"
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "fila",
+        "executando",
+        "concluido",
+        "falhou",
+        "cancelado",
+        "interrompido"
+      ]
+    },
+    "etapa_atual": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "etapas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pendente",
+              "agente",
+              "gate",
+              "concluida",
+              "falhou",
+              "pulada"
+            ]
+          },
+          "harness": {
+            "type": "string"
+          },
+          "modelo": {
+            "type": "string"
+          },
+          "sessao": {
+            "type": "string"
+          },
+          "inicio": {
+            "type": "string"
+          },
+          "fim": {
+            "type": "string"
+          },
+          "gate": {
+            "type": "object"
+          },
+          "feito": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "artefatos": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "log": {
+            "type": "string"
+          },
+          "custo": {
+            "type": [
+              "string",
+              "object"
+            ]
+          }
+        }
+      }
+    },
+    "historico": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "em",
+          "evento"
+        ],
+        "properties": {
+          "em": {
+            "type": "string"
+          },
+          "etapa": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "evento": {
+            "type": "string"
+          },
+          "mensagem": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "parada": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "motivo": {
+          "type": "string"
+        },
+        "comando": {
+          "type": "string"
+        },
+        "log": {
+          "type": "string"
+        }
+      }
+    },
+    "humano": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "motivo": {
+          "type": "string"
+        },
+        "comando": {
+          "type": "string"
+        }
+      }
+    },
+    "fim": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "exit_code": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "seq": {
+      "type": "integer"
+    },
+    "atualizado_em": {
+      "type": "string"
+    }
+  }
+}

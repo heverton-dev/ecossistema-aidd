@@ -1,0 +1,335 @@
+{
+  "schema": "aidd.pipelines.contrato/1",
+  "descricao": "Contrato unico e vivo de pipelines do ecossistema AIDD",
+  "versao": "1.0.0",
+  "pipelines": [
+    {
+      "id": "pure",
+      "nome": "Triade pure (Do Zero Puro)",
+      "comando": "python ecossistema.py pure",
+      "origem_estado": "<projeto>/.aidd/cache/_pipeline_state.json",
+      "etapas": [
+        {
+          "id": "fundacao",
+          "titulo": "Fundacao (Forge)"
+        },
+        {
+          "id": "planejamento",
+          "titulo": "Planejamento (Planner)"
+        },
+        {
+          "id": "gerador",
+          "titulo": "Gerador TDD (Generator)"
+        },
+        {
+          "id": "despacho",
+          "titulo": "Despacho VSA (Master)"
+        },
+        {
+          "id": "blindagem",
+          "titulo": "Blindagem SHA-256 (Enterprise)"
+        },
+        {
+          "id": "infraestrutura",
+          "titulo": "Infraestrutura (Ops)"
+        },
+        {
+          "id": "auditoria-projeto",
+          "titulo": "Auditoria do Projeto"
+        }
+      ]
+    },
+    {
+      "id": "open",
+      "nome": "Triade open (Motores Open-Source)",
+      "comando": "python ecossistema.py open",
+      "origem_estado": "~/.aidd/execucoes/<run_id>/estado.json",
+      "etapas": [
+        {
+          "id": "fundacao",
+          "titulo": "Fundacao (Forge)"
+        },
+        {
+          "id": "planejamento",
+          "titulo": "Planejamento (Planner)"
+        },
+        {
+          "id": "fabrica",
+          "titulo": "Fabrica Open-Source (Factory)"
+        },
+        {
+          "id": "despacho",
+          "titulo": "Despacho VSA (Master)"
+        },
+        {
+          "id": "blindagem",
+          "titulo": "Blindagem SHA-256 (Enterprise)"
+        },
+        {
+          "id": "infraestrutura",
+          "titulo": "Infraestrutura (Ops)"
+        },
+        {
+          "id": "auditoria-projeto",
+          "titulo": "Auditoria do Projeto"
+        }
+      ]
+    },
+    {
+      "id": "freedom",
+      "nome": "Triade freedom (Low-Code Desacoplado)",
+      "comando": "python ecossistema.py freedom",
+      "origem_estado": "~/.aidd/execucoes/<run_id>/estado.json",
+      "etapas": [
+        {
+          "id": "fundacao",
+          "titulo": "Fundacao (Forge)"
+        },
+        {
+          "id": "planejamento",
+          "titulo": "Planejamento (Planner)"
+        },
+        {
+          "id": "ponte",
+          "titulo": "Ponte Low-Code (Bridge)"
+        },
+        {
+          "id": "despacho",
+          "titulo": "Despacho VSA (Master)"
+        },
+        {
+          "id": "blindagem",
+          "titulo": "Blindagem SHA-256 (Enterprise)"
+        },
+        {
+          "id": "infraestrutura",
+          "titulo": "Infraestrutura (Ops)"
+        },
+        {
+          "id": "auditoria-projeto",
+          "titulo": "Auditoria do Projeto"
+        }
+      ]
+    },
+    {
+      "id": "auditoria-4f",
+      "nome": "Pipeline Linear de Auditoria 4F",
+      "comando": "python scripts/orquestrador_4f.py --manifest <manifesto>",
+      "origem_estado": "manifesto e worktrees efemeras",
+      "etapas": [
+        {
+          "id": "fase-1",
+          "titulo": "Inspetor (Laudo 15-D)"
+        },
+        {
+          "id": "fase-2",
+          "titulo": "Arquiteto (Plano de Evolucao)"
+        },
+        {
+          "id": "fase-3",
+          "titulo": "Construtor (Implementacao)"
+        },
+        {
+          "id": "fase-4",
+          "titulo": "Inspetor de Retorno (Re-Auditoria)"
+        },
+        {
+          "id": "gate-final",
+          "titulo": "Quality Gate Final"
+        },
+        {
+          "id": "aprovacao",
+          "titulo": "Join Barrier (Aprovacao Humana)"
+        }
+      ]
+    },
+    {
+      "id": "evolucao",
+      "nome": "Pipeline de Evolucao Tecnica",
+      "comando": "python ecossistema.py evolucao <tool>",
+      "origem_estado": "PLANO-EVOLUCAO.json e worktrees efemeras",
+      "etapas": [
+        {
+          "id": "construtor",
+          "titulo": "Construtor do Ticket"
+        },
+        {
+          "id": "gate-ticket",
+          "titulo": "Quality Gate do Ticket"
+        },
+        {
+          "id": "gate-final",
+          "titulo": "Bateria Completa"
+        },
+        {
+          "id": "aprovacao",
+          "titulo": "Aprovacao Humana (Merge)"
+        }
+      ]
+    },
+    {
+      "id": "melhoria-plan-orchestrate",
+      "nome": "Fluxo Melhoria -> Plano -> Orquestracao",
+      "comando": "python ecossistema.py melhoria",
+      "origem_estado": "docs/melhorias/ e docs/planos/",
+      "etapas": [
+        {
+          "id": "melhoria",
+          "titulo": "Analise e Laudo (aidd-improvement)"
+        },
+        {
+          "id": "plano",
+          "titulo": "Compilacao do Plano (aidd-plan)"
+        },
+        {
+          "id": "orquestracao",
+          "titulo": "Execucao e Voo (aidd-orchestrate)"
+        }
+      ]
+    },
+    {
+      "id": "aidd-ingest",
+      "nome": "Ingestao de Repositorios Externos",
+      "comando": "python ecossistema.py ingest <repo>",
+      "origem_estado": "~/.aidd/execucoes/<run_id>/estado.json",
+      "etapas": [
+        {
+          "id": "triagem",
+          "titulo": "Triagem das 13 Leis"
+        },
+        {
+          "id": "auditoria-4f",
+          "titulo": "Auditoria 4F Inicial"
+        },
+        {
+          "id": "plano-evolucao",
+          "titulo": "Plano de Evolucao"
+        },
+        {
+          "id": "execucao",
+          "titulo": "Execucao de Migracao"
+        }
+      ]
+    },
+    {
+      "id": "aidd-ops",
+      "nome": "Infraestrutura Agentica e VPS",
+      "comando": "python ecossistema.py ops",
+      "origem_estado": "~/.aidd/execucoes/<run_id>/estado.json",
+      "etapas": [
+        {
+          "id": "sizing-vps",
+          "titulo": "Dimensionamento VPS"
+        },
+        {
+          "id": "ssh-hardening",
+          "titulo": "Blindagem SSH e Firewall"
+        },
+        {
+          "id": "docker-provision",
+          "titulo": "Provisionamento Docker"
+        },
+        {
+          "id": "cloudflare-dns",
+          "titulo": "Configuracao Cloudflare"
+        },
+        {
+          "id": "deploy-verificacao",
+          "titulo": "Deploy e Verificacao"
+        }
+      ]
+    },
+    {
+      "id": "aidd-pipeline",
+      "nome": "Orquestracao de Pipeline e Planos",
+      "comando": "python ecossistema.py pipeline --handoff <json>",
+      "origem_estado": "~/.aidd/execucoes/<run_id>/estado.json",
+      "etapas": [
+        {
+          "id": "compilacao-tickets",
+          "titulo": "Compilacao de Tickets"
+        },
+        {
+          "id": "worktrees-paralelo",
+          "titulo": "Execucao em Worktrees"
+        },
+        {
+          "id": "join-barrier",
+          "titulo": "Barreira de Validacao"
+        },
+        {
+          "id": "integracao-master",
+          "titulo": "Integracao Master"
+        }
+      ]
+    },
+    {
+      "id": "bateria-gates",
+      "nome": "Bateria de Quality Gates (Auditoria)",
+      "comando": "python ecossistema.py audit",
+      "origem_estado": "secoes/medicoes/completo-<arvore>.json",
+      "etapas": [
+        {
+          "id": "preparacao-escopo",
+          "titulo": "Preparacao de Escopo"
+        },
+        {
+          "id": "execucao-portoes",
+          "titulo": "Execucao dos Gates"
+        },
+        {
+          "id": "relatorio-conformidade",
+          "titulo": "Relatorio de Conformidade"
+        }
+      ]
+    },
+    {
+      "id": "despacho-vsa",
+      "nome": "Despacho Topologico VSA em Worktrees",
+      "comando": "python ecossistema.py dispatch",
+      "origem_estado": "dispatch_rollback_report.json",
+      "etapas": [
+        {
+          "id": "analise-dag",
+          "titulo": "Resolucao DAG (Kahn)"
+        },
+        {
+          "id": "worktrees-fatias",
+          "titulo": "Execucao por Fatia"
+        },
+        {
+          "id": "barreira-validacao",
+          "titulo": "Barreira de Validacao"
+        },
+        {
+          "id": "convergencia-master",
+          "titulo": "Convergencia Modular"
+        }
+      ]
+    },
+    {
+      "id": "run-plan",
+      "nome": "Execucao Deterministica de Planos",
+      "comando": "python ecossistema.py run-plan <plano>",
+      "origem_estado": "~/.aidd/execucoes/<run_id>/estado.json",
+      "etapas": [
+        {
+          "id": "compilacao-plano",
+          "titulo": "Compilacao do Plano"
+        },
+        {
+          "id": "execucao-fases",
+          "titulo": "Execucao em Worktrees"
+        },
+        {
+          "id": "join-barrier",
+          "titulo": "Barreira de Qualidade"
+        },
+        {
+          "id": "verificacao-final",
+          "titulo": "Verificacao Final"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "pedido_original": "Dashboard visual de acompanhamento em tempo real, no formato Kanban, do trabalho de cada pipeline do ecossistema, inspirado no factory/dashboard.html do repositório zazencodes-season-3 (src/software-factory-claude-code). Refinado em 08-10-2026: um Kanban para cada pipeline, lista de pipelines viva, gaveta com tudo o que foi feito, arquivo consultável do que terminou e, numa fase própria, skills, MCPs e tokens por execução.",
+  "data": "08-10-2026",
+  "nota_atual": "2",
+  "evidencia": "Escala: 0 = nada visível; 10 = um Kanban ao vivo para cada pipeline, com arquivo consultável. Hoje só existe visão por agente: uma aba do Orca por fase (scripts/orquestrador_4f.py, run_agente_orca) e a janela LiveHUD apenas no modo sem Orca; scripts/fila_ciclos.py só avisa no fim do ciclo. Protótipo só-leitura de 08-10-2026 sobre os 19 MANIFESTO-4F.json: 36 ms e 2 chamadas git. Catálogo (docs/auditoria/mapa-pecas/catalogo-pecas.json, chave pipelines) em 08-10-2026 à noite: 9 pipelines; etapas de 4F, evolução, ingest e melhoria -> plan -> orchestrate copiadas de títulos das SKILL.md; aidd-ops e aidd-pipeline com zero etapas; bateria de gates, despacho VSA e run-plan fora do catálogo. Nenhum código do repositório lê tokens dos registros de conversa dos harnesses.",
+  "plano_existente": null,
+  "item_relacionado": null,
+  "nota_anterior": null,
+  "evidencia_anterior": null,
+  "itens_avaliados": [],
+  "resumo": "Decisões fechadas com o usuário em 08-10-2026 (v3): os 12 pipelines, cada um com seu Kanban (colunas Fila, etapas declaradas, Concluído e Parado); cartão = uma execução, com gaveta em 5 blocos (linha do tempo, o que foi feito, por que parou, o que precisa de você, dados brutos); contrato único e vivo de pipelines lido por catálogo, mapa e quadro, em que pipeline não declarado barra o commit pelo G_mapa_pecas; dashboard neste repositório, com link no Mission Control; aba Arquivo com arquivamento compactado, nada apagado sem OK e backup mensal opcional num repositório privado do GitHub; harness, LLM e tempo desde o registro, e skills, MCPs e tokens numa fase própria no fim, com 'não medido' quando não houver dado.",
+  "achados": [
+    "Referência (código conferido): factory/dashboard.html (~630 linhas, sem CDN) consulta jobs/<id>/job.json a cada 2 s; só o orquestrador escreve job.json; estado de execução fica fora do git.",
+    "O estado do 4F e da evolução já é derivável sem instrumentar nada: saídas existentes, refs/aidd/aprovavel/<id>, commit '(gate_fase em curso)', merge 'chore(audit): aprova <id>', trava .aidd/fila-ciclos.lock e secoes/medicoes/ultimo-ciclo.json.",
+    "Os demais pipelines quase não gravam estado: dispatch e run-plan nada (só relatório de rollback); aidd-pure mantém <projeto>/.aidd/cache/_pipeline_state.json; open e freedom nada.",
+    "Ponto único de entrada: main() do ecossistema.py chama dispatch[cmd](args); envolver essa chamada registra início, fim e código de saída sem tocar nas fatias.",
+    "Catálogo com 9 pipelines e etapas pouco confiáveis (títulos de SKILL.md; ops e pipeline com zero); bateria de gates, despacho VSA e run-plan rodam mas não estão no catálogo nem no mapa.",
+    "O orquestrador já sabe harness, modelo e horários de cada fase; skills, MCPs e tokens só existem no registro de conversa de cada harness, em formatos diferentes, e nenhum código do repositório lê esses registros hoje.",
+    "Arquivo pequeno se guardar só dados resumidos (5 a 30 KB por execução, mil execuções em torno de 30 MB antes de compactar); o que ocupa espaço são logs e registros de conversa, que o plano não copia.",
+    "Armadilhas mantidas: src-core é núcleo de produto vigiado por drift; G_CYBERSECURITY_OWASP reprova innerHTML montado por concatenação; os.replace falha no Windows com o leitor aberto; visual-maps gerar sozinho deixa os gates de mapas vermelhos nesta máquina.",
+    "Plano v3 no .md companheiro: Fase 0 contrato vivo, Fase 1 registro, Fase 2 tela e Arquivo, Fase 3 etapa ao vivo por pipeline, Fase 4 alertas e arquivamento com backup opcional, Fase 5 custo e ferramentas."
+  ],
+  "riscos": [
+    "Contrato e pipelines divergirem: o emissor recusa etapa fora do contrato e o catálogo acusa pipeline não declarado.",
+    "Windows: os.replace falha enquanto o quadro lê o arquivo; o emissor tenta de novo e segue sem derrubar o pipeline.",
+    "Servidor local exposto: só 127.0.0.1, Host conferido, só GET, artefatos por lista branca e CSP sem código inline.",
+    "Backup no GitHub vazar segredo: só dados resumidos, detector de segredos antes do envio, repositório privado.",
+    "Formato do registro de conversa mudar: coletor por harness com teste de amostra real; falhou, o cartão mostra 'não medido'.",
+    "A bateria tests/ leva ~790 s com teto de 900 s no G_TESTES_REAIS: os testes novos somam menos de 3 s.",
+    "Escopo inflar: cada fase fecha sozinha; reavaliar antes das Fases 3, 4 e 5."
+  ],
+  "recomendacao": "Rodar /plan só com a Fase 0 (contrato vivo de pipelines) numa sessão nova, depois dos Blocos 8 e 9 do ciclo-03 da modularização VSA; o primeiro commit leva também este plano para o git, junto com o catálogo regenerado.",
+  "status": "RASCUNHO - aguardando decisao humana sobre proximo passo (ex: iniciar /plan, ou atualizar a nota do plano existente)"
+}

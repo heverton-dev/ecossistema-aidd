@@ -8,7 +8,7 @@
     "leis": 14,
     "lente_15d": 15,
     "oficina": 37,
-    "scripts": 52,
+    "scripts": 59,
     "moldes_entrega": 21,
     "harnesses": 7,
     "skills_nossas": 44,
@@ -22,7 +22,7 @@
     "gates_arquivos": 133,
     "contratos": 9,
     "etapas_receita": 7,
-    "pipelines": 9,
+    "pipelines": 12,
     "modulos": 4,
     "agentes": 9,
     "encaixes_quebrados": 0
@@ -2345,6 +2345,30 @@
         "nota": "10"
       },
       {
+        "alvo": "aidd-master",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-master/ciclo-01",
+        "fases": {
+          "laudo_inicial": false,
+          "plano_evolucao": false,
+          "laudo_revisado": false,
+          "dod": false
+        },
+        "nota": ""
+      },
+      {
+        "alvo": "aidd-master",
+        "ciclo": "ciclo-02",
+        "caminho": "docs/auditoria/aidd-master/ciclo-02",
+        "fases": {
+          "laudo_inicial": false,
+          "plano_evolucao": false,
+          "laudo_revisado": false,
+          "dod": true
+        },
+        "nota": ""
+      },
+      {
         "alvo": "aidd-master-runner",
         "ciclo": "ciclo-01",
         "caminho": "docs/auditoria/aidd-master-runner/ciclo-01",
@@ -2741,6 +2765,18 @@
         "nota": ""
       },
       {
+        "alvo": "quadro-kanban-pipelines",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/quadro-kanban-pipelines/ciclo-01",
+        "fases": {
+          "laudo_inicial": false,
+          "plano_evolucao": true,
+          "laudo_revisado": false,
+          "dod": true
+        },
+        "nota": ""
+      },
+      {
         "alvo": "skills-ddd",
         "ciclo": "ciclo-01",
         "caminho": "docs/auditoria/skills-ddd/ciclo-01",
@@ -2777,7 +2813,7 @@
         "nota": ""
       }
     ],
-    "relatorios_melhoria": 15
+    "relatorios_melhoria": 16
   },
   "scripts": [
     {
@@ -2879,6 +2915,15 @@
       "id": "escopo_escrita_mapas",
       "descricao": "Escopo de escrita dos mapas visuais (aidd-visual-maps, D3 / DoD 2).",
       "chamado_por": [
+        "scripts",
+        "testes"
+      ]
+    },
+    {
+      "id": "estado_execucao",
+      "descricao": "",
+      "chamado_por": [
+        "painel",
         "scripts",
         "testes"
       ]
@@ -3120,6 +3165,45 @@
       ]
     },
     {
+      "id": "quadro_alertas",
+      "descricao": "",
+      "chamado_por": [
+        "testes"
+      ]
+    },
+    {
+      "id": "quadro_arquivador",
+      "descricao": "",
+      "chamado_por": [
+        "painel",
+        "testes"
+      ]
+    },
+    {
+      "id": "quadro_custos",
+      "descricao": "",
+      "chamado_por": [
+        "scripts",
+        "testes"
+      ]
+    },
+    {
+      "id": "quadro_leitor",
+      "descricao": "",
+      "chamado_por": [
+        "scripts",
+        "testes"
+      ]
+    },
+    {
+      "id": "quadro_servidor",
+      "descricao": "",
+      "chamado_por": [
+        "painel",
+        "testes"
+      ]
+    },
+    {
       "id": "reconciliar_copias_vsa",
       "descricao": "Relatório determinístico de divergência entre tools/ e modulos/ (ciclo-03 VSA, Ticket 1).",
       "chamado_por": [
@@ -3167,6 +3251,11 @@
         "scripts",
         "testes"
       ]
+    },
+    {
+      "id": "simular_execucao_kanban",
+      "descricao": "Script de Simulação em Tempo Real para Demonstração Visual do Quadro Kanban.",
+      "chamado_por": []
     },
     {
       "id": "telemetria_mapas",
@@ -5918,256 +6007,460 @@
   ],
   "pipelines": [
     {
-      "id": "triade-pure",
-      "origem": "scripts/orquestrador_sincrono.py",
+      "id": "pure",
+      "nome": "Triade pure (Do Zero Puro)",
+      "comando": "python ecossistema.py pure",
+      "origem_estado": "<projeto>/.aidd/cache/_pipeline_state.json",
       "etapas": [
         {
-          "titulo": "Etapa 1: Fundação, Git, pre-commit e regras de governança.",
-          "peca": "etapa_01_forge",
-          "chamada": "forge init <var> --force"
+          "id": "fundacao",
+          "peca": "fundacao",
+          "titulo": "Fundacao (Forge)",
+          "chamada": ""
         },
         {
-          "titulo": "Etapa 2: Planejamento BDD/SDD, contratos e Quarteto Sine Qua Non.",
-          "peca": "etapa_02_planner",
-          "chamada": "planner init --fluxo <var> --nome <var> --slug <var> --dominio <var> --pasta <var>"
+          "id": "planejamento",
+          "peca": "planejamento",
+          "titulo": "Planejamento (Planner)",
+          "chamada": ""
         },
         {
-          "titulo": "Etapa 3: Execução da Engine correspondente ao Fluxo.",
-          "peca": "etapa_03_engine",
-          "chamada": "pure-motor <var> --pasta <var> --implementar-codigo"
+          "id": "gerador",
+          "peca": "gerador",
+          "titulo": "Gerador TDD (Generator)",
+          "chamada": ""
         },
         {
-          "titulo": "Etapa 4: Despacho das fatias VSA + harmonização no Monólito Modular.",
-          "peca": "etapa_04_master",
-          "chamada": "dispatch --dispatch <var> --target-dir <var> --barrier-sync"
+          "id": "despacho",
+          "peca": "despacho",
+          "titulo": "Despacho VSA (Master)",
+          "chamada": ""
         },
         {
-          "titulo": "Etapa 5: Blindagem SHA-256 e detecção de drift.",
-          "peca": "etapa_05_enterprise",
-          "chamada": "enterprise inject rule <var> --dir <var>"
+          "id": "blindagem",
+          "peca": "blindagem",
+          "titulo": "Blindagem SHA-256 (Enterprise)",
+          "chamada": ""
         },
         {
-          "titulo": "Etapa 6: Infraestrutura, Docker Compose e Validação de Portas.",
-          "peca": "etapa_06_ops",
-          "chamada": "ops plan <var> --pasta <var>"
+          "id": "infraestrutura",
+          "peca": "infraestrutura",
+          "titulo": "Infraestrutura (Ops)",
+          "chamada": ""
         },
         {
-          "titulo": "Etapa 7: Auditoria de conformidade do projeto gerado (não do monorepo).",
-          "peca": "etapa_07_auditoria",
-          "chamada": "forge audit <var>"
+          "id": "auditoria-projeto",
+          "peca": "auditoria-projeto",
+          "titulo": "Auditoria do Projeto",
+          "chamada": ""
         }
-      ]
+      ],
+      "origem": "python ecossistema.py pure"
     },
     {
-      "id": "triade-open",
-      "origem": "scripts/orquestrador_sincrono.py",
+      "id": "open",
+      "nome": "Triade open (Motores Open-Source)",
+      "comando": "python ecossistema.py open",
+      "origem_estado": "~/.aidd/execucoes/<run_id>/estado.json",
       "etapas": [
         {
-          "titulo": "Etapa 1: Fundação, Git, pre-commit e regras de governança.",
-          "peca": "etapa_01_forge",
-          "chamada": "forge init <var> --force"
+          "id": "fundacao",
+          "peca": "fundacao",
+          "titulo": "Fundacao (Forge)",
+          "chamada": ""
         },
         {
-          "titulo": "Etapa 2: Planejamento BDD/SDD, contratos e Quarteto Sine Qua Non.",
-          "peca": "etapa_02_planner",
-          "chamada": "planner init --fluxo <var> --nome <var> --slug <var> --dominio <var> --pasta <var>"
+          "id": "planejamento",
+          "peca": "planejamento",
+          "titulo": "Planejamento (Planner)",
+          "chamada": ""
         },
         {
-          "titulo": "Etapa 3: Execução da Engine correspondente ao Fluxo.",
-          "peca": "etapa_03_engine",
-          "chamada": "open-motor --plano <var> --pasta <var>"
+          "id": "fabrica",
+          "peca": "fabrica",
+          "titulo": "Fabrica Open-Source (Factory)",
+          "chamada": ""
         },
         {
-          "titulo": "Etapa 4: Despacho das fatias VSA + harmonização no Monólito Modular.",
-          "peca": "etapa_04_master",
-          "chamada": "dispatch --dispatch <var> --target-dir <var> --barrier-sync"
+          "id": "despacho",
+          "peca": "despacho",
+          "titulo": "Despacho VSA (Master)",
+          "chamada": ""
         },
         {
-          "titulo": "Etapa 5: Blindagem SHA-256 e detecção de drift.",
-          "peca": "etapa_05_enterprise",
-          "chamada": "enterprise inject rule <var> --dir <var>"
+          "id": "blindagem",
+          "peca": "blindagem",
+          "titulo": "Blindagem SHA-256 (Enterprise)",
+          "chamada": ""
         },
         {
-          "titulo": "Etapa 6: Infraestrutura, Docker Compose e Validação de Portas.",
-          "peca": "etapa_06_ops",
-          "chamada": "ops plan <var> --pasta <var>"
+          "id": "infraestrutura",
+          "peca": "infraestrutura",
+          "titulo": "Infraestrutura (Ops)",
+          "chamada": ""
         },
         {
-          "titulo": "Etapa 7: Auditoria de conformidade do projeto gerado (não do monorepo).",
-          "peca": "etapa_07_auditoria",
-          "chamada": "forge audit <var>"
+          "id": "auditoria-projeto",
+          "peca": "auditoria-projeto",
+          "titulo": "Auditoria do Projeto",
+          "chamada": ""
         }
-      ]
+      ],
+      "origem": "python ecossistema.py open"
     },
     {
-      "id": "triade-freedom",
-      "origem": "scripts/orquestrador_sincrono.py",
+      "id": "freedom",
+      "nome": "Triade freedom (Low-Code Desacoplado)",
+      "comando": "python ecossistema.py freedom",
+      "origem_estado": "~/.aidd/execucoes/<run_id>/estado.json",
       "etapas": [
         {
-          "titulo": "Etapa 1: Fundação, Git, pre-commit e regras de governança.",
-          "peca": "etapa_01_forge",
-          "chamada": "forge init <var> --force"
+          "id": "fundacao",
+          "peca": "fundacao",
+          "titulo": "Fundacao (Forge)",
+          "chamada": ""
         },
         {
-          "titulo": "Etapa 2: Planejamento BDD/SDD, contratos e Quarteto Sine Qua Non.",
-          "peca": "etapa_02_planner",
-          "chamada": "planner init --fluxo <var> --nome <var> --slug <var> --dominio <var> --pasta <var>"
+          "id": "planejamento",
+          "peca": "planejamento",
+          "titulo": "Planejamento (Planner)",
+          "chamada": ""
         },
         {
-          "titulo": "Etapa 3: Execução da Engine correspondente ao Fluxo.",
-          "peca": "etapa_03_engine",
-          "chamada": "freedom-motor scan <var>"
+          "id": "ponte",
+          "peca": "ponte",
+          "titulo": "Ponte Low-Code (Bridge)",
+          "chamada": ""
         },
         {
-          "titulo": "Etapa 4: Despacho das fatias VSA + harmonização no Monólito Modular.",
-          "peca": "etapa_04_master",
-          "chamada": "dispatch --dispatch <var> --target-dir <var> --barrier-sync"
+          "id": "despacho",
+          "peca": "despacho",
+          "titulo": "Despacho VSA (Master)",
+          "chamada": ""
         },
         {
-          "titulo": "Etapa 5: Blindagem SHA-256 e detecção de drift.",
-          "peca": "etapa_05_enterprise",
-          "chamada": "enterprise inject rule <var> --dir <var>"
+          "id": "blindagem",
+          "peca": "blindagem",
+          "titulo": "Blindagem SHA-256 (Enterprise)",
+          "chamada": ""
         },
         {
-          "titulo": "Etapa 6: Infraestrutura, Docker Compose e Validação de Portas.",
-          "peca": "etapa_06_ops",
-          "chamada": "ops plan <var> --pasta <var>"
+          "id": "infraestrutura",
+          "peca": "infraestrutura",
+          "titulo": "Infraestrutura (Ops)",
+          "chamada": ""
         },
         {
-          "titulo": "Etapa 7: Auditoria de conformidade do projeto gerado (não do monorepo).",
-          "peca": "etapa_07_auditoria",
-          "chamada": "forge audit <var>"
+          "id": "auditoria-projeto",
+          "peca": "auditoria-projeto",
+          "titulo": "Auditoria do Projeto",
+          "chamada": ""
         }
-      ]
+      ],
+      "origem": "python ecossistema.py freedom"
     },
     {
-      "id": "melhoria -> plan -> orchestrate",
-      "origem": "componentes/compartilhado/skills/aidd-improvement/SKILL.md, componentes/compartilhado/skills/aidd-plan/SKILL.md, componentes/compartilhado/skills/aidd-orchestrate/SKILL.md",
+      "id": "auditoria-4f",
+      "nome": "Pipeline Linear de Auditoria 4F",
+      "comando": "python scripts/orquestrador_4f.py --manifest <manifesto>",
+      "origem_estado": "manifesto e worktrees efemeras",
       "etapas": [
         {
-          "titulo": "passo 1",
-          "peca": "aidd-improvement",
+          "id": "fase-1",
+          "peca": "fase-1",
+          "titulo": "Inspetor (Laudo 15-D)",
           "chamada": ""
         },
         {
-          "titulo": "passo 2",
-          "peca": "aidd-plan",
+          "id": "fase-2",
+          "peca": "fase-2",
+          "titulo": "Arquiteto (Plano de Evolucao)",
           "chamada": ""
         },
         {
-          "titulo": "passo 3",
-          "peca": "aidd-orchestrate",
+          "id": "fase-3",
+          "peca": "fase-3",
+          "titulo": "Construtor (Implementacao)",
+          "chamada": ""
+        },
+        {
+          "id": "fase-4",
+          "peca": "fase-4",
+          "titulo": "Inspetor de Retorno (Re-Auditoria)",
+          "chamada": ""
+        },
+        {
+          "id": "gate-final",
+          "peca": "gate-final",
+          "titulo": "Quality Gate Final",
+          "chamada": ""
+        },
+        {
+          "id": "aprovacao",
+          "peca": "aprovacao",
+          "titulo": "Join Barrier (Aprovacao Humana)",
           "chamada": ""
         }
-      ]
+      ],
+      "origem": "python scripts/orquestrador_4f.py --manifest <manifesto>"
     },
     {
-      "id": "aidd-audit-4f",
-      "origem": "componentes/compartilhado/skills/aidd-audit-4f/SKILL.md",
+      "id": "evolucao",
+      "nome": "Pipeline de Evolucao Tecnica",
+      "comando": "python ecossistema.py evolucao <tool>",
+      "origem_estado": "PLANO-EVOLUCAO.json e worktrees efemeras",
       "etapas": [
         {
-          "titulo": "Read the target manifest (e.g. `docs/auditoria/template-pipeline-4f.json`)",
-          "peca": "aidd-audit-4f",
+          "id": "construtor",
+          "peca": "construtor",
+          "titulo": "Construtor do Ticket",
           "chamada": ""
         },
         {
-          "titulo": "Create or reuse `docs/auditoria/<tool>/ciclo-NN/`",
-          "peca": "aidd-audit-4f",
+          "id": "gate-ticket",
+          "peca": "gate-ticket",
+          "titulo": "Quality Gate do Ticket",
           "chamada": ""
         },
         {
-          "titulo": "Accumulate phases on the cycle's own branch (`audit/<pipeline_id>`) without touching the c",
-          "peca": "aidd-audit-4f",
+          "id": "gate-final",
+          "peca": "gate-final",
+          "titulo": "Bateria Completa",
           "chamada": ""
         },
         {
-          "titulo": "Phase 1 (Inspector)",
-          "peca": "aidd-audit-4f",
-          "chamada": ""
-        },
-        {
-          "titulo": "Phase 2 (Architect)",
-          "peca": "aidd-audit-4f",
-          "chamada": ""
-        },
-        {
-          "titulo": "Phase 3 (Builder)",
-          "peca": "aidd-audit-4f",
-          "chamada": ""
-        },
-        {
-          "titulo": "Phase 4 (Return inspector)",
-          "peca": "aidd-audit-4f",
-          "chamada": ""
-        },
-        {
-          "titulo": "Run `gate_final` (full battery) once",
-          "peca": "aidd-audit-4f",
+          "id": "aprovacao",
+          "peca": "aprovacao",
+          "titulo": "Aprovacao Humana (Merge)",
           "chamada": ""
         }
-      ]
+      ],
+      "origem": "python ecossistema.py evolucao <tool>"
     },
     {
-      "id": "aidd-evolution",
-      "origem": "componentes/compartilhado/skills/aidd-evolution/SKILL.md",
+      "id": "melhoria-plan-orchestrate",
+      "nome": "Fluxo Melhoria -> Plano -> Orquestracao",
+      "comando": "python ecossistema.py melhoria",
+      "origem_estado": "docs/melhorias/ e docs/planos/",
       "etapas": [
         {
-          "titulo": "Read the evolution manifest (e.g. `docs/auditoria/<tool>/ciclo-NN/PLANO-EVOLUCAO.json`) an",
-          "peca": "aidd-evolution",
+          "id": "melhoria",
+          "peca": "melhoria",
+          "titulo": "Analise e Laudo (aidd-improvement)",
           "chamada": ""
         },
         {
-          "titulo": "All tickets accumulate on the cycle's own branch (`audit/<pipeline_id>`); the current bran",
-          "peca": "aidd-evolution",
+          "id": "plano",
+          "peca": "plano",
+          "titulo": "Compilacao do Plano (aidd-plan)",
           "chamada": ""
         },
         {
-          "titulo": "For each ticket",
-          "peca": "aidd-evolution",
-          "chamada": ""
-        },
-        {
-          "titulo": "After the last ticket",
-          "peca": "aidd-evolution",
+          "id": "orquestracao",
+          "peca": "orquestracao",
+          "titulo": "Execucao e Voo (aidd-orchestrate)",
           "chamada": ""
         }
-      ]
+      ],
+      "origem": "python ecossistema.py melhoria"
     },
     {
       "id": "aidd-ingest",
-      "origem": "componentes/compartilhado/skills/aidd-ingest/SKILL.md",
+      "nome": "Ingestao de Repositorios Externos",
+      "comando": "python ecossistema.py ingest <repo>",
+      "origem_estado": "~/.aidd/execucoes/<run_id>/estado.json",
       "etapas": [
         {
-          "titulo": "Triage & Sandbox Isolation",
-          "peca": "aidd-ingest",
+          "id": "triagem",
+          "peca": "triagem",
+          "titulo": "Triagem das 13 Leis",
           "chamada": ""
         },
         {
-          "titulo": "4F Audit Pipeline",
-          "peca": "aidd-ingest",
+          "id": "auditoria-4f",
+          "peca": "auditoria-4f",
+          "titulo": "Auditoria 4F Inicial",
           "chamada": ""
         },
         {
-          "titulo": "Architecture & Evolution Plan",
-          "peca": "aidd-ingest",
+          "id": "plano-evolucao",
+          "peca": "plano-evolucao",
+          "titulo": "Plano de Evolucao",
           "chamada": ""
         },
         {
-          "titulo": "Worktree Execution & Convergence",
-          "peca": "aidd-ingest",
+          "id": "execucao",
+          "peca": "execucao",
+          "titulo": "Execucao de Migracao",
           "chamada": ""
         }
-      ]
+      ],
+      "origem": "python ecossistema.py ingest <repo>"
     },
     {
       "id": "aidd-ops",
-      "origem": "componentes/compartilhado/skills/aidd-ops/SKILL.md",
-      "etapas": []
+      "nome": "Infraestrutura Agentica e VPS",
+      "comando": "python ecossistema.py ops",
+      "origem_estado": "~/.aidd/execucoes/<run_id>/estado.json",
+      "etapas": [
+        {
+          "id": "sizing-vps",
+          "peca": "sizing-vps",
+          "titulo": "Dimensionamento VPS",
+          "chamada": ""
+        },
+        {
+          "id": "ssh-hardening",
+          "peca": "ssh-hardening",
+          "titulo": "Blindagem SSH e Firewall",
+          "chamada": ""
+        },
+        {
+          "id": "docker-provision",
+          "peca": "docker-provision",
+          "titulo": "Provisionamento Docker",
+          "chamada": ""
+        },
+        {
+          "id": "cloudflare-dns",
+          "peca": "cloudflare-dns",
+          "titulo": "Configuracao Cloudflare",
+          "chamada": ""
+        },
+        {
+          "id": "deploy-verificacao",
+          "peca": "deploy-verificacao",
+          "titulo": "Deploy e Verificacao",
+          "chamada": ""
+        }
+      ],
+      "origem": "python ecossistema.py ops"
     },
     {
       "id": "aidd-pipeline",
-      "origem": "componentes/compartilhado/skills/aidd-pipeline/SKILL.md",
-      "etapas": []
+      "nome": "Orquestracao de Pipeline e Planos",
+      "comando": "python ecossistema.py pipeline --handoff <json>",
+      "origem_estado": "~/.aidd/execucoes/<run_id>/estado.json",
+      "etapas": [
+        {
+          "id": "compilacao-tickets",
+          "peca": "compilacao-tickets",
+          "titulo": "Compilacao de Tickets",
+          "chamada": ""
+        },
+        {
+          "id": "worktrees-paralelo",
+          "peca": "worktrees-paralelo",
+          "titulo": "Execucao em Worktrees",
+          "chamada": ""
+        },
+        {
+          "id": "join-barrier",
+          "peca": "join-barrier",
+          "titulo": "Barreira de Validacao",
+          "chamada": ""
+        },
+        {
+          "id": "integracao-master",
+          "peca": "integracao-master",
+          "titulo": "Integracao Master",
+          "chamada": ""
+        }
+      ],
+      "origem": "python ecossistema.py pipeline --handoff <json>"
+    },
+    {
+      "id": "bateria-gates",
+      "nome": "Bateria de Quality Gates (Auditoria)",
+      "comando": "python ecossistema.py audit",
+      "origem_estado": "secoes/medicoes/completo-<arvore>.json",
+      "etapas": [
+        {
+          "id": "preparacao-escopo",
+          "peca": "preparacao-escopo",
+          "titulo": "Preparacao de Escopo",
+          "chamada": ""
+        },
+        {
+          "id": "execucao-portoes",
+          "peca": "execucao-portoes",
+          "titulo": "Execucao dos Gates",
+          "chamada": ""
+        },
+        {
+          "id": "relatorio-conformidade",
+          "peca": "relatorio-conformidade",
+          "titulo": "Relatorio de Conformidade",
+          "chamada": ""
+        }
+      ],
+      "origem": "python ecossistema.py audit"
+    },
+    {
+      "id": "despacho-vsa",
+      "nome": "Despacho Topologico VSA em Worktrees",
+      "comando": "python ecossistema.py dispatch",
+      "origem_estado": "dispatch_rollback_report.json",
+      "etapas": [
+        {
+          "id": "analise-dag",
+          "peca": "analise-dag",
+          "titulo": "Resolucao DAG (Kahn)",
+          "chamada": ""
+        },
+        {
+          "id": "worktrees-fatias",
+          "peca": "worktrees-fatias",
+          "titulo": "Execucao por Fatia",
+          "chamada": ""
+        },
+        {
+          "id": "barreira-validacao",
+          "peca": "barreira-validacao",
+          "titulo": "Barreira de Validacao",
+          "chamada": ""
+        },
+        {
+          "id": "convergencia-master",
+          "peca": "convergencia-master",
+          "titulo": "Convergencia Modular",
+          "chamada": ""
+        }
+      ],
+      "origem": "python ecossistema.py dispatch"
+    },
+    {
+      "id": "run-plan",
+      "nome": "Execucao Deterministica de Planos",
+      "comando": "python ecossistema.py run-plan <plano>",
+      "origem_estado": "~/.aidd/execucoes/<run_id>/estado.json",
+      "etapas": [
+        {
+          "id": "compilacao-plano",
+          "peca": "compilacao-plano",
+          "titulo": "Compilacao do Plano",
+          "chamada": ""
+        },
+        {
+          "id": "execucao-fases",
+          "peca": "execucao-fases",
+          "titulo": "Execucao em Worktrees",
+          "chamada": ""
+        },
+        {
+          "id": "join-barrier",
+          "peca": "join-barrier",
+          "titulo": "Barreira de Qualidade",
+          "chamada": ""
+        },
+        {
+          "id": "verificacao-final",
+          "peca": "verificacao-final",
+          "titulo": "Verificacao Final",
+          "chamada": ""
+        }
+      ],
+      "origem": "python ecossistema.py run-plan <plano>"
     }
   ],
   "modulos": [

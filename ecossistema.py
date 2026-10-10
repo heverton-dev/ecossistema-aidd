@@ -1530,6 +1530,46 @@ def _apelido_com_aviso(antigo, novo, destino):
         return destino(args)
     return apelido
 
+
+def cmd_quadro(args):
+    """Inicia o servidor local do Quadro Kanban AIDD ou executa arquivamento."""
+    import argparse
+    import webbrowser
+    sys.path.insert(0, os.path.join(ROOT_DIR, "scripts"))
+    import quadro_arquivador
+    from quadro_servidor import iniciar_servidor
+
+    parser = argparse.ArgumentParser(description="Quadro Kanban de Pipelines AIDD")
+    parser.add_argument("--porta", type=int, default=8990, help="Porta HTTP (padrão: 8990)")
+    parser.add_argument("--abrir", action="store_true", help="Abre o navegador automaticamente")
+    parser.add_argument("--arquivar", action="store_true", help="Executa rotina de arquivamento compactado")
+    parser.add_argument("--dias", type=int, default=30, help="Dias de antiguidade para arquivamento (padrão: 30)")
+    parser.add_argument("--confirmar", action="store_true", help="Confirma compactação e exclusão dos originais")
+    parsed, _ = parser.parse_known_args(args)
+
+    if parsed.arquivar:
+        itens = quadro_arquivador.executar_arquivamento(dias=parsed.dias, confirmar=parsed.confirmar)
+        if not parsed.confirmar:
+            print(f"[aidd-quadro] Simulação de arquivamento ({len(itens)} execuções encontradas com mais de {parsed.dias} dias):")
+            for it in itens:
+                print(f"  - {it['run_id']} ({it['pipeline']} · {it['atualizado_em']})")
+            print("Execute com '--confirmar' para efetivar a compactação em .zip.")
+        else:
+            print(f"[aidd-quadro] {len(itens)} execuções arquivadas com sucesso em .zip.")
+        return 0
+
+    url = f"http://127.0.0.1:{parsed.porta}"
+    print(f"[aidd-quadro] Servidor ativo em {url}")
+    if parsed.abrir:
+        webbrowser.open(url)
+
+    servidor = iniciar_servidor(porta=parsed.porta)
+    try:
+        servidor.serve_forever()
+    except KeyboardInterrupt:
+        print("\n[aidd-quadro] Encerrando servidor.")
+    return 0
+
 def comandos_disponiveis():
     """Mapa comando -> função, já com os nomes antigos como apelido que avisa."""
     dispatch = {
@@ -1588,6 +1628,8 @@ def comandos_disponiveis():
         "modularizacao-vsa": cmd_modularizacao_vsa,
         "preflight-host": cmd_preflight_host,
         "status": cmd_status,
+        "quadro": cmd_quadro,
+        "kanban": cmd_quadro,
         "help": lambda a: print_help() or 0,
         "--help": lambda a: print_help() or 0,
         "-h": lambda a: print_help() or 0
@@ -1595,6 +1637,26 @@ def comandos_disponiveis():
     for antigo, novo in carregar_nomes_antigos().items():
         dispatch[antigo] = _apelido_com_aviso(antigo, novo, dispatch[novo])
     return dispatch
+
+
+MAPA_CMD_PIPELINE = {
+    "pure": "pure",
+    "open": "open",
+    "freedom": "freedom",
+    "audit-4f": "auditoria-4f",
+    "aidd-audit-4f": "auditoria-4f",
+    "evolucao": "evolucao",
+    "aidd-evolucao": "evolucao",
+    "melhoria": "melhoria-plan-orchestrate",
+    "plan": "melhoria-plan-orchestrate",
+    "orchestrate": "melhoria-plan-orchestrate",
+    "ingest": "aidd-ingest",
+    "ops": "aidd-ops",
+    "pipeline": "aidd-pipeline",
+    "audit": "bateria-gates",
+    "dispatch": "despacho-vsa",
+    "run-plan": "run-plan",
+}
 
 def main():
     # Windows abre stdout/stderr no codepage local (cp1252), que não
@@ -1618,8 +1680,30 @@ def main():
     dispatch = comandos_disponiveis()
 
     if cmd in dispatch:
-        exit_code = dispatch[cmd](args)
-        sys.exit(exit_code or 0)
+        pipe_id = MAPA_CMD_PIPELINE.get(cmd)
+        if pipe_id and os.environ.get("AIDD_QUADRO") != "0":
+            try:
+                sys.path.insert(0, os.path.join(ROOT_DIR, "scripts"))
+                import estado_execucao
+                chave = f"{pipe_id}-{args[0]}" if args and not args[0].startswith("-") else f"{pipe_id}-cli"
+                with estado_execucao.Execucao.abrir(
+                    pipeline=pipe_id,
+                    chave=chave,
+                    titulo=f"ecossistema.py {cmd} {' '.join(args)}".strip(),
+                    comando=f"python ecossistema.py {cmd} {' '.join(args)}".strip()
+                ) as ex:
+                    exit_code = dispatch[cmd](args)
+                    if exit_code and exit_code != 0:
+                        ex.parar(motivo=f"Comando encerrou com exit code {exit_code}")
+                    sys.exit(exit_code or 0)
+            except SystemExit:
+                raise
+            except Exception:
+                exit_code = dispatch[cmd](args)
+                sys.exit(exit_code or 0)
+        else:
+            exit_code = dispatch[cmd](args)
+            sys.exit(exit_code or 0)
     else:
         print(f"Erro: comando desconhecido '{cmd}'. Digite 'python ecossistema.py help' para ver as opções.")
         if cmd in ("componentes", "components-sync", "sync-components") or "sync" in cmd or "tipo" in cmd or "tipos" in cmd:

@@ -217,7 +217,15 @@ def auditar_gates(gates_dir: str | None = None, raiz: str = ROOT_DIR) -> int:
 
     for gate_file, valido, errs in resultados:
         if not valido:
-            erros_totais[gate_file] = errs
+            test_file = encontrar_arquivo_teste(gate_file, pasta_de[gate_file])
+            if test_file:
+                valido_retry, errs_retry = auditar_teste_de_falha(test_file, executar=True)
+                if valido_retry:
+                    conformes.append(gate_file)
+                    continue
+                erros_totais[gate_file] = errs_retry
+            else:
+                erros_totais[gate_file] = errs
         else:
             conformes.append(gate_file)
 

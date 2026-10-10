@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quadro AIDD · Pipelines</title>
+  <link rel="stylesheet" href="/quadro.css">
+</head>
+<body>
+  <header class="barra-topo">
+    <div class="marca">
+      <div class="emblema-aidd" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="4 17 10 11 4 5"></polyline>
+          <line x1="12" y1="19" x2="20" y2="19"></line>
+        </svg>
+      </div>
+      <div>
+        <h1 class="marca-titulo">Quadro AIDD</h1>
+        <span class="marca-subtitulo">Console Operacional de Pipelines</span>
+      </div>
+    </div>
+
+    <nav class="abas-navegacao" aria-label="Seções do Quadro">
+      <button id="aba-pipelines" class="aba-btn ativa" onclick="mudarAba('pipelines')">
+        <span class="aba-rotulo">Pipelines Ativos</span>
+        <span id="contagem-pipelines-ativos" class="aba-badge">0</span>
+      </button>
+      <button id="aba-arquivo" class="aba-btn" onclick="mudarAba('arquivo')">
+        <span class="aba-rotulo">Arquivo Histórico</span>
+      </button>
+    </nav>
+
+    <div class="painel-acoes-topo">
+      <div class="status-conexao" title="Status de sincronização com o ecossistema">
+        <span id="indicador-pulso" class="pulso-status"></span>
+        <span id="texto-atualizacao">Conectando...</span>
+      </div>
+      <button id="btn-notificacao" class="btn-acao-topo" onclick="alternarNotificacoes()" title="Ativar alertas desktop para aprovação e falhas" aria-label="Notificações">
+        <svg id="icone-notificacao" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
+      </button>
+      <button id="btn-tema" class="btn-tema" onclick="alternarTema()" title="Alternar tema claro/escuro (T)" aria-label="Alternar tema">
+        <svg id="icone-tema" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="conteudo-principal">
+    <!-- VISÃO GERAL DE PIPELINES -->
+    <section id="secao-pipelines" class="visao-secao">
+      <div class="secao-cabecalho">
+        <div>
+          <h2 class="secao-titulo">Pipelines do Ecossistema</h2>
+          <p class="secao-descricao">Visão consolidada dos 12 pipelines e fluxos operacionais.</p>
+        </div>
+        <div class="caixa-busca">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input id="campo-busca" class="input-busca" type="text" placeholder="Filtrar pipelines... (/)" oninput="filtrarPipelines(this)" />
+          <kbd class="atalho-busca">/</kbd>
+        </div>
+      </div>
+      <div id="grade-pipelines" class="grade-cards"></div>
+      
+      <div id="kanban-container" class="kanban-wrapper escondido">
+        <div class="kanban-cabecalho">
+          <div class="kanban-cabecalho-esquerda">
+            <button class="btn-voltar" onclick="fecharKanban()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+              <span>Voltar aos pipelines</span>
+            </button>
+            <h2 id="kanban-titulo" class="kanban-titulo-texto">Kanban</h2>
+          </div>
+          <div class="kanban-cabecalho-centro">
+            <div class="caixa-busca caixa-busca-kanban">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input id="campo-busca-kanban" class="input-busca" type="text" placeholder="Filtrar execuções... (/)" oninput="filtrarKanban(this)" />
+              <kbd class="atalho-busca">/</kbd>
+            </div>
+          </div>
+          <div class="kanban-cabecalho-direita">
+            <span class="rotulo-comando">Comando de Acionamento:</span>
+            <code id="kanban-comando" class="comando-badge"></code>
+          </div>
+        </div>
+        <div id="kanban-colunas" class="kanban-trilha"></div>
+      </div>
+    </section>
+
+    <!-- VISÃO DO ARQUIVO -->
+    <section id="secao-arquivo" class="visao-secao escondido">
+      <div class="secao-cabecalho">
+        <div>
+          <h2 class="secao-titulo">Histórico e Arquivo</h2>
+          <p class="secao-descricao">Execuções arquivadas e finalizadas com registro factual auditável.</p>
+        </div>
+      </div>
+      <div class="filtros-arquivo">
+        <div class="campo-filtro">
+          <label for="filtro-pipeline">Filtrar por Pipeline</label>
+          <select id="filtro-pipeline" onchange="carregarArquivo()">
+            <option value="">Todos os pipelines</option>
+          </select>
+        </div>
+        <div class="campo-filtro">
+          <label for="filtro-status">Filtrar por Status</label>
+          <select id="filtro-status" onchange="carregarArquivo()">
+            <option value="">Todos os status</option>
+            <option value="concluido">Concluídos</option>
+            <option value="falhou">Falhados</option>
+            <option value="interrompido">Interrompidos</option>
+            <option value="cancelado">Cancelados</option>
+          </select>
+        </div>
+      </div>
+      <div id="tabela-arquivo" class="tabela-container"></div>
+    </section>
+  </main>
+
+  <!-- GAVETA LATERAL DO CARTÃO (DRAWER) -->
+  <div id="gaveta-backdrop" class="gaveta-backdrop escondido" onclick="fecharGaveta()"></div>
+  <aside id="gaveta-detalhes" class="gaveta escondido" aria-hidden="true" role="dialog" aria-labelledby="gaveta-titulo">
+    <div class="gaveta-cabecalho">
+      <div>
+        <span class="gaveta-meta-tipo">Execução Ativa</span>
+        <h3 id="gaveta-titulo" class="gaveta-titulo-texto">Detalhes da Execução</h3>
+      </div>
+      <button class="btn-fechar" onclick="fecharGaveta()" aria-label="Fechar gaveta (Esc)">✕</button>
+    </div>
+    <div id="gaveta-conteudo" class="gaveta-corpo"></div>
+  </aside>
+
+  <script src="/quadro.js"></script>
+</body>
+</html>

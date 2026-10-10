@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 2. Target tool: quadro-kanban-pipelines.
+DIMENSION: D8
+DELIVER: tests/test_catalogo_pipelines_contrato.py
+
+STEPS:
+- Write tests/test_catalogo_pipelines_contrato.py asserting coletar_pipelines in scripts/catalogo_pecas.py reads stages from PIPELINES.json contract.
+- Run pytest tests/test_catalogo_pipelines_contrato.py and assert failure if logic does not read contract.
+- Modify scripts/catalogo_pecas.py to load stages from modulos/04-nucleo-compartilhado/contracts/PIPELINES.json.
+- Re-run pytest tests/test_catalogo_pipelines_contrato.py and assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: tests/test_catalogo_pipelines_contrato.py

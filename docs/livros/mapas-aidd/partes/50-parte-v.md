@@ -22,9 +22,9 @@ Onde mora: `scripts/orquestrador_sincrono.py` e `componentes/compartilhado/skill
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| pipelines | 9 |
-| fluxos da Tríade | 3 |
-| sem etapas declaradas | 2 |
+| pipelines | 12 |
+| fluxos da Tríade | 0 |
+| sem etapas declaradas | 0 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_pipelines`), os mesmos do mapa `mapa-13-pipelines.html`.
 

@@ -24,7 +24,7 @@ Onde mora: `docs/planos/` e `docs/auditoria/`. Quem confere: o `scripts/atualiza
 | :-------------------------------------- | :-------------------------------------------- |
 | planos | 37 |
 | em execução | 11 |
-| ciclos de auditoria | 51 |
+| ciclos de auditoria | 54 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_oficina`), os mesmos do mapa `mapa-11-oficina.html`.
 

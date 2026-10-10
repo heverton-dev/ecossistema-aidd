@@ -1,0 +1,54 @@
+{
+  "pipeline_id": "evolucao-quadro-kanban-pipelines-ciclo-01",
+  "target_tool": "quadro-kanban-pipelines",
+  "descricao": "Plano de Evolução Tática montado a partir dos 4 tickets de PLANO-EVOLUCAO.md",
+  "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
+  "definition_of_done": "docs/auditoria/quadro-kanban-pipelines/ciclo-01/DOD.md",
+  "gate_final": "python ecossistema.py audit",
+  "fases": [
+    {
+      "ticket_id": "TICKET-01",
+      "nome": "Fase_1_Ticket_1_Contrato_unico_de_pipelines_e_teste_de_schema",
+      "dimensao_15d": "D1. Aderencia Arquitetural e Contratos",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-low",
+      "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/quadro-kanban-pipelines/ciclo-01/prompts_tickets/PROMPT-TICKET-01.txt",
+      "output_handoff": "modulos/04-nucleo-compartilhado/contracts/PIPELINES.json",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-02",
+      "nome": "Fase_2_Ticket_2_Consumo_do_contrato_vivo_no_catalogo_de_pecas",
+      "dimensao_15d": "D8. Determinismo e AST",
+      "harness": "mimo",
+      "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
+      "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
+      "input_prompt": "docs/auditoria/quadro-kanban-pipelines/ciclo-01/prompts_tickets/PROMPT-TICKET-02.txt",
+      "output_handoff": "tests/test_catalogo_pipelines_contrato.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-03",
+      "nome": "Fase_3_Ticket_3_Detector_do_contrato_vivo_e_teste_de_mordida",
+      "dimensao_15d": "D13. Quality Gates (Portoes)",
+      "harness": "opencode",
+      "model": "opencode/big-pickle",
+      "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
+      "input_prompt": "docs/auditoria/quadro-kanban-pipelines/ciclo-01/prompts_tickets/PROMPT-TICKET-03.txt",
+      "output_handoff": "tests/test_pipelines_detector_vivo.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-04",
+      "nome": "Fase_4_Ticket_4_Regeneracao_e_validacao_com_gates_do_ecossistema",
+      "dimensao_15d": "D13. Quality Gates (Portoes)",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-low",
+      "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/quadro-kanban-pipelines/ciclo-01/prompts_tickets/PROMPT-TICKET-04.txt",
+      "output_handoff": "docs/auditoria/quadro-kanban-pipelines/ciclo-01/EVIDENCIA-FASE-0.md",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    }
+  ]
+}

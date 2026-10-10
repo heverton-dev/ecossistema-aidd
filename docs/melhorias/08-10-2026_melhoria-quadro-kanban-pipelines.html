@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>08-10-2026_melhoria-quadro-kanban-pipelines</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg:#f6f7f9; --bg-card:#ffffff; --border:#e2e5ea;
+    --fg:#1b1f26; --fg-muted:#5b6472;
+    --accent:#2563eb; --accent-fg:#ffffff;
+    --good:#1a7f4e; --good-bg:#e4f6ec;
+    --warn:#9a6400; --warn-bg:#fdf1d9;
+    --bad:#b3261e; --bad-bg:#fbe7e6;
+    --neutra:#6b7280; --neutra-bg:#eceef1;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#0b111a; --bg-card:#131b26; --border:#232d3b;
+      --fg:#e6edf3; --fg-muted:#94a3b8;
+      --accent:#4c8dff; --accent-fg:#08111f;
+      --good:#3ddc84; --good-bg:#0f2c1d;
+      --warn:#f2b84b; --warn-bg:#2c2410;
+      --bad:#ff6b6b; --bad-bg:#2c1414;
+      --neutra:#9aa4b2; --neutra-bg:#1b232f;
+    }
+  }
+  * { box-sizing: border-box; scrollbar-width: thin; scrollbar-color: var(--accent) var(--bg); }
+  ::-webkit-scrollbar { width:4px; height:4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--accent); border-radius:4px; }
+  body {
+    background:var(--bg); color:var(--fg);
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    line-height: 1.5; margin:0; padding: 32px 16px;
+  }
+  .pagina { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 1.375rem; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .subtitulo { color: var(--fg-muted); font-size: 0.875rem; margin: 0 0 24px; }
+  .eyebrow {
+    font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.05em; color: var(--fg-muted); margin: 0 0 16px;
+  }
+  .card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px; margin-bottom: 16px;
+  }
+  .pedido { font-size: 0.9375rem; color: var(--fg-muted); margin-bottom: 16px; }
+  .pedido strong { color: var(--fg); }
+  .evidencia { font-size: 0.8125rem; color: var(--fg-muted); margin: 8px 0 0; }
+  .plano-caminho { font-size: 0.8125rem; color: var(--fg-muted); margin: 0 0 16px; word-break: break-all; }
+
+  .gauge { display:flex; align-items:center; gap:12px; margin-bottom: 8px; }
+  .gauge-rotulo { flex: 0 0 140px; font-size: 0.8125rem; color: var(--fg-muted); }
+  .gauge-trilho { flex: 1; height: 10px; background: var(--border); border-radius: 6px; overflow: hidden; }
+  .gauge-fill { height: 100%; border-radius: 6px; }
+  .gauge-fill-neutra {
+    background-image: repeating-linear-gradient(45deg, currentColor 0 6px, transparent 6px 12px);
+  }
+  .gauge-good { background: var(--good); color: var(--good); }
+  .gauge-warn { background: var(--warn); color: var(--warn); }
+  .gauge-bad { background: var(--bad); color: var(--bad); }
+  .gauge-neutra { background: var(--neutra); color: var(--neutra); }
+  .gauge-valor { flex: 0 0 auto; font-weight: 700; font-size: 0.9375rem; min-width: 64px; text-align: right; }
+  .gauge-texto-good { color: var(--good); }
+  .gauge-texto-warn { color: var(--warn); }
+  .gauge-texto-bad { color: var(--bad); }
+  .gauge-texto-neutra { color: var(--neutra); }
+  .comparativo-notas { margin: 8px 0 4px; }
+
+  .badge {
+    display: inline-block; padding: 2px 10px; border-radius: 999px;
+    font-size: 0.8125rem; font-weight: 600; white-space: nowrap;
+  }
+  .badge-good { background: var(--good-bg); color: var(--good); }
+  .badge-warn { background: var(--warn-bg); color: var(--warn); }
+  .badge-bad { background: var(--bad-bg); color: var(--bad); }
+  .badge-neutra { background: var(--neutra-bg); color: var(--neutra); }
+
+  .dist-bar { display:flex; height: 10px; border-radius: 6px; overflow: hidden; margin-bottom: 8px; background: var(--border); }
+  .dist-seg { height: 100%; }
+  .dist-feito { background: var(--good); }
+  .dist-parcial { background: var(--warn); }
+  .dist-nao-feito { background: var(--bad); }
+  .dist-legenda { display:flex; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; }
+  .dist-legenda-item { font-size: 0.8125rem; color: var(--fg-muted); display:flex; align-items:center; gap:6px; }
+  .dist-dot { width:8px; height:8px; border-radius:50%; display:inline-block; }
+  .dist-dot.dist-feito { background: var(--good); }
+  .dist-dot.dist-parcial { background: var(--warn); }
+  .dist-dot.dist-nao-feito { background: var(--bad); }
+
+  .tabela-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+  th { text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em;
+       color: var(--fg-muted); font-weight: 600; padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  .col-item { white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--fg-muted); }
+
+  h2.titulo-secao { font-size: 1rem; font-weight: 700; margin: 0 0 12px; }
+  ul { margin: 0; padding-left: 20px; }
+  li { margin-bottom: 6px; }
+  .status-rodape { font-size: 0.8125rem; color: var(--fg-muted); }
+</style>
+</head>
+<body>
+<div class="pagina">
+  <h1>Relatorio de Analise Profunda</h1>
+  <p class="subtitulo">08-10-2026_melhoria-quadro-kanban-pipelines</p>
+
+  <section class="card">
+    <p class="pedido"><strong>Pedido original:</strong> Dashboard visual de acompanhamento em tempo real, no formato Kanban, do trabalho de cada pipeline do ecossistema, inspirado no factory/dashboard.html do repositório zazencodes-season-3 (src/software-factory-claude-code). Refinado em 08-10-2026: um Kanban para cada pipeline, lista de pipelines viva, gaveta com tudo o que foi feito, arquivo consultável do que terminou e, numa fase própria, skills, MCPs e tokens por execução.</p>
+  </section>
+
+  <section class="card">
+  <h2 class="eyebrow">Nota Atual</h2>
+  <div class="gauge">
+  <div class="gauge-rotulo">Nota Atual (0-10)</div>
+  <div class="gauge-trilho" role="img" aria-label="Nota Atual (0-10): 2/10">
+    <div class="gauge-fill gauge-bad" style="width:20%;"></div>
+  </div>
+  <div class="gauge-valor gauge-texto-bad">2/10</div>
+</div>
+  <p class="evidencia"><strong>Evidencia:</strong> Escala: 0 = nada visível; 10 = um Kanban ao vivo para cada pipeline, com arquivo consultável. Hoje só existe visão por agente: uma aba do Orca por fase (scripts/orquestrador_4f.py, run_agente_orca) e a janela LiveHUD apenas no modo sem Orca; scripts/fila_ciclos.py só avisa no fim do ciclo. Protótipo só-leitura de 08-10-2026 sobre os 19 MANIFESTO-4F.json: 36 ms e 2 chamadas git. Catálogo (docs/auditoria/mapa-pecas/catalogo-pecas.json, chave pipelines) em 08-10-2026 à noite: 9 pipelines; etapas de 4F, evolução, ingest e melhoria -&gt; plan -&gt; orchestrate copiadas de títulos das SKILL.md; aidd-ops e aidd-pipeline com zero etapas; bateria de gates, despacho VSA e run-plan fora do catálogo. Nenhum código do repositório lê tokens dos registros de conversa dos harnesses.</p>
+</section>
+  
+
+  <section class="card">
+    <h2 class="titulo-secao">Resumo</h2>
+    <p>Decisões fechadas com o usuário em 08-10-2026 (v3): os 12 pipelines, cada um com seu Kanban (colunas Fila, etapas declaradas, Concluído e Parado); cartão = uma execução, com gaveta em 5 blocos (linha do tempo, o que foi feito, por que parou, o que precisa de você, dados brutos); contrato único e vivo de pipelines lido por catálogo, mapa e quadro, em que pipeline não declarado barra o commit pelo G_mapa_pecas; dashboard neste repositório, com link no Mission Control; aba Arquivo com arquivamento compactado, nada apagado sem OK e backup mensal opcional num repositório privado do GitHub; harness, LLM e tempo desde o registro, e skills, MCPs e tokens numa fase própria no fim, com 'não medido' quando não houver dado.</p>
+  </section>
+
+  <section class="card">
+    <h2 class="titulo-secao">Achados</h2>
+    <ul><li>Referência (código conferido): factory/dashboard.html (~630 linhas, sem CDN) consulta jobs/&lt;id&gt;/job.json a cada 2 s; só o orquestrador escreve job.json; estado de execução fica fora do git.</li><li>O estado do 4F e da evolução já é derivável sem instrumentar nada: saídas existentes, refs/aidd/aprovavel/&lt;id&gt;, commit '(gate_fase em curso)', merge 'chore(audit): aprova &lt;id&gt;', trava .aidd/fila-ciclos.lock e secoes/medicoes/ultimo-ciclo.json.</li><li>Os demais pipelines quase não gravam estado: dispatch e run-plan nada (só relatório de rollback); aidd-pure mantém &lt;projeto&gt;/.aidd/cache/_pipeline_state.json; open e freedom nada.</li><li>Ponto único de entrada: main() do ecossistema.py chama dispatch[cmd](args); envolver essa chamada registra início, fim e código de saída sem tocar nas fatias.</li><li>Catálogo com 9 pipelines e etapas pouco confiáveis (títulos de SKILL.md; ops e pipeline com zero); bateria de gates, despacho VSA e run-plan rodam mas não estão no catálogo nem no mapa.</li><li>O orquestrador já sabe harness, modelo e horários de cada fase; skills, MCPs e tokens só existem no registro de conversa de cada harness, em formatos diferentes, e nenhum código do repositório lê esses registros hoje.</li><li>Arquivo pequeno se guardar só dados resumidos (5 a 30 KB por execução, mil execuções em torno de 30 MB antes de compactar); o que ocupa espaço são logs e registros de conversa, que o plano não copia.</li><li>Armadilhas mantidas: src-core é núcleo de produto vigiado por drift; G_CYBERSECURITY_OWASP reprova innerHTML montado por concatenação; os.replace falha no Windows com o leitor aberto; visual-maps gerar sozinho deixa os gates de mapas vermelhos nesta máquina.</li><li>Plano v3 no .md companheiro: Fase 0 contrato vivo, Fase 1 registro, Fase 2 tela e Arquivo, Fase 3 etapa ao vivo por pipeline, Fase 4 alertas e arquivamento com backup opcional, Fase 5 custo e ferramentas.</li></ul>
+  </section>
+
+  <section class="card">
+    <h2 class="titulo-secao">Riscos / Limitacoes</h2>
+    <ul><li>Contrato e pipelines divergirem: o emissor recusa etapa fora do contrato e o catálogo acusa pipeline não declarado.</li><li>Windows: os.replace falha enquanto o quadro lê o arquivo; o emissor tenta de novo e segue sem derrubar o pipeline.</li><li>Servidor local exposto: só 127.0.0.1, Host conferido, só GET, artefatos por lista branca e CSP sem código inline.</li><li>Backup no GitHub vazar segredo: só dados resumidos, detector de segredos antes do envio, repositório privado.</li><li>Formato do registro de conversa mudar: coletor por harness com teste de amostra real; falhou, o cartão mostra 'não medido'.</li><li>A bateria tests/ leva ~790 s com teto de 900 s no G_TESTES_REAIS: os testes novos somam menos de 3 s.</li><li>Escopo inflar: cada fase fecha sozinha; reavaliar antes das Fases 3, 4 e 5.</li></ul>
+  </section>
+
+  <section class="card">
+    <h2 class="titulo-secao">Recomendacao</h2>
+    <p>Rodar /plan só com a Fase 0 (contrato vivo de pipelines) numa sessão nova, depois dos Blocos 8 e 9 do ciclo-03 da modularização VSA; o primeiro commit leva também este plano para o git, junto com o catálogo regenerado.</p>
+  </section>
+
+  <p class="status-rodape"><strong>Status:</strong> RASCUNHO - aguardando decisao humana sobre proximo passo (ex: iniciar /plan, ou atualizar a nota do plano existente)</p>
+</div>
+</body>
+</html>

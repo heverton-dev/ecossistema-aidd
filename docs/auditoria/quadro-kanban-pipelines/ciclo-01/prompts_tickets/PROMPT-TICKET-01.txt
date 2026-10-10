@@ -1,0 +1,18 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 1. Target tool: quadro-kanban-pipelines.
+DIMENSION: D1
+DELIVER: modulos/04-nucleo-compartilhado/contracts/PIPELINES.json
+
+STEPS:
+- Write tests/test_pipelines_contrato.py asserting modulos/04-nucleo-compartilhado/contracts/PIPELINES.json exists and contains 12 pipelines.
+- Run pytest tests/test_pipelines_contrato.py and verify exit 1 before contract creation.
+- Create modulos/04-nucleo-compartilhado/contracts/PIPELINES.json declaring all 12 pipelines with their respective stages and state source.
+- Declare explicit stages for aidd-ops and aidd-pipeline.
+- Re-run pytest tests/test_pipelines_contrato.py and assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: modulos/04-nucleo-compartilhado/contracts/PIPELINES.json

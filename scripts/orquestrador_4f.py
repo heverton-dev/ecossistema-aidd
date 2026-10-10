@@ -1,3 +1,11 @@
+try:
+    from estado_execucao import Execucao
+except ImportError:
+    try:
+        from scripts.estado_execucao import Execucao
+    except ImportError:
+        Execucao = None
+
 import argparse
 import ctypes
 import json
@@ -774,6 +782,19 @@ def main():
 
 
 def executar_pipeline(args, data, pipeline_id, fases, repo_root):
+    if Execucao and os.environ.get("AIDD_QUADRO") != "0":
+        with Execucao.abrir(
+            pipeline="auditoria-4f",
+            chave=pipeline_id,
+            titulo=f"4F {pipeline_id}",
+            comando=f"python scripts/orquestrador_4f.py --manifest {args.manifest}"
+        ) as ex_quadro:
+            return _executar_pipeline_real(args, data, pipeline_id, fases, repo_root, ex_quadro)
+    else:
+        return _executar_pipeline_real(args, data, pipeline_id, fases, repo_root, None)
+
+
+def _executar_pipeline_real(args, data, pipeline_id, fases, repo_root, ex_quadro=None):
     # As fases acumulam numa branch própria do ciclo; a branch atual só muda com --aprovar.
     branch_ciclo = f"audit/{pipeline_id}"
     worktrees_base = repo_root.parent / f"worktrees_{pipeline_id}"
@@ -800,6 +821,9 @@ def executar_pipeline(args, data, pipeline_id, fases, repo_root):
             continue
 
         print(f"\n---> INICIANDO FASE {i}: {nome}")
+        if ex_quadro:
+            fase_id = f"fase-{i}" if i <= 4 else ("gate-final" if i == 5 else f"fase-{i}")
+            ex_quadro.etapa(fase_id, "agente", harness=fase.get("harness"), modelo=fase.get("model"))
 
         if handoff and not args.force and not args.fase and saida_ja_existe(handoff, branch_ciclo, repo_root):
             print(f"[CACHE] '{handoff}' já existe (projeto ou {branch_ciclo}). Pulando a execução da IA desta fase.")
