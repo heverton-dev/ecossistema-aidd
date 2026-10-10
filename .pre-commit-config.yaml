@@ -136,10 +136,10 @@ repos:
         require_serial: true
 
       - id: g-testes-reais
-        name: G_TESTES_REAIS (pytest real por ferramenta em tools/)
+        name: G_TESTES_REAIS (pytest real por ferramenta — bateria completa)
         entry: python modulos/01-governanca-e-qualidade/gates/G_TESTES_REAIS.py
         language: system
-        files: ^tools/
+        stages: [manual]  # g-micro-gates-diff cobre commits; audit/push roda via manual
         pass_filenames: false
         require_serial: true
 
