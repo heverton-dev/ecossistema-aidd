@@ -979,6 +979,19 @@ def executar_pipeline(ideia: str, pasta_projeto: Path, nao_interativo: bool = Tr
         'arquivo': str(saida_contexto) if saida_contexto.exists() else None
     }
 
+    # Validação mecânica cross-script (Gate I3 / G_INTEGRACAO_CROSS_SCRIPT)
+    try:
+        import importlib.util
+        _gate_cross_path = Path(__file__).resolve().parent / "gates" / "G_INTEGRACAO_CROSS_SCRIPT.py"
+        if _gate_cross_path.exists():
+            _spec_cross = importlib.util.spec_from_file_location("G_INTEGRACAO_CROSS_SCRIPT", str(_gate_cross_path))
+            _mod_cross = importlib.util.module_from_spec(_spec_cross)
+            _spec_cross.loader.exec_module(_mod_cross)
+            _res_cross = _mod_cross.executar_gate(pasta_projeto)
+            resultado['gate_cross_script'] = {'codigo': _res_cross}
+    except Exception as _exc_cross:
+        print(f"[GATE I3] Aviso ao executar G_INTEGRACAO_CROSS_SCRIPT: {_exc_cross}")
+
     # Descartar todas as fases da memória ao final
     _descarregar_todas_fases()
 

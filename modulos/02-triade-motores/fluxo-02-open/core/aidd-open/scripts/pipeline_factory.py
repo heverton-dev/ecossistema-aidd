@@ -36,10 +36,19 @@ def _achar_raiz_repo(inicio: str) -> str:
 _FACTORY_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(_FACTORY_ROOT, "src"))
 sys.path.insert(0, os.path.join(_FACTORY_ROOT, "scripts", "phases_open"))
+sys.path.insert(0, os.path.join(_FACTORY_ROOT, "gates"))
 sys.path.insert(0, os.path.join(_achar_raiz_repo(_FACTORY_ROOT), "componentes", "compartilhado", "src-core"))
+
 
 from core_open.result import Result
 from core_open.escritor_atomico import escrever_json_atomico
+
+# Importar gates de validação
+import G_FACTORY_ANALYSIS
+import G_FACTORY_COMPOSE
+import G_FACTORY_ENV
+import G_FACTORY_INIT_DB
+import G_FACTORY_INTEGRATION
 
 # Importar fases
 from importlib import import_module as _imod
@@ -189,6 +198,7 @@ def executar_pipeline(plano_path: str, pasta_destino: str, incluir_llm: bool = T
         caminho = _salvar_artefato(pasta_destino, "factory_analysis.json", res_analysis.valor)
         artefatos.append({"tipo": "analysis", "caminho": caminho, "status": "gerado"})
         print(f"  [OK] factory_analysis.json gerado")
+        G_FACTORY_ANALYSIS.executar(caminho)
     else:
         artefatos.append({"tipo": "analysis", "caminho": "", "status": "erro", "detalhes": res_analysis.erro})
         print(f"  [ERRO] {res_analysis.codigo}: {res_analysis.erro}")
@@ -249,6 +259,7 @@ def executar_pipeline(plano_path: str, pasta_destino: str, incluir_llm: bool = T
             caminho = _salvar_artefato(pasta_destino, "docker-compose.yml", res_compose.valor)
             artefatos.append({"tipo": "compose", "caminho": caminho, "status": "gerado"})
             print(f"  [OK] docker-compose.yml gerado")
+            G_FACTORY_COMPOSE.executar(caminho)
         else:
             artefatos.append({"tipo": "compose", "caminho": "", "status": "erro", "detalhes": res_compose.erro})
             print(f"  [ERRO] {res_compose.codigo}: {res_compose.erro}")
@@ -265,6 +276,7 @@ def executar_pipeline(plano_path: str, pasta_destino: str, incluir_llm: bool = T
             caminho = _salvar_artefato(pasta_destino, "init-multiple-databases.sh", res_init.valor)
             artefatos.append({"tipo": "init_db", "caminho": caminho, "status": "gerado"})
             print(f"  [OK] init-multiple-databases.sh gerado")
+            G_FACTORY_INIT_DB.executar(caminho)
         else:
             artefatos.append({"tipo": "init_db", "caminho": "", "status": "erro", "detalhes": res_init.erro})
             print(f"  [ERRO] {res_init.codigo}: {res_init.erro}")
@@ -281,6 +293,7 @@ def executar_pipeline(plano_path: str, pasta_destino: str, incluir_llm: bool = T
             for env_info in res_env.valor:
                 artefatos.append({"tipo": "env", "caminho": env_info["caminho"], "status": "gerado"})
             print(f"  [OK] {len(res_env.valor)} arquivo(s) .env gerado(s)")
+            G_FACTORY_ENV.executar(pasta_destino)
         else:
             artefatos.append({"tipo": "env", "caminho": "", "status": "erro", "detalhes": res_env.erro})
             print(f"  [ERRO] {res_env.codigo}: {res_env.erro}")
@@ -368,6 +381,8 @@ def executar_pipeline(plano_path: str, pasta_destino: str, incluir_llm: bool = T
         },
     }
     output_path = _salvar_artefato(pasta_destino, "FACTORY_OUTPUT.json", factory_output)
+    if G_FACTORY_INTEGRATION.executar(pasta_destino) != 0:
+        erros += 1
 
     # Resumo final
     print()

@@ -1587,3 +1587,20 @@
   - Suíte do forge (de dentro da pasta) → 316 passed, 1 skipped, exit 0.
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 08/10/2026.
+
+## 53. Pós-ciclo-03 (Item 3): Chamadores ativos para os 6 gates de ferramentas
+
+- **Objetivo da Correção:**
+  Seis gates de ferramentas listados na allowlist de fronteira estavam sem chamadores no código de produção (`G_FACTORY_ANALYSIS`, `G_FACTORY_COMPOSE`, `G_FACTORY_ENV`, `G_FACTORY_INIT_DB`, `G_FACTORY_INTEGRATION` no `aidd-open` e `G_INTEGRACAO_CROSS_SCRIPT` no `aidd-pure`). A governança exigia conexão determinística aos pipelines correspondentes ou remoção.
+- **Ferramentas Tocadas:**
+  `aidd-open` (`modulos/02-triade-motores/fluxo-02-open/core/aidd-open/scripts/pipeline_factory.py`) e `aidd-pure` (`modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/pipeline_completo.py`).
+- **O que executou:**
+  1. `pipeline_factory.py`: conectados deterministicamente `G_FACTORY_ANALYSIS` (Fase 1), `G_FACTORY_COMPOSE` (Fase 4), `G_FACTORY_INIT_DB` (Fase 5), `G_FACTORY_ENV` (Fase 6) e `G_FACTORY_INTEGRATION` (Fase 9 / pós-output).
+  2. `pipeline_completo.py`: conectado `G_INTEGRACAO_CROSS_SCRIPT` (validação mecânica cross-script no encerramento do pipeline).
+  3. `tests/test_chamadores_gates_ferramentas.py`: teste TDD automatizado garantindo que nenhum dos 6 gates permaneça órfão no repositório.
+- **Resultados de Testes (09/10/2026):**
+  - `pytest tests/test_chamadores_gates_ferramentas.py` → exit 1 antes (`pc_item3_tdd_red.log`), exit 0 depois (`pc_item3_tdd_green.log`).
+  - `b8_scripts/chamadores_gates.py` → 6 gates com chamadores >= 1 (exit 0).
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 09/10/2026.
+
