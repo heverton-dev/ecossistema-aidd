@@ -61,6 +61,12 @@ class QuadroLeitor:
         if incluir_arquivo:
             pasta_arquivo = self.raiz_aidd / "arquivo"
             if pasta_arquivo.exists():
+                for estado_file in pasta_arquivo.glob("*/estado.json"):
+                    try:
+                        conteudo = json.loads(estado_file.read_text(encoding="utf-8"))
+                        execucoes.append(conteudo)
+                    except Exception:
+                        pass
                 for zip_path in pasta_arquivo.glob("*.zip"):
                     try:
                         with zipfile.ZipFile(zip_path, "r") as zf:
@@ -78,6 +84,36 @@ class QuadroLeitor:
         execucoes.sort(key=lambda x: x.get("atualizado_em", x.get("processo", {}).get("inicio", "")), reverse=True)
         return execucoes
 
+    def arquivar_execucoes(self, status_alvos: Optional[List[str]] = None) -> int:
+        import shutil
+        alvos = set(status_alvos or ["concluido", "falhou", "interrompido", "cancelado"])
+        pasta_execucoes = self.raiz_aidd / "execucoes"
+        pasta_arquivo = self.raiz_aidd / "arquivo"
+        pasta_arquivo.mkdir(parents=True, exist_ok=True)
+        total_movidos = 0
+
+        if not pasta_execucoes.exists():
+            return 0
+
+        for pasta_run in list(pasta_execucoes.iterdir()):
+            if not pasta_run.is_dir():
+                continue
+            estado_file = pasta_run / "estado.json"
+            if not estado_file.exists():
+                continue
+            try:
+                conteudo = json.loads(estado_file.read_text(encoding="utf-8"))
+                st = conteudo.get("status", "")
+                if st in alvos:
+                    destino = pasta_arquivo / pasta_run.name
+                    if destino.exists():
+                        shutil.rmtree(destino, ignore_errors=True)
+                    shutil.move(str(pasta_run), str(destino))
+                    total_movidos += 1
+            except Exception:
+                continue
+        return total_movidos
+
     def obter_execucao(self, run_id: str) -> Optional[Dict[str, Any]]:
         # Tenta em execucoes ativas
         arquivo = self.raiz_aidd / "execucoes" / run_id / "estado.json"
@@ -89,6 +125,14 @@ class QuadroLeitor:
                     if pid and not _pid_vivo(pid):
                         conteudo["status"] = "interrompido"
                 return conteudo
+            except Exception:
+                pass
+
+        # Tenta na pasta descompactada de arquivo
+        arquivo_historico = self.raiz_aidd / "arquivo" / run_id / "estado.json"
+        if arquivo_historico.exists():
+            try:
+                return json.loads(arquivo_historico.read_text(encoding="utf-8"))
             except Exception:
                 pass
 

@@ -286,6 +286,34 @@ class QuadroApp:
             headers["Content-Type"] = "application/json; charset=utf-8"
             return 200, headers, corpo
 
+        # ENDPOINT DE CONECTIVIDADE LOCAL / WI-FI (QR CODE)
+        if path == "/api/rede/wifi":
+            ip = obter_ip_rede()
+            porta = getattr(self, "porta", 8990)
+            url_wifi = f"http://{ip}:{porta}"
+            
+            qrcode_svg = ""
+            try:
+                import qrcode
+                import qrcode.image.svg
+                factory = qrcode.image.svg.SvgPathImage
+                img = qrcode.make(url_wifi, image_factory=factory, box_size=10, border=2)
+                qrcode_svg = img.to_string(encoding="unicode")
+            except Exception as e:
+                qrcode_svg = f"<p>Erro gerando QR: {e}</p>"
+
+            resp = {
+                "ip": ip,
+                "porta": porta,
+                "url": url_wifi,
+                "online": ip not in ("127.0.0.1", ""),
+                "qrcode_svg": qrcode_svg
+            }
+            corpo = json.dumps(resp, ensure_ascii=False).encode("utf-8")
+            headers = dict(headers_padrao)
+            headers["Content-Type"] = "application/json; charset=utf-8"
+            return 200, headers, corpo
+
         # Ativos Estáticos
         if path in ("/", "/index.html"):
             index_path = self.pasta_estatica / "index.html"
@@ -320,6 +348,21 @@ class QuadroApp:
             "Cache-Control": "no-store",
             "Content-Type": "application/json; charset=utf-8"
         }
+
+        # LIMPAR / ARQUIVAR EXECUÇÕES CONCLUÍDAS E FALHAS
+        if path == "/api/acao/arquivar":
+            try:
+                dados = json.loads(body.decode("utf-8")) if body else {}
+            except Exception:
+                dados = {}
+            status_alvos = dados.get("status", ["concluido", "falhou", "interrompido", "cancelado"])
+            total = self.leitor.arquivar_execucoes(status_alvos)
+            resp = {
+                "status": "sucesso",
+                "mensagem": f"{total} execuções movidas para o arquivo histórico",
+                "total_arquivados": total
+            }
+            return 200, headers_padrao, json.dumps(resp, ensure_ascii=False).encode("utf-8")
 
         if path == "/api/acao/disparar":
             try:
@@ -385,16 +428,45 @@ class QuadroApp:
 
         return 404, headers_padrao, json.dumps({"erro": "Rota nao encontrada"}).encode("utf-8")
 
+def obter_ip_rede() -> str:
+    import socket
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+    except Exception:
+        try:
+            return socket.gethostbyname(socket.gethostname())
+        except Exception:
+            return "127.0.0.1"
+
+def _host_permitido(host: str) -> bool:
+    h = host.split(":")[0].strip()
+    if h in ("localhost", "127.0.0.1"):
+        return True
+    if h.startswith("192.168.") or h.startswith("10."):
+        return True
+    partes = h.split(".")
+    if len(partes) == 4 and partes[0] == "172":
+        try:
+            octeto = int(partes[1])
+            if 16 <= octeto <= 31:
+                return True
+        except ValueError:
+            pass
+    return False
+
 class _HttpHandler(BaseHTTPRequestHandler):
     app: QuadroApp = None
 
     def do_GET(self):
-        # Validação de segurança: escuta apenas Host local
         host = self.headers.get("Host", "")
-        if not (host.startswith("localhost") or host.startswith("127.0.0.1")):
+        if not _host_permitido(host):
             self.send_response(403)
             self.end_headers()
-            self.wfile.write(b"Acesso restrito a 127.0.0.1")
+            self.wfile.write(b"Acesso restrito a localhost ou rede local")
             return
 
         status, headers, body = self.app.tratar_requisicao(self.path)
@@ -406,10 +478,10 @@ class _HttpHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         host = self.headers.get("Host", "")
-        if not (host.startswith("localhost") or host.startswith("127.0.0.1")):
+        if not _host_permitido(host):
             self.send_response(403)
             self.end_headers()
-            self.wfile.write(b"Acesso restrito a 127.0.0.1")
+            self.wfile.write(b"Acesso restrito a localhost ou rede local")
             return
 
         comprimento = int(self.headers.get("Content-Length", 0))
@@ -422,12 +494,12 @@ class _HttpHandler(BaseHTTPRequestHandler):
         self.wfile.write(resposta)
 
     def log_message(self, format, *args):
-        # Silencioso para não poluir terminal
         pass
 
-def iniciar_servidor(porta: int = 8990, raiz_aidd: Optional[Path] = None):
+def iniciar_servidor(porta: int = 8990, raiz_aidd: Optional[Path] = None, host: str = "0.0.0.0"):
     app = QuadroApp(raiz_aidd=raiz_aidd)
+    app.porta = porta
     _HttpHandler.app = app
-    servidor = HTTPServer(("127.0.0.1", porta), _HttpHandler)
+    servidor = HTTPServer((host, porta), _HttpHandler)
     return servidor
 

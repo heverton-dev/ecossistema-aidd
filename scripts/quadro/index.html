@@ -2,7 +2,10 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#080b11">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Quadro AIDD · Pipelines</title>
   <link rel="stylesheet" href="/quadro.css">
 </head>
@@ -20,24 +23,6 @@
         <span class="marca-subtitulo">Console Operacional de Pipelines</span>
       </div>
     </div>
-
-    <nav class="abas-navegacao" aria-label="Seções do Quadro">
-      <button id="aba-pipelines" class="aba-btn ativa" onclick="mudarAba('pipelines')">
-        <span class="aba-rotulo">Pipelines Ativos</span>
-        <span id="contagem-pipelines-ativos" class="aba-badge">0</span>
-      </button>
-      <button id="aba-gates" class="aba-btn" onclick="mudarAba('gates')">
-        <span class="aba-rotulo">Matriz de Gates (72)</span>
-        <span id="contagem-gates-leds" class="aba-badge">72</span>
-      </button>
-      <button id="aba-worktrees" class="aba-btn" onclick="mudarAba('worktrees')">
-        <span class="aba-rotulo">Worktrees VSA</span>
-        <span id="contagem-worktrees" class="aba-badge">0</span>
-      </button>
-      <button id="aba-arquivo" class="aba-btn" onclick="mudarAba('arquivo')">
-        <span class="aba-rotulo">Arquivo Histórico</span>
-      </button>
-    </nav>
 
     <div class="painel-acoes-topo">
       <!-- WIDGET DE TELEMETRIA FACTUAL DE TOKENS & CUSTO (SPARKLINE) -->
@@ -57,6 +42,28 @@
           <polygon points="12 2 19 21 12 17 5 21 12 2"></polygon>
         </svg>
         <span>Novo Disparo</span>
+      </button>
+
+      <!-- BOTÃO QR CODE MOBILE (WI-FI) -->
+      <button id="btn-qrcode-topo" class="btn-acao-topo" onclick="abrirModalQRCode()" title="Acessar no celular via Wi-Fi (QR Code)" aria-label="QR Code Mobile">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7"></rect>
+          <rect x="14" y="3" width="7" height="7"></rect>
+          <rect x="14" y="14" width="7" height="7"></rect>
+          <rect x="3" y="14" width="7" height="7"></rect>
+          <rect x="7" y="7" width="1" height="1"></rect>
+          <rect x="17" y="7" width="1" height="1"></rect>
+          <rect x="7" y="17" width="1" height="1"></rect>
+        </svg>
+      </button>
+
+      <!-- BOTÃO LIMPAR / ARQUIVAR -->
+      <button id="btn-arquivar-topo" class="btn-acao-topo" onclick="confirmarArquivamento()" title="Limpar e arquivar execuções concluídas/falhas" aria-label="Limpar Execuções">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="21 8 21 21 3 21 3 8"></polyline>
+          <rect x="1" y="3" width="22" height="5"></rect>
+          <line x1="10" y1="12" x2="14" y2="12"></line>
+        </svg>
       </button>
 
       <div class="status-conexao" title="Status de sincronização com o ecossistema">
@@ -95,22 +102,38 @@
   </header>
 
   <main class="conteudo-principal">
+    <!-- BARRA ESTRUTURAL DE NAVEGAÇÃO PRINCIPAL (SUBSTITUI FAIXA ESTÁTICA) -->
+    <div class="barra-navegacao-secao">
+      <nav class="abas-navegacao" aria-label="Seções do Quadro">
+        <button id="aba-pipelines" class="aba-btn ativa" onclick="mudarAba('pipelines')">
+          <span class="aba-rotulo">Pipelines Ativos</span>
+          <span id="contagem-pipelines-ativos" class="aba-badge">0</span>
+        </button>
+        <button id="aba-gates" class="aba-btn" onclick="mudarAba('gates')">
+          <span class="aba-rotulo">Matriz de Gates (72)</span>
+          <span id="contagem-gates-leds" class="aba-badge">72</span>
+        </button>
+        <button id="aba-worktrees" class="aba-btn" onclick="mudarAba('worktrees')">
+          <span class="aba-rotulo">Worktrees VSA</span>
+          <span id="contagem-worktrees" class="aba-badge">0</span>
+        </button>
+        <button id="aba-arquivo" class="aba-btn" onclick="mudarAba('arquivo')">
+          <span class="aba-rotulo">Arquivo Histórico</span>
+        </button>
+      </nav>
+
+      <div class="caixa-busca">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input id="campo-busca" class="input-busca" type="text" placeholder="Filtrar pipelines... (/)" oninput="filtrarPipelines(this)" />
+        <kbd class="atalho-busca">/</kbd>
+      </div>
+    </div>
+
     <!-- VISÃO GERAL DE PIPELINES -->
     <section id="secao-pipelines" class="visao-secao">
-      <div class="secao-cabecalho">
-        <div>
-          <h2 class="secao-titulo">Pipelines do Ecossistema</h2>
-          <p class="secao-descricao">Visão consolidada dos 12 pipelines e fluxos operacionais.</p>
-        </div>
-        <div class="caixa-busca">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-          <input id="campo-busca" class="input-busca" type="text" placeholder="Filtrar pipelines... (/)" oninput="filtrarPipelines(this)" />
-          <kbd class="atalho-busca">/</kbd>
-        </div>
-      </div>
       <div id="grade-pipelines" class="grade-cards"></div>
       
       <div id="kanban-container" class="kanban-wrapper escondido">
@@ -257,7 +280,8 @@
 
     <!-- ABAS INTERNAS DA GAVETA -->
     <div class="gaveta-abas-topo">
-      <button id="gaveta-aba-detalhes" class="gaveta-aba-btn ativa" onclick="alternarAbaGaveta('detalhes')">Visão Estruturada</button>
+      <button id="gaveta-aba-detalhes" class="gaveta-aba-btn ativa" onclick="alternarAbaGaveta('detalhes')">Visão Geral</button>
+      <button id="gaveta-aba-timeline" class="gaveta-aba-btn" onclick="alternarAbaGaveta('timeline')">Linha do Tempo</button>
       <button id="gaveta-aba-terminal" class="gaveta-aba-btn" onclick="alternarAbaGaveta('terminal')">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px; vertical-align: -1px;">
           <polyline points="4 17 10 11 4 5"></polyline>
@@ -268,6 +292,7 @@
     </div>
 
     <div id="gaveta-conteudo" class="gaveta-corpo"></div>
+    <div id="gaveta-timeline-conteudo" class="gaveta-corpo escondido"></div>
 
     <!-- PAINEL TERMINAL LOGTAIL NA GAVETA -->
     <div id="gaveta-terminal-conteudo" class="gaveta-corpo escondido">
@@ -340,6 +365,34 @@
         <button class="btn-fechar" onclick="fecharModalDiff()">✕</button>
       </div>
       <pre id="modal-diff-conteudo" class="diff-viewer-conteudo"></pre>
+    </div>
+  </div>
+
+  <!-- MODAL QR CODE MOBILE (WI-FI) -->
+  <div id="modal-qrcode" class="modal-backdrop escondido" onclick="fecharModalQRCode(event)">
+    <div class="modal-janela modal-qrcode-janela" onclick="event.stopPropagation()">
+      <div class="modal-cabecalho">
+        <div class="modal-cabecalho-esq">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+            <line x1="12" y1="18" x2="12.01" y2="18"></line>
+          </svg>
+          <h3 class="modal-titulo">Console Mobile (Wi-Fi Local)</h3>
+        </div>
+        <button class="btn-fechar" onclick="fecharModalQRCode()">✕</button>
+      </div>
+      <div class="modal-corpo qrcode-corpo">
+        <p class="qrcode-instrucao">Conecte seu celular na mesma rede Wi-Fi e aponte a câmera para acompanhar a esteira em tempo real:</p>
+        <div id="qrcode-container" class="qrcode-matriz-wrapper"></div>
+        <div class="qrcode-dados-bloco">
+          <span class="qrcode-url-rotulo">Endereço na LAN:</span>
+          <div class="qrcode-url-caixa">
+            <code id="qrcode-url-texto" class="qrcode-url-texto">Carregando...</code>
+            <button id="btn-copiar-url-wifi" class="btn-copiar-wifi" onclick="copiarUrlWifi()">Copiar</button>
+          </div>
+          <div id="qrcode-status-rede" class="qrcode-status-rede">Verificando IP da máquina...</div>
+        </div>
+      </div>
     </div>
   </div>
 

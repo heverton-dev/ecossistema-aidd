@@ -274,9 +274,17 @@ function renderizarPipelines() {
     encontrados++;
 
     const card = document.createElement("article");
-    const temExecutando = (info.executando || 0) > 0;
-    const temFalha = (info.falhou || 0) > 0;
-    card.className = "card-pipeline" + (temExecutando ? " card-ativo" : "") + (temFalha ? " card-falha" : "");
+    card.className = "card-pipeline";
+    if (info.precisa_humano > 0) {
+      card.classList.add("card-estado-humano");
+    } else if (info.falhou > 0) {
+      card.classList.add("card-estado-falhou");
+    } else if (info.executando > 0) {
+      card.classList.add("card-estado-executando");
+    } else if (info.concluido > 0) {
+      card.classList.add("card-estado-concluido");
+    }
+
     card.tabIndex = 0;
     card.onclick = () => abrirKanban(id);
     card.onkeydown = (e) => { if (e.key === "Enter") abrirKanban(id); };
@@ -289,23 +297,23 @@ function renderizarPipelines() {
     tit.textContent = info.nome || id;
     topo.appendChild(tit);
 
-    // Destaque sutil da Tríade Canônica
+    // Destaque corporativo da Tríade Canônica
     if (["pure", "open", "freedom"].includes(id)) {
       const tagTriade = document.createElement("span");
-      tagTriade.className = "badge-triade";
+      tagTriade.className = "badge-corp vivo";
       tagTriade.textContent = id === "pure" ? "Tríade #1" : (id === "open" ? "Tríade #2" : "Tríade #3");
       topo.appendChild(tagTriade);
     }
 
     if (info.precisa_humano > 0) {
       const alerta = document.createElement("span");
-      alerta.className = "badge-alerta";
-      alerta.textContent = `⚠ ${info.precisa_humano} precisa de você`;
+      alerta.className = "badge-corp alerta";
+      alerta.textContent = `⚠ ${info.precisa_humano} ação humana`;
       topo.appendChild(alerta);
     }
     card.appendChild(topo);
 
-    // CENTRO DO CARD: ETAPA ATUAL & BARRA DE PROGRESSO
+    // CENTRO DO CARD: ETAPA ATUAL & BARRA DE PROGRESSO & TIMER DA FASE
     const centro = document.createElement("div");
     centro.className = "card-pipeline-centro";
 
@@ -375,22 +383,33 @@ function renderizarPipelines() {
     trilhaProg.appendChild(barraProg);
     centro.appendChild(trilhaProg);
 
+    // TIMER DEDICADO POR FASE / ETAPA
+    if (info.executando > 0) {
+      const timerEtapa = document.createElement("div");
+      timerEtapa.className = "card-etapa-timer-linha";
+      timerEtapa.innerHTML = `
+        <span>Tempo na fase:</span>
+        <span class="timer-etapa-badge cartao-tempo-etapa" data-inicio="${info.atualizado_em || ''}">00:00</span>
+      `;
+      centro.appendChild(timerEtapa);
+    }
+
     card.appendChild(centro);
 
-    // RODAPÉ: RODANDO -> CONCLUÍDOS -> FALHAS
+    // RODAPÉ: RODANDO -> CONCLUÍDOS -> FALHAS (ENTERPRISE BADGES)
     const metricas = document.createElement("div");
     metricas.className = "pipeline-metricas";
 
     const spanExec = document.createElement("span");
-    spanExec.className = "metrica-tag" + (info.executando > 0 ? " executando" : "");
+    spanExec.className = "metrica-tag badge-corp" + (info.executando > 0 ? " vivo" : "");
     spanExec.textContent = `${info.executando || 0} rodando`;
 
     const spanConc = document.createElement("span");
-    spanConc.className = "metrica-tag" + (info.concluido > 0 ? " concluido" : "");
+    spanConc.className = "metrica-tag badge-corp" + (info.concluido > 0 ? " sucesso" : "");
     spanConc.textContent = `${info.concluido || 0} concluídos`;
 
     const spanFalha = document.createElement("span");
-    spanFalha.className = "metrica-tag" + (info.falhou > 0 ? " falha" : "");
+    spanFalha.className = "metrica-tag badge-corp" + (info.falhou > 0 ? " falha" : "");
     spanFalha.textContent = `${info.falhou || 0} falhas`;
 
     metricas.appendChild(spanExec);
@@ -616,6 +635,15 @@ async function carregarKanban(pipeId) {
         for (const cartao of cartoes) {
           const elCard = document.createElement("div");
           elCard.className = "cartao-execucao";
+          if (cartao.status === "falhou" || cartao.status === "interrompido") {
+            elCard.classList.add("card-estado-falhou");
+          } else if (cartao.status === "precisa_humano" || cartao.humano) {
+            elCard.classList.add("card-estado-humano");
+          } else if (cartao.status === "executando") {
+            elCard.classList.add("card-estado-executando");
+          } else if (cartao.status === "concluido") {
+            elCard.classList.add("card-estado-concluido");
+          }
           elCard.tabIndex = 0;
           elCard.onclick = () => abrirGaveta(cartao.run_id);
           elCard.onkeydown = (e) => { if (e.key === "Enter") abrirGaveta(cartao.run_id); };
@@ -751,6 +779,17 @@ function atualizarCronometros() {
       el.textContent = "-";
     }
   });
+
+  // CRONÔMETRO DEDICADO POR FASE / ETAPA
+  const elementosEtapa = document.querySelectorAll(".cartao-tempo-etapa");
+  elementosEtapa.forEach(el => {
+    const inicioStr = el.getAttribute("data-inicio");
+    if (!inicioStr) return;
+    const inicioMs = new Date(inicioStr).getTime();
+    if (isNaN(inicioMs)) return;
+    const seg = Math.max(0, Math.floor((agoraMs - inicioMs) / 1000));
+    el.textContent = formatarDuracao(seg);
+  });
 }
 
 // ==========================================
@@ -784,6 +823,8 @@ function filtrarCards(elOrigem) {
 // ==========================================
 // 9. GAVETA LATERAL & TELEMETRIA DE CUSTOS (RECURSO #5)
 // ==========================================
+// 9. GAVETA LATERAL & TELEMETRIA DE CUSTOS (CORPORATE CLEAN DESIGN)
+// ==========================================
 async function abrirGaveta(runId) {
   try {
     const res = await fetch(`/api/execucao/${runId}`);
@@ -791,114 +832,63 @@ async function abrirGaveta(runId) {
     const ex = await res.json();
 
     const titGaveta = document.getElementById("gaveta-titulo");
-    if (titGaveta) titGaveta.textContent = ex.titulo || ex.run_id;
+    if (titGaveta) {
+      const st = ex.status || 'desconhecido';
+      const classeBadge = st === 'concluido' ? 'sucesso' : (st === 'falhou' || st === 'interrompido' ? 'falha' : (st === 'executando' ? 'vivo' : 'alerta'));
+      titGaveta.innerHTML = `
+        <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+          <span>${ex.titulo || ex.run_id}</span>
+          <span class="badge-corp ${classeBadge}">${st.toUpperCase()}</span>
+        </div>
+      `;
+    }
 
     const corpo = document.getElementById("gaveta-conteudo");
-    if (!corpo) return;
+    const corpoTimeline = document.getElementById("gaveta-timeline-conteudo");
+    if (!corpo || !corpoTimeline) return;
     corpo.replaceChildren();
+    corpoTimeline.replaceChildren();
 
-    // 1. Linha do Tempo
-    const b1 = document.createElement("div");
-    b1.className = "bloco-gaveta";
-    const h1 = document.createElement("h4");
-    h1.className = "bloco-gaveta-titulo";
-    h1.textContent = "1. Linha do Tempo";
-    b1.appendChild(h1);
+    // 1. CARDS DE MÉTRICAS RÁPIDAS (RESUMO EXECUTIVO)
+    const gradeResumo = document.createElement("div");
+    gradeResumo.className = "gaveta-resumo-grid";
+    gradeResumo.innerHTML = `
+      <div class="resumo-item">
+        <span class="resumo-label">Pipeline</span>
+        <span class="resumo-valor">${ex.pipeline || '-'}</span>
+      </div>
+      <div class="resumo-item">
+        <span class="resumo-label">PID / Processo</span>
+        <span class="resumo-valor">${ex.processo?.pid || '-'}</span>
+      </div>
+      <div class="resumo-item">
+        <span class="resumo-label">Início</span>
+        <span class="resumo-valor">${ex.processo?.inicio ? (ex.processo.inicio).substring(11, 19) : '-'}</span>
+      </div>
+      <div class="resumo-item">
+        <span class="resumo-label">Fase Atual</span>
+        <span class="resumo-valor destaque-vivo">${ex.etapa_atual || '-'}</span>
+      </div>
+    `;
+    corpo.appendChild(gradeResumo);
 
-    const listaTempo = document.createElement("ul");
-    listaTempo.className = "linha-tempo-lista";
-    for (const h of ex.historico || []) {
-      const li = document.createElement("li");
-      li.className = "linha-tempo-item";
-
-      const hora = document.createElement("span");
-      hora.className = "linha-tempo-hora";
-      hora.textContent = (h.em || "").substring(11, 19);
-
-      const evento = document.createElement("span");
-      evento.className = "linha-tempo-evento";
-      evento.textContent = h.evento + ":";
-
-      const msg = document.createElement("span");
-      msg.textContent = h.mensagem || "";
-
-      li.appendChild(hora);
-      li.appendChild(evento);
-      li.appendChild(msg);
-      listaTempo.appendChild(li);
-    }
-    b1.appendChild(listaTempo);
-    corpo.appendChild(b1);
-
-    // 2. O que foi feito
-    const b2 = document.createElement("div");
-    b2.className = "bloco-gaveta";
-    const h2 = document.createElement("h4");
-    h2.className = "bloco-gaveta-titulo";
-    h2.textContent = "2. O Que Foi Feito";
-    b2.appendChild(h2);
-
-    if (!ex.etapas || ex.etapas.length === 0) {
-      const p = document.createElement("p");
-      p.style.fontSize = "0.785rem";
-      p.style.color = "var(--texto-mutado)";
-      p.textContent = "Nenhuma etapa concluída registrada.";
-      b2.appendChild(p);
-    } else {
-      for (const et of ex.etapas) {
-        const p = document.createElement("p");
-        p.style.fontSize = "0.785rem";
-        p.style.marginBottom = "0.3rem";
-        p.textContent = `Etapa ${et.id} — Status: ${et.status}`;
-        b2.appendChild(p);
-      }
-    }
-    corpo.appendChild(b2);
-
-    // 3. Por que parou
-    if (ex.parada) {
-      const b3 = document.createElement("div");
-      b3.className = "bloco-gaveta";
-      const h3 = document.createElement("h4");
-      h3.className = "bloco-gaveta-titulo";
-      h3.textContent = "3. Por Que Parou";
-      b3.appendChild(h3);
-
-      const motivo = document.createElement("p");
-      motivo.style.fontSize = "0.825rem";
-      motivo.style.color = "var(--c-falha)";
-      motivo.textContent = ex.parada.motivo || "Parada sem motivo especificado.";
-      b3.appendChild(motivo);
-      corpo.appendChild(b3);
-    }
-
-    // BLOCO DE AÇÃO & REMEDIAÇÃO AGÊNTICA (QUANDO HÁ FALHA OU PARADA)
+    // 2. BLOCO DE ALERTA & REMEDIAÇÃO (SOMENTE SE FALHA OU PARADA)
     if (ex.status === "falhou" || ex.status === "interrompido" || ex.parada) {
-      const bRemed = document.createElement("div");
-      bRemed.className = "bloco-gaveta bloco-remediacao-ativa";
+      const bAlerta = document.createElement("div");
+      bAlerta.className = "bloco-remediacao-clean";
+      bAlerta.innerHTML = `
+        <div class="remediacao-topo-clean">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <h4>Falha Operacional Detectada</h4>
+        </div>
+        <p class="remediacao-motivo-texto">${ex.parada?.motivo || 'Execução interrompida sem sinal de sucesso.'}</p>
+        <div class="grade-botoes-remediacao-clean"></div>
+      `;
+      const gradeBotoes = bAlerta.querySelector(".grade-botoes-remediacao-clean");
 
-      const hRemed = document.createElement("h4");
-      hRemed.className = "bloco-gaveta-titulo titulo-remediacao";
-      hRemed.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:6px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Central de Ação & Remediação Agêntica`;
-      bRemed.appendChild(hRemed);
-
-      const pDesc = document.createElement("p");
-      pDesc.className = "remediacao-desc";
-      pDesc.textContent = "Falha operacional detectada. Dispare remediações ou gere o relatório pronto para o agente:";
-      bRemed.appendChild(pDesc);
-
-      const gradeBotoes = document.createElement("div");
-      gradeBotoes.className = "grade-botoes-remediacao";
-
-      const svgDoc = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;margin-right:6px;"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>`;
-      const svgRocket = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;margin-right:6px;"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/></svg>`;
-      const svgBolt = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;margin-right:6px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`;
-      const svgWrench = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;margin-right:6px;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`;
-
-      // 1. Botão Copiar Reporte Completo para Agente
       const btnReporte = document.createElement("button");
       btnReporte.className = "btn-remediacao btn-copiar-reporte";
-      btnReporte.innerHTML = `${svgDoc}<span>Copiar Reporte para Agente</span>`;
+      btnReporte.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg><span>Copiar Reporte Agente</span>`;
       btnReporte.onclick = () => {
         const promptAgente = [
           "## REPORT DE FALHA OPERACIONAL (DASHBOARD AIDD)",
@@ -906,224 +896,126 @@ async function abrirGaveta(runId) {
           `- Run ID: \`${ex.run_id}\``,
           `- Status: ${ex.status}`,
           `- Etapa da Falha: ${ex.etapa_atual || 'não identificada'}`,
-          `- Comando Executado: \`${ex.comando || ''}\``,
-          `- Motivo da Parada: ${ex.parada?.motivo || 'Erro reportado pelo pipeline'}`,
-          "",
-          "### Instrução para o Agente:",
-          "1. Analise o erro factual acima e investigue a causa raiz no código.",
-          "2. Corrija o problema seguindo as 13 Leis do ecossistema (Zero Stubs, Determinismo).",
-          "3. Execute os testes/gates correspondentes para assegurar que a falha foi sanada."
+          `- Comando: \`${ex.comando || ''}\``,
+          `- Motivo: ${ex.parada?.motivo || 'Erro no pipeline'}`
         ].join("\n");
         navigator.clipboard.writeText(promptAgente);
-        btnReporte.innerHTML = `<span>✓ Reporte Copiado! Cole no Agente</span>`;
-        btnReporte.classList.add("sucesso");
-        setTimeout(() => {
-          btnReporte.innerHTML = `${svgDoc}<span>Copiar Reporte para Agente</span>`;
-          btnReporte.classList.remove("sucesso");
-        }, 3000);
+        btnReporte.innerHTML = "<span>✓ Reporte Copiado!</span>";
+        setTimeout(() => { btnReporte.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg><span>Copiar Reporte Agente</span>`; }, 2500);
       };
       gradeBotoes.appendChild(btnReporte);
 
-      // 2. Botão Disparar Pipeline Audit-4F
-      const btnAudit4f = document.createElement("button");
-      btnAudit4f.className = "btn-remediacao btn-disparar-audit";
-      btnAudit4f.innerHTML = `${svgRocket}<span>Disparar Auditoria 4F (audit-4f)</span>`;
-      btnAudit4f.onclick = async () => {
-        btnAudit4f.disabled = true;
-        btnAudit4f.textContent = "Disparando...";
-        try {
-          const r = await fetch("/api/acao/disparar", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({acao: "audit-4f", alvo: ex.pipeline, run_id: ex.run_id})
-          });
-          const d = await r.json();
-          if (r.ok) {
-            btnAudit4f.textContent = `✓ Audit-4F em execução (PID ${d.pid || ''})`;
-            btnAudit4f.classList.add("sucesso");
-            setTimeout(() => carregarPipelines(), 1000);
-          } else {
-            btnAudit4f.textContent = `Erro: ${d.erro || 'Falha ao disparar'}`;
-            btnAudit4f.disabled = false;
-          }
-        } catch (err) {
-          btnAudit4f.textContent = "Erro de conexão";
-          btnAudit4f.disabled = false;
-        }
-      };
-      gradeBotoes.appendChild(btnAudit4f);
+      const btnAudit = document.createElement("button");
+      btnAudit.className = "btn-remediacao btn-disparar-audit";
+      btnAudit.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/></svg><span>Audit-4F</span>`;
+      btnAudit.onclick = () => dispararAcao("audit-4f", ex.pipeline);
+      gradeBotoes.appendChild(btnAudit);
 
-      // 3. Botão Disparar Pipeline Evolução
       const btnEvolucao = document.createElement("button");
       btnEvolucao.className = "btn-remediacao btn-disparar-evolucao";
-      btnEvolucao.innerHTML = `${svgBolt}<span>Disparar Evolução Técnica (evolucao)</span>`;
-      btnEvolucao.onclick = async () => {
-        btnEvolucao.disabled = true;
-        btnEvolucao.textContent = "Disparando...";
-        try {
-          const r = await fetch("/api/acao/disparar", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({acao: "evolucao", alvo: ex.pipeline, run_id: ex.run_id})
-          });
-          const d = await r.json();
-          if (r.ok) {
-            btnEvolucao.textContent = `✓ Evolução em execução (PID ${d.pid || ''})`;
-            btnEvolucao.classList.add("sucesso");
-            setTimeout(() => carregarPipelines(), 1000);
-          } else {
-            btnEvolucao.textContent = `Erro: ${d.erro || 'Falha ao disparar'}`;
-            btnEvolucao.disabled = false;
-          }
-        } catch (err) {
-          btnEvolucao.textContent = "Erro de conexão";
-          btnEvolucao.disabled = false;
-        }
-      };
+      btnEvolucao.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span>Evolução</span>`;
+      btnEvolucao.onclick = () => dispararAcao("evolucao", ex.pipeline);
       gradeBotoes.appendChild(btnEvolucao);
 
-      // 4. Botão Reexecutar Gates
       const btnGates = document.createElement("button");
       btnGates.className = "btn-remediacao btn-disparar-gates";
-      btnGates.innerHTML = `${svgWrench}<span>Reexecutar Gates (audit)</span>`;
-      btnGates.onclick = async () => {
-        btnGates.disabled = true;
-        btnGates.textContent = "Disparando...";
-        try {
-          const r = await fetch("/api/acao/disparar", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({acao: "audit"})
-          });
-          const d = await r.json();
-          if (r.ok) {
-            btnGates.textContent = `✓ Gates em execução (PID ${d.pid || ''})`;
-            btnGates.classList.add("sucesso");
-            setTimeout(() => carregarPipelines(), 1000);
-          } else {
-            btnGates.textContent = `Erro: ${d.erro || 'Falha ao disparar'}`;
-            btnGates.disabled = false;
-          }
-        } catch (err) {
-          btnGates.textContent = "Erro de conexão";
-          btnGates.disabled = false;
-        }
-      };
+      btnGates.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><span>Gates</span>`;
+      btnGates.onclick = () => dispararAcao("audit");
       gradeBotoes.appendChild(btnGates);
 
-      bRemed.appendChild(gradeBotoes);
-      corpo.appendChild(bRemed);
+      corpo.appendChild(bAlerta);
     }
 
-    // 4. Precisa de Você
+    // 3. AÇÃO HUMANA (SE HOUVER)
     if (ex.humano) {
-      const b4 = document.createElement("div");
-      b4.className = "bloco-gaveta";
-      const h4 = document.createElement("h4");
-      h4.className = "bloco-gaveta-titulo";
-      h4.textContent = "4. Precisa de Você (Ação Humana)";
-      b4.appendChild(h4);
-
-      const msgHumano = document.createElement("p");
-      msgHumano.style.fontSize = "0.8rem";
-      msgHumano.style.marginBottom = "0.5rem";
-      msgHumano.textContent = ex.humano.mensagem || "Comando para intervenção rápida:";
-      b4.appendChild(msgHumano);
-
-      const caixa = document.createElement("div");
-      caixa.className = "caixa-comando";
-
-      const cmdText = document.createElement("code");
-      cmdText.textContent = ex.humano.comando;
-
-      const btnCopiar = document.createElement("button");
-      btnCopiar.className = "btn-copiar";
-      btnCopiar.textContent = "Copiar Comando";
-      btnCopiar.onclick = () => {
-        navigator.clipboard.writeText(ex.humano.comando);
-        btnCopiar.textContent = "✓ Copiado!";
-        btnCopiar.classList.add("copiado");
-        setTimeout(() => {
-          btnCopiar.textContent = "Copiar Comando";
-          btnCopiar.classList.remove("copiado");
-        }, 2000);
-      };
-
-      caixa.appendChild(cmdText);
-      caixa.appendChild(btnCopiar);
-      b4.appendChild(caixa);
-      corpo.appendChild(b4);
+      const bHumano = document.createElement("div");
+      bHumano.className = "bloco-humano-clean";
+      bHumano.innerHTML = `
+        <h4 class="bloco-gaveta-titulo"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Intervenção Manual Requerida</h4>
+        <p style="font-size:0.785rem;color:var(--texto-secundario);margin:0.35rem 0;">${ex.humano.mensagem || 'Comando sugerido:'}</p>
+        <div class="caixa-comando">
+          <code>${ex.humano.comando}</code>
+          <button class="btn-copiar" onclick="navigator.clipboard.writeText('${ex.humano.comando}');this.textContent='Copiado!';setTimeout(()=>this.textContent='Copiar',2000);">Copiar</button>
+        </div>
+      `;
+      corpo.appendChild(bHumano);
     }
 
-    // 5. RECURSO #5: TELEMETRIA FACTUAL DE CUSTOS & TOKENS (LEI #8)
-    const b5 = document.createElement("div");
-    b5.className = "bloco-gaveta";
-    const h5 = document.createElement("h4");
-    h5.className = "bloco-gaveta-titulo";
-    h5.textContent = "5. Telemetria de Custos & Tokens";
-    b5.appendChild(h5);
+    // 4. ETAPAS CONCLUÍDAS (LISTA LIMPA COM BULLETS)
+    const bEtapas = document.createElement("div");
+    bEtapas.className = "bloco-gaveta";
+    bEtapas.innerHTML = `<h4 class="bloco-gaveta-titulo">Etapas da Execução</h4>`;
+    if (!ex.etapas || ex.etapas.length === 0) {
+      bEtapas.innerHTML += `<p class="gaveta-texto-mutado">Nenhuma etapa concluída registrada.</p>`;
+    } else {
+      const lista = document.createElement("div");
+      lista.className = "gaveta-etapas-lista";
+      for (const et of ex.etapas) {
+        const item = document.createElement("div");
+        item.className = "gaveta-etapa-linha";
+        const dot = et.status === 'concluido' ? 'passou' : (et.status === 'falhou' ? 'falhou' : 'neutro');
+        item.innerHTML = `
+          <span class="led-indicador ${dot}"></span>
+          <span class="etapa-linha-id">Etapa ${et.id}</span>
+          <span class="badge-corp ${dot === 'passou' ? 'sucesso' : 'falha'}">${et.status}</span>
+        `;
+        lista.appendChild(item);
+      }
+      bEtapas.appendChild(lista);
+    }
+    corpo.appendChild(bEtapas);
 
+    // 5. TELEMETRIA FACTUAL (MINI CARDS)
+    const bTelemetria = document.createElement("div");
+    bTelemetria.className = "bloco-gaveta";
+    bTelemetria.innerHTML = `<h4 class="bloco-gaveta-titulo">Telemetria de Tokens & Recursos</h4>`;
     const custos = ex.custos;
     if (custos && typeof custos === "object" && custos.tokens_in !== undefined) {
-      const grid = document.createElement("div");
-      grid.className = "bloco-custos-grid";
-
-      const cardIn = document.createElement("div");
-      cardIn.className = "custo-card";
-      cardIn.innerHTML = `
-        <span class="custo-card-label">Tokens Input</span>
-        <span class="custo-card-valor destaque-vivo">${custos.tokens_in.toLocaleString()}</span>
+      const totTokens = (custos.tokens_in || 0) + (custos.tokens_out || 0);
+      bTelemetria.innerHTML += `
+        <div class="bloco-custos-grid">
+          <div class="custo-card"><span class="custo-card-label">Input</span><span class="custo-card-valor destaque-vivo">${custos.tokens_in.toLocaleString()}</span></div>
+          <div class="custo-card"><span class="custo-card-label">Output</span><span class="custo-card-valor destaque-sucesso">${custos.tokens_out.toLocaleString()}</span></div>
+          <div class="custo-card"><span class="custo-card-label">Total</span><span class="custo-card-valor">${totTokens.toLocaleString()}</span></div>
+          <div class="custo-card"><span class="custo-card-label">Tools</span><span class="custo-card-valor">${(custos.skills?.length || 0) + (custos.mcps?.length || 0)}</span></div>
+        </div>
       `;
-
-      const cardOut = document.createElement("div");
-      cardOut.className = "custo-card";
-      cardOut.innerHTML = `
-        <span class="custo-card-label">Tokens Output</span>
-        <span class="custo-card-valor destaque-sucesso">${custos.tokens_out.toLocaleString()}</span>
-      `;
-
-      const totalTokens = (custos.tokens_in || 0) + (custos.tokens_out || 0);
-      const cardTotal = document.createElement("div");
-      cardTotal.className = "custo-card";
-      cardTotal.innerHTML = `
-        <span class="custo-card-label">Total de Tokens</span>
-        <span class="custo-card-valor">${totalTokens.toLocaleString()}</span>
-      `;
-
-      const cardFerramentas = document.createElement("div");
-      cardFerramentas.className = "custo-card";
-      const totalTools = (custos.skills?.length || 0) + (custos.mcps?.length || 0);
-      cardFerramentas.innerHTML = `
-        <span class="custo-card-label">Skills & MCPs</span>
-        <span class="custo-card-valor">${totalTools} ativos</span>
-      `;
-
-      grid.appendChild(cardIn);
-      grid.appendChild(cardOut);
-      grid.appendChild(cardTotal);
-      grid.appendChild(cardFerramentas);
-      b5.appendChild(grid);
     } else {
-      const badgeHonesto = document.createElement("div");
-      badgeHonesto.className = "custo-nao-medido-badge";
-      badgeHonesto.textContent = "ℹ Rótulo Honesto (Lei #8): Telemetria não-medida (sem logs JSONL anexados).";
-      b5.appendChild(badgeHonesto);
+      bTelemetria.innerHTML += `<div class="custo-nao-medido-badge">ℹ Telemetria não-medida (sem logs JSONL anexados)</div>`;
     }
-    corpo.appendChild(b5);
+    corpo.appendChild(bTelemetria);
 
-    // 6. Dados Brutos
-    const b6 = document.createElement("div");
-    b6.className = "bloco-gaveta";
-    const h6 = document.createElement("h4");
-    h6.className = "bloco-gaveta-titulo";
-    h6.textContent = "6. Dados Brutos (Auditoria Factual)";
-    b6.appendChild(h6);
+    // 6. DADOS BRUTOS EM ACCORDION / DETAILS (ZERO POLUIÇÃO)
+    const bRaw = document.createElement("details");
+    bRaw.className = "gaveta-accordion-raw";
+    bRaw.innerHTML = `
+      <summary class="gaveta-accordion-sumario">Auditoria Técnica Factual (JSON Bruto)</summary>
+      <pre class="pre-dados-brutos">${JSON.stringify(ex, null, 2)}</pre>
+    `;
+    corpo.appendChild(bRaw);
 
-    const pre = document.createElement("pre");
-    pre.className = "pre-dados-brutos";
-    pre.textContent = JSON.stringify(ex, null, 2);
-    b6.appendChild(pre);
-    corpo.appendChild(b6);
+    // 7. PREENCHER ABA TIMELINE (DEDICADA)
+    corpoTimeline.innerHTML = `<h4 class="bloco-gaveta-titulo" style="margin-bottom:0.75rem;">Histórico Cronológico de Eventos</h4>`;
+    if (!ex.historico || ex.historico.length === 0) {
+      corpoTimeline.innerHTML += `<p class="gaveta-texto-mutado">Sem histórico cronológico registrado.</p>`;
+    } else {
+      const listaT = document.createElement("ul");
+      listaT.className = "linha-tempo-lista";
+      for (const h of ex.historico) {
+        const li = document.createElement("li");
+        li.className = "linha-tempo-item";
+        li.innerHTML = `
+          <span class="linha-tempo-hora">${(h.em || "").substring(11, 19)}</span>
+          <span class="linha-tempo-evento">${h.evento}:</span>
+          <span>${h.mensagem || ""}</span>
+        `;
+        listaT.appendChild(li);
+      }
+      corpoTimeline.appendChild(listaT);
+    }
+
+    // Default para aba 'detalhes'
+    alternarAbaGaveta('detalhes');
 
     // Abrir drawer e backdrop
     const gavetaEl = document.getElementById("gaveta-detalhes");
@@ -1134,7 +1026,6 @@ async function abrirGaveta(runId) {
     }
     if (backdropEl) backdropEl.classList.remove("escondido");
 
-    // Iniciar Logtail em streaming para a execução aberta
     iniciarLogtail(runId);
   } catch (e) {
     console.error("Erro ao carregar detalhes:", e);
@@ -1654,4 +1545,112 @@ window.addEventListener("focus", () => {
   atualizarDados();
   carregarTelemetriaTokens();
 });
+
+// ==========================================================================
+// 13. RECURSO: ACESSO MOBILE VIA WI-FI COM QR CODE
+// ==========================================================================
+let _urlWifiCache = "";
+
+async function abrirModalQRCode() {
+  tocarSom("clique");
+  const modal = document.getElementById("modal-qrcode");
+  const container = document.getElementById("qrcode-container");
+  const elUrl = document.getElementById("qrcode-url-texto");
+  const elStatus = document.getElementById("qrcode-status-rede");
+
+  if (!modal) return;
+  modal.classList.remove("escondido");
+
+  if (container) container.innerHTML = `<span style="font-size:0.75rem;color:#64748b;">Gerando QR Code...</span>`;
+  if (elUrl) elUrl.textContent = "Obtendo endereço LAN...";
+
+  try {
+    const res = await fetch("/api/rede/wifi");
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const dados = await res.json();
+    _urlWifiCache = dados.url || "";
+
+    if (elUrl) elUrl.textContent = _urlWifiCache;
+    if (elStatus) {
+      elStatus.textContent = dados.online 
+        ? `IP na rede Wi-Fi: ${dados.ip} (Porta ${dados.porta})`
+        : "Aviso: Sem IP de LAN detectado (operando em localhost)";
+    }
+
+    if (container && dados.qrcode_svg) {
+      container.innerHTML = dados.qrcode_svg;
+      const svg = container.querySelector("svg");
+      if (svg) {
+        svg.setAttribute("width", "100%");
+        svg.setAttribute("height", "100%");
+      }
+    }
+  } catch (err) {
+    if (container) container.innerHTML = `<span style="font-size:0.75rem;color:var(--c-falha);">Erro ao obter dados de rede</span>`;
+    if (elUrl) elUrl.textContent = "Erro de conexão";
+  }
+}
+
+function fecharModalQRCode(evento) {
+  if (evento && evento.target && evento.target.closest(".modal-janela") && !evento.target.classList.contains("btn-fechar")) {
+    return;
+  }
+  const modal = document.getElementById("modal-qrcode");
+  if (modal) modal.classList.add("escondido");
+  tocarSom("clique");
+}
+
+function copiarUrlWifi() {
+  const btn = document.getElementById("btn-copiar-url-wifi");
+  if (!_urlWifiCache) return;
+  navigator.clipboard.writeText(_urlWifiCache).then(() => {
+    tocarSom("clique");
+    if (btn) {
+      const orig = btn.textContent;
+      btn.textContent = "✓ Copiado!";
+      btn.style.background = "var(--c-sucesso)";
+      btn.style.color = "#000";
+      setTimeout(() => {
+        btn.textContent = orig;
+        btn.style.background = "";
+        btn.style.color = "";
+      }, 2000);
+    }
+  });
+}
+
+// ==========================================================================
+// 14. RECURSO: LIMPAR / ARQUIVAR EXECUÇÕES CONCLUÍDAS E FALHAS
+// ==========================================================================
+async function confirmarArquivamento() {
+  tocarSom("clique");
+  const confirmar = confirm("Deseja mover todas as execuções CONCLUÍDAS e FALHAS para o Arquivo Histórico?\nIsso despoluirá a visão ativa sem perder dados.");
+  if (!confirmar) return;
+
+  const btn = document.getElementById("btn-arquivar-topo");
+  if (btn) btn.style.opacity = "0.5";
+
+  try {
+    const res = await fetch("/api/acao/arquivar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: ["concluido", "falhou", "interrompido", "cancelado"] })
+    });
+    const dados = await res.json();
+    if (res.ok) {
+      tocarSom("sucesso");
+      alert(`✓ ${dados.mensagem || 'Execuções arquivadas com sucesso!'}`);
+      await atualizarDados();
+    } else {
+      tocarSom("falha");
+      alert(`Erro ao arquivar: ${dados.erro || 'Falha na requisição'}`);
+    }
+  } catch (err) {
+    tocarSom("falha");
+    alert("Erro de conexão ao solicitar arquivamento.");
+  } finally {
+    if (btn) btn.style.opacity = "1";
+  }
+}
+
 
