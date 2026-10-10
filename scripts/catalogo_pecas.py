@@ -140,11 +140,17 @@ def _ignorado(p: Path) -> bool:
 
 
 def _ler(p: Path) -> str:
-    return p.read_text(encoding="utf-8", errors="ignore")
+    try:
+        return p.read_text(encoding="utf-8", errors="ignore")
+    except (FileNotFoundError, OSError):
+        return ""
 
 
 def _hash(p: Path) -> str:
-    return hashlib.sha256(p.read_bytes()).hexdigest()[:12]
+    try:
+        return hashlib.sha256(p.read_bytes()).hexdigest()[:12]
+    except (FileNotFoundError, OSError):
+        return ""
 
 
 def _frontmatter(texto: str, campo: str) -> str:

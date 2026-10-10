@@ -21,7 +21,7 @@ Executes the maximum-craft Impeccable design pipeline on UI and frontend surface
 
 ### Phase 1: Context Capture (`init`)
 1. Verify if `PRODUCT.md` exists in project root or current target.
-2. If missing, execute `.claude/skills/impeccable/scripts/impeccable init` to capture product domain, persona, and core visual intent.
+2. If missing, execute `impeccable init` (via launcher or skill) to capture product domain, persona, and core visual intent.
 3. *Criterion:* `PRODUCT.md` exists and contains defined product and surface goals.
 
 ### Phase 2: Design Mapping (`document`)
@@ -69,7 +69,7 @@ Executes the maximum-craft Impeccable design pipeline on UI and frontend surface
 
 ## Failure Modes & Fallback
 
-- **Launcher unavailable on platform:** Execute the atomic steps directly via local project files (`PRODUCT.md`, `DESIGN.md`, detector) following `reference/craft-floor.md`.
+- **Launcher unavailable on platform:** Execute the atomic steps directly via local project files (`PRODUCT.md`, `DESIGN.md`, detector) following design guidelines.
 - **Target path not specified:** Default to the current modified frontend directory or prompt the user once for the target screen.
 
 ## Stopping Checklist

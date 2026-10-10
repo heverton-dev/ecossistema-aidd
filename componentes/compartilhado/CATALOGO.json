@@ -2084,7 +2084,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-master",
       "versao": "1.0.0",
-      "sha256": "sha256-669bd3d9b3373e939f66f69abe985876dfc4ce9c750e1e5b1b192c0da1896d1b",
+      "sha256": "sha256-b25f3306a33df88a128c8f5f1312490c31de052b368cc89f7dcc9f82d03e0c4c",
       "consumidores": [
         "aidd-enterprise",
         "aidd-master"

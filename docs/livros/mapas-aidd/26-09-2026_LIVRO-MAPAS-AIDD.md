@@ -266,9 +266,9 @@ Onde mora: `componentes/compartilhado/skills/`. Quem confere: o `G_SKILL_FORMATO
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| skills nossas | 44 |
+| skills nossas | 45 |
 | nomes de terceiros registrados | 15 |
-| com "Use when" | 44 |
+| com "Use when" | 45 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_skills`), os mesmos do mapa `mapa-05-skills.html`.
 
@@ -313,8 +313,8 @@ Onde mora: `componentes/compartilhado/comandos/`. Quem confere: a conferência d
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| comandos slash | 19 |
-| apontam para skill que existe | 19 |
+| comandos slash | 20 |
+| apontam para skill que existe | 20 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_comandos_slash`), os mesmos do mapa `mapa-06-comandos.html`.
 
@@ -447,7 +447,7 @@ Onde mora: `tools/<f>/templates/`. Quem confere: os guardas de entrega gerados p
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | moldes | 21 |
-| arquivos de molde | 355 |
+| arquivos de molde | 341 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_moldes_entrega`), os mesmos do mapa `mapa-09-moldes.html`.
 
@@ -535,8 +535,8 @@ Onde mora: `docs/planos/` e `docs/auditoria/`. Quem confere: o `scripts/atualiza
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| planos | 38 |
-| em execução | 11 |
+| planos | 0 |
+| em execução | 0 |
 | ciclos de auditoria | 54 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_oficina`), os mesmos do mapa `mapa-11-oficina.html`.

@@ -4,17 +4,17 @@
   "totais": {
     "ferramentas": 8,
     "comandos_cli": 74,
-    "skills": 44,
+    "skills": 45,
     "leis": 14,
     "lente_15d": 15,
-    "oficina": 38,
+    "oficina": 0,
     "scripts": 59,
     "moldes_entrega": 21,
     "harnesses": 7,
-    "skills_nossas": 44,
+    "skills_nossas": 45,
     "skills_terceiros_copiadas": 0,
     "skills_terceiros_registradas": 15,
-    "comandos_slash": 19,
+    "comandos_slash": 20,
     "mcps_registrados": 11,
     "mcps_internos": 5,
     "hooks": 5,
@@ -350,6 +350,12 @@
       "terceiro": false
     },
     {
+      "id": "aidd-impeccable-full",
+      "descricao": "Orchestrates full Impeccable design lifecycle across UI/frontend surfaces. Mandatorily triggered whenever any frontend page, component, view or dashboard is created, generated, or scaffolded. Runs structured passes init -> document -> critique -> audit -> polish -> harden -> extract. Use when creating or refining frontend pages, or when user invokes \"/impeccable-full\", \"impeccable-full\", \"design completo\", \"força máxima de UI\", \"craft frontend\".",
+      "linhas": 81,
+      "terceiro": false
+    },
+    {
       "id": "aidd-improvement",
       "descricao": "Deeply investigates a requested ecosystem improvement in the real code and writes a scored evaluation report (current grade 0-10 with evidence) in docs/melhorias/. Step 1 of the melhoria -> plan -> orchestrate flow. Use when the user asks to analyze, evaluate or grade an improvement or refactor before planning, or to re-analyze an existing plan, or types \"/melhoria\", \"melhoria\", \"analisar melhoria\", \"avaliar melhoria\", \"reanalisar plano\".",
       "linhas": 86,
@@ -382,7 +388,7 @@
     {
       "id": "aidd-ops",
       "descricao": "Runs the aidd-ops agentic infrastructure pipeline (VPS sizing, SSH hardening, Docker, Cloudflare, deploy). Use when the user wants to provision or deploy infrastructure, or says \"ops\", \"/ops\", \"infraestrutura\", \"subir na VPS\", \"provisionar\".",
-      "linhas": 49,
+      "linhas": 48,
       "terceiro": false
     },
     {
@@ -1976,198 +1982,7 @@
     ]
   },
   "oficina": {
-    "planos": [
-      {
-        "id": "PLAN-0029-teste-e2e-ferramentas",
-        "estado": "a-fazer",
-        "itens": 5
-      },
-      {
-        "id": "PLAN-0016-qualidade-testes-mutacao",
-        "estado": "fazendo",
-        "itens": 10
-      },
-      {
-        "id": "PLAN-0017-resiliencia-concorrencia-integridade",
-        "estado": "fazendo",
-        "itens": 8
-      },
-      {
-        "id": "PLAN-0018-seguranca-zero-trust",
-        "estado": "fazendo",
-        "itens": 10
-      },
-      {
-        "id": "PLAN-0019-bootstrap-ambiente-preflight",
-        "estado": "fazendo",
-        "itens": 9
-      },
-      {
-        "id": "PLAN-0021-codigo-limpo-profundo",
-        "estado": "fazendo",
-        "itens": 17
-      },
-      {
-        "id": "PLAN-0022-config-arquivos-tokens",
-        "estado": "fazendo",
-        "itens": 4
-      },
-      {
-        "id": "PLAN-0023-evolucao-engenharia-software",
-        "estado": "fazendo",
-        "itens": 6
-      },
-      {
-        "id": "PLAN-0025-conclusao-auditoria-maquiagem",
-        "estado": "fazendo",
-        "itens": 11
-      },
-      {
-        "id": "PLAN-0027-implementacao-aidd-open",
-        "estado": "fazendo",
-        "itens": 8
-      },
-      {
-        "id": "PLAN-0028-completude-factory-v2",
-        "estado": "fazendo",
-        "itens": 8
-      },
-      {
-        "id": "PLAN-0034-upgrade-ferramentas-enterprise",
-        "estado": "fazendo",
-        "itens": 3
-      },
-      {
-        "id": "PLAN-0001-evolucao-notas-auditoria",
-        "estado": "feitos",
-        "itens": 7
-      },
-      {
-        "id": "PLAN-0002-correcao-riscos-ecossistema",
-        "estado": "feitos",
-        "itens": 0
-      },
-      {
-        "id": "PLAN-0003-refinamento-notas-auditoria",
-        "estado": "feitos",
-        "itens": 6
-      },
-      {
-        "id": "PLAN-0004-integracao-aidd-ops",
-        "estado": "feitos",
-        "itens": 9
-      },
-      {
-        "id": "PLAN-0005-skill-gerador-planos",
-        "estado": "feitos",
-        "itens": 1
-      },
-      {
-        "id": "PLAN-0006-skill-orquestracao-orca",
-        "estado": "feitos",
-        "itens": 6
-      },
-      {
-        "id": "PLAN-0007-testes-completos-ecossistema",
-        "estado": "feitos",
-        "itens": 6
-      },
-      {
-        "id": "PLAN-0008-validacao-humana-testes",
-        "estado": "feitos",
-        "itens": 6
-      },
-      {
-        "id": "PLAN-0009-correcao-auditoria-maquiagem",
-        "estado": "feitos",
-        "itens": 18
-      },
-      {
-        "id": "PLAN-0010-direcionamento-estrategico-anti-nih",
-        "estado": "feitos",
-        "itens": 9
-      },
-      {
-        "id": "PLAN-0011-evolucao-aidd-ops",
-        "estado": "feitos",
-        "itens": 4
-      },
-      {
-        "id": "PLAN-0012-correcao-arquitetura-limpa",
-        "estado": "feitos",
-        "itens": 5
-      },
-      {
-        "id": "PLAN-0013-correcao-codigo-limpo",
-        "estado": "feitos",
-        "itens": 8
-      },
-      {
-        "id": "PLAN-0014-reestruturacao-ddd-clean-architecture",
-        "estado": "feitos",
-        "itens": 10
-      },
-      {
-        "id": "PLAN-0015-otimizacao-tokenomics-latencia",
-        "estado": "feitos",
-        "itens": 7
-      },
-      {
-        "id": "PLAN-0020-aidd-bridge",
-        "estado": "feitos",
-        "itens": 4
-      },
-      {
-        "id": "PLAN-0024-testes-motor-orquestrador",
-        "estado": "feitos",
-        "itens": 3
-      },
-      {
-        "id": "PLAN-0026-universalidade-harnesses-mcp-hooks",
-        "estado": "feitos",
-        "itens": 4
-      },
-      {
-        "id": "PLAN-0028-upgrade-stack-camadas",
-        "estado": "feitos",
-        "itens": 6
-      },
-      {
-        "id": "PLAN-0030-correcao-bugs-e2e-fluxos-canonicos",
-        "estado": "feitos",
-        "itens": 0
-      },
-      {
-        "id": "PLAN-0030-integracao-skills-matt-pocock",
-        "estado": "feitos",
-        "itens": 0
-      },
-      {
-        "id": "PLAN-0031-blindagem-cyberseguranca",
-        "estado": "feitos",
-        "itens": 4
-      },
-      {
-        "id": "PLAN-0032-remediar-gaps-auditoria",
-        "estado": "feitos",
-        "itens": 3
-      },
-      {
-        "id": "PLAN-0033-implementacao-arquitetural-vsa",
-        "estado": "feitos",
-        "itens": 3
-      },
-      {
-        "id": "PLAN-0035-blindagem-arquitetural-qualidade",
-        "estado": "feitos",
-        "itens": 5
-      },
-      {
-        "id": "PLAN-0036-taxonomia-quarteto-sine-qua-non",
-        "estado": "feitos",
-        "itens": 5
-      }
-    ],
+    "planos": [],
     "ciclos": [
       {
         "alvo": "agilidade-gates",
@@ -3398,7 +3213,7 @@
       "ferramenta": "aidd-enterprise",
       "molde": "v2",
       "caminho": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/templates/v2",
-      "arquivos": 74,
+      "arquivos": 67,
       "dona_canonica": "aidd-master"
     },
     {
@@ -3433,7 +3248,7 @@
       "ferramenta": "aidd-master",
       "molde": "v2",
       "caminho": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/templates/v2",
-      "arquivos": 62,
+      "arquivos": 55,
       "dona_canonica": "aidd-master"
     },
     {
@@ -3462,7 +3277,7 @@
           "hook": ".claude/hooks/{nome}",
           "sub-agent": ".claude/agents/{nome}"
         },
-        "skills_em_disco": 59,
+        "skills_em_disco": 60,
         "nossas_faltando": [],
         "terceiros_em_disco": 15,
         "config_mcp": ".mcp.json"
@@ -3483,7 +3298,7 @@
           "hook": ".agents/hooks/{nome}",
           "sub-agent": ".agents/agents/{nome}"
         },
-        "skills_em_disco": 59,
+        "skills_em_disco": 60,
         "nossas_faltando": [],
         "terceiros_em_disco": 15,
         "config_mcp": ".agents/mcp_config.json"
@@ -3504,7 +3319,7 @@
           "hook": ".opencode/hooks/{nome}",
           "sub-agent": ".opencode/agents/{nome}"
         },
-        "skills_em_disco": 45,
+        "skills_em_disco": 46,
         "nossas_faltando": [],
         "terceiros_em_disco": 1,
         "config_mcp": "opencode.jsonc"
@@ -3525,7 +3340,7 @@
           "hook": ".mimocode/hooks/{nome}",
           "sub-agent": ".mimocode/agents/{nome}"
         },
-        "skills_em_disco": 45,
+        "skills_em_disco": 46,
         "nossas_faltando": [],
         "terceiros_em_disco": 1,
         "config_mcp": "mimocode.jsonc"
@@ -3544,7 +3359,7 @@
           "hook": ".gemini/hooks/{nome}",
           "sub-agent": ".gemini/agents/{nome}"
         },
-        "skills_em_disco": 44,
+        "skills_em_disco": 45,
         "nossas_faltando": [],
         "terceiros_em_disco": 0,
         "config_mcp": ".gemini/settings.json"
@@ -3563,7 +3378,7 @@
           "command": ".cursor/commands/{nome}",
           "hook": ".cursor/hooks/{nome}"
         },
-        "skills_em_disco": 45,
+        "skills_em_disco": 46,
         "nossas_faltando": [],
         "terceiros_em_disco": 1,
         "config_mcp": ".cursor/mcp.json"
@@ -3582,7 +3397,7 @@
           "command": ".codebuddy/commands/{nome}",
           "hook": ".codebuddy/hooks/{nome}"
         },
-        "skills_em_disco": 44,
+        "skills_em_disco": 45,
         "nossas_faltando": [],
         "terceiros_em_disco": 0,
         "config_mcp": ""
@@ -3659,6 +3474,13 @@
       "caminho": "componentes/compartilhado/comandos/generate.md",
       "descricao": "Apelido de 1 ciclo para o motor do Fluxo 01. Use `/pure` (fluxo completo) ou `python ecossistema.py pure-motor \"<ideia>\"` (só o motor de 8 fases).",
       "skill": "aidd-pure",
+      "skill_existe": true
+    },
+    {
+      "id": "impeccable-full",
+      "caminho": "componentes/compartilhado/comandos/impeccable-full.md",
+      "descricao": "Dispara o ciclo completo de forca maxima do Impeccable (init -> document -> critique -> audit -> polish -> harden -> extract)",
+      "skill": "aidd-impeccable-full",
       "skill_existe": true
     },
     {
@@ -5783,7 +5605,8 @@
             "--dominio",
             "<var>",
             "--pasta",
-            "<var>"
+            "<var>",
+            "--force"
           ],
           [
             "planner",
@@ -5939,7 +5762,7 @@
     },
     {
       "etapa": "etapa_02_planner",
-      "chamada": "ecossistema.py planner init --fluxo <var> --nome <var> --slug <var> --dominio <var> --pasta <var>",
+      "chamada": "ecossistema.py planner init --fluxo <var> --nome <var> --slug <var> --dominio <var> --pasta <var> --force",
       "encaixa": true,
       "problemas": []
     },

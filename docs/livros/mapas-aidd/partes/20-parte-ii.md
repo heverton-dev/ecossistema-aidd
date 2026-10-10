@@ -69,9 +69,9 @@ Onde mora: `componentes/compartilhado/skills/`. Quem confere: o `G_SKILL_FORMATO
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| skills nossas | 44 |
+| skills nossas | 45 |
 | nomes de terceiros registrados | 15 |
-| com "Use when" | 44 |
+| com "Use when" | 45 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_skills`), os mesmos do mapa `mapa-05-skills.html`.
 
@@ -116,8 +116,8 @@ Onde mora: `componentes/compartilhado/comandos/`. Quem confere: a conferência d
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| comandos slash | 19 |
-| apontam para skill que existe | 19 |
+| comandos slash | 20 |
+| apontam para skill que existe | 20 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_comandos_slash`), os mesmos do mapa `mapa-06-comandos.html`.
 
