@@ -224,21 +224,5 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 8 ferramentas compl
 > Bloco reescrito por `python scripts/atualizar_index_planos.py` toda vez que `docs/planos/` muda (via `.githooks/pre-commit`). Reflete o mesmo cálculo de status de `docs/planos/INDEX.md` — nunca edite manualmente, o script sobrescreve.
 
 <!-- AUTO:INICIATIVAS:START -->
-- 🔒 **Teste E2E Ferramentas** — `docs/planos/a-fazer/PLAN-0029-teste-e2e-ferramentas/`
-- 🔶 **Qualidade Testes Mutacao** — `docs/planos/fazendo/PLAN-0016-qualidade-testes-mutacao/`
-- 🔶 **Resiliencia Concorrencia Integridade** — `docs/planos/fazendo/PLAN-0017-resiliencia-concorrencia-integridade/`
-- 🔶 **Seguranca Zero Trust** — `docs/planos/fazendo/PLAN-0018-seguranca-zero-trust/`
-- 🔶 **Bootstrap Ambiente Preflight** — `docs/planos/fazendo/PLAN-0019-bootstrap-ambiente-preflight/`
-- 🔶 **Codigo Limpo Profundo** — `docs/planos/fazendo/PLAN-0021-codigo-limpo-profundo/`
-- 🔶 **Config Arquivos Tokens** — `docs/planos/fazendo/PLAN-0022-config-arquivos-tokens/`
-- 🔶 **Evolucao Engenharia Software** — `docs/planos/fazendo/PLAN-0023-evolucao-engenharia-software/`
-- 🔶 **Conclusao Auditoria Maquiagem** — `docs/planos/fazendo/PLAN-0025-conclusao-auditoria-maquiagem/`
-- ⏳ **Implementacao Aidd Open** — `docs/planos/fazendo/PLAN-0027-implementacao-aidd-open/`
-- ⏳ **Completude Factory V2** — `docs/planos/fazendo/PLAN-0028-completude-factory-v2/`
-- 🔶 **Upgrade Ferramentas Enterprise** — `docs/planos/fazendo/PLAN-0034-upgrade-ferramentas-enterprise/`
-- ⏳ **Direcionamento Estrategico Anti Nih** — `docs/planos/feitos/PLAN-0010-direcionamento-estrategico-anti-nih/`
-- ⏳ **Otimizacao Tokenomics Latencia** — `docs/planos/feitos/PLAN-0015-otimizacao-tokenomics-latencia/`
-- ⏳ **Testes Motor Orquestrador** — `docs/planos/feitos/PLAN-0024-testes-motor-orquestrador/`
-- ⏳ **Upgrade Stack Camadas** — `docs/planos/feitos/PLAN-0028-upgrade-stack-camadas/`
-- ⏳ **Taxonomia Quarteto Sine Qua Non** — `docs/planos/feitos/PLAN-0036-taxonomia-quarteto-sine-qua-non/`
+- Nenhuma iniciativa ativa no momento.
 <!-- AUTO:INICIATIVAS:END -->

@@ -309,8 +309,11 @@ def main() -> int:
 
     iniciativas = descobrir_iniciativas()
     if not iniciativas:
-        print("[ERRO] Nenhuma iniciativa encontrada em docs/planos/ — algo está errado.", file=sys.stderr)
-        return 1
+        INDEX_PATH.write_text("# Índice — `docs/planos/`\n\nNenhuma iniciativa registrada no momento.\n", encoding="utf-8")
+        if atualizar_memoria([]):
+            print(f"[OK] {MEMORY_PATH} — bloco de iniciativas ativas atualizado.")
+        print(f"[OK] {INDEX_PATH} atualizado: 0 iniciativas.")
+        return 0
 
     for ini in iniciativas:
         mover_se_necessario(ini, dry_run=args.dry_run)

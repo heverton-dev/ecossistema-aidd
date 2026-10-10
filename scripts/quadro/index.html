@@ -53,7 +53,10 @@
 
       <!-- BOTÃO LAUNCHPAD (+ NOVO DISPARO) -->
       <button id="btn-launchpad" class="btn-launchpad" onclick="abrirLaunchpad()" title="Disparar novo pipeline ou fluxo da Tríade">
-        <span>🚀 Novo Disparo</span>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 19 21 12 17 5 21 12 2"></polygon>
+        </svg>
+        <span>Novo Disparo</span>
       </button>
 
       <div class="status-conexao" title="Status de sincronização com o ecossistema">
@@ -213,7 +216,12 @@
         <div class="chip-status-gate passou"><span class="led-indicador passou"></span> <span id="contagem-gates-passou">0</span> Aprovados</div>
         <div class="chip-status-gate falhou"><span class="led-indicador falhou"></span> <span id="contagem-gates-falhou">0</span> Reprovados</div>
         <div class="chip-status-gate pendente"><span class="led-indicador pendente"></span> <span id="contagem-gates-pendente">72</span> Pendentes</div>
-        <button class="btn-acao-retestar" onclick="dispararAcao('audit')">⚡ Executar Bateria Completa Agora</button>
+        <button class="btn-acao-retestar" onclick="dispararAcao('audit')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+          <span>Executar Bateria Completa</span>
+        </button>
       </div>
       <div id="grade-leds-gates" class="grade-leds-gates"></div>
     </section>
@@ -225,7 +233,12 @@
           <h2 class="secao-titulo">Worktrees VSA & Fatias Efêmeras</h2>
           <p class="secao-descricao">Isolamento e convergência topológica das fatias verticais gerenciadas pelo aidd-dispatch.</p>
         </div>
-        <button class="btn-acao-retestar" onclick="carregarWorktrees()">🔄 Atualizar Worktrees</button>
+        <button class="btn-acao-retestar" onclick="carregarWorktrees()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+          </svg>
+          <span>Atualizar Worktrees</span>
+        </button>
       </div>
       <div id="lista-worktrees-container" class="lista-worktrees-grid"></div>
     </section>
@@ -245,7 +258,13 @@
     <!-- ABAS INTERNAS DA GAVETA -->
     <div class="gaveta-abas-topo">
       <button id="gaveta-aba-detalhes" class="gaveta-aba-btn ativa" onclick="alternarAbaGaveta('detalhes')">Visão Estruturada</button>
-      <button id="gaveta-aba-terminal" class="gaveta-aba-btn" onclick="alternarAbaGaveta('terminal')">📜 Terminal ao Vivo (Logtail)</button>
+      <button id="gaveta-aba-terminal" class="gaveta-aba-btn" onclick="alternarAbaGaveta('terminal')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px; vertical-align: -1px;">
+          <polyline points="4 17 10 11 4 5"></polyline>
+          <line x1="12" y1="19" x2="20" y2="19"></line>
+        </svg>
+        <span>Terminal ao Vivo</span>
+      </button>
     </div>
 
     <div id="gaveta-conteudo" class="gaveta-corpo"></div>
@@ -267,7 +286,7 @@
   <div id="modal-launchpad" class="modal-backdrop escondido" onclick="fecharLaunchpad(event)">
     <div class="modal-janela" onclick="event.stopPropagation()">
       <div class="modal-cabecalho">
-        <h3 class="modal-titulo">🚀 Launchpad Operacional AIDD</h3>
+        <h3 class="modal-titulo">Launchpad Operacional AIDD</h3>
         <button class="btn-fechar" onclick="fecharLaunchpad()">✕</button>
       </div>
       <p class="modal-subtitulo">Dispare qualquer motor da Tríade Canônica ou pipeline de auditoria com um clique:</p>

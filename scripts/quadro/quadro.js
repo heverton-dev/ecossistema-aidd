@@ -20,7 +20,14 @@ const ESTADO_GLOBAL = {
   filtroPipelines: "",
   filtroKanban: "",
   notificacoesAtivas: localStorage.getItem("aidd_quadro_notificacoes") === "1",
-  notificacoesEmitidas: new Set()
+  notificacoesEmitidas: new Set(),
+  somAtivo: localStorage.getItem("aidd_quadro_som") === "1",
+  intervaloLogtail: null,
+  logtailOffset: 0,
+  logtailRunId: null,
+  logtailAutoScroll: true,
+  dadosGates: [],
+  dadosWorktrees: []
 };
 
 // ==========================================
@@ -39,6 +46,87 @@ function aplicarTema(tema) {
 function alternarTema() {
   const novo = ESTADO_GLOBAL.tema === "claro" ? "escuro" : "claro";
   aplicarTema(novo);
+  tocarSom("clique");
+}
+
+// ==========================================
+// 1.1 SÍNTESE DE ÁUDIO NATIVA (WEB AUDIO API)
+// ==========================================
+let _audioCtx = null;
+function obterAudioContext() {
+  if (!_audioCtx) {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (AudioContextClass) _audioCtx = new AudioContextClass();
+  }
+  if (_audioCtx && _audioCtx.state === "suspended") {
+    _audioCtx.resume();
+  }
+  return _audioCtx;
+}
+
+function tocarSom(tipo) {
+  if (!ESTADO_GLOBAL.somAtivo) return;
+  try {
+    const ctx = obterAudioContext();
+    if (!ctx) return;
+    const t = ctx.currentTime;
+
+    if (tipo === "sucesso") {
+      // Acorde suave C5 -> E5 -> G5
+      [523.25, 659.25, 783.99].forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, t + idx * 0.08);
+        gain.gain.setValueAtTime(0.08, t + idx * 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + idx * 0.08 + 0.45);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t + idx * 0.08);
+        osc.stop(t + idx * 0.08 + 0.5);
+      });
+    } else if (tipo === "falha") {
+      // Tom grave descendente de alerta
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(220, t);
+      osc.frequency.exponentialRampToValueAtTime(110, t + 0.35);
+      gain.gain.setValueAtTime(0.12, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.45);
+    } else if (tipo === "clique") {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(600, t);
+      gain.gain.setValueAtTime(0.04, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.07);
+    }
+  } catch (e) {
+    // Silencioso em caso de restrição do navegador
+  }
+}
+
+function alternarSom() {
+  ESTADO_GLOBAL.somAtivo = !ESTADO_GLOBAL.somAtivo;
+  localStorage.setItem("aidd_quadro_som", ESTADO_GLOBAL.somAtivo ? "1" : "0");
+  atualizarIconeSom();
+  if (ESTADO_GLOBAL.somAtivo) tocarSom("sucesso");
+}
+
+function atualizarIconeSom() {
+  const btn = document.getElementById("btn-som");
+  if (!btn) return;
+  btn.style.opacity = ESTADO_GLOBAL.somAtivo ? "1" : "0.5";
+  btn.title = ESTADO_GLOBAL.somAtivo ? "Som ativado (clique para mutar)" : "Som desativado (clique para ativar)";
 }
 
 // ==========================================
@@ -62,6 +150,7 @@ async function alternarNotificacoes() {
 
   localStorage.setItem("aidd_quadro_notificacoes", ESTADO_GLOBAL.notificacoesAtivas ? "1" : "0");
   atualizarIconeNotificacao();
+  tocarSom("clique");
 }
 
 function atualizarIconeNotificacao() {
@@ -82,6 +171,7 @@ function emitirNotificacaoSeNecessario(titulo, corpo, idUnico) {
       body: corpo,
       tag: idUnico
     });
+    tocarSom("falha");
   } catch (e) {
     console.warn("Falha ao emitir notificação desktop:", e);
   }
@@ -92,20 +182,23 @@ function emitirNotificacaoSeNecessario(titulo, corpo, idUnico) {
 // ==========================================
 function mudarAba(aba) {
   ESTADO_GLOBAL.abaAtiva = aba;
+  tocarSom("clique");
   
-  const btnPipes = document.getElementById("aba-pipelines");
-  const btnArq = document.getElementById("aba-arquivo");
-  const secPipes = document.getElementById("secao-pipelines");
-  const secArq = document.getElementById("secao-arquivo");
-
-  if (btnPipes) btnPipes.classList.toggle("ativa", aba === "pipelines");
-  if (btnArq) btnArq.classList.toggle("ativa", aba === "arquivo");
-  if (secPipes) secPipes.classList.toggle("escondido", aba !== "pipelines");
-  if (secArq) secArq.classList.toggle("escondido", aba !== "arquivo");
+  const abas = ["pipelines", "gates", "worktrees", "arquivo"];
+  abas.forEach(nome => {
+    const btn = document.getElementById(`aba-${nome}`);
+    const sec = document.getElementById(`secao-${nome}`);
+    if (btn) btn.classList.toggle("ativa", aba === nome);
+    if (sec) sec.classList.toggle("escondido", aba !== nome);
+  });
 
   if (aba === "arquivo") {
     carregarArquivo();
     preencherFiltrosArquivo();
+  } else if (aba === "gates") {
+    carregarGates();
+  } else if (aba === "worktrees") {
+    carregarWorktrees();
   }
 }
 
@@ -558,7 +651,7 @@ async function carregarKanban(pipeId) {
           if (cartao.gate_atual) {
             const gateTag = document.createElement("div");
             gateTag.className = "cartao-gate-tag";
-            gateTag.textContent = `🎯 Gate: ${cartao.gate_atual} ${cartao.progresso_gates ? '(' + cartao.progresso_gates + ')' : ''}`;
+            gateTag.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;margin-right:4px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Gate: ${cartao.gate_atual} ${cartao.progresso_gates ? '(' + cartao.progresso_gates + ')' : ''}`;
             elCard.appendChild(gateTag);
           }
 
@@ -786,7 +879,7 @@ async function abrirGaveta(runId) {
 
       const hRemed = document.createElement("h4");
       hRemed.className = "bloco-gaveta-titulo titulo-remediacao";
-      hRemed.textContent = "⚡ Central de Ação & Remediação Agêntica";
+      hRemed.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:6px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Central de Ação & Remediação Agêntica`;
       bRemed.appendChild(hRemed);
 
       const pDesc = document.createElement("p");
@@ -797,10 +890,15 @@ async function abrirGaveta(runId) {
       const gradeBotoes = document.createElement("div");
       gradeBotoes.className = "grade-botoes-remediacao";
 
+      const svgDoc = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;margin-right:6px;"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>`;
+      const svgRocket = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;margin-right:6px;"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/></svg>`;
+      const svgBolt = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;margin-right:6px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`;
+      const svgWrench = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;margin-right:6px;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`;
+
       // 1. Botão Copiar Reporte Completo para Agente
       const btnReporte = document.createElement("button");
       btnReporte.className = "btn-remediacao btn-copiar-reporte";
-      btnReporte.textContent = "📋 Copiar Reporte para Agente";
+      btnReporte.innerHTML = `${svgDoc}<span>Copiar Reporte para Agente</span>`;
       btnReporte.onclick = () => {
         const promptAgente = [
           "## REPORT DE FALHA OPERACIONAL (DASHBOARD AIDD)",
@@ -817,10 +915,10 @@ async function abrirGaveta(runId) {
           "3. Execute os testes/gates correspondentes para assegurar que a falha foi sanada."
         ].join("\n");
         navigator.clipboard.writeText(promptAgente);
-        btnReporte.textContent = "✓ Reporte Copiado! Cole no Agente";
+        btnReporte.innerHTML = `<span>✓ Reporte Copiado! Cole no Agente</span>`;
         btnReporte.classList.add("sucesso");
         setTimeout(() => {
-          btnReporte.textContent = "📋 Copiar Reporte para Agente";
+          btnReporte.innerHTML = `${svgDoc}<span>Copiar Reporte para Agente</span>`;
           btnReporte.classList.remove("sucesso");
         }, 3000);
       };
@@ -829,7 +927,7 @@ async function abrirGaveta(runId) {
       // 2. Botão Disparar Pipeline Audit-4F
       const btnAudit4f = document.createElement("button");
       btnAudit4f.className = "btn-remediacao btn-disparar-audit";
-      btnAudit4f.textContent = "🚀 Disparar Auditoria 4F (audit-4f)";
+      btnAudit4f.innerHTML = `${svgRocket}<span>Disparar Auditoria 4F (audit-4f)</span>`;
       btnAudit4f.onclick = async () => {
         btnAudit4f.disabled = true;
         btnAudit4f.textContent = "Disparando...";
@@ -858,7 +956,7 @@ async function abrirGaveta(runId) {
       // 3. Botão Disparar Pipeline Evolução
       const btnEvolucao = document.createElement("button");
       btnEvolucao.className = "btn-remediacao btn-disparar-evolucao";
-      btnEvolucao.textContent = "⚡ Disparar Evolução Técnica (evolucao)";
+      btnEvolucao.innerHTML = `${svgBolt}<span>Disparar Evolução Técnica (evolucao)</span>`;
       btnEvolucao.onclick = async () => {
         btnEvolucao.disabled = true;
         btnEvolucao.textContent = "Disparando...";
@@ -887,7 +985,7 @@ async function abrirGaveta(runId) {
       // 4. Botão Reexecutar Gates
       const btnGates = document.createElement("button");
       btnGates.className = "btn-remediacao btn-disparar-gates";
-      btnGates.textContent = "🔧 Reexecutar Gates (audit)";
+      btnGates.innerHTML = `${svgWrench}<span>Reexecutar Gates (audit)</span>`;
       btnGates.onclick = async () => {
         btnGates.disabled = true;
         btnGates.textContent = "Disparando...";
@@ -1035,12 +1133,16 @@ async function abrirGaveta(runId) {
       gavetaEl.setAttribute("aria-hidden", "false");
     }
     if (backdropEl) backdropEl.classList.remove("escondido");
+
+    // Iniciar Logtail em streaming para a execução aberta
+    iniciarLogtail(runId);
   } catch (e) {
     console.error("Erro ao carregar detalhes:", e);
   }
 }
 
 function fecharGaveta() {
+  pararLogtail();
   const gavetaEl = document.getElementById("gaveta-detalhes");
   const backdropEl = document.getElementById("gaveta-backdrop");
   if (gavetaEl) {
@@ -1182,24 +1284,374 @@ window.addEventListener("keydown", (e) => {
 
   if (e.key === "t" || e.key === "T") {
     alternarTema();
+  } else if (e.key === "s" || e.key === "S") {
+    alternarSom();
   } else if (e.key === "1") {
     mudarAba("pipelines");
   } else if (e.key === "2") {
+    mudarAba("gates");
+  } else if (e.key === "3") {
+    mudarAba("worktrees");
+  } else if (e.key === "4") {
     mudarAba("arquivo");
   }
 });
 
+// ==========================================
+// 12. LOGTAIL / STREAMING DE LOGS NA GAVETA
+// ==========================================
+function alternarAbaGaveta(aba) {
+  const btnDet = document.getElementById("gaveta-aba-detalhes");
+  const btnTerm = document.getElementById("gaveta-aba-terminal");
+  const conDet = document.getElementById("gaveta-conteudo");
+  const conTerm = document.getElementById("gaveta-terminal-conteudo");
+
+  if (btnDet) btnDet.classList.toggle("ativa", aba === "detalhes");
+  if (btnTerm) btnTerm.classList.toggle("ativa", aba === "terminal");
+  if (conDet) conDet.classList.toggle("escondido", aba !== "detalhes");
+  if (conTerm) conTerm.classList.toggle("escondido", aba !== "terminal");
+  tocarSom("clique");
+}
+
+function iniciarLogtail(runId) {
+  pararLogtail();
+  ESTADO_GLOBAL.logtailRunId = runId;
+  ESTADO_GLOBAL.logtailOffset = 0;
+  
+  const elTerm = document.getElementById("terminal-log-texto");
+  if (elTerm) elTerm.textContent = `[aidd-logtail] Conectando ao fluxo de logs da execução ${runId}...\n`;
+
+  // Consulta imediata e depois intervalo
+  consultarChunkLog();
+  ESTADO_GLOBAL.intervaloLogtail = setInterval(consultarChunkLog, 1500);
+}
+
+function pararLogtail() {
+  if (ESTADO_GLOBAL.intervaloLogtail) {
+    clearInterval(ESTADO_GLOBAL.intervaloLogtail);
+    ESTADO_GLOBAL.intervaloLogtail = null;
+  }
+  ESTADO_GLOBAL.logtailRunId = null;
+}
+
+async function consultarChunkLog() {
+  if (!ESTADO_GLOBAL.logtailRunId) return;
+  try {
+    const res = await fetch(`/api/logs/${ESTADO_GLOBAL.logtailRunId}?offset=${ESTADO_GLOBAL.logtailOffset}`);
+    if (!res.ok) return;
+    const dados = await res.json();
+    if (dados.log) {
+      const elTerm = document.getElementById("terminal-log-texto");
+      if (elTerm) {
+        elTerm.textContent += dados.log;
+        if (ESTADO_GLOBAL.logtailAutoScroll) {
+          elTerm.scrollTop = elTerm.scrollHeight;
+        }
+      }
+    }
+    ESTADO_GLOBAL.logtailOffset = dados.offset || ESTADO_GLOBAL.logtailOffset;
+    if (dados.fim) {
+      pararLogtail();
+      const elTerm = document.getElementById("terminal-log-texto");
+      if (elTerm) elTerm.textContent += "\n[aidd-logtail] Fim da execução registrado.\n";
+    }
+  } catch (e) {
+    // Silencioso em caso de corte
+  }
+}
+
+function limparTerminalGaveta() {
+  const elTerm = document.getElementById("terminal-log-texto");
+  if (elTerm) elTerm.textContent = "";
+}
+
+function alternarAutoScrollTerminal() {
+  ESTADO_GLOBAL.logtailAutoScroll = !ESTADO_GLOBAL.logtailAutoScroll;
+  const btn = document.getElementById("btn-terminal-pausa");
+  if (btn) btn.textContent = `Auto-scroll: ${ESTADO_GLOBAL.logtailAutoScroll ? 'ON' : 'OFF'}`;
+}
+
+// ==========================================
+// 13. MATRIZ DE GATES (GRADE DE 72 LEDS)
+// ==========================================
+async function carregarGates() {
+  const container = document.getElementById("grade-leds-gates");
+  if (!container) return;
+
+  try {
+    const res = await fetch("/api/gates");
+    if (!res.ok) return;
+    const dados = await res.json();
+    ESTADO_GLOBAL.dadosGates = dados.gates || [];
+
+    let passou = 0;
+    let falhou = 0;
+    let pendente = 0;
+
+    for (const g of ESTADO_GLOBAL.dadosGates) {
+      if (g.status === "passou") passou++;
+      else if (g.status === "falhou") falhou++;
+      else pendente++;
+    }
+
+    const elPassou = document.getElementById("contagem-gates-passou");
+    const elFalhou = document.getElementById("contagem-gates-falhou");
+    const elPendente = document.getElementById("contagem-gates-pendente");
+    const badgeTopo = document.getElementById("contagem-gates-leds");
+
+    if (elPassou) elPassou.textContent = passou;
+    if (elFalhou) elFalhou.textContent = falhou;
+    if (elPendente) elPendente.textContent = pendente;
+    if (badgeTopo) badgeTopo.textContent = `${passou}/${ESTADO_GLOBAL.dadosGates.length}`;
+
+    renderizarGradeGates(ESTADO_GLOBAL.dadosGates);
+  } catch (e) {
+    console.error("Erro ao carregar gates:", e);
+  }
+}
+
+function renderizarGradeGates(gates) {
+  const container = document.getElementById("grade-leds-gates");
+  if (!container) return;
+  container.replaceChildren();
+
+  for (const g of gates) {
+    const item = document.createElement("div");
+    item.className = "led-gate-item";
+    item.title = `${g.id}\nMódulo: ${g.modulo}\nLei: ${g.lei || 'Canônica'}\nStatus: ${g.status}`;
+
+    const led = document.createElement("span");
+    led.className = `led-indicador ${g.status}`;
+    item.appendChild(led);
+
+    const nome = document.createElement("span");
+    nome.className = "led-gate-nome";
+    nome.textContent = g.nome;
+    item.appendChild(nome);
+
+    if (g.lei) {
+      const lei = document.createElement("span");
+      lei.className = "led-gate-lei";
+      lei.textContent = `L#${g.lei}`;
+      item.appendChild(lei);
+    }
+
+    container.appendChild(item);
+  }
+}
+
+function filtrarGates(input) {
+  const termo = (input.value || "").trim().toLowerCase();
+  if (!termo) {
+    renderizarGradeGates(ESTADO_GLOBAL.dadosGates);
+    return;
+  }
+  const filtrados = ESTADO_GLOBAL.dadosGates.filter(g => 
+    g.nome.toLowerCase().includes(termo) || 
+    g.id.toLowerCase().includes(termo) ||
+    (g.lei && g.lei.toString().includes(termo))
+  );
+  renderizarGradeGates(filtrados);
+}
+
+// ==========================================
+// 14. WORKTREES VSA & DIFF VIEWER
+// ==========================================
+async function carregarWorktrees() {
+  const container = document.getElementById("lista-worktrees-container");
+  const badgeCont = document.getElementById("contagem-worktrees");
+  if (!container) return;
+
+  try {
+    const res = await fetch("/api/worktrees");
+    if (!res.ok) return;
+    const dados = await res.json();
+    ESTADO_GLOBAL.dadosWorktrees = dados.worktrees || [];
+    if (badgeCont) badgeCont.textContent = ESTADO_GLOBAL.dadosWorktrees.length;
+
+    container.replaceChildren();
+
+    if (ESTADO_GLOBAL.dadosWorktrees.length === 0) {
+      const vazio = document.createElement("div");
+      vazio.className = "estado-vazio-tabela";
+      vazio.style.gridColumn = "1 / -1";
+      vazio.textContent = "Nenhuma git worktree efêmera ativa no momento. Todas convergiram ou foram limpas.";
+      container.appendChild(vazio);
+      return;
+    }
+
+    for (const wt of ESTADO_GLOBAL.dadosWorktrees) {
+      const card = document.createElement("div");
+      card.className = "card-worktree";
+
+      const topo = document.createElement("div");
+      topo.className = "worktree-topo";
+
+      const tit = document.createElement("span");
+      tit.className = "worktree-nome";
+      tit.textContent = wt.nome || "worktree";
+      topo.appendChild(tit);
+
+      if (wt.branch) {
+        const br = document.createElement("span");
+        br.className = "worktree-branch";
+        br.textContent = wt.branch;
+        topo.appendChild(br);
+      }
+      card.appendChild(topo);
+
+      const pathEl = document.createElement("span");
+      pathEl.className = "worktree-caminho";
+      pathEl.textContent = wt.caminho;
+      card.appendChild(pathEl);
+
+      const acoes = document.createElement("div");
+      acoes.className = "worktree-acoes";
+
+      const btnDiff = document.createElement("button");
+      btnDiff.className = "btn-worktree-diff";
+      btnDiff.textContent = "🔍 Inspecionar Diff";
+      btnDiff.onclick = () => abrirModalDiff(wt.caminho);
+      acoes.appendChild(btnDiff);
+
+      card.appendChild(acoes);
+      container.appendChild(card);
+    }
+  } catch (e) {
+    console.error("Erro ao carregar worktrees:", e);
+  }
+}
+
+async function abrirModalDiff(caminho) {
+  const modal = document.getElementById("modal-diff");
+  const pre = document.getElementById("modal-diff-conteudo");
+  const tit = document.getElementById("modal-diff-titulo");
+  if (!modal || !pre) return;
+
+  if (tit) tit.textContent = `Diff da Worktree: ${caminho}`;
+  pre.textContent = "Coletando diff git...";
+  modal.classList.remove("escondido");
+  tocarSom("clique");
+
+  try {
+    const res = await fetch(`/api/worktree/diff?caminho=${encodeURIComponent(caminho)}`);
+    if (!res.ok) {
+      pre.textContent = "Falha ao obter diff.";
+      return;
+    }
+    const dados = await res.json();
+    pre.textContent = dados.diff || "Nenhuma alteração pendente (working tree clean).";
+  } catch (e) {
+    pre.textContent = `Erro: ${e.message}`;
+  }
+}
+
+function fecharModalDiff(event) {
+  const modal = document.getElementById("modal-diff");
+  if (modal) modal.classList.add("escondido");
+}
+
+// ==========================================
+// 15. LAUNCHPAD MODAL (NOVO DISPARO COM 1 CLIQUE)
+// ==========================================
+function abrirLaunchpad() {
+  const modal = document.getElementById("modal-launchpad");
+  const status = document.getElementById("status-disparo-launchpad");
+  if (status) status.classList.add("escondido");
+  if (modal) modal.classList.remove("escondido");
+  tocarSom("clique");
+}
+
+function fecharLaunchpad(event) {
+  const modal = document.getElementById("modal-launchpad");
+  if (modal) modal.classList.add("escondido");
+}
+
+async function dispararFluxo(tipo) {
+  const status = document.getElementById("status-disparo-launchpad");
+  if (status) {
+    status.classList.remove("escondido");
+    status.textContent = `Disparando fluxo '${tipo}'...`;
+  }
+  tocarSom("clique");
+
+  try {
+    const res = await fetch("/api/acao/disparar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ acao: tipo })
+    });
+    const dados = await res.json();
+    if (res.ok) {
+      if (status) status.textContent = `✓ Sucesso! ${dados.mensagem || 'Fluxo iniciado'} (PID ${dados.pid || ''})`;
+      tocarSom("sucesso");
+      setTimeout(() => {
+        fecharLaunchpad();
+        atualizarDados();
+      }, 1500);
+    } else {
+      if (status) status.textContent = `Erro: ${dados.erro || 'Falha ao acionar'}`;
+      tocarSom("falha");
+    }
+  } catch (e) {
+    if (status) status.textContent = `Erro de conexão: ${e.message}`;
+    tocarSom("falha");
+  }
+}
+
+// ==========================================
+// 16. TELEMETRIA FACTUAL DE TOKENS (SPARKLINE)
+// ==========================================
+async function carregarTelemetriaTokens() {
+  try {
+    const res = await fetch("/api/telemetria/tokens");
+    if (!res.ok) return;
+    const dados = await res.json();
+
+    const elTaxa = document.getElementById("tokens-taxa-texto");
+    const elCusto = document.getElementById("tokens-custo-texto");
+    if (elTaxa) elTaxa.textContent = `${(dados.taxa_atual_tpm / 1000).toFixed(1)}k TPM`;
+    if (elCusto) elCusto.textContent = `$${dados.custo_sessao_usd.toFixed(2)}`;
+
+    // Atualiza pontos do Sparkline SVG se houver histórico
+    const spark = document.getElementById("sparkline-tokens");
+    if (spark && dados.historico && dados.historico.length > 1) {
+      const maxT = Math.max(...dados.historico.map(p => p.tokens), 1);
+      const w = 48;
+      const h = 18;
+      const step = w / (dados.historico.length - 1);
+      const pontos = dados.historico.map((p, idx) => {
+        const x = Math.round(idx * step);
+        const y = Math.round(h - (p.tokens / maxT) * (h - 4)) - 2;
+        return `${x},${y}`;
+      }).join(" ");
+      const poly = spark.querySelector("polyline");
+      if (poly) poly.setAttribute("points", pontos);
+    }
+  } catch (e) {
+    // Silencioso
+  }
+}
+
 // Inicialização
 aplicarTema(ESTADO_GLOBAL.tema);
 atualizarIconeNotificacao();
+atualizarIconeSom();
 setInterval(atualizarDados, 2000);
 setInterval(atualizarCronometros, 1000);
+setInterval(carregarTelemetriaTokens, 5000);
 atualizarDados();
+carregarTelemetriaTokens();
 
 // Recarga instantânea ao retornar à aba ou focar na janela
 document.addEventListener("visibilitychange", () => {
-  if (!document.hidden) atualizarDados();
+  if (!document.hidden) {
+    atualizarDados();
+    carregarTelemetriaTokens();
+  }
 });
 window.addEventListener("focus", () => {
   atualizarDados();
+  carregarTelemetriaTokens();
 });
+
