@@ -68,13 +68,30 @@ def test_provision_gera_server_py_no_primeiro_modulo(tmp_path):
     assert server_path.stat().st_size > 0, "src/server.py foi gerado vazio"
 
 
-def test_provision_gera_frontend_nextjs_por_padrao(tmp_path):
+def test_provision_gera_frontend_tanstack_por_padrao(tmp_path):
     """Lei Inviolável #11 (Padrão-Ouro de Stack): provision() sem
-    frontend_stack explícito deve gerar frontend/ em Next.js, não mais o
-    Super-App em src/static/index.html (Python/HTML puro)."""
+    frontend_stack explícito deve gerar frontend/ em TanStack Start / Router + TypeScript,
+    não mais Next.js (abolido)."""
     from provision_project import provision
 
-    provision("Projeto Teste Nextjs Default", base_dir=str(tmp_path))
+    provision("Projeto Teste Tanstack Default", base_dir=str(tmp_path))
+    projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
+
+    assert (projeto_dir / "frontend" / "package.json").is_file()
+    assert (projeto_dir / "frontend" / "src" / "App.tsx").is_file()
+    assert not (projeto_dir / "src" / "static" / "index.html").exists()
+
+    pkg = json.loads((projeto_dir / "frontend" / "package.json").read_text(encoding="utf-8"))
+    assert "@tanstack/react-router" in pkg["dependencies"]
+    assert "next" not in pkg.get("dependencies", {})
+
+
+def test_provision_gera_frontend_nextjs_quando_pedido_explicitamente(tmp_path):
+    """Lei Inviolável #11: Next.js só é gerado se pedido explicitamente
+    para fins de compatibilidade legada."""
+    from provision_project import provision
+
+    provision("Projeto Teste Nextjs Explicito", base_dir=str(tmp_path), frontend_stack="nextjs")
     projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
 
     assert (projeto_dir / "frontend" / "package.json").is_file()
@@ -267,7 +284,7 @@ def test_add_module_religa_pagina_do_frontend_nextjs(tmp_path):
     from provision_project import provision
     from add_module import criar_modulo
 
-    provision("Projeto Teste Add Module Frontend", base_dir=str(tmp_path))
+    provision("Projeto Teste Add Module Frontend", base_dir=str(tmp_path), frontend_stack="nextjs")
     projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
     assert (projeto_dir / "frontend" / "package.json").is_file()
 
@@ -277,3 +294,19 @@ def test_add_module_religa_pagina_do_frontend_nextjs(tmp_path):
     # A página do módulo original ("principal") continua existindo — a
     # regeneração não pode apagar páginas de módulos já existentes.
     assert (projeto_dir / "frontend" / "app" / "principal" / "page.tsx").is_file()
+
+
+def test_add_module_mantem_frontend_tanstack(tmp_path):
+    """Lei #11: add_module em projeto TanStack preserva a stack TanStack sem regressão."""
+    from provision_project import provision
+    from add_module import criar_modulo
+
+    provision("Projeto Teste Add Module Tanstack", base_dir=str(tmp_path))
+    projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
+    assert (projeto_dir / "frontend" / "package.json").is_file()
+
+    criar_modulo("tarefas", "Módulo de tarefas", target_dir=str(projeto_dir))
+
+    pkg = json.loads((projeto_dir / "frontend" / "package.json").read_text(encoding="utf-8"))
+    assert "@tanstack/react-router" in pkg["dependencies"]
+    assert "next" not in pkg.get("dependencies", {})

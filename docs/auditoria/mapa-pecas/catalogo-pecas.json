@@ -7,7 +7,7 @@
     "skills": 44,
     "leis": 14,
     "lente_15d": 15,
-    "oficina": 37,
+    "oficina": 38,
     "scripts": 59,
     "moldes_entrega": 21,
     "harnesses": 7,
@@ -2131,6 +2131,11 @@
         "id": "PLAN-0028-upgrade-stack-camadas",
         "estado": "feitos",
         "itens": 6
+      },
+      {
+        "id": "PLAN-0030-correcao-bugs-e2e-fluxos-canonicos",
+        "estado": "feitos",
+        "itens": 0
       },
       {
         "id": "PLAN-0030-integracao-skills-matt-pocock",

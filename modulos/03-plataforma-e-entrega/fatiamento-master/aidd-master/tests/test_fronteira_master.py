@@ -30,8 +30,16 @@ from typing import Any, Dict
 import jsonschema
 import pytest
 
+def _achar_raiz_repo(inicio: Path) -> Path:
+    curr = inicio.resolve()
+    for parent in [curr] + list(curr.parents):
+        if (parent / "ecossistema.py").is_file():
+            return parent
+    return inicio.resolve().parents[5] if len(inicio.resolve().parents) > 5 else curr.parent
+
+
 # Configuração de caminhos do ecossistema
-ROOT_DIR = Path(__file__).resolve().parents[3]
+ROOT_DIR = _achar_raiz_repo(Path(__file__))
 MASTER_DIR = ROOT_DIR / "modulos" / "03-plataforma-e-entrega" / "fatiamento-master" / "aidd-master"
 FORGE_DIR = ROOT_DIR / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-forge"
 SPECS_DIR = ROOT_DIR / "componentes" / "compartilhado" / "specs"

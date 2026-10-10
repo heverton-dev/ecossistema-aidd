@@ -143,6 +143,9 @@ secoes/medicoes/
 # Codebase Memory MCP local index
 .codebase-memory/
 
+# Playwright MCP artifacts
+.playwright-mcp/
+
 
 
 

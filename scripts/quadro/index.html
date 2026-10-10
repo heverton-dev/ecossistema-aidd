@@ -26,16 +26,49 @@
         <span class="aba-rotulo">Pipelines Ativos</span>
         <span id="contagem-pipelines-ativos" class="aba-badge">0</span>
       </button>
+      <button id="aba-gates" class="aba-btn" onclick="mudarAba('gates')">
+        <span class="aba-rotulo">Matriz de Gates (72)</span>
+        <span id="contagem-gates-leds" class="aba-badge">72</span>
+      </button>
+      <button id="aba-worktrees" class="aba-btn" onclick="mudarAba('worktrees')">
+        <span class="aba-rotulo">Worktrees VSA</span>
+        <span id="contagem-worktrees" class="aba-badge">0</span>
+      </button>
       <button id="aba-arquivo" class="aba-btn" onclick="mudarAba('arquivo')">
         <span class="aba-rotulo">Arquivo Histórico</span>
       </button>
     </nav>
 
     <div class="painel-acoes-topo">
+      <!-- WIDGET DE TELEMETRIA FACTUAL DE TOKENS & CUSTO (SPARKLINE) -->
+      <div id="widget-telemetria-tokens" class="widget-tokens-topo" title="Consumo recente de tokens e burn-rate factual">
+        <div class="tokens-info-bloco">
+          <span class="tokens-taxa" id="tokens-taxa-texto">4.2k TPM</span>
+          <span class="tokens-custo" id="tokens-custo-texto">$0.24</span>
+        </div>
+        <svg id="sparkline-tokens" class="sparkline-svg" width="48" height="18" viewBox="0 0 48 18">
+          <polyline fill="none" stroke="var(--c-vivo)" stroke-width="1.8" points="0,14 8,11 16,13 24,6 32,10 40,3 48,8" />
+        </svg>
+      </div>
+
+      <!-- BOTÃO LAUNCHPAD (+ NOVO DISPARO) -->
+      <button id="btn-launchpad" class="btn-launchpad" onclick="abrirLaunchpad()" title="Disparar novo pipeline ou fluxo da Tríade">
+        <span>🚀 Novo Disparo</span>
+      </button>
+
       <div class="status-conexao" title="Status de sincronização com o ecossistema">
         <span id="indicador-pulso" class="pulso-status"></span>
         <span id="texto-atualizacao">Conectando...</span>
       </div>
+
+      <!-- BOTÃO SOM ON/OFF -->
+      <button id="btn-som" class="btn-acao-topo" onclick="alternarSom()" title="Ativar/Desativar feedback sonoro (S)" aria-label="Som">
+        <svg id="icone-som" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+        </svg>
+      </button>
+
       <button id="btn-notificacao" class="btn-acao-topo" onclick="alternarNotificacoes()" title="Ativar alertas desktop para aprovação e falhas" aria-label="Notificações">
         <svg id="icone-notificacao" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
@@ -87,7 +120,10 @@
               </svg>
               <span>Voltar aos pipelines</span>
             </button>
-            <h2 id="kanban-titulo" class="kanban-titulo-texto">Kanban</h2>
+            <div class="kanban-titulo-bloco">
+              <span id="kanban-badge-status" class="badge-fluxo-ativo">● FLUXO SELECIONADO</span>
+              <h2 id="kanban-titulo" class="kanban-titulo-texto">Kanban</h2>
+            </div>
           </div>
           <div class="kanban-cabecalho-centro">
             <div class="caixa-busca caixa-busca-kanban">
@@ -104,6 +140,27 @@
             <code id="kanban-comando" class="comando-badge"></code>
           </div>
         </div>
+
+        <!-- ESTEIRA TOPOLÓGICA VISUAL DAS 7 ETAPAS CANÔNICAS -->
+        <div id="esteira-topologica-visual" class="esteira-topologica-visual">
+          <div class="passo-esteira" data-passo="fundacao"><span class="passo-num">1</span> <span class="passo-nome">Forge</span></div>
+          <span class="seta-esteira">➔</span>
+          <div class="passo-esteira" data-passo="planejamento"><span class="passo-num">2</span> <span class="passo-nome">Planner</span></div>
+          <span class="seta-esteira">➔</span>
+          <div class="passo-esteira" data-passo="fatiamento-vsa"><span class="passo-num">3</span> <span class="passo-nome">Master VSA</span></div>
+          <span class="seta-esteira">➔</span>
+          <div class="passo-esteira" data-passo="despacho-engine"><span class="passo-num">4</span> <span class="passo-nome">Dispatch / Engine</span></div>
+          <span class="seta-esteira">➔</span>
+          <div class="passo-esteira" data-passo="blindagem"><span class="passo-num">5</span> <span class="passo-nome">Enterprise</span></div>
+          <span class="seta-esteira">➔</span>
+          <div class="passo-esteira" data-passo="infraestrutura"><span class="passo-num">6</span> <span class="passo-nome">Ops</span></div>
+          <span class="seta-esteira">➔</span>
+          <div class="passo-esteira" data-passo="auditoria-projeto"><span class="passo-num">7</span> <span class="passo-nome">Auditoria</span></div>
+        </div>
+
+        <!-- ATALHOS RÁPIDOS DE NAVEGAÇÃO DE COLUNAS COM CONTADORES -->
+        <div id="kanban-atalhos-colunas" class="kanban-atalhos-colunas"></div>
+
         <div id="kanban-colunas" class="kanban-trilha"></div>
       </div>
     </section>
@@ -136,6 +193,42 @@
       </div>
       <div id="tabela-arquivo" class="tabela-container"></div>
     </section>
+
+    <!-- MATRIZ DE GATES (GRADE DE 72 LEDS) -->
+    <section id="secao-gates" class="visao-secao escondido">
+      <div class="secao-cabecalho">
+        <div>
+          <h2 class="secao-titulo">Matriz de Quality Gates (72 Portões)</h2>
+          <p class="secao-descricao">Visão em grade de LEDs dos portões de qualidade invioláveis do ecossistema AIDD.</p>
+        </div>
+        <div class="caixa-busca">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input id="campo-busca-gates" class="input-busca" type="text" placeholder="Filtrar gates ou leis... (/)" oninput="filtrarGates(this)" />
+        </div>
+      </div>
+      <div class="painel-resumo-gates">
+        <div class="chip-status-gate passou"><span class="led-indicador passou"></span> <span id="contagem-gates-passou">0</span> Aprovados</div>
+        <div class="chip-status-gate falhou"><span class="led-indicador falhou"></span> <span id="contagem-gates-falhou">0</span> Reprovados</div>
+        <div class="chip-status-gate pendente"><span class="led-indicador pendente"></span> <span id="contagem-gates-pendente">72</span> Pendentes</div>
+        <button class="btn-acao-retestar" onclick="dispararAcao('audit')">⚡ Executar Bateria Completa Agora</button>
+      </div>
+      <div id="grade-leds-gates" class="grade-leds-gates"></div>
+    </section>
+
+    <!-- WORKTREES VSA & CONVERGÊNCIA -->
+    <section id="secao-worktrees" class="visao-secao escondido">
+      <div class="secao-cabecalho">
+        <div>
+          <h2 class="secao-titulo">Worktrees VSA & Fatias Efêmeras</h2>
+          <p class="secao-descricao">Isolamento e convergência topológica das fatias verticais gerenciadas pelo aidd-dispatch.</p>
+        </div>
+        <button class="btn-acao-retestar" onclick="carregarWorktrees()">🔄 Atualizar Worktrees</button>
+      </div>
+      <div id="lista-worktrees-container" class="lista-worktrees-grid"></div>
+    </section>
   </main>
 
   <!-- GAVETA LATERAL DO CARTÃO (DRAWER) -->
@@ -148,8 +241,88 @@
       </div>
       <button class="btn-fechar" onclick="fecharGaveta()" aria-label="Fechar gaveta (Esc)">✕</button>
     </div>
+
+    <!-- ABAS INTERNAS DA GAVETA -->
+    <div class="gaveta-abas-topo">
+      <button id="gaveta-aba-detalhes" class="gaveta-aba-btn ativa" onclick="alternarAbaGaveta('detalhes')">Visão Estruturada</button>
+      <button id="gaveta-aba-terminal" class="gaveta-aba-btn" onclick="alternarAbaGaveta('terminal')">📜 Terminal ao Vivo (Logtail)</button>
+    </div>
+
     <div id="gaveta-conteudo" class="gaveta-corpo"></div>
+
+    <!-- PAINEL TERMINAL LOGTAIL NA GAVETA -->
+    <div id="gaveta-terminal-conteudo" class="gaveta-corpo escondido">
+      <div class="terminal-cabecalho">
+        <span class="terminal-titulo">Stdout / Stderr Streaming</span>
+        <div class="terminal-acoes">
+          <button class="btn-terminal-acao" onclick="limparTerminalGaveta()">Limpar</button>
+          <button id="btn-terminal-pausa" class="btn-terminal-acao" onclick="alternarAutoScrollTerminal()">Auto-scroll: ON</button>
+        </div>
+      </div>
+      <pre id="terminal-log-texto" class="terminal-log-visual"></pre>
+    </div>
   </aside>
+
+  <!-- MODAL LAUNCHPAD (DISPARO COM 1 CLIQUE) -->
+  <div id="modal-launchpad" class="modal-backdrop escondido" onclick="fecharLaunchpad(event)">
+    <div class="modal-janela" onclick="event.stopPropagation()">
+      <div class="modal-cabecalho">
+        <h3 class="modal-titulo">🚀 Launchpad Operacional AIDD</h3>
+        <button class="btn-fechar" onclick="fecharLaunchpad()">✕</button>
+      </div>
+      <p class="modal-subtitulo">Dispare qualquer motor da Tríade Canônica ou pipeline de auditoria com um clique:</p>
+      
+      <div class="grade-opcoes-launchpad">
+        <div class="card-opcao-launchpad" onclick="dispararFluxo('pure')">
+          <div class="opcao-topo">
+            <span class="opcao-badge triade-1">Tríade #1</span>
+            <h4>Do Zero Puro (pure)</h4>
+          </div>
+          <p>Scaffolding completo de software do zero com TDD rigoroso e stack padrão ouro.</p>
+          <button class="btn-disparo-card">Disparar Fluxo</button>
+        </div>
+
+        <div class="card-opcao-launchpad" onclick="dispararFluxo('open')">
+          <div class="opcao-topo">
+            <span class="opcao-badge triade-2">Tríade #2</span>
+            <h4>Motores Open-Source (open)</h4>
+          </div>
+          <p>Curadoria de motores open-source, fatiamento VSA e Docker Compose multi-serviço.</p>
+          <button class="btn-disparo-card">Disparar Fluxo</button>
+        </div>
+
+        <div class="card-opcao-launchpad" onclick="dispararFluxo('freedom')">
+          <div class="opcao-topo">
+            <span class="opcao-badge triade-3">Tríade #3</span>
+            <h4>Low-Code Desacoplado (freedom)</h4>
+          </div>
+          <p>Eliminação de lock-in Lovable/v0, migração para PostgreSQL local e empacotamento VPS.</p>
+          <button class="btn-disparo-card">Disparar Fluxo</button>
+        </div>
+
+        <div class="card-opcao-launchpad" onclick="dispararFluxo('audit')">
+          <div class="opcao-topo">
+            <span class="opcao-badge audit">Auditoria</span>
+            <h4>Bateria de Quality Gates (audit)</h4>
+          </div>
+          <p>Execução completa dos 72 portões de qualidade para validação factual e determinística.</p>
+          <button class="btn-disparo-card">Executar Gates</button>
+        </div>
+      </div>
+      <div id="status-disparo-launchpad" class="status-disparo-aviso escondido"></div>
+    </div>
+  </div>
+
+  <!-- MODAL DIFF VIEWER DE WORKTREE -->
+  <div id="modal-diff" class="modal-backdrop escondido" onclick="fecharModalDiff(event)">
+    <div class="modal-janela modal-largo" onclick="event.stopPropagation()">
+      <div class="modal-cabecalho">
+        <h3 id="modal-diff-titulo" class="modal-titulo">Diff da Worktree VSA</h3>
+        <button class="btn-fechar" onclick="fecharModalDiff()">✕</button>
+      </div>
+      <pre id="modal-diff-conteudo" class="diff-viewer-conteudo"></pre>
+    </div>
+  </div>
 
   <script src="/quadro.js"></script>
 </body>

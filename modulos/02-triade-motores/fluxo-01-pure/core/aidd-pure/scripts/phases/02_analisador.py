@@ -482,11 +482,18 @@ class AnalisadorFase2:
             )
         except LLMNaoConfiguradoException as e:
             print(f"   ❌ {e.mensagem_usuario}")
-            return None
+            raise e
 
         if resposta is None:
-            print(f"   ❌ Falha ao obter resposta do LLM (nenhuma ADE ativa e/ou headless sem credencial)")
-            return None
+            print(f"   ❌ Falha ao obter resposta do LLM (nenhuma ADE ativa e modo headless sem LLM_MODEL configurado)")
+            raise LLMNaoConfiguradoException(
+                mensagem_usuario=(
+                    "Tempo limite de resposta esgotado no modo delegado e nenhum modelo headless configurado.\n"
+                    "Configure a variável LLM_MODEL (ex: anthropic/claude-haiku-4-5-20251001, openai/gpt-4o, "
+                    "ollama/llama3) e a chave correspondente no arquivo .env."
+                ),
+                detalhes_tecnicos="Timeout de resposta delegada sem resposta e sem LLM_MODEL configurado."
+            )
 
         try:
             conteudo = resposta['conteudo']

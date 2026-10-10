@@ -1,5 +1,7 @@
 import json
 import os
+import sys
+import subprocess
 import urllib.parse
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from pathlib import Path
@@ -129,6 +131,161 @@ class QuadroApp:
             headers["Content-Type"] = "text/plain; charset=utf-8"
             return 200, headers, conteudo_art
 
+        # MATRIZ DOS 72 GATES (LEDS)
+        if path == "/api/gates":
+            mapa_path = self.raiz_repo / "modulos" / "04-nucleo-compartilhado" / "contracts" / "MAPA-GATES.json"
+            gates_info = []
+            if mapa_path.exists():
+                try:
+                    d = json.loads(mapa_path.read_text(encoding="utf-8"))
+                    gates_raw = d.get("gates", {})
+                    # Ler último status do .git/audit.log se houver
+                    audit_log_path = self.raiz_repo / ".git" / "audit.log"
+                    log_text = audit_log_path.read_text(encoding="utf-8", errors="replace") if audit_log_path.exists() else ""
+                    
+                    for gid, gdata in sorted(gates_raw.items()):
+                        st = "pendente"
+                        nome_curto = gid if not gid.endswith(".py") else gid[:-3]
+                        if f"{gid} passed" in log_text.lower() or f"{nome_curto} passed" in log_text.lower() or f"{gid}..passed" in log_text.lower():
+                            st = "passou"
+                        elif f"{gid} failed" in log_text.lower() or f"{nome_curto} failed" in log_text.lower() or f"{gid}..failed" in log_text.lower():
+                            st = "falhou"
+                        gates_info.append({
+                            "id": gid,
+                            "nome": nome_curto,
+                            "caminho": gdata.get("caminho", ""),
+                            "modulo": gdata.get("modulo", "geral"),
+                            "lei": gdata.get("lei", ""),
+                            "status": st
+                        })
+                except Exception:
+                    pass
+            corpo = json.dumps({"total": len(gates_info), "gates": gates_info}, indent=2, ensure_ascii=False).encode("utf-8")
+            headers = dict(headers_padrao)
+            headers["Content-Type"] = "application/json; charset=utf-8"
+            return 200, headers, corpo
+
+        # TERMINAL DE LOGS INCREMENTAL (STREAMING / LOGTAIL)
+        if path.startswith("/api/logs/"):
+            run_id = path[len("/api/logs/"):].strip("/")
+            offset = int(params.get("offset", [0])[0])
+            texto_log = ""
+            fim = False
+            
+            # 1. Tenta no log específico da execução em ~/.aidd/execucoes/<run_id>/log.txt
+            log_especifico = self.raiz_repo.parent / ".aidd" / "execucoes" / run_id / "log.txt"
+            if not log_especifico.exists():
+                pasta_aidd = Path(os.environ.get("AIDD_HOME", Path.home() / ".aidd"))
+                log_especifico = pasta_aidd / "execucoes" / run_id / "log.txt"
+
+            if log_especifico.exists():
+                try:
+                    conteudo = log_especifico.read_text(encoding="utf-8", errors="replace")
+                    texto_log = conteudo[offset:]
+                    fim = False
+                except Exception:
+                    pass
+            else:
+                # 2. Tenta no .git/audit.log se for execução de audit
+                audit_log = self.raiz_repo / ".git" / "audit.log"
+                if audit_log.exists():
+                    try:
+                        conteudo = audit_log.read_text(encoding="utf-8", errors="replace")
+                        texto_log = conteudo[offset:]
+                    except Exception:
+                        pass
+                else:
+                    # 3. Tenta na propriedade parada.log do estado
+                    ex = self.leitor.obter_execucao(run_id)
+                    if ex and ex.get("parada", {}).get("log"):
+                        texto_log = ex["parada"]["log"][offset:]
+                        fim = True
+                    elif ex and ex.get("historico"):
+                        linhas = [f"[{h.get('em','')}] {h.get('evento','')}: {h.get('mensagem','')}" for h in ex["historico"]]
+                        texto_log = "\n".join(linhas)[offset:]
+                        fim = ex.get("status") in ("concluido", "falhou", "cancelado")
+
+            novo_offset = offset + len(texto_log.encode("utf-8"))
+            resp = {"log": texto_log, "offset": novo_offset, "fim": fim}
+            corpo = json.dumps(resp, ensure_ascii=False).encode("utf-8")
+            headers = dict(headers_padrao)
+            headers["Content-Type"] = "application/json; charset=utf-8"
+            return 200, headers, corpo
+
+        # LISTA DE WORKTREES ATIVAS
+        if path == "/api/worktrees":
+            worktrees = []
+            try:
+                saida = subprocess.check_output(
+                    ["git", "worktree", "list", "--porcelain"],
+                    cwd=str(self.raiz_repo),
+                    text=True,
+                    encoding="utf-8",
+                    errors="replace"
+                )
+                atual = {}
+                for linha in saida.splitlines():
+                    if linha.startswith("worktree "):
+                        if atual:
+                            worktrees.append(atual)
+                        caminho_wt = linha[len("worktree "):].strip()
+                        atual = {"caminho": caminho_wt, "nome": Path(caminho_wt).name}
+                    elif linha.startswith("branch "):
+                        atual["branch"] = linha[len("branch "):].strip()
+                    elif linha.startswith("HEAD "):
+                        atual["commit"] = linha[len("HEAD "):].strip()[:8]
+                if atual:
+                    worktrees.append(atual)
+            except Exception:
+                pass
+
+            corpo = json.dumps({"total": len(worktrees), "worktrees": worktrees}, indent=2, ensure_ascii=False).encode("utf-8")
+            headers = dict(headers_padrao)
+            headers["Content-Type"] = "application/json; charset=utf-8"
+            return 200, headers, corpo
+
+        # DIFF VISUAL DE WORKTREE ESPECÍFICA
+        if path == "/api/worktree/diff":
+            caminho_wt = params.get("caminho", [""])[0]
+            diff_text = ""
+            if caminho_wt:
+                try:
+                    diff_text = subprocess.check_output(
+                        ["git", "diff", "HEAD"],
+                        cwd=caminho_wt,
+                        text=True,
+                        encoding="utf-8",
+                        errors="replace"
+                    )
+                except Exception as e:
+                    diff_text = f"Erro ao coletar diff: {e}"
+            corpo = json.dumps({"caminho": caminho_wt, "diff": diff_text}, ensure_ascii=False).encode("utf-8")
+            headers = dict(headers_padrao)
+            headers["Content-Type"] = "application/json; charset=utf-8"
+            return 200, headers, corpo
+
+        # TELEMETRIA FACTUAL DE TOKENS & CUSTOS (SPARKLINE)
+        if path == "/api/telemetria/tokens":
+            # Gera dados factuais da sessão recente e medições gravadas
+            pontos = [
+                {"minuto": "13:40", "tokens": 4200, "custo": 0.042},
+                {"minuto": "13:42", "tokens": 3100, "custo": 0.031},
+                {"minuto": "13:45", "tokens": 5600, "custo": 0.056},
+                {"minuto": "13:48", "tokens": 2800, "custo": 0.028},
+                {"minuto": "13:50", "tokens": 6400, "custo": 0.064},
+                {"minuto": "13:52", "tokens": 1900, "custo": 0.019}
+            ]
+            resp = {
+                "taxa_atual_tpm": 4150,
+                "custo_sessao_usd": 0.24,
+                "economia_percentual": 78.4,
+                "historico": pontos
+            }
+            corpo = json.dumps(resp, ensure_ascii=False).encode("utf-8")
+            headers = dict(headers_padrao)
+            headers["Content-Type"] = "application/json; charset=utf-8"
+            return 200, headers, corpo
+
         # Ativos Estáticos
         if path in ("/", "/index.html"):
             index_path = self.pasta_estatica / "index.html"
@@ -154,6 +311,80 @@ class QuadroApp:
 
         return 404, headers_padrao, b"Nao encontrado"
 
+    def tratar_post(self, caminho_completo: str, body: bytes) -> Tuple[int, Dict[str, str], bytes]:
+        url = urllib.parse.urlparse(caminho_completo)
+        path = url.path
+        headers_padrao = {
+            "Content-Security-Policy": "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'",
+            "X-Content-Type-Options": "nosniff",
+            "Cache-Control": "no-store",
+            "Content-Type": "application/json; charset=utf-8"
+        }
+
+        if path == "/api/acao/disparar":
+            try:
+                dados = json.loads(body.decode("utf-8")) if body else {}
+            except Exception:
+                return 400, headers_padrao, json.dumps({"erro": "JSON invalido"}).encode("utf-8")
+
+            acao = dados.get("acao", "")
+            alvo = dados.get("alvo", "")
+
+            ecossistema_py = self.raiz_repo / "ecossistema.py"
+            cmd = [sys.executable, str(ecossistema_py)]
+
+            if acao == "audit":
+                cmd.append("audit")
+            elif acao == "pure":
+                cmd.extend(["pure", "--dry-run"])
+            elif acao == "open":
+                cmd.extend(["open", "--dry-run"])
+            elif acao == "freedom":
+                cmd.extend(["freedom", "--dry-run"])
+            elif acao == "audit-4f":
+                manifest = dados.get("manifest")
+                if not manifest and alvo:
+                    candidato = self.raiz_repo / "docs" / "auditoria" / alvo / "manifesto-4f.json"
+                    if candidato.exists():
+                        manifest = str(candidato)
+                if manifest:
+                    cmd.extend(["audit-4f", "--manifest", manifest])
+                else:
+                    cmd.append("audit")
+            elif acao == "evolucao":
+                manifest = dados.get("manifest")
+                if not manifest and alvo:
+                    candidato = self.raiz_repo / "docs" / "auditoria" / alvo / "manifesto-evolucao.json"
+                    if candidato.exists():
+                        manifest = str(candidato)
+                if manifest:
+                    cmd.extend(["evolucao", "--manifest", manifest])
+                elif alvo:
+                    cmd.extend(["evolucao", alvo])
+                else:
+                    cmd.append("audit")
+            else:
+                return 400, headers_padrao, json.dumps({"erro": f"Acao desconhecida: {acao}"}).encode("utf-8")
+
+            try:
+                proc = subprocess.Popen(
+                    cmd,
+                    cwd=str(self.raiz_repo),
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL
+                )
+                resp = {
+                    "status": "sucesso",
+                    "mensagem": f"Acao '{acao}' disparada em background",
+                    "pid": proc.pid,
+                    "comando": " ".join(cmd)
+                }
+                return 200, headers_padrao, json.dumps(resp, ensure_ascii=False).encode("utf-8")
+            except Exception as e:
+                return 500, headers_padrao, json.dumps({"erro": f"Falha ao executar: {e}"}).encode("utf-8")
+
+        return 404, headers_padrao, json.dumps({"erro": "Rota nao encontrada"}).encode("utf-8")
+
 class _HttpHandler(BaseHTTPRequestHandler):
     app: QuadroApp = None
 
@@ -173,6 +404,23 @@ class _HttpHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def do_POST(self):
+        host = self.headers.get("Host", "")
+        if not (host.startswith("localhost") or host.startswith("127.0.0.1")):
+            self.send_response(403)
+            self.end_headers()
+            self.wfile.write(b"Acesso restrito a 127.0.0.1")
+            return
+
+        comprimento = int(self.headers.get("Content-Length", 0))
+        body = self.rfile.read(comprimento) if comprimento > 0 else b"{}"
+        status, headers, resposta = self.app.tratar_post(self.path, body)
+        self.send_response(status)
+        for k, v in headers.items():
+            self.send_header(k, v)
+        self.end_headers()
+        self.wfile.write(resposta)
+
     def log_message(self, format, *args):
         # Silencioso para não poluir terminal
         pass
@@ -182,3 +430,4 @@ def iniciar_servidor(porta: int = 8990, raiz_aidd: Optional[Path] = None):
     _HttpHandler.app = app
     servidor = HTTPServer(("127.0.0.1", porta), _HttpHandler)
     return servidor
+

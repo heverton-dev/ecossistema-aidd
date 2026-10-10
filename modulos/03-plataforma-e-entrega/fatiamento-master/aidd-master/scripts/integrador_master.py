@@ -43,14 +43,28 @@ def _sha256_arquivo(caminho: Path) -> str:
     return hasher.hexdigest()
 
 
+def _achar_raiz_repositorio(inicio: Path) -> Path:
+    """Sobe diretórios até encontrar a raiz do repositório contendo ecossistema.py."""
+    curr = inicio.resolve()
+    for parent in [curr] + list(curr.parents):
+        if (parent / "ecossistema.py").is_file():
+            return parent
+        if (parent / "componentes" / "compartilhado" / "specs").is_dir():
+            return parent
+    return inicio.resolve().parents[5] if len(inicio.resolve().parents) > 5 else curr.parent
+
+
 def _encontrar_schema_c4(raiz: Path) -> Path:
     """Localiza o schema JSON oficial do contrato C4."""
+    raiz_real = _achar_raiz_repositorio(raiz)
     candidatos = [
+        raiz_real / "componentes" / "compartilhado" / "specs" / "handoff-master-to-enterprise.schema.json",
         raiz / "componentes" / "compartilhado" / "specs" / "handoff-master-to-enterprise.schema.json",
         raiz.parent / "componentes" / "compartilhado" / "specs" / "handoff-master-to-enterprise.schema.json",
+        Path(__file__).resolve().parents[5] / "componentes" / "compartilhado" / "specs" / "handoff-master-to-enterprise.schema.json" if len(Path(__file__).resolve().parents) > 5 else None,
     ]
     for c in candidatos:
-        if c.is_file():
+        if c and c.is_file():
             return c
     raise FileNotFoundError("Schema handoff-master-to-enterprise.schema.json não encontrado.")
 
@@ -212,7 +226,7 @@ def integrar_fatias_e_emitir_c4(projeto_dir: str | Path) -> str:
     }
 
     # Validação formal contra schema oficial
-    raiz_repo = Path(__file__).resolve().parents[3]
+    raiz_repo = _achar_raiz_repositorio(Path(__file__))
     schema_path = _encontrar_schema_c4(raiz_repo)
     schema_c4 = json.loads(schema_path.read_text(encoding="utf-8"))
     jsonschema.validate(instance=c4_payload, schema=schema_c4)

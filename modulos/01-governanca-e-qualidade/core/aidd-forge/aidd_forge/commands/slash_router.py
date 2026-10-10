@@ -101,7 +101,7 @@ INTENT_ROUTER_SECTION = (
     "Se o usuario pedir referencia visual, telas ou fluxos de UI (\"buscar referencias de UI\", "
     "\"telas de checkout\", \"design de dashboard\", \"exemplos do mobbin\"), execute a busca "
     "deterministica via Mobbin Enterprise no Planner:\n"
-    "`python ecossistema.py planner mobbin search \"<termo>\" --plataforma web`\n"
+    "`planner mobbin search \"<termo>\" --plataforma web`\n"
 )
 
 

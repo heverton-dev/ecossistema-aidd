@@ -52,8 +52,8 @@ Atomic operations of `modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freed
 
 ```bash
 python ecossistema.py freedom-motor scan [path]
-python ecossistema.py freedom-motor convert-db [path]
-python ecossistema.py freedom-motor merge [app1] [app2] --output [destination]
+python ecossistema.py freedom-motor convert-db [path] [--output dest]   # or --origem [path] --destino [dest]
+python ecossistema.py freedom-motor merge [app1] [app2] --output [dest] # or --origem [app1] --origem [app2] --destino [dest]
 python ecossistema.py freedom-motor pack [path] --domain example.com
 ```
 

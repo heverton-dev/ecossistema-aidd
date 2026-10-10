@@ -32,6 +32,13 @@ Conforme o mapa oficial de arquitetura (`MAPA-DONOS-FERRAMENTAS.json` e `G_FRONT
   - `**/swagger*`
   - `**/G_*.py`
   - `**/*inject*`
-- **Zona de escrita no projeto:** `src/modules/*/**`, `frontend/app/*/**`, `HANDOFF_ENGINE_MASTER.json`, `.aidd/cache/**`.
+## Configuração de LLM e Modos de Execução
+
+O motor opera em dois modos:
+1. **Modo Delegado (default):** Se houver uma ADE ativa (Claude Code, Antigravity, OpenCode, etc.), o motor delega as decisões diretamente na conversa via arquivos de protocolo JSON em `.aidd/cache/`.
+2. **Modo Headless (fallback):** Se a ADE estiver ausente ou offline, o motor recorre à variável de ambiente `LLM_MODEL`:
+   - Defina `LLM_MODEL` no seu `.env` (ex.: `anthropic/claude-haiku-4-5-20251001`, `openai/gpt-4o`, `ollama/llama3`).
+   - Configure a respectiva chave de API (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, etc.).
+   - Se a ADE estiver offline e `LLM_MODEL` não estiver configurado, o motor falha rapidamente com **código de saída 3** e instruções de configuração claras.
 
 ---

@@ -1622,4 +1622,24 @@
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 10/10/2026.
 
+## 55. PLAN-0030: Correção dos 8 Bugs E2E dos Fluxos Canônicos (PURE / OPEN / FREEDOM)
+
+- **Objetivo da Correção:**
+  Resolver os 8 bugs identificados durante os testes end-to-end da Tríade Canônica (`BUG-01` a `BUG-08`), cobrindo validação de schema C4 no master, materialização de testes de fatias no dispatch, fail-fast no modo headless do pure, higienização de specs e dados voláteis no forge, flexibilização de diretórios e flags de CLI no freedom, e adoção soberana do padrão TanStack Start/Router no scaffold do master (Lei #11).
+- **Ferramentas Tocadas:**
+  `aidd-master`, `aidd-dispatch`, `aidd-pure`, `aidd-forge`, `aidd-freedom`.
+- **O que executou:**
+  1. `BUG-01`: Em `integrador_master.py`, implementada busca dinâmica de raiz do repositório para carregar contratos C4 com 100% de integridade (4/4 testes de fronteira aprovados).
+  2. `BUG-02`: Em `dispatch_pipeline.py` e `engine_router.py`, implementada materialização preventiva de `tests/slices/__init__.py` e stubs de teste para worktrees efêmeras (11/11 testes do dispatch aprovados).
+  3. `BUG-03`: Em `utils_delegacao.py` e `pipeline_completo.py`, adicionada exceção `LLMNaoConfiguradoException` e fail-fast com exit code 3 em timeout headless (76/76 testes de delegação aprovados).
+  4. `BUG-04` e `BUG-05`: Em `AGENTS.md` (template do forge) e `slash_router.py`, removidas specs acopladas e comandos voláteis (15/15 PASS na auditoria de governança do Forge).
+  5. `BUG-06` e `BUG-07`: Em `cli.py` do `aidd-freedom`, suporte a busca flexível de sandbox e aliases `--origem` e `--destino` em `convert-db` e `merge` (67/67 testes de bridge aprovados).
+  6. `BUG-08`: Em `provision_project.py` e `add_module.py`, geração soberana do frontend em TanStack Start / Router + TypeScript + Tailwind CSS (Lei #11) com inclusão de `@tanstack/react-router` (14/14 testes unitários de provisionamento aprovados e validação com exit 0 no gate `G_STACK_PADRAO_OURO`).
+- **Resultados de Testes (10/10/2026):**
+  - Todas as suítes das 5 ferramentas aprovadas com 100% de êxito.
+  - Portão `G_STACK_PADRAO_OURO`: aprovado com exit code 0 em projeto novo provisionado.
+  - Macro-gates do ecossistema: conformidade confirmada.
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 10/10/2026.
+
 

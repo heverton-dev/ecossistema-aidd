@@ -1,231 +1,231 @@
 {
   "ferramenta": "aidd-visual-maps",
   "catalogo": "docs/auditoria/mapa-pecas/catalogo-pecas.json",
-  "hash_catalogo": "116c03375d4513cae8c9880172a834df8e36ab125ddd921f1b64642b86820983",
+  "hash_catalogo": "6f86d860853ad6679e205e43c364051126027b5579881d4ceb321e190ad48ce2",
   "mapas": [
     {
       "tipo": "leis",
       "arquivo": "docs/mapas-visuais/mapa-01-leis.html",
       "versao": "tecnica",
       "sha256": "d201ae62668009223f9c7c22ea220d957fa3359db3b45d46334d056f4feb0ff3",
-      "status": "desatualizado"
+      "status": "concluido"
     },
     {
       "tipo": "leis",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-01-leis.html",
       "versao": "nao-tecnica",
       "sha256": "b3f44d9182703a828cc09baa79f6db21f2b49072786d7fb7d5e936f9e5912404",
-      "status": "desatualizado"
+      "status": "concluido"
     },
     {
       "tipo": "ferramentas",
       "arquivo": "docs/mapas-visuais/mapa-02-ferramentas.html",
       "versao": "tecnica",
       "sha256": "b48f556e41f6a7062a222e20973f308a5cb44f00b462ec7e2ab33d73febcfbc2",
-      "status": "desatualizado"
+      "status": "concluido"
     },
     {
       "tipo": "ferramentas",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-02-ferramentas.html",
       "versao": "nao-tecnica",
       "sha256": "3023b969aa7c80c448d2c68a5b39261a32637e831053f8aabc3c16cc5927281f",
-      "status": "desatualizado"
+      "status": "concluido"
     },
     {
       "tipo": "encaixes",
       "arquivo": "docs/mapas-visuais/mapa-03-encaixes.html",
       "versao": "tecnica",
       "sha256": "7712e43a7e5e965c0ff8df38d2a42518c9d0a6957475a0dab35e9621aa26601b",
-      "status": "desatualizado"
+      "status": "concluido"
     },
     {
       "tipo": "encaixes",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-03-encaixes.html",
       "versao": "nao-tecnica",
       "sha256": "5937519061447de895c576f964765eda4add7745999ab62d35fc60f90e8fcf07",
-      "status": "desatualizado"
+      "status": "concluido"
     },
     {
       "tipo": "guardas",
       "arquivo": "docs/mapas-visuais/mapa-04-guardas.html",
       "versao": "tecnica",
       "sha256": "96f6244720d644814fbbd0419b7fee1bd39a6c7bdb131b964962efd70b4e3932",
-      "status": "desatualizado"
+      "status": "concluido"
     },
     {
       "tipo": "guardas",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-04-guardas.html",
       "versao": "nao-tecnica",
       "sha256": "3ef5dee28829c21cc6f9def9cf458ff842ac60055ab3bd109211e9fe75360b9e",
-      "status": "desatualizado"
+      "status": "concluido"
     },
     {
       "tipo": "skills",
       "arquivo": "docs/mapas-visuais/mapa-05-skills.html",
       "versao": "tecnica",
       "sha256": "1aef880db178c2925f690e52bd4ed1d0ecb88bcef16288b5ed2c167e829a098e",
-      "status": "desatualizado"
+      "status": "concluido"
     },
     {
       "tipo": "skills",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-05-skills.html",
       "versao": "nao-tecnica",
       "sha256": "3998d55f7a390124b3eb5695c0a26020ee99d7bfaef9376b3bf37489a1e68fca",
-      "status": "desatualizado"
+      "status": "concluido"
     },
     {
       "tipo": "comandos",
       "arquivo": "docs/mapas-visuais/mapa-06-comandos.html",
       "versao": "tecnica",
       "sha256": "97376ce0a02d8dcbc15dc81a4892c629da2a6b6fd90f9d3ad141ddff1ddf273b",
-      "status": "desatualizado"
+      "status": "concluido"
     },
     {
       "tipo": "comandos",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-06-comandos.html",
       "versao": "nao-tecnica",
       "sha256": "2f7536d798cf27fe194604ec42fc38902fd4cedc2fb2f58a6c0b353a48d19b8f",
-      "status": "desatualizado"
+      "status": "concluido"
     },
     {
       "tipo": "conexoes",
       "arquivo": "docs/mapas-visuais/mapa-07-conexoes.html",
       "versao": "tecnica",
       "sha256": "245067421b29749ac6457e3953b88c950428896a2d9bea2ef4f1c26082602e89",
-      "status": "desatualizado"
+      "status": "concluido"
     },
     {
       "tipo": "conexoes",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-07-conexoes.html",
       "versao": "nao-tecnica",
       "sha256": "4af789de3c8337889b03b8404fc8a28ac2a016633cc882edfbee64d035d08904",
-      "status": "desatualizado"
+      "status": "concluido"
     },
     {
       "tipo": "harnesses",
       "arquivo": "docs/mapas-visuais/mapa-08-harnesses.html",
       "versao": "tecnica",
       "sha256": "0fc9e3ba46a12639cc27ca7fcb262101909fdf8d8f30a6e85d23918bf40d67f9",
-      "status": "desatualizado"
+      "status": "concluido"
     },
     {
       "tipo": "harnesses",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-08-harnesses.html",
       "versao": "nao-tecnica",
       "sha256": "dcab6c7a5c99f04343f41a5d4bbd3d56af82fac458646982aad66d697497f872",
-      "status": "desatualizado"
+      "status": "concluido"
     },
     {
       "tipo": "moldes",
       "arquivo": "docs/mapas-visuais/mapa-09-moldes.html",
       "versao": "tecnica",
       "sha256": "25edbf447a12d3714c8dbc9c1a2d6779ab0be82a322365ca79e42c9018212bf8",
-      "status": "desatualizado"
+      "status": "concluido"
     },
     {
       "tipo": "moldes",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-09-moldes.html",
       "versao": "nao-tecnica",
       "sha256": "26bc5e4a28e0ba9973d8d4a7e779f4f3338bef7d721992c5f9df20ae8ed6fb73",
-      "status": "desatualizado"
+      "status": "concluido"
     },
     {
       "tipo": "scripts",
       "arquivo": "docs/mapas-visuais/mapa-10-scripts.html",
       "versao": "tecnica",
       "sha256": "ef3b5c97225c711dc17fa3817b5560dc6d09e28f0c87a2224d0b487cff5526dc",
-      "status": "desatualizado"
+      "status": "concluido"
     },
     {
       "tipo": "scripts",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-10-scripts.html",
       "versao": "nao-tecnica",
       "sha256": "5cf9ca6c5e2c64f9c923b745fdbbad5beeac0745bb1192fee008457994718a37",
-      "status": "desatualizado"
+      "status": "concluido"
     },
     {
       "tipo": "oficina",
       "arquivo": "docs/mapas-visuais/mapa-11-oficina.html",
       "versao": "tecnica",
-      "sha256": "adf4aaf90c6dc487b4709b6c51702a7514b61a2978e5d7fb879f674e2bfdf773",
-      "status": "desatualizado"
+      "sha256": "31fbcf92f0c66b4036b8632d576fc3653c54218ce0b3885164da76338d304b81",
+      "status": "concluido"
     },
     {
       "tipo": "oficina",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-11-oficina.html",
       "versao": "nao-tecnica",
-      "sha256": "ea47de78ca40bbbdaa4acf600b1fe26f65288c19eb64e196f7fd3cdbe5b88b9c",
-      "status": "desatualizado"
+      "sha256": "0be62d3d242a1fb3c19ab260f3860b327784eb31eaba32fe7f2a4c8964075f7b",
+      "status": "concluido"
     },
     {
       "tipo": "lente15d",
       "arquivo": "docs/mapas-visuais/mapa-12-lente15d.html",
       "versao": "tecnica",
       "sha256": "00fdf28a1a6e1f12ebea9a699354e175272a5811ef433067de224e518a58c20f",
-      "status": "desatualizado"
+      "status": "concluido"
     },
     {
       "tipo": "lente15d",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-12-lente15d.html",
       "versao": "nao-tecnica",
       "sha256": "e19cd6076c44fc9b9d6a6352b560e808c7bbb60d583c889b544c292f36f027b0",
-      "status": "desatualizado"
+      "status": "concluido"
     },
     {
       "tipo": "pipelines",
       "arquivo": "docs/mapas-visuais/mapa-13-pipelines.html",
       "versao": "tecnica",
       "sha256": "b83e1fbbb803d96173c1465d43132ee05386410a7f7a097afa5faebd6498d051",
-      "status": "desatualizado"
+      "status": "concluido"
     },
     {
       "tipo": "pipelines",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-13-pipelines.html",
       "versao": "nao-tecnica",
       "sha256": "4cedfd742147492fe4b56c1a6891de6ba10f7e9be2383e633d49c91874029b56",
-      "status": "desatualizado"
+      "status": "concluido"
     },
     {
       "tipo": "modulos",
       "arquivo": "docs/mapas-visuais/mapa-14-modulos.html",
       "versao": "tecnica",
       "sha256": "8a3aae8697341ec913d8a6205fd560306d11288b09b4089f2594faaba70e63c3",
-      "status": "desatualizado"
+      "status": "concluido"
     },
     {
       "tipo": "modulos",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-14-modulos.html",
       "versao": "nao-tecnica",
       "sha256": "7dfed2bca426d096063445027726363cf7a46d956b04aa8d21f68204d23e117b",
-      "status": "desatualizado"
+      "status": "concluido"
     },
     {
       "tipo": "agentes",
       "arquivo": "docs/mapas-visuais/mapa-15-agentes.html",
       "versao": "tecnica",
       "sha256": "6c3939258bc1fd44f18e6d8eb08d06c23630e6537ad3000fec1bc029da9507c1",
-      "status": "desatualizado"
+      "status": "concluido"
     },
     {
       "tipo": "agentes",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-15-agentes.html",
       "versao": "nao-tecnica",
       "sha256": "50d97b97202474a3b64e4cb56bd42cd656bc9f78aa29ba11b9f8cbc5f8ce95fc",
-      "status": "desatualizado"
+      "status": "concluido"
     },
     {
       "tipo": "indice",
       "arquivo": "docs/mapas-visuais/mapa-00-indice.html",
       "versao": "tecnica",
       "sha256": "5c1dde9c7b8520f8e6e2e276131c7730177471621d2db897b4d011007ea6cf48",
-      "status": "desatualizado"
+      "status": "concluido"
     },
     {
       "tipo": "indice",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-00-indice.html",
       "versao": "nao-tecnica",
       "sha256": "b08f69e9822aeb35195cafeeb80e0456bb543819ef7cec5cc93d30eefdc4133f",
-      "status": "desatualizado"
+      "status": "concluido"
     }
   ],
   "handoff_livro": {
@@ -250,7 +250,7 @@
       },
       {
         "arquivo": "docs/livros/mapas-aidd/partes/40-parte-iv.md",
-        "sha256": "89726362159141923945f8c3c352a109debea1fa15e94edb4237ff6b822c3dec"
+        "sha256": "f9d22c7d26b44f0fc0f4873595d08ee0214a326c3ed816712afb67faea478429"
       },
       {
         "arquivo": "docs/livros/mapas-aidd/partes/50-parte-v.md",
@@ -269,7 +269,7 @@
       "comando": "python componentes/compartilhado/skills/aidd-textbook/scripts/livro.py build docs/livros/mapas-aidd",
       "exit_code": 0,
       "pdf": "docs/livros/mapas-aidd/26-09-2026_LIVRO-MAPAS-AIDD.pdf",
-      "sha256": "a7ebec970f4a8c24dc64239b84774611dcba4d2d51da0125f3c3cbc9fb934050"
+      "sha256": "f485dada0cffbabef937070f08bb528fd78ec24cd2cd68016f7fbaf826e25bab"
     }
   }
 }

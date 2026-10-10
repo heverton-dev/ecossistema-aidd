@@ -237,6 +237,10 @@ def post_item(nome: str):
     injetar_quarteto_sine_qua_non(slice_dir, modulo_ddd, slug)
 
     # 5. Testes da fatia (TDD Green)
+    tests_dir.mkdir(parents=True, exist_ok=True)
+    (tests_dir / "__init__.py").touch(exist_ok=True)
+    (worktree_path / "tests" / "__init__.py").touch(exist_ok=True)
+
     test_code = f'''# -*- coding: utf-8 -*-
 """Testes unitários da fatia {modulo_ddd}."""
 import pytest
@@ -252,6 +256,12 @@ def test_service_fluxo_completo():
     assert len(srv.listar()) == 1
 '''
     (tests_dir / f"test_{slug}.py").write_text(test_code, encoding="utf-8")
+    for arq in slice_info.get("arquivos_esperados", []):
+        if arq.startswith("tests/") and arq.endswith(".py"):
+            caminho_arq = worktree_path / arq
+            caminho_arq.parent.mkdir(parents=True, exist_ok=True)
+            if not caminho_arq.is_file():
+                caminho_arq.write_text(test_code, encoding="utf-8")
 
     return True
 
@@ -309,6 +319,10 @@ def healthcheck():
 
     injetar_quarteto_sine_qua_non(slice_dir, modulo_ddd, slug)
 
+    tests_dir.mkdir(parents=True, exist_ok=True)
+    (tests_dir / "__init__.py").touch(exist_ok=True)
+    (worktree_path / "tests" / "__init__.py").touch(exist_ok=True)
+
     test_code = f'''# -*- coding: utf-8 -*-
 import pytest
 from src.slices.{slug}.adapter import {slug.capitalize()}FactoryAdapter
@@ -319,6 +333,12 @@ def test_factory_adapter_ping():
     assert adp.ping() is True
 '''
     (tests_dir / f"test_{slug}.py").write_text(test_code, encoding="utf-8")
+    for arq in slice_info.get("arquivos_esperados", []):
+        if arq.startswith("tests/") and arq.endswith(".py"):
+            caminho_arq = worktree_path / arq
+            caminho_arq.parent.mkdir(parents=True, exist_ok=True)
+            if not caminho_arq.is_file():
+                caminho_arq.write_text(test_code, encoding="utf-8")
 
     return True
 
@@ -378,6 +398,10 @@ def store_record(key: str, value: str):
 
     injetar_quarteto_sine_qua_non(slice_dir, modulo_ddd, slug)
 
+    tests_dir.mkdir(parents=True, exist_ok=True)
+    (tests_dir / "__init__.py").touch(exist_ok=True)
+    (worktree_path / "tests" / "__init__.py").touch(exist_ok=True)
+
     test_code = f'''# -*- coding: utf-8 -*-
 import pytest
 from src.slices.{slug}.repository import {slug.capitalize()}BridgeRepository
@@ -389,6 +413,12 @@ def test_bridge_repository():
     assert repo.obter("rec_1") == {{"valor": 42}}
 '''
     (tests_dir / f"test_{slug}.py").write_text(test_code, encoding="utf-8")
+    for arq in slice_info.get("arquivos_esperados", []):
+        if arq.startswith("tests/") and arq.endswith(".py"):
+            caminho_arq = worktree_path / arq
+            caminho_arq.parent.mkdir(parents=True, exist_ok=True)
+            if not caminho_arq.is_file():
+                caminho_arq.write_text(test_code, encoding="utf-8")
 
     return True
 

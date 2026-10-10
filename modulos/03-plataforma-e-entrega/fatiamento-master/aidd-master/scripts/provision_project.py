@@ -39,7 +39,7 @@ def _renderizar_e_escrever_docs_html(templates_dir, static_dir, suite_name, modu
     with open(os.path.join(static_dir, 'docs.html'), 'w', encoding='utf-8') as f:
         f.write(final_docs_html)
 
-def provision(project_desc, base_dir=None, frontend_stack='nextjs'):
+def provision(project_desc, base_dir=None, frontend_stack='tanstack'):
     if os.path.isabs(project_desc) or os.sep in project_desc or (os.altsep and os.altsep in project_desc) or os.path.exists(project_desc):
         project_dir = os.path.abspath(project_desc)
         slug = slugify(os.path.basename(project_dir)) or "projeto-modular"
@@ -152,9 +152,10 @@ def provision(project_desc, base_dir=None, frontend_stack='nextjs'):
     # compose_suite() faz.
     #
     # Lei Inviolável #11 (Padrão-Ouro de Stack, `AGENTS.md`): o frontend
-    # default é Next.js + TypeScript + Tailwind CSS (`frontend_stack=
-    # "nextjs"`). O Super-App em HTML/CSS/JS Python puro só é gerado se
-    # pedido explicitamente (`frontend_stack="python-html"`).
+    # default é TanStack Start / Router + TypeScript + Tailwind CSS (`frontend_stack=
+    # "tanstack"`). O Super-App em HTML/CSS/JS Python puro só é gerado se
+    # pedido explicitamente (`frontend_stack="python-html"`). Next.js só se
+    # pedido explicitamente (`frontend_stack="nextjs"`).
     try:
         from compose_suite import generate_modular_server_code
         server_code = generate_modular_server_code(slug, ["principal"], db_engine="sqlite", project_dir=project_dir)
@@ -162,10 +163,20 @@ def provision(project_desc, base_dir=None, frontend_stack='nextjs'):
             f.write(server_code)
         print("  [+] Servidor dinâmico 'src/server.py' gerado com sucesso!")
 
-        if frontend_stack == 'nextjs':
+        if frontend_stack == 'tanstack':
+            frontend_dest = os.path.join(project_dir, 'frontend')
+            frontend_template = os.path.join(repo_root, 'templates', 'v2', 'frontend')
+            if not os.path.isdir(frontend_template):
+                frontend_template = os.path.join(repo_root, 'templates', 'frontend')
+            if os.path.isdir(frontend_template):
+                def _ignorar_build(dir_src, names):
+                    return {'node_modules', 'dist', '.git', '__pycache__'}.intersection(names)
+                shutil.copytree(frontend_template, frontend_dest, dirs_exist_ok=True, ignore=_ignorar_build)
+            print("  [+] Front-end 'frontend/' gerado em TanStack Start / Router + TypeScript + Tailwind (Lei #11)!")
+        elif frontend_stack == 'nextjs':
             from nextjs_exporter import NextJSExporter
             NextJSExporter().export_project(project_dir, os.path.join(project_dir, 'frontend'), suite_name=slug)
-            print("  [+] Front-end 'frontend/' gerado em Next.js + TypeScript + Tailwind (Lei #11)!")
+            print("  [+] Front-end 'frontend/' gerado em Next.js + TypeScript + Tailwind!")
         else:
             from compose_suite import generate_superapp_index_html
             index_html = generate_superapp_index_html(slug, ["principal"])

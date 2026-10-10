@@ -79,9 +79,33 @@ def _rodar_testes_fatia(projeto: str, fatia_dir: str):
     return proc.returncode, total, passaram, falharam, junit
 
 
+def _resolver_caminho_sandbox(path_informado: str) -> str:
+    """Resolve caminho de projeto/export low-code de forma robusta e tolerante a CWD."""
+    p = os.path.abspath(path_informado)
+    if os.path.exists(os.path.join(p, "package.json")):
+        return p
+    candidatos = [
+        os.path.join(os.getcwd(), path_informado),
+        os.path.join(os.getcwd(), "projetos", path_informado),
+        os.path.join(os.path.dirname(os.getcwd()), path_informado),
+    ]
+    for c in candidatos:
+        if os.path.exists(os.path.join(c, "package.json")):
+            return os.path.abspath(c)
+    return p
+
+
 def cmd_scan(args):
-    scanner = LovableScanner(args.project_dir)
-    manifest = scanner.scan()
+    proj_dir = _resolver_caminho_sandbox(args.project_dir)
+    try:
+        scanner = LovableScanner(proj_dir)
+        manifest = scanner.scan()
+    except FileNotFoundError as e:
+        print(f"[ERRO] {e}")
+        print("Dica: Informe o caminho absoluto ou relativo para a pasta do export que contenha 'package.json'.")
+        return 1
+
+    args.project_dir = proj_dir
     projeto = _resolver_projeto_scan(args)
 
     aidd_dir = os.path.join(projeto, ".aidd")
@@ -166,18 +190,36 @@ def cmd_scan(args):
     return 0
 
 def cmd_convert_db(args):
-    scanner = LovableScanner(args.project_dir)
-    manifest = scanner.scan()
+    dir_proj = getattr(args, "project_dir", None) or getattr(args, "origem", None)
+    if not dir_proj:
+        print("[ERRO] Informe o diretório do projeto como argumento posicional ou via '--origem <dir>'.")
+        return 1
+    dir_proj = _resolver_caminho_sandbox(dir_proj)
+    try:
+        scanner = LovableScanner(dir_proj)
+        manifest = scanner.scan()
+    except FileNotFoundError as e:
+        print(f"[ERRO] {e}")
+        return 1
+
     db = DataBridge(manifest["database"]["migrations"])
     sql = db.generate_consolidated_init_sql(with_real_auth=args.with_gotrue)
-    out_file = args.output or os.path.join(args.project_dir, "init-db.sql")
+    out_file = getattr(args, "output", None) or getattr(args, "destino", None) or os.path.join(dir_proj, "init-db.sql")
     with open(out_file, "w", encoding="utf-8") as f:
         f.write(sql)
     print(f"[SUCESSO] Script PostgreSQL puro consolidado em: {out_file}")
     return 0
 
 def cmd_merge(args):
-    unifier = MultiAppUnifier(args.apps, args.output)
+    apps_list = getattr(args, "apps", None) or getattr(args, "origem", None)
+    out_dest = getattr(args, "output", None) or getattr(args, "destino", None)
+    if not apps_list:
+        print("[ERRO] Informe os apps a unir como argumentos posicionais ou via '--origem <app1> <app2>'.")
+        return 1
+    if not out_dest:
+        print("[ERRO] Informe o diretório de destino via '--output <dir>' ou '--destino <dir>'.")
+        return 1
+    unifier = MultiAppUnifier(apps_list, out_dest)
     res = unifier.merge()
     print(f"[SUCESSO] {res['total_apps']} aplicacoes unificadas com sucesso em: {res['output_dir']}")
     return 0
@@ -272,14 +314,18 @@ def main():
 
     # convert-db
     p_db = subparsers.add_parser("convert-db", help="Converte migracoes do Supabase em PostgreSQL consolidado")
-    p_db.add_argument("project_dir", help="Diretorio do projeto")
-    p_db.add_argument("--output", "-o", help="Caminho de saida para init-db.sql")
+    p_db.add_argument("project_dir", nargs="?", default=None, help="Diretorio do projeto")
+    p_db.add_argument("--origem", default=None, help="Alias para project_dir (diretório do app)")
+    p_db.add_argument("--output", "-o", default=None, help="Caminho de saida para init-db.sql")
+    p_db.add_argument("--destino", default=None, help="Alias para --output (caminho de saida)")
     p_db.add_argument("--with-gotrue", action="store_true", help="Pacote de deploy usara GoTrue real (docker-compose.swarm.yml) em vez da emulacao de auth.users")
 
     # merge
     p_merge = subparsers.add_parser("merge", help="Unifica multiplos apps em um unico projeto")
-    p_merge.add_argument("apps", nargs="+", help="Diretorios dos apps a unir")
-    p_merge.add_argument("--output", "-o", required=True, help="Diretorio destino")
+    p_merge.add_argument("apps", nargs="*", default=None, help="Diretorios dos apps a unir")
+    p_merge.add_argument("--origem", nargs="+", default=None, help="Alias para apps (diretorios dos apps a unir)")
+    p_merge.add_argument("--output", "-o", default=None, help="Diretorio destino")
+    p_merge.add_argument("--destino", default=None, help="Alias para --output (diretorio destino)")
 
     # pack
     p_pack = subparsers.add_parser("pack", help="Gera Dockerfile, Docker Compose e Swarm para VPS")

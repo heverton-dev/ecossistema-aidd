@@ -675,6 +675,20 @@ class PainelGates:
             if m:
                 self.atual = _nome_curto_gate(m.group("nome"))
                 self.inicio_gate = time.time()
+                tot_concluidos = self.contagem["Passed"] + self.contagem["Failed"] + self.contagem["Skipped"]
+                tot_estimado = 71
+                idx_atual = tot_concluidos + 1
+                pct = min(99, max(1, round((idx_atual / tot_estimado) * 100)))
+                try:
+                    from scripts.estado_execucao import atualizar_execucao_ativa
+                    atualizar_execucao_ativa(
+                        etapa_atual="execucao-portoes",
+                        gate_atual=self.atual,
+                        progresso_gates=f"{idx_atual}/{tot_estimado}",
+                        percentual=pct
+                    )
+                except Exception:
+                    pass
                 try:
                     self.offset_progresso = os.path.getsize(self.caminho_progresso) if self.caminho_progresso else 0
                 except OSError:
@@ -698,6 +712,19 @@ class PainelGates:
             duracao = time.time() - self.inicio_gate if self.atual else 0.0
             self.atual = None
             self.contagem[status] += 1
+            tot_concluidos = self.contagem["Passed"] + self.contagem["Failed"] + self.contagem["Skipped"]
+            tot_estimado = 71
+            pct = min(100, round((tot_concluidos / tot_estimado) * 100))
+            try:
+                from scripts.estado_execucao import atualizar_execucao_ativa
+                atualizar_execucao_ativa(
+                    etapa_atual="execucao-portoes",
+                    gate_atual=f"{nome} ({status})",
+                    progresso_gates=f"{tot_concluidos}/{tot_estimado}",
+                    percentual=pct
+                )
+            except Exception:
+                pass
             limpa = "\r\033[K" if self.estilo.interativo else ""
             if status == "Skipped":
                 if limpa:
@@ -710,6 +737,16 @@ class PainelGates:
 
     def resumo(self):
         c = self.contagem
+        try:
+            from scripts.estado_execucao import atualizar_execucao_ativa
+            atualizar_execucao_ativa(
+                etapa_atual="convergencia-relatorio",
+                gate_atual="Finalizado",
+                progresso_gates=f"{c['Passed'] + c['Failed'] + c['Skipped']}/71",
+                percentual=100
+            )
+        except Exception:
+            pass
         if not sum(c.values()):
             return
         p = self.estilo.icone("ponto")

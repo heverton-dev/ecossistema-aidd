@@ -1,4 +1,4 @@
-﻿import json
+import json
 import os
 import re
 import sys
@@ -158,9 +158,16 @@ class Execucao:
             "humano": self.humano,
             "fim": self.fim,
             "exit_code": self.exit_code,
+            "detalhes": getattr(self, "detalhes", {}),
             "seq": self.seq,
             "atualizado_em": _agora_iso()
         }
+
+    def atualizar_detalhes(self, **kwargs):
+        if not hasattr(self, "detalhes"):
+            self.detalhes = {}
+        self.detalhes.update(kwargs)
+        self.salvar()
 
     def salvar(self):
         if not self._arquivo:
@@ -181,3 +188,56 @@ class Execucao:
             if not self._aviso_emitido:
                 sys.stderr.write(f"[aidd-quadro] aviso: falha ao gravar estado da execucao {self.run_id}: {e}\n")
                 self._aviso_emitido = True
+
+def atualizar_execucao_ativa(**kwargs):
+    """Atualiza a execucao pai ativa com dados em tempo real (ex: gates, progresso)."""
+    run_id = os.environ.get("AIDD_EXECUCAO_PAI")
+    raiz = _obter_raiz_aidd()
+    if not raiz:
+        return
+    pasta_exec = raiz / "execucoes"
+    if not pasta_exec.exists():
+        return
+    
+    arquivo = None
+    if run_id:
+        candidato = pasta_exec / run_id / "estado.json"
+        if candidato.exists():
+            arquivo = candidato
+            
+    if not arquivo:
+        mais_recente = None
+        mais_recente_tempo = 0
+        for f in pasta_exec.glob("*/estado.json"):
+            try:
+                mtime = f.stat().st_mtime
+                if mtime > mais_recente_tempo:
+                    mais_recente_tempo = mtime
+                    mais_recente = f
+            except Exception:
+                continue
+        arquivo = mais_recente
+
+    if not arquivo:
+        return
+
+    try:
+        dados = json.loads(arquivo.read_text(encoding="utf-8"))
+        if dados.get("status") != "executando":
+            return
+        if "detalhes" not in dados or not isinstance(dados["detalhes"], dict):
+            dados["detalhes"] = {}
+        dados["detalhes"].update(kwargs)
+        dados.update(kwargs)
+        dados["atualizado_em"] = _agora_iso()
+        temp = arquivo.with_suffix(".tmp")
+        for _ in range(3):
+            try:
+                temp.write_text(json.dumps(dados, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+                temp.replace(arquivo)
+                break
+            except (PermissionError, OSError):
+                time.sleep(0.02)
+    except Exception:
+        pass
+

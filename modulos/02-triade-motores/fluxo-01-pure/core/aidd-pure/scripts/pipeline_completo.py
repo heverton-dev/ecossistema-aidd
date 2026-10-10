@@ -1055,7 +1055,7 @@ def cli(ideia, pasta, interativo, implementar_codigo, resume, orquestrador):
             )
     except LLMNaoConfiguradoException as e:
         print(f"\n❌ {e.mensagem_usuario}")
-        sys.exit(1)
+        sys.exit(3)
 
     print("\n" + "=" * 70)
     if resultado['status'] == 'COMPLETO':

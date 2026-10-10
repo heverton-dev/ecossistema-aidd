@@ -208,13 +208,18 @@ def criar_modulo(nome_modulo: str, descricao: str = "", target_dir: str = "."):
                     frontend_pkg = os.path.join(target_dir, "frontend", "package.json")
                     if os.path.isfile(frontend_pkg):
                         try:
-                            from nextjs_exporter import NextJSExporter
-                            NextJSExporter().export_project(
-                                target_dir, os.path.join(target_dir, "frontend"), suite_name=suite_name
-                            )
-                            print(f"  [+] Front-end 'frontend/' religado com o módulo '{slug}' (Next.js)!")
-                        except ImportError as e:
-                            print(f"  [!] Aviso: não foi possível regenerar o frontend Next.js: {e}")
+                            with open(frontend_pkg, "r", encoding="utf-8") as f:
+                                pkg_data = json.load(f)
+                            if "next" in pkg_data.get("dependencies", {}):
+                                from nextjs_exporter import NextJSExporter
+                                NextJSExporter().export_project(
+                                    target_dir, os.path.join(target_dir, "frontend"), suite_name=suite_name
+                                )
+                                print(f"  [+] Front-end 'frontend/' religado com o módulo '{slug}' (Next.js)!")
+                            else:
+                                print(f"  [+] Front-end 'frontend/' mantido em TanStack Start / Router (Lei #11) para o módulo '{slug}'!")
+                        except Exception as e:
+                            print(f"  [!] Aviso: não foi possível regenerar o frontend: {e}")
         except Exception as e:
             print(f"  [!] Aviso ao atualizar manifesto: {e}")
 

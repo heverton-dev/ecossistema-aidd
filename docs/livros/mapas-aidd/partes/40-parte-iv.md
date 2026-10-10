@@ -22,7 +22,7 @@ Onde mora: `docs/planos/` e `docs/auditoria/`. Quem confere: o `scripts/atualiza
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| planos | 37 |
+| planos | 38 |
 | em execução | 11 |
 | ciclos de auditoria | 54 |
 

@@ -113,7 +113,6 @@ function mudarAba(aba) {
 // 4. SINCRONIZAÇÃO E BUSCA DE DADOS
 // ==========================================
 async function atualizarDados() {
-  if (document.hidden) return;
   const indicadorPulso = document.getElementById("indicador-pulso");
   const textoAtualizacao = document.getElementById("texto-atualizacao");
   const badgeContagem = document.getElementById("contagem-pipelines-ativos");
@@ -182,7 +181,9 @@ function renderizarPipelines() {
     encontrados++;
 
     const card = document.createElement("article");
-    card.className = "card-pipeline";
+    const temExecutando = (info.executando || 0) > 0;
+    const temFalha = (info.falhou || 0) > 0;
+    card.className = "card-pipeline" + (temExecutando ? " card-ativo" : "") + (temFalha ? " card-falha" : "");
     card.tabIndex = 0;
     card.onclick = () => abrirKanban(id);
     card.onkeydown = (e) => { if (e.key === "Enter") abrirKanban(id); };
@@ -195,6 +196,14 @@ function renderizarPipelines() {
     tit.textContent = info.nome || id;
     topo.appendChild(tit);
 
+    // Destaque sutil da Tríade Canônica
+    if (["pure", "open", "freedom"].includes(id)) {
+      const tagTriade = document.createElement("span");
+      tagTriade.className = "badge-triade";
+      tagTriade.textContent = id === "pure" ? "Tríade #1" : (id === "open" ? "Tríade #2" : "Tríade #3");
+      topo.appendChild(tagTriade);
+    }
+
     if (info.precisa_humano > 0) {
       const alerta = document.createElement("span");
       alerta.className = "badge-alerta";
@@ -203,6 +212,79 @@ function renderizarPipelines() {
     }
     card.appendChild(topo);
 
+    // CENTRO DO CARD: ETAPA ATUAL & BARRA DE PROGRESSO
+    const centro = document.createElement("div");
+    centro.className = "card-pipeline-centro";
+
+    const etapaInfo = document.createElement("div");
+    etapaInfo.className = "card-etapa-info";
+
+    const etapaRotulo = document.createElement("span");
+    etapaRotulo.className = "card-etapa-rotulo";
+    etapaRotulo.textContent = "Etapa:";
+    etapaInfo.appendChild(etapaRotulo);
+
+    const etapaNome = document.createElement("span");
+    etapaNome.className = "card-etapa-nome";
+
+    const listaEtapas = Object.keys(info.etapas_contagem || {});
+    const totalEtapas = listaEtapas.length || 7;
+    let pctProgresso = 0;
+    let estiloBarra = "neutro";
+
+    if (info.executando > 0) {
+      if (info.gate_atual) {
+        etapaNome.textContent = `Gate: ${info.gate_atual} ${info.progresso_gates ? '(' + info.progresso_gates + ')' : ''}`;
+        etapaNome.classList.add("executando");
+        pctProgresso = info.percentual !== undefined ? info.percentual : 50;
+        estiloBarra = "executando";
+      } else {
+        let etapaAtiva = null;
+        let idxEtapa = -1;
+        for (let i = 0; i < listaEtapas.length; i++) {
+          const k = listaEtapas[i];
+          if ((info.etapas_contagem[k] || 0) > 0) {
+            etapaAtiva = k;
+            idxEtapa = i;
+          }
+        }
+        const nomeEtapaFormatado = etapaAtiva 
+          ? (etapaAtiva.charAt(0).toUpperCase() + etapaAtiva.slice(1)).replace(/-/g, " ")
+          : "Em andamento";
+        etapaNome.textContent = nomeEtapaFormatado;
+        etapaNome.classList.add("executando");
+        pctProgresso = idxEtapa >= 0 ? Math.round(((idxEtapa + 1) / totalEtapas) * 100) : 50;
+        estiloBarra = "executando";
+      }
+    } else if (info.falhou > 0) {
+      etapaNome.textContent = "Falha detectada";
+      etapaNome.classList.add("falhou");
+      pctProgresso = 100;
+      estiloBarra = "falhou";
+    } else if (info.concluido > 0) {
+      etapaNome.textContent = "Todas concluídas";
+      etapaNome.classList.add("concluido");
+      pctProgresso = 100;
+      estiloBarra = "concluido";
+    } else {
+      etapaNome.textContent = "Aguardando disparo";
+      pctProgresso = 0;
+      estiloBarra = "neutro";
+    }
+    etapaInfo.appendChild(etapaNome);
+    centro.appendChild(etapaInfo);
+
+    const trilhaProg = document.createElement("div");
+    trilhaProg.className = "card-progresso-trilha";
+    const barraProg = document.createElement("div");
+    barraProg.className = `card-progresso-barra ${estiloBarra}`;
+    barraProg.style.width = `${pctProgresso}%`;
+    trilhaProg.appendChild(barraProg);
+    centro.appendChild(trilhaProg);
+
+    card.appendChild(centro);
+
+    // RODAPÉ: RODANDO -> CONCLUÍDOS -> FALHAS
     const metricas = document.createElement("div");
     metricas.className = "pipeline-metricas";
 
@@ -214,8 +296,13 @@ function renderizarPipelines() {
     spanConc.className = "metrica-tag" + (info.concluido > 0 ? " concluido" : "");
     spanConc.textContent = `${info.concluido || 0} concluídos`;
 
+    const spanFalha = document.createElement("span");
+    spanFalha.className = "metrica-tag" + (info.falhou > 0 ? " falha" : "");
+    spanFalha.textContent = `${info.falhou || 0} falhas`;
+
     metricas.appendChild(spanExec);
     metricas.appendChild(spanConc);
+    metricas.appendChild(spanFalha);
     card.appendChild(metricas);
 
     container.appendChild(card);
@@ -246,6 +333,11 @@ async function abrirKanban(pipeId) {
   
   if (grade) grade.classList.add("escondido");
   if (kanban) kanban.classList.remove("escondido");
+
+  const bannerTexto = document.getElementById("texto-fluxo-ativo");
+  const bannerEl = document.getElementById("banner-fluxo-ativo");
+  if (bannerTexto) bannerTexto.textContent = `FLUXO ATIVO: ${pipeId.toUpperCase()}`;
+  if (bannerEl) bannerEl.classList.add("executando");
   
   await carregarKanban(pipeId);
 }
@@ -263,6 +355,11 @@ function fecharKanban() {
   
   if (kanban) kanban.classList.add("escondido");
   if (grade) grade.classList.remove("escondido");
+
+  const bannerTexto = document.getElementById("texto-fluxo-ativo");
+  const bannerEl = document.getElementById("banner-fluxo-ativo");
+  if (bannerTexto) bannerTexto.textContent = "TODOS OS PIPELINES";
+  if (bannerEl) bannerEl.classList.remove("executando");
   
   renderizarPipelines();
 }
@@ -272,6 +369,23 @@ async function carregarKanban(pipeId) {
     const res = await fetch(`/api/pipeline/${pipeId}`);
     if (!res.ok) return;
     const dados = await res.json();
+
+    const bannerTexto = document.getElementById("texto-fluxo-ativo");
+    const badgeStatus = document.getElementById("kanban-badge-status");
+    if (bannerTexto) bannerTexto.textContent = `FLUXO ATIVO: ${(dados.nome || pipeId).toUpperCase()}`;
+    if (badgeStatus) badgeStatus.textContent = `● FLUXO ATIVO: ${(dados.nome || pipeId).toUpperCase()}`;
+
+    // Atualizar iluminação da esteira topológica visual de 7 etapas
+    const passosEsteira = document.querySelectorAll(".passo-esteira[data-passo]");
+    const etapasAtivas = new Set((dados.execucoes || []).filter(e => e.status === "executando").map(e => e.etapa_atual));
+    passosEsteira.forEach(p => {
+      const passoId = p.getAttribute("data-passo");
+      if (etapasAtivas.has(passoId)) {
+        p.classList.add("passo-ativo");
+      } else {
+        p.classList.remove("passo-ativo");
+      }
+    });
 
     // Cache inteligente de dados
     const strDados = JSON.stringify(dados);
@@ -321,11 +435,16 @@ async function carregarKanban(pipeId) {
       { id: "parado", titulo: "Parado" }
     ];
 
+    const barraAtalhos = document.getElementById("kanban-atalhos-colunas");
+    if (barraAtalhos) barraAtalhos.replaceChildren();
+
     const termoBusca = (ESTADO_GLOBAL.filtroKanban || "").trim().toLowerCase();
+    let colunaComFoco = null;
 
     for (const col of colunasDef) {
       const elCol = document.createElement("div");
       elCol.className = "kanban-coluna";
+      elCol.id = `coluna-alvo-${col.id}`;
 
       // Filtrar cartões pertencentes à coluna
       const cartoes = (dados.execucoes || []).filter(ex => {
@@ -346,6 +465,34 @@ async function carregarKanban(pipeId) {
         }
         return true;
       });
+
+      // Adicionar chip na barra de atalhos rápidos
+      if (barraAtalhos) {
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "chip-coluna-atalho" + 
+          (cartoes.length > 0 ? " com-cartoes" : "") + 
+          (col.id === "concluido" && cartoes.length > 0 ? " concluidos-destaque" : "");
+        chip.title = `Rolar até a coluna ${col.titulo} (${cartoes.length} execuções)`;
+        chip.onclick = () => {
+          elCol.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+        };
+
+        const chipTxt = document.createElement("span");
+        chipTxt.textContent = col.titulo;
+        chip.appendChild(chipTxt);
+
+        const chipBadge = document.createElement("span");
+        chipBadge.className = "chip-badge";
+        chipBadge.textContent = cartoes.length;
+        chip.appendChild(chipBadge);
+
+        barraAtalhos.appendChild(chip);
+      }
+
+      if (cartoes.length > 0 && !colunaComFoco) {
+        colunaComFoco = elCol;
+      }
 
       const topo = document.createElement("div");
       topo.className = "coluna-topo";
@@ -399,10 +546,21 @@ async function carregarKanban(pipeId) {
             elCard.appendChild(btnHover);
           }
 
+          if (cartao.status === "falhou" || cartao.status === "interrompido") {
+            elCard.classList.add("cartao-falha-kanban");
+          }
+
           const titCard = document.createElement("div");
           titCard.className = "cartao-titulo";
           titCard.textContent = cartao.titulo || cartao.chave;
           elCard.appendChild(titCard);
+
+          if (cartao.gate_atual) {
+            const gateTag = document.createElement("div");
+            gateTag.className = "cartao-gate-tag";
+            gateTag.textContent = `🎯 Gate: ${cartao.gate_atual} ${cartao.progresso_gates ? '(' + cartao.progresso_gates + ')' : ''}`;
+            elCard.appendChild(gateTag);
+          }
 
           const metaCard = document.createElement("div");
           metaCard.className = "cartao-metadados";
@@ -433,7 +591,7 @@ async function carregarKanban(pipeId) {
       trilha.appendChild(elCol);
     }
 
-    // Restaurar posições de rolagem
+    // Restaurar posições de rolagem ou focar na coluna com cartões
     const novosCorpos = trilha.querySelectorAll(".coluna-corpo[data-coluna-id]");
     novosCorpos.forEach(c => {
       const cid = c.getAttribute("data-coluna-id");
@@ -441,7 +599,12 @@ async function carregarKanban(pipeId) {
         c.scrollTop = posicoesScroll[cid];
       }
     });
-    trilha.scrollLeft = scrollTrilhaX;
+
+    if (scrollTrilhaX === 0 && colunaComFoco && colunaComFoco.id !== "coluna-alvo-fila") {
+      colunaComFoco.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    } else {
+      trilha.scrollLeft = scrollTrilhaX;
+    }
 
     ESTADO_GLOBAL.cacheKanbanJson = strDados;
     atualizarCronometros();
@@ -614,6 +777,144 @@ async function abrirGaveta(runId) {
       motivo.textContent = ex.parada.motivo || "Parada sem motivo especificado.";
       b3.appendChild(motivo);
       corpo.appendChild(b3);
+    }
+
+    // BLOCO DE AÇÃO & REMEDIAÇÃO AGÊNTICA (QUANDO HÁ FALHA OU PARADA)
+    if (ex.status === "falhou" || ex.status === "interrompido" || ex.parada) {
+      const bRemed = document.createElement("div");
+      bRemed.className = "bloco-gaveta bloco-remediacao-ativa";
+
+      const hRemed = document.createElement("h4");
+      hRemed.className = "bloco-gaveta-titulo titulo-remediacao";
+      hRemed.textContent = "⚡ Central de Ação & Remediação Agêntica";
+      bRemed.appendChild(hRemed);
+
+      const pDesc = document.createElement("p");
+      pDesc.className = "remediacao-desc";
+      pDesc.textContent = "Falha operacional detectada. Dispare remediações ou gere o relatório pronto para o agente:";
+      bRemed.appendChild(pDesc);
+
+      const gradeBotoes = document.createElement("div");
+      gradeBotoes.className = "grade-botoes-remediacao";
+
+      // 1. Botão Copiar Reporte Completo para Agente
+      const btnReporte = document.createElement("button");
+      btnReporte.className = "btn-remediacao btn-copiar-reporte";
+      btnReporte.textContent = "📋 Copiar Reporte para Agente";
+      btnReporte.onclick = () => {
+        const promptAgente = [
+          "## REPORT DE FALHA OPERACIONAL (DASHBOARD AIDD)",
+          `- Pipeline: \`${ex.pipeline || 'desconhecido'}\``,
+          `- Run ID: \`${ex.run_id}\``,
+          `- Status: ${ex.status}`,
+          `- Etapa da Falha: ${ex.etapa_atual || 'não identificada'}`,
+          `- Comando Executado: \`${ex.comando || ''}\``,
+          `- Motivo da Parada: ${ex.parada?.motivo || 'Erro reportado pelo pipeline'}`,
+          "",
+          "### Instrução para o Agente:",
+          "1. Analise o erro factual acima e investigue a causa raiz no código.",
+          "2. Corrija o problema seguindo as 13 Leis do ecossistema (Zero Stubs, Determinismo).",
+          "3. Execute os testes/gates correspondentes para assegurar que a falha foi sanada."
+        ].join("\n");
+        navigator.clipboard.writeText(promptAgente);
+        btnReporte.textContent = "✓ Reporte Copiado! Cole no Agente";
+        btnReporte.classList.add("sucesso");
+        setTimeout(() => {
+          btnReporte.textContent = "📋 Copiar Reporte para Agente";
+          btnReporte.classList.remove("sucesso");
+        }, 3000);
+      };
+      gradeBotoes.appendChild(btnReporte);
+
+      // 2. Botão Disparar Pipeline Audit-4F
+      const btnAudit4f = document.createElement("button");
+      btnAudit4f.className = "btn-remediacao btn-disparar-audit";
+      btnAudit4f.textContent = "🚀 Disparar Auditoria 4F (audit-4f)";
+      btnAudit4f.onclick = async () => {
+        btnAudit4f.disabled = true;
+        btnAudit4f.textContent = "Disparando...";
+        try {
+          const r = await fetch("/api/acao/disparar", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({acao: "audit-4f", alvo: ex.pipeline, run_id: ex.run_id})
+          });
+          const d = await r.json();
+          if (r.ok) {
+            btnAudit4f.textContent = `✓ Audit-4F em execução (PID ${d.pid || ''})`;
+            btnAudit4f.classList.add("sucesso");
+            setTimeout(() => carregarPipelines(), 1000);
+          } else {
+            btnAudit4f.textContent = `Erro: ${d.erro || 'Falha ao disparar'}`;
+            btnAudit4f.disabled = false;
+          }
+        } catch (err) {
+          btnAudit4f.textContent = "Erro de conexão";
+          btnAudit4f.disabled = false;
+        }
+      };
+      gradeBotoes.appendChild(btnAudit4f);
+
+      // 3. Botão Disparar Pipeline Evolução
+      const btnEvolucao = document.createElement("button");
+      btnEvolucao.className = "btn-remediacao btn-disparar-evolucao";
+      btnEvolucao.textContent = "⚡ Disparar Evolução Técnica (evolucao)";
+      btnEvolucao.onclick = async () => {
+        btnEvolucao.disabled = true;
+        btnEvolucao.textContent = "Disparando...";
+        try {
+          const r = await fetch("/api/acao/disparar", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({acao: "evolucao", alvo: ex.pipeline, run_id: ex.run_id})
+          });
+          const d = await r.json();
+          if (r.ok) {
+            btnEvolucao.textContent = `✓ Evolução em execução (PID ${d.pid || ''})`;
+            btnEvolucao.classList.add("sucesso");
+            setTimeout(() => carregarPipelines(), 1000);
+          } else {
+            btnEvolucao.textContent = `Erro: ${d.erro || 'Falha ao disparar'}`;
+            btnEvolucao.disabled = false;
+          }
+        } catch (err) {
+          btnEvolucao.textContent = "Erro de conexão";
+          btnEvolucao.disabled = false;
+        }
+      };
+      gradeBotoes.appendChild(btnEvolucao);
+
+      // 4. Botão Reexecutar Gates
+      const btnGates = document.createElement("button");
+      btnGates.className = "btn-remediacao btn-disparar-gates";
+      btnGates.textContent = "🔧 Reexecutar Gates (audit)";
+      btnGates.onclick = async () => {
+        btnGates.disabled = true;
+        btnGates.textContent = "Disparando...";
+        try {
+          const r = await fetch("/api/acao/disparar", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({acao: "audit"})
+          });
+          const d = await r.json();
+          if (r.ok) {
+            btnGates.textContent = `✓ Gates em execução (PID ${d.pid || ''})`;
+            btnGates.classList.add("sucesso");
+            setTimeout(() => carregarPipelines(), 1000);
+          } else {
+            btnGates.textContent = `Erro: ${d.erro || 'Falha ao disparar'}`;
+            btnGates.disabled = false;
+          }
+        } catch (err) {
+          btnGates.textContent = "Erro de conexão";
+          btnGates.disabled = false;
+        }
+      };
+      gradeBotoes.appendChild(btnGates);
+
+      bRemed.appendChild(gradeBotoes);
+      corpo.appendChild(bRemed);
     }
 
     // 4. Precisa de Você
@@ -894,3 +1195,11 @@ atualizarIconeNotificacao();
 setInterval(atualizarDados, 2000);
 setInterval(atualizarCronometros, 1000);
 atualizarDados();
+
+// Recarga instantânea ao retornar à aba ou focar na janela
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) atualizarDados();
+});
+window.addEventListener("focus", () => {
+  atualizarDados();
+});

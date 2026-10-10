@@ -1,4 +1,4 @@
-﻿import json
+import json
 import os
 import zipfile
 from pathlib import Path
@@ -160,5 +160,16 @@ class QuadroLeitor:
             etapa = ex.get("etapa_atual")
             if etapa:
                 r["etapas_contagem"][etapa] = r["etapas_contagem"].get(etapa, 0) + 1
+
+            if st == "executando":
+                gate = ex.get("gate_atual") or ex.get("detalhes", {}).get("gate_atual")
+                prog = ex.get("progresso_gates") or ex.get("detalhes", {}).get("progresso_gates")
+                pct = ex.get("percentual") if ex.get("percentual") is not None else ex.get("detalhes", {}).get("percentual")
+                if gate:
+                    r["gate_atual"] = gate
+                if prog:
+                    r["progresso_gates"] = prog
+                if pct is not None:
+                    r["percentual"] = pct
 
         return resultado
