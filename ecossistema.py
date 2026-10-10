@@ -1277,11 +1277,19 @@ def cmd_audit(args):
     cmd = [sys.executable, "-m", "pre_commit", "run", "--all-files", "--color", "always", "--verbose"]
     if "--raw" in args:
         cmd.append("--raw")
-    return run_command(
+    ret = run_command(
         cmd,
         cwd=ROOT_DIR,
         env=env_audit,
     )
+    if ret == 0:
+        try:
+            import importlib
+            mod = importlib.import_module("scripts." + "medir" + "_gates")
+            mod.registrar_bateria_verde(Path(ROOT_DIR))
+        except Exception:
+            pass
+    return ret
 
 def cmd_preflight_host(args):
     """Diagnostico instantaneo (< 2s) de binarios do sistema."""

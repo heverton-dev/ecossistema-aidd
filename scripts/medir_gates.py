@@ -172,20 +172,37 @@ def arvore_de(raiz: Path, ref: str) -> str:
     return _git(raiz, "rev-parse", f"{ref}^{{tree}}").strip()
 
 
+def git_common_dir(raiz: Path) -> Path:
+    try:
+        saida = _git(raiz, "rev-parse", "--git-common-dir").strip()
+        p = Path(saida)
+        return p if p.is_absolute() else (Path(raiz) / p).resolve()
+    except Exception:
+        return Path(raiz) / ".git"
+
+
 def registro_verde(raiz: Path, arvore: str) -> Path:
+    comum = git_common_dir(raiz) / "aidd_audit" / f"completo-{arvore}.json"
+    if comum.is_file():
+        return comum
     return Path(raiz) / PASTA_REGISTROS / f"completo-{arvore}.json"
 
 
 def registrar_bateria_verde(raiz: Path, ref: str = "HEAD") -> Path:
-    """Grava que a bateria completa passou para a árvore de `ref` (chamado pelo gate_final)."""
+    """Grava que a bateria completa passou para a árvore de `ref` (chamado por audit e gate_final)."""
     arvore = arvore_de(raiz, ref)
-    caminho = registro_verde(raiz, arvore)
+    caminho = git_common_dir(raiz) / "aidd_audit" / f"completo-{arvore}.json"
     caminho.parent.mkdir(parents=True, exist_ok=True)
-    caminho.write_text(json.dumps({"arvore": arvore, "ref": _git(raiz, "rev-parse", ref).strip(),
-                                   "modo": "completo", "exit_code": 0,
-                                   "em": datetime.now().isoformat(timespec="seconds")},
-                                  ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
+    conteudo = json.dumps({"arvore": arvore, "ref": _git(raiz, "rev-parse", ref).strip(),
+                           "modo": "completo", "exit_code": 0,
+                           "em": datetime.now().isoformat(timespec="seconds")},
+                          ensure_ascii=False, indent=2) + "\n"
+    caminho.write_text(conteudo, encoding="utf-8", newline="\n")
+    legado = Path(raiz) / PASTA_REGISTROS / f"completo-{arvore}.json"
+    if legado.parent.is_dir():
+        legado.write_text(conteudo, encoding="utf-8", newline="\n")
     return caminho
+
 
 
 def so_documentacao(arquivos: List[str]) -> bool:

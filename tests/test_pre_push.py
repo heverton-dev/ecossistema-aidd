@@ -123,3 +123,27 @@ def test_hook_pre_push_esta_versionado_e_chama_a_verificacao():
     modo = subprocess.run(["git", "ls-files", "-s", ".githooks/pre-push"], cwd=ROOT,
                           capture_output=True, text=True).stdout.split()[0]
     assert modo == "100755"
+
+
+def test_registro_verde_em_worktree_compartilhado_com_main(repo, tmp_path):
+    wt = tmp_path / "wt"
+    _git(repo, "worktree", "add", "-q", str(wt), "-b", "feature")
+    _git(wt, "config", "user.email", "t@t")
+    _git(wt, "config", "user.name", "t")
+    _commit(wt, "servico.py", "def rodar(): pass\n")
+    sha_wt = _git(wt, "rev-parse", "HEAD")
+    medir_gates.registrar_bateria_verde(wt, "HEAD")
+
+    # Na main, mergeia a branch feature
+    _git(repo, "merge", "-q", "--ff-only", "feature")
+    sha_main = _git(repo, "rev-parse", "HEAD")
+    assert sha_main == sha_wt
+
+    # Pre-push executado na main DEVE encontrar o registro gravado pela worktree
+    codigo = medir_gates.verificar_push(
+        _linha(repo, sha_main), repo,
+        rodar_bateria=lambda raiz: pytest.fail("não devia rodar bateria: já registrada pela worktree"),
+        avisar=lambda m: None
+    )
+    assert codigo == 0
+
