@@ -288,8 +288,8 @@ def test_fluxo_completo_le_contratos_das_ferramentas_sem_alterar(tmp_path, fluxo
     etapas = [
         (orq.etapa_01_forge, ["C1"]),
         (orq.etapa_02_planner, ["C2"]),
-        (orq.etapa_03_engine, ["C3"]),
-        (orq.etapa_04_master, ["C4"]),
+        (orq.etapa_03_master, ["C4"]),
+        (orq.etapa_04_engine, ["C3"]),
         (orq.etapa_05_enterprise, ["C5"]),
         (orq.etapa_06_ops, []),
         (orq.etapa_07_auditoria, []),
@@ -358,17 +358,17 @@ def test_dispatch_roda_no_comeco_da_etapa_master(tmp_path, fluxo):
     assert orq.etapa_01_forge() and orq.etapa_02_planner()
     assert (orq.pasta / "VSA_DISPATCH.json").is_file(), "o planner grava o manifesto VSA"
 
-    inicio_engine = len(ferramentas.chamadas)
-    assert orq.etapa_03_engine() is True
-    assert all(sub[:1] != ["dispatch"] for sub in ferramentas.subs()[inicio_engine:])
-
     inicio_master = len(ferramentas.chamadas)
-    assert orq.etapa_04_master() is True
+    assert orq.etapa_03_master() is True
     subs_master = ferramentas.subs()[inicio_master:]
-    assert subs_master[0][:1] == ["dispatch"]
-    assert Path(subs_master[0][subs_master[0].index("--target-dir") + 1]) == orq.pasta
-    assert Path(subs_master[0][subs_master[0].index("--dispatch") + 1]) == orq.pasta / "VSA_DISPATCH.json"
-    assert subs_master[1][:2] == ["master", "init"]
+    assert subs_master[0][:2] == ["master", "init"]
+
+    inicio_engine = len(ferramentas.chamadas)
+    assert orq.etapa_04_engine() is True
+    subs_engine = ferramentas.subs()[inicio_engine:]
+    assert subs_engine[0][:1] == ["dispatch"]
+    assert Path(subs_engine[0][subs_engine[0].index("--target-dir") + 1]) == orq.pasta
+    assert Path(subs_engine[0][subs_engine[0].index("--dispatch") + 1]) == orq.pasta / "VSA_DISPATCH.json"
 
 
 # ---------------------------------------------------------------------------

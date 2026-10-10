@@ -126,16 +126,16 @@
 
 Every robust application in the ecosystem originates from **`aidd-forge`** (supreme governance and rule dictatorship) and an interactive **`PRÉ-PLANO`** intake (`aidd-planner`), allowing the developer or user to derive 3 distinct specialized paths with zero friction (CLI or Slash Commands):
 
-- **FLUXO 01 — `aidd-pure` (Do Zero Puro | Slash: `/pure`):** `[FORGE -> PLANNER] -> GENERATOR -> [MASTER -> ENTERPRISE -> OPS]`
+- **FLUXO 01 — `aidd-pure` (Do Zero Puro | Slash: `/pure`):** `[FORGE -> PLANNER] -> MASTER -> [DISPATCH + GENERATOR] -> [ENTERPRISE -> OPS]`
   - Engine: `aidd-pure` (8-phase pipeline, TDD Red-Green, Monólito Modular VSA + Next.js).
   - CLI: `python ecossistema.py pure` ou `python ecossistema.py run-fluxo --fluxo pure`
   - Skill: `aidd-pure`
-- **FLUXO 02 — `aidd-open` (Motores Open-Source | Slash: `/aidd-open` ou `/open` ou `/factory`):** `[FORGE -> PLANNER] -> FACTORY -> [MASTER -> ENTERPRISE -> OPS]`
+- **FLUXO 02 — `aidd-open` (Motores Open-Source | Slash: `/aidd-open` ou `/open` ou `/factory`):** `[FORGE -> PLANNER] -> MASTER -> [DISPATCH + FACTORY] -> [ENTERPRISE -> OPS]`
   - Engine: `aidd-open` (Open-source engine curation, VSA integration slices, compose).
   - CLI: `python ecossistema.py open` (ou `python ecossistema.py aidd-open`) ou `python ecossistema.py run-fluxo --fluxo open`
   - Skill: `aidd-open`
   - *Aviso de Namespace:* No Antigravity CLI (`agy`), o comando `/open <path>` é reservado internamente pela ferramenta para abrir arquivos no editor do sistema. Por isso, no AGY/Antigravity utilize `/aidd-open` ou `/factory` para acionar este fluxo sem colisão.
-- **FLUXO 03 — `aidd-freedom` (Low-Code / Apps Unificadas | Slash: `/freedom`):** `[FORGE -> PLANNER] -> BRIDGE -> [MASTER -> ENTERPRISE -> OPS]`
+- **FLUXO 03 — `aidd-freedom` (Low-Code / Apps Unificadas | Slash: `/freedom`):** `[FORGE -> PLANNER] -> MASTER -> [DISPATCH + BRIDGE] -> [ENTERPRISE -> OPS]`
   - Engine: `aidd-freedom` (Vendor lock-in eradication, Lovable/v0/Bolt cleanup, PostgreSQL, UI preservation).
   - CLI: `python ecossistema.py freedom` ou `python ecossistema.py run-fluxo --fluxo freedom`
   - Skill: `aidd-freedom` (operações atômicas da ferramenta via `aidd-freedom`)
@@ -156,19 +156,21 @@ Every robust application in the ecosystem originates from **`aidd-forge`** (supr
   - CLI: `python ecossistema.py evolucao <tool>` ou `python ecossistema.py evolucao --manifest <json>`
   - Skill: `aidd-evolution`
 
-- **PIPELINE CANÔNICO CALIBRADO (Fluxo de 9 Etapas com Gates em 2 Níveis e Schemas SHA-256):**
+- **PIPELINE CANÔNICO CALIBRADO (Fluxo de 10 Etapas com Gates em 2 Níveis e Schemas SHA-256):**
   - Encadeamento Canônico Estrito:
     ```
     [1. FORGE] ➔ [2. PLANNER (SHA-256)] ➔ [3. MASTER (Fatiamento VSA)]
           ➔ [4. DISPATCH (Worktrees + Micro-Gates)] ➔ [5. ENGINE (Execução das Fatias)]
-          ➔ [6. BARREIRA (Rebase Sync)] ➔ [7. ENTERPRISE & OPS] ➔ [8. 54 MACRO-GATES]
-          ➔ [9. COMMIT CONSOLIDADO]
+          ➔ [6. BARREIRA (Rebase Sync)] ➔ [7. ENTERPRISE] ➔ [8. OPS]
+          ➔ [9. 54 MACRO-GATES] ➔ [10. COMMIT CONSOLIDADO]
     ```
   - **Papel das Etapas e dos Motores da Tríade:**
-    - O `aidd-master` atua antes da execução do código compilando o manifesto `VSA_DISPATCH.json` a partir da planta baixa do `aidd-planner`.
+    - O `aidd-master` atua antes da execução do código compilando o fatiamento e inicializando a estrutura do monólito modular VSA.
     - O `aidd-dispatch` gera as Git Worktrees paralelas/efêmeras.
     - O **Motor da Tríade** (`aidd-pure` | `aidd-open` | `aidd-freedom`) executa *dentro das worktrees*, materializando as fatias sob isolamento rigoroso.
-    - A **Barreira de Sincronização** valida os micro-gates, executa o rebase preventivo e consolida as fatias na branch de integração antes da injeção de infraestrutura e conectores corporativos.
+    - A **Barreira de Sincronização** valida os micro-gates, executa o rebase preventivo e consolida as fatias na branch de integração.
+    - O `aidd-enterprise` blinda a árvore unificada contra vulnerabilidades e desvios de integridade SHA-256.
+    - O `aidd-ops` empacota a infraestrutura em Docker Compose e valida as portas expostas.
   - **Contratos e Handoff Formal:** Todos os contratos centrais (`PLANNER.json`, `VSA_DISPATCH.json`, `handoff_evolution.json`) exigem integridade criptográfica `payload_sha256` calculada sobre o payload canônico. Se o hash divergir, o bastão é bloqueado imediatamente (exit 1).
   - **Gates em 2 Níveis (Shift-Left):**
     - *Nível 1 (Micro-Gates de Worktree):* Execução rápida (< 2s) em isolamento da fatia (`py_compile`, verificação de stubs/Lei #5, testes unitários da fatia, verificação de fronteiras). Reprovação aborta a worktree antes do merge.

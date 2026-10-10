@@ -8,7 +8,7 @@ Onde a fábrica é consertada: os planos, os ciclos de auditoria e a lente que o
 #ficha(
   ("Mapa", "mapa-11-oficina.html"),
   ("Para que serve", "todos os planos e ciclos de auditoria, com as fases cumpridas"),
-  ("Achados em aberto", "23"),
+  ("Achados em aberto", "26"),
 )
 ```
 
@@ -37,6 +37,8 @@ Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `c
 - **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-forge-runner/ciclo-01 (`CAT-ciclo-aidd-forge-runner-ciclo-01`).
 - **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-freedom-runner/ciclo-01 (`CAT-ciclo-aidd-freedom-runner-ciclo-01`).
 - **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-livro-texto/ciclo-01 (`CAT-ciclo-aidd-livro-texto-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-master/ciclo-01 (`CAT-ciclo-aidd-master-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-master/ciclo-02 (`CAT-ciclo-aidd-master-ciclo-02`).
 - **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-master-runner/ciclo-01 (`CAT-ciclo-aidd-master-runner-ciclo-01`).
 - **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-mcp/ciclo-01 (`CAT-ciclo-aidd-mcp-ciclo-01`).
 - **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-open-runner/ciclo-01 (`CAT-ciclo-aidd-open-runner-ciclo-01`).
@@ -53,6 +55,7 @@ Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `c
 - **Baixa** · Ciclo de auditoria sem todos os documentos: fluxo-02-runner/ciclo-01 (`CAT-ciclo-fluxo-02-runner-ciclo-01`).
 - **Baixa** · Ciclo de auditoria sem todos os documentos: fluxo-03-runner/ciclo-01 (`CAT-ciclo-fluxo-03-runner-ciclo-01`).
 - **Baixa** · Ciclo de auditoria sem todos os documentos: fronteiras-ferramentas/ciclo-01 (`CAT-ciclo-fronteiras-ferramentas-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: quadro-kanban-pipelines/ciclo-01 (`CAT-ciclo-quadro-kanban-pipelines-ciclo-01`).
 
 O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`.
 

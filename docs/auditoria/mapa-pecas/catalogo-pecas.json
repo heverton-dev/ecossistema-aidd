@@ -231,7 +231,7 @@
       "mcps_proprios": [
         "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/mcps/mcp-verificador-cve/server.py"
       ],
-      "arquivos_py": 58
+      "arquivos_py": 57
     }
   ],
   "skills": [
@@ -3393,7 +3393,7 @@
       "ferramenta": "aidd-enterprise",
       "molde": "v2",
       "caminho": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/templates/v2",
-      "arquivos": 80,
+      "arquivos": 74,
       "dona_canonica": "aidd-master"
     },
     {
@@ -3428,7 +3428,7 @@
       "ferramenta": "aidd-master",
       "molde": "v2",
       "caminho": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/templates/v2",
-      "arquivos": 68,
+      "arquivos": 62,
       "dona_canonica": "aidd-master"
     },
     {
@@ -5793,9 +5793,40 @@
         "chama_alguma_ferramenta": true
       },
       {
-        "etapa": "etapa_03_engine",
-        "descricao": "Etapa 3: Execução da Engine correspondente ao Fluxo.",
+        "etapa": "etapa_03_master",
+        "descricao": "Etapa 3: Fatiamento inicial e harmonização no Monólito Modular VSA.",
         "chamadas_cli": [
+          [
+            "master",
+            "init",
+            "<var>",
+            "--pasta",
+            "<var>"
+          ],
+          [
+            "master",
+            "add-module",
+            "<var>",
+            "--pasta",
+            "<var>"
+          ]
+        ],
+        "chamadas_por_fluxo": {},
+        "atalhos_internos": [],
+        "chama_alguma_ferramenta": true
+      },
+      {
+        "etapa": "etapa_04_engine",
+        "descricao": "Etapa 4: Despacho das fatias VSA em Git worktrees + Execução da Engine Especialista.",
+        "chamadas_cli": [
+          [
+            "dispatch",
+            "--dispatch",
+            "<var>",
+            "--target-dir",
+            "<var>",
+            "--barrier-sync"
+          ],
           [
             "pure-motor",
             "<var>",
@@ -5836,37 +5867,6 @@
             ]
           ]
         },
-        "atalhos_internos": [],
-        "chama_alguma_ferramenta": true
-      },
-      {
-        "etapa": "etapa_04_master",
-        "descricao": "Etapa 4: Despacho das fatias VSA + harmonização no Monólito Modular.",
-        "chamadas_cli": [
-          [
-            "dispatch",
-            "--dispatch",
-            "<var>",
-            "--target-dir",
-            "<var>",
-            "--barrier-sync"
-          ],
-          [
-            "master",
-            "init",
-            "<var>",
-            "--pasta",
-            "<var>"
-          ],
-          [
-            "master",
-            "add-module",
-            "<var>",
-            "--pasta",
-            "<var>"
-          ]
-        ],
-        "chamadas_por_fluxo": {},
         "atalhos_internos": [],
         "chama_alguma_ferramenta": true
       },
@@ -5945,38 +5945,38 @@
       "problemas": []
     },
     {
-      "etapa": "etapa_03_engine",
-      "chamada": "ecossistema.py pure-motor <var> --pasta <var> --implementar-codigo",
-      "encaixa": true,
-      "problemas": []
-    },
-    {
-      "etapa": "etapa_03_engine",
-      "chamada": "ecossistema.py open-motor --plano <var> --pasta <var>",
-      "encaixa": true,
-      "problemas": []
-    },
-    {
-      "etapa": "etapa_03_engine",
-      "chamada": "ecossistema.py freedom-motor scan <var>",
-      "encaixa": true,
-      "problemas": []
-    },
-    {
-      "etapa": "etapa_04_master",
-      "chamada": "ecossistema.py dispatch --dispatch <var> --target-dir <var> --barrier-sync",
-      "encaixa": true,
-      "problemas": []
-    },
-    {
-      "etapa": "etapa_04_master",
+      "etapa": "etapa_03_master",
       "chamada": "ecossistema.py master init <var> --pasta <var>",
       "encaixa": true,
       "problemas": []
     },
     {
-      "etapa": "etapa_04_master",
+      "etapa": "etapa_03_master",
       "chamada": "ecossistema.py master add-module <var> --pasta <var>",
+      "encaixa": true,
+      "problemas": []
+    },
+    {
+      "etapa": "etapa_04_engine",
+      "chamada": "ecossistema.py dispatch --dispatch <var> --target-dir <var> --barrier-sync",
+      "encaixa": true,
+      "problemas": []
+    },
+    {
+      "etapa": "etapa_04_engine",
+      "chamada": "ecossistema.py pure-motor <var> --pasta <var> --implementar-codigo",
+      "encaixa": true,
+      "problemas": []
+    },
+    {
+      "etapa": "etapa_04_engine",
+      "chamada": "ecossistema.py open-motor --plano <var> --pasta <var>",
+      "encaixa": true,
+      "problemas": []
+    },
+    {
+      "etapa": "etapa_04_engine",
+      "chamada": "ecossistema.py freedom-motor scan <var>",
       "encaixa": true,
       "problemas": []
     },
@@ -6025,15 +6025,15 @@
           "chamada": ""
         },
         {
-          "id": "gerador",
-          "peca": "gerador",
-          "titulo": "Gerador TDD (Generator)",
+          "id": "fatiamento-vsa",
+          "peca": "fatiamento-vsa",
+          "titulo": "Fatiamento VSA (Master)",
           "chamada": ""
         },
         {
-          "id": "despacho",
-          "peca": "despacho",
-          "titulo": "Despacho VSA (Master)",
+          "id": "despacho-engine",
+          "peca": "despacho-engine",
+          "titulo": "Despacho & Execucao (Worktrees + Generator)",
           "chamada": ""
         },
         {
@@ -6076,15 +6076,15 @@
           "chamada": ""
         },
         {
-          "id": "fabrica",
-          "peca": "fabrica",
-          "titulo": "Fabrica Open-Source (Factory)",
+          "id": "fatiamento-vsa",
+          "peca": "fatiamento-vsa",
+          "titulo": "Fatiamento VSA (Master)",
           "chamada": ""
         },
         {
-          "id": "despacho",
-          "peca": "despacho",
-          "titulo": "Despacho VSA (Master)",
+          "id": "despacho-engine",
+          "peca": "despacho-engine",
+          "titulo": "Despacho & Execucao (Worktrees + Factory)",
           "chamada": ""
         },
         {
@@ -6127,15 +6127,15 @@
           "chamada": ""
         },
         {
-          "id": "ponte",
-          "peca": "ponte",
-          "titulo": "Ponte Low-Code (Bridge)",
+          "id": "fatiamento-vsa",
+          "peca": "fatiamento-vsa",
+          "titulo": "Fatiamento VSA (Master)",
           "chamada": ""
         },
         {
-          "id": "despacho",
-          "peca": "despacho",
-          "titulo": "Despacho VSA (Master)",
+          "id": "despacho-engine",
+          "peca": "despacho-engine",
+          "titulo": "Despacho & Execucao (Worktrees + Bridge)",
           "chamada": ""
         },
         {
@@ -6245,19 +6245,19 @@
       "etapas": [
         {
           "id": "melhoria",
-          "peca": "melhoria",
+          "peca": "aidd-improvement",
           "titulo": "Analise e Laudo (aidd-improvement)",
           "chamada": ""
         },
         {
           "id": "plano",
-          "peca": "plano",
+          "peca": "aidd-plan",
           "titulo": "Compilacao do Plano (aidd-plan)",
           "chamada": ""
         },
         {
           "id": "orquestracao",
-          "peca": "orquestracao",
+          "peca": "aidd-orchestrate",
           "titulo": "Execucao e Voo (aidd-orchestrate)",
           "chamada": ""
         }
@@ -6500,7 +6500,7 @@
             "aidd-pure"
           ],
           "guardas": 10,
-          "arquivos_py": 64
+          "arquivos_py": 63
         },
         {
           "id": "fluxo-02-open",

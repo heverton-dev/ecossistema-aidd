@@ -47,7 +47,7 @@ ORQUESTRADOR = RAIZ / "scripts" / "orquestrador_sincrono.py"
 DEPENDENCIAS = RAIZ / "modulos" / "04-nucleo-compartilhado" / "contracts" / "dependencias_externas.json"
 
 # Pastas que são exemplos/sandboxes copiados, não peças vivas.
-IGNORAR = ("materiais-extras", "sandbox-forge-teste", ".venv", "node_modules", "__pycache__")
+IGNORAR = ("materiais-extras", "sandbox-forge-teste", ".venv", "node_modules", "__pycache__", "dist", "build", ".codebuddy", "package-lock.json")
 
 # Ponto de entrada de cada ferramenta (espelha os cmd_* de ecossistema.py).
 ENTRADAS = {

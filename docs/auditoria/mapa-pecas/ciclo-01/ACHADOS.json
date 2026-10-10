@@ -7,12 +7,12 @@
   ],
   "como_usar": "Cada achado em aberto traz pedido_melhoria: o texto para python ecossistema.py melhoria init --pedido \"...\".",
   "totais": {
-    "aberto": 28,
+    "aberto": 31,
     "suspeita": 0,
     "resolvido": 14,
     "abertos_alta": 0,
     "abertos_media": 3,
-    "abertos_baixa": 25
+    "abertos_baixa": 28
   },
   "achados": [
     {
@@ -148,6 +148,30 @@
         "faltam: plano_evolucao"
       ],
       "pedido_melhoria": "Completar ou fechar o ciclo aidd-livro-texto/ciclo-01."
+    },
+    {
+      "id": "CAT-ciclo-aidd-master-ciclo-01",
+      "titulo": "Ciclo de auditoria sem todos os documentos: aidd-master/ciclo-01",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "oficina",
+      "evidencia": [
+        "faltam: laudo_inicial, plano_evolucao, laudo_revisado, dod"
+      ],
+      "pedido_melhoria": "Completar ou fechar o ciclo aidd-master/ciclo-01."
+    },
+    {
+      "id": "CAT-ciclo-aidd-master-ciclo-02",
+      "titulo": "Ciclo de auditoria sem todos os documentos: aidd-master/ciclo-02",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "oficina",
+      "evidencia": [
+        "faltam: laudo_inicial, plano_evolucao, laudo_revisado"
+      ],
+      "pedido_melhoria": "Completar ou fechar o ciclo aidd-master/ciclo-02."
     },
     {
       "id": "CAT-ciclo-aidd-master-runner-ciclo-01",
@@ -342,6 +366,18 @@
       "pedido_melhoria": "Completar ou fechar o ciclo fronteiras-ferramentas/ciclo-01."
     },
     {
+      "id": "CAT-ciclo-quadro-kanban-pipelines-ciclo-01",
+      "titulo": "Ciclo de auditoria sem todos os documentos: quadro-kanban-pipelines/ciclo-01",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "oficina",
+      "evidencia": [
+        "faltam: laudo_inicial, laudo_revisado"
+      ],
+      "pedido_melhoria": "Completar ou fechar o ciclo quadro-kanban-pipelines/ciclo-01."
+    },
+    {
       "id": "CAT-guardas-sem-lei",
       "titulo": "1 guardas da raiz que nenhuma lei declara",
       "gravidade": "baixa",
@@ -355,7 +391,7 @@
     },
     {
       "id": "CAT-scripts-sem-chamador",
-      "titulo": "4 scripts que nenhum código chama",
+      "titulo": "5 scripts que nenhum código chama",
       "gravidade": "baixa",
       "estado": "aberto",
       "origem": "catalogo",
@@ -364,7 +400,8 @@
         "buscar_referencia_complexa",
         "checar_combos_vps",
         "gerar_benchmark_comparativo",
-        "gerar_benchmark_extremo"
+        "gerar_benchmark_extremo",
+        "simular_execucao_kanban"
       ],
       "pedido_melhoria": "Ligar ao painel ou remover os scripts de scripts/ que nenhum código chama."
     },

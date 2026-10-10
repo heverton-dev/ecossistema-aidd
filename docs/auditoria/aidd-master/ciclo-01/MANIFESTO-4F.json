@@ -1,0 +1,1 @@
+{"pipeline_id": "auditoria-aidd-master-ciclo-01", "target_tool": "aidd-master", "ciclo": "ciclo-01", "session_id": "auto_generated", "definition_of_done": "docs/auditoria/aidd-master/ciclo-01/DOD.md", "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json", "gate_final": "python ecossistema.py audit", "fases": []}

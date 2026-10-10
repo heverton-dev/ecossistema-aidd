@@ -37,8 +37,8 @@ dos pipelines `/audit-4f` e `/evolucao`.
 #esteira(
   no("1. FORGE", sub: "fundação"),
   no("2. PLANNER", sub: "plano formal"),
-  no-claro("3. ENGINE", sub: "varia por fluxo"),
-  no("4. MASTER", sub: "harmonização"),
+  no("3. MASTER", sub: "fatiamento VSA"),
+  no-claro("4. ENGINE", sub: "varia por fluxo"),
 )
 #v(-4pt)
 #esteira(
@@ -48,10 +48,10 @@ dos pipelines `/audit-4f` e `/evolucao`.
 )
 ```
 
-A **cabeça** (`FORGE → PLANNER`) e a **cauda** (`MASTER → ENTERPRISE → OPS →
-AUDITORIA`) são idênticas nos três fluxos. A única diferença é a etapa 3, o motor:
+A **cabeça** (`FORGE → PLANNER → MASTER`) e a **cauda** (`ENTERPRISE → OPS →
+AUDITORIA`) são idênticas nos três fluxos. A única diferença é a etapa 4, o motor especialista:
 
-| Fluxo e nome canônico     | Motor da etapa 3     | Acionamento                          | Estratégia de construção                              |
+| Fluxo e nome canônico     | Motor da etapa 4     | Acionamento                          | Estratégia de construção                              |
 | :------------------------ | :------------------- | :----------------------------------- | :----------------------------------------------------- |
 | Fluxo 01 — `aidd-pure`    | `aidd-pure`     | `/pure` · `ecossistema.py pure`      | Do zero puro: código autoral sob medida, com TDD       |
 | Fluxo 02 — `aidd-open`    | `aidd-open`       | `/open` · `ecossistema.py open`      | Motores open-source curados e integrados               |

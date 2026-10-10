@@ -18,12 +18,12 @@
           "titulo": "Planejamento (Planner)"
         },
         {
-          "id": "gerador",
-          "titulo": "Gerador TDD (Generator)"
+          "id": "fatiamento-vsa",
+          "titulo": "Fatiamento VSA (Master)"
         },
         {
-          "id": "despacho",
-          "titulo": "Despacho VSA (Master)"
+          "id": "despacho-engine",
+          "titulo": "Despacho & Execucao (Worktrees + Generator)"
         },
         {
           "id": "blindagem",
@@ -54,12 +54,12 @@
           "titulo": "Planejamento (Planner)"
         },
         {
-          "id": "fabrica",
-          "titulo": "Fabrica Open-Source (Factory)"
+          "id": "fatiamento-vsa",
+          "titulo": "Fatiamento VSA (Master)"
         },
         {
-          "id": "despacho",
-          "titulo": "Despacho VSA (Master)"
+          "id": "despacho-engine",
+          "titulo": "Despacho & Execucao (Worktrees + Factory)"
         },
         {
           "id": "blindagem",
@@ -90,12 +90,12 @@
           "titulo": "Planejamento (Planner)"
         },
         {
-          "id": "ponte",
-          "titulo": "Ponte Low-Code (Bridge)"
+          "id": "fatiamento-vsa",
+          "titulo": "Fatiamento VSA (Master)"
         },
         {
-          "id": "despacho",
-          "titulo": "Despacho VSA (Master)"
+          "id": "despacho-engine",
+          "titulo": "Despacho & Execucao (Worktrees + Bridge)"
         },
         {
           "id": "blindagem",
@@ -175,14 +175,17 @@
       "etapas": [
         {
           "id": "melhoria",
+          "peca": "aidd-improvement",
           "titulo": "Analise e Laudo (aidd-improvement)"
         },
         {
           "id": "plano",
+          "peca": "aidd-plan",
           "titulo": "Compilacao do Plano (aidd-plan)"
         },
         {
           "id": "orquestracao",
+          "peca": "aidd-orchestrate",
           "titulo": "Execucao e Voo (aidd-orchestrate)"
         }
       ]
