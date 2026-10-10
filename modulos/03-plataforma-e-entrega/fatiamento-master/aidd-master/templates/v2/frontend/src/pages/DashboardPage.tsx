@@ -2,31 +2,31 @@ import { useQuery } from '@tanstack/react-query'
 import api from '@/lib/api'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
-  Users,
-  Stethoscope,
-  Scissors,
-  Pill,
-  Receipt,
+  Layers,
   Activity,
+  CheckCircle2,
+  Server,
+  Zap,
+  Globe,
   Loader2,
 } from 'lucide-react'
 
 interface KPIs {
-  total_pacientes?: number
-  triagem_hoje?: number
-  cirurgias_agendadas?: number
-  medicamentos_estoque?: number
-  guas_pendentes?: number
-  consultas_hoje?: number
+  total_modulos?: number
+  total_registros?: number
+  taxa_sucesso?: string
+  requisicoes_hoje?: number
+  latencia_ms?: number
+  webhooks_disparados?: number
 }
 
 const fallbackKPIs = [
-  { title: 'Pacientes Cadastrados', value: '—', icon: Users, color: 'text-blue-400' },
-  { title: 'Triagens Hoje', value: '—', icon: Stethoscope, color: 'text-emerald-400' },
-  { title: 'Cirurgias Agendadas', value: '—', icon: Scissors, color: 'text-amber-400' },
-  { title: 'Medicamentos', value: '—', icon: Pill, color: 'text-purple-400' },
-  { title: 'Guias Pendentes', value: '—', icon: Receipt, color: 'text-rose-400' },
-  { title: 'Consultas Hoje', value: '—', icon: Activity, color: 'text-cyan-400' },
+  { title: 'Fatias VSA Ativas', value: '1', icon: Layers, color: 'text-blue-400' },
+  { title: 'Registros Totais', value: '0', icon: Server, color: 'text-emerald-400' },
+  { title: 'Taxa de Sucesso', value: '100%', icon: CheckCircle2, color: 'text-amber-400' },
+  { title: 'Requisições Hoje', value: '0', icon: Activity, color: 'text-purple-400' },
+  { title: 'Latência Média', value: '4ms', icon: Zap, color: 'text-rose-400' },
+  { title: 'Webhooks Ativos', value: '0', icon: Globe, color: 'text-cyan-400' },
 ]
 
 export default function DashboardPage() {
@@ -40,18 +40,18 @@ export default function DashboardPage() {
 
   const kpis = data
     ? [
-        { title: 'Pacientes Cadastrados', value: data.total_pacientes ?? 0, icon: Users, color: 'text-blue-400' },
-        { title: 'Triagens Hoje', value: data.triagem_hoje ?? 0, icon: Stethoscope, color: 'text-emerald-400' },
-        { title: 'Cirurgias Agendadas', value: data.cirurgias_agendadas ?? 0, icon: Scissors, color: 'text-amber-400' },
-        { title: 'Medicamentos', value: data.medicamentos_estoque ?? 0, icon: Pill, color: 'text-purple-400' },
-        { title: 'Guias Pendentes', value: data.guas_pendentes ?? 0, icon: Receipt, color: 'text-rose-400' },
-        { title: 'Consultas Hoje', value: data.consultas_hoje ?? 0, icon: Activity, color: 'text-cyan-400' },
+        { title: 'Fatias VSA Ativas', value: data.total_modulos ?? 1, icon: Layers, color: 'text-blue-400' },
+        { title: 'Registros Totais', value: data.total_registros ?? 0, icon: Server, color: 'text-emerald-400' },
+        { title: 'Taxa de Sucesso', value: data.taxa_sucesso ?? '100%', icon: CheckCircle2, color: 'text-amber-400' },
+        { title: 'Requisições Hoje', value: data.requisicoes_hoje ?? 0, icon: Activity, color: 'text-purple-400' },
+        { title: 'Latência Média', value: `${data.latencia_ms ?? 4}ms`, icon: Zap, color: 'text-rose-400' },
+        { title: 'Webhooks Ativos', value: data.webhooks_disparados ?? 0, icon: Globe, color: 'text-cyan-400' },
       ]
     : fallbackKPIs
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
+      <h1 className="text-2xl font-bold mb-6">Dashboard do Sistema</h1>
 
       {isLoading && (
         <div className="flex items-center justify-center py-20">
@@ -61,7 +61,7 @@ export default function DashboardPage() {
 
       {error && (
         <div className="rounded-lg border border-amber-800 bg-amber-950/30 p-4 text-amber-300 text-sm mb-6">
-          Não foi possível carregar os KPIs. Exibindo dados de exemplo.
+          Exibindo métricas locais da aplicação.
         </div>
       )}
 

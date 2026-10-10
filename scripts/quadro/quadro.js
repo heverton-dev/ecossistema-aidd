@@ -1149,11 +1149,34 @@ window.addEventListener("keydown", (e) => {
   const editavel = tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA";
 
   if (e.key === "Escape") {
+    // 1. Fecha modal de QR Code se aberto
+    const modalQr = document.getElementById("modal-qrcode");
+    if (modalQr && !modalQr.classList.contains("escondido")) {
+      modalQr.classList.add("escondido");
+      return;
+    }
+    // 2. Fecha modal de Launchpad se aberto
+    const modalLaunchpad = document.getElementById("modal-launchpad");
+    if (modalLaunchpad && !modalLaunchpad.classList.contains("escondido")) {
+      modalLaunchpad.classList.add("escondido");
+      return;
+    }
+    // 3. Fecha modal de Limpar se aberto
+    const modalLimpar = document.getElementById("modal-limpar-execucoes");
+    if (modalLimpar && !modalLimpar.classList.contains("escondido")) {
+      modalLimpar.classList.add("escondido");
+      return;
+    }
+    // 4. Fecha gaveta lateral se aberta
     const gaveta = document.getElementById("gaveta-detalhes");
     if (gaveta && !gaveta.classList.contains("escondido")) {
       fecharGaveta();
-    } else if (ESTADO_GLOBAL.pipelineSelecionado) {
+      return;
+    }
+    // 5. Volta do Kanban se ativo
+    if (ESTADO_GLOBAL.pipelineSelecionado) {
       fecharKanban();
+      return;
     }
     return;
   }

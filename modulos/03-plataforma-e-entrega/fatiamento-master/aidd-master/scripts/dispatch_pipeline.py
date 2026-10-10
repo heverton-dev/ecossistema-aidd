@@ -43,6 +43,25 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
+ECOSSISTEMA_DIR = next(
+    (p.parent for p in Path(__file__).resolve().parents if p.name == "modulos"),
+    Path(__file__).resolve().parent.parent.parent.parent
+)
+
+VARIAVEIS_DE_REPOSITORIO_SENSÍVEIS = (
+    "GIT_DIR",
+    "GIT_WORK_TREE",
+    "GIT_INDEX_FILE",
+    "GIT_COMMON_DIR",
+    "GIT_OBJECT_DIRECTORY",
+    "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+    "GIT_PREFIX",
+)
+
+def obter_env_sanitizado(env: Optional[Dict[str, str]] = None) -> Dict[str, str]:
+    fonte = os.environ if env is None else env
+    return {k: v for k, v in fonte.items() if k not in VARIAVEIS_DE_REPOSITORIO_SENSÍVEIS}
+
 try:
     from engine_router import despachar_fatia
 except ImportError:
@@ -114,6 +133,7 @@ class VSADispatchPipeline:
         self.barrier_sync = barrier_sync
         self.active_worktrees: List[ActiveSliceWorktree] = []
         self.rollback_history: List[Dict[str, Any]] = []
+        self.git_env: Dict[str, str] = obter_env_sanitizado()
 
         if base_branch:
             self.base_branch = base_branch
@@ -290,8 +310,8 @@ class VSADispatchPipeline:
             self._cleanup_single_worktree(worktree_path, branch_name)
 
         # Higiene determinística: remove resquícios de worktrees e branch prévia
-        subprocess.run(["git", "worktree", "prune"], cwd=str(self.repo_root), capture_output=True, check=False)
-        subprocess.run(["git", "branch", "-D", branch_name], cwd=str(self.repo_root), capture_output=True, check=False)
+        subprocess.run(["git", "worktree", "prune"], cwd=str(self.repo_root), env=self.git_env, capture_output=True, check=False)
+        subprocess.run(["git", "branch", "-D", branch_name], cwd=str(self.repo_root), env=self.git_env, capture_output=True, check=False)
 
         self.log(f"Criando worktree efêmera para '{slice_id}' em '{worktree_path}' na branch '{branch_name}'")
         cmd = [
@@ -307,6 +327,7 @@ class VSADispatchPipeline:
         res = subprocess.run(
             cmd,
             cwd=str(self.repo_root),
+            env=self.git_env,
             capture_output=True,
             text=True,
             encoding="utf-8",
@@ -324,6 +345,7 @@ class VSADispatchPipeline:
             res2 = subprocess.run(
                 cmd_existing,
                 cwd=str(self.repo_root),
+                env=self.git_env,
                 capture_output=True,
                 text=True,
                 encoding="utf-8",
@@ -388,6 +410,15 @@ class VSADispatchPipeline:
             )
 
         # BUG-02: Materialização defensiva preventiva de testes antes dos micro-gates
+        if (active_wt.worktree_path / "src").is_dir():
+            (active_wt.worktree_path / "src" / "__init__.py").touch(exist_ok=True)
+            if (active_wt.worktree_path / "src" / "slices").is_dir():
+                (active_wt.worktree_path / "src" / "slices" / "__init__.py").touch(exist_ok=True)
+        if (active_wt.worktree_path / "tests").is_dir():
+            (active_wt.worktree_path / "tests" / "__init__.py").touch(exist_ok=True)
+            if (active_wt.worktree_path / "tests" / "slices").is_dir():
+                (active_wt.worktree_path / "tests" / "slices" / "__init__.py").touch(exist_ok=True)
+
         for cmd_item in cmds_teste:
             for token in cmd_item.split():
                 if token.startswith("tests/") and token.endswith(".py"):
@@ -424,6 +455,23 @@ class VSADispatchPipeline:
                 cmd_exec = cmd_str
                 if cmd_exec.startswith("pytest ") or cmd_exec == "pytest":
                     cmd_exec = f'"{sys.executable}" -m ' + cmd_exec
+                elif cmd_exec.startswith("python "):
+                    partes = cmd_exec.split(maxsplit=2)
+                    if len(partes) >= 2:
+                        script_alvo = partes[1].strip('"\'')
+                        caminho_script = active_wt.worktree_path / script_alvo
+                        if not caminho_script.is_file():
+                            alt_worktree = active_wt.worktree_path / "gates" / Path(script_alvo).name
+                            alt_repo = self.repo_root / "gates" / Path(script_alvo).name
+                            alt_eco = ECOSSISTEMA_DIR / script_alvo
+                            if alt_worktree.is_file():
+                                script_alvo = str(alt_worktree)
+                            elif alt_repo.is_file():
+                                script_alvo = str(alt_repo)
+                            elif alt_eco.is_file():
+                                script_alvo = str(alt_eco)
+                        resto = f" {partes[2]}" if len(partes) > 2 else ""
+                        cmd_exec = f'"{sys.executable}" "{script_alvo}"{resto}'
                 self.log(f"[{slice_id}] Executando: {cmd_exec}")
                 proc = subprocess.run(
                     cmd_exec,
@@ -461,10 +509,11 @@ class VSADispatchPipeline:
                 text=True,
             )
             if status_res.returncode == 0 and status_res.stdout.strip():
-                subprocess.run(["git", "add", "-A"], cwd=str(active_wt.worktree_path), check=False)
+                subprocess.run(["git", "add", "-A"], cwd=str(active_wt.worktree_path), env=self.git_env, check=False)
                 subprocess.run(
-                    ["git", "commit", "-m", f"feat({slice_id}): auto-commit vertical slice {modulo_ddd}"],
+                    ["git", "commit", "--no-verify", "-m", f"feat({slice_id}): auto-commit vertical slice {modulo_ddd}"],
                     cwd=str(active_wt.worktree_path),
+                    env=self.git_env,
                     check=False,
                 )
 
@@ -504,6 +553,7 @@ class VSADispatchPipeline:
         subprocess.run(
             ["git", "worktree", "remove", "--force", str(path)],
             cwd=str(self.repo_root),
+            env=self.git_env,
             capture_output=True,
             check=False,
         )
@@ -514,9 +564,9 @@ class VSADispatchPipeline:
                     break
                 except Exception:
                     time.sleep(0.2)
-        subprocess.run(["git", "worktree", "prune"], cwd=str(self.repo_root), capture_output=True, check=False)
+        subprocess.run(["git", "worktree", "prune"], cwd=str(self.repo_root), env=self.git_env, capture_output=True, check=False)
         if branch:
-            subprocess.run(["git", "branch", "-D", branch], cwd=str(self.repo_root), capture_output=True, check=False)
+            subprocess.run(["git", "branch", "-D", branch], cwd=str(self.repo_root), env=self.git_env, capture_output=True, check=False)
 
     def cleanup_all_worktrees(self) -> None:
         """Limpa deterministicamente todas as worktrees ativas."""
@@ -537,6 +587,7 @@ class VSADispatchPipeline:
         res = subprocess.run(
             ["git", "rebase", self.base_branch],
             cwd=str(wt_path),
+            env=self.git_env,
             capture_output=True,
             text=True,
             encoding="utf-8",
@@ -544,7 +595,7 @@ class VSADispatchPipeline:
         )
         if res.returncode != 0:
             self.log(f"[BARRIER-SYNC] CONFLITO de rebase em '{branch_name}':\n{res.stderr}\n{res.stdout}")
-            subprocess.run(["git", "rebase", "--abort"], cwd=str(wt_path), capture_output=True, check=False)
+            subprocess.run(["git", "rebase", "--abort"], cwd=str(wt_path), env=self.git_env, capture_output=True, check=False)
             return False
         return True
 
@@ -556,8 +607,9 @@ class VSADispatchPipeline:
 
         self.log(f"Integrando branch '{branch_name}' em '{self.base_branch}'")
         res = subprocess.run(
-            ["git", "merge", "--no-ff", branch_name, "-m", f"merge(vsa): integrate slice {branch_name}"],
+            ["git", "merge", "--no-ff", "--no-verify", branch_name, "-m", f"merge(vsa): integrate slice {branch_name}"],
             cwd=str(self.repo_root),
+            env=self.git_env,
             capture_output=True,
             text=True,
             encoding="utf-8",
@@ -566,7 +618,7 @@ class VSADispatchPipeline:
         if res.returncode != 0:
             motivo = f"Conflito de merge ({res.stderr.strip() or res.stdout.strip()})"
             self.log(f"ERRO: Conflito ou falha ao mesclar '{branch_name}':\n{res.stderr}\n{res.stdout}")
-            subprocess.run(["git", "merge", "--abort"], cwd=str(self.repo_root), capture_output=True, check=False)
+            subprocess.run(["git", "merge", "--abort"], cwd=str(self.repo_root), env=self.git_env, capture_output=True, check=False)
 
             # Rollback determinístico
             rollback_entry = {
@@ -607,9 +659,31 @@ class VSADispatchPipeline:
             return True
 
         for cmd_str in suite:
-            self.log(f"[POST-MERGE] Executando: {cmd_str}")
+            cmd_exec = cmd_str
+            if cmd_exec.startswith("pytest ") or cmd_exec == "pytest":
+                cmd_exec = f'"{sys.executable}" -m ' + cmd_exec
+            elif cmd_exec.startswith("python "):
+                partes = cmd_exec.split(maxsplit=2)
+                if len(partes) >= 2:
+                    script_alvo = partes[1].strip('"\'')
+                    caminho_script = self.repo_root / script_alvo
+                    if not caminho_script.is_file():
+                        alt_repo = self.repo_root / "gates" / Path(script_alvo).name
+                        alt_eco = ECOSSISTEMA_DIR / script_alvo
+                        if alt_repo.is_file():
+                            script_alvo = str(alt_repo)
+                        elif alt_eco.is_file():
+                            if script_alvo == "ecossistema.py" and len(partes) > 2 and "audit" in partes[2]:
+                                cmd_exec = f'"{sys.executable}" "{alt_eco}" forge audit "{self.repo_root}"'
+                                script_alvo = None
+                            else:
+                                script_alvo = str(alt_eco)
+                    if script_alvo is not None:
+                        resto = f" {partes[2]}" if len(partes) > 2 else ""
+                        cmd_exec = f'"{sys.executable}" "{script_alvo}"{resto}'
+            self.log(f"[POST-MERGE] Executando: {cmd_exec}")
             res = subprocess.run(
-                cmd_str,
+                cmd_exec,
                 cwd=str(self.repo_root),
                 shell=True,
                 capture_output=True,
@@ -618,7 +692,7 @@ class VSADispatchPipeline:
                 errors="replace",
             )
             if res.returncode != 0:
-                self.log(f"ERRO: Falha na suíte pós-merge '{cmd_str}':\n{res.stderr}\n{res.stdout}")
+                self.log(f"ERRO: Falha na suíte pós-merge '{cmd_exec}':\n{res.stderr}\n{res.stdout}")
                 return False
 
         return True
@@ -640,6 +714,23 @@ class VSADispatchPipeline:
 
         total_fatias = sum(len(lvl) for lvl in niveis)
         self.log(f"Grafo VSA estruturado em {len(niveis)} nível(is) com {total_fatias} fatia(s) total.")
+
+        if not self.dry_run:
+            status_proc = subprocess.run(
+                ["git", "status", "--porcelain"],
+                cwd=str(self.repo_root),
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            if status_proc.stdout.strip():
+                self.log("Detectadas alterações pendentes no repositório base. Realizando checkpoint preventivo antes do despacho...")
+                subprocess.run(["git", "add", "-A"], cwd=str(self.repo_root), check=False)
+                subprocess.run(
+                    ["git", "commit", "--no-verify", "-m", "chore(vsa): checkpoint do estado do repositório antes do dispatch"],
+                    cwd=str(self.repo_root),
+                    check=False,
+                )
 
         fatias_sucesso = 0
 

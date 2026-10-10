@@ -2424,13 +2424,21 @@ body {
     display: none;
   }
 
+  .barra-topo {
+    padding: max(0.6rem, env(safe-area-inset-top, 0.6rem)) 0.65rem 0.6rem 0.65rem;
+    gap: 0.4rem;
+  }
+
   .painel-acoes-topo {
-    gap: 0.25rem;
+    gap: 0.35rem;
   }
 
   .widget-tokens-topo {
-    padding: 0.15rem 0.35rem;
-    gap: 0.25rem;
+    padding: 0.2rem 0.45rem;
+    gap: 0.3rem;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
   }
 
   .tokens-taxa {
@@ -2442,7 +2450,10 @@ body {
   }
 
   .status-conexao {
-    padding: 0.2rem 0.35rem;
+    padding: 0.2rem 0.5rem;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
   }
 
   #texto-atualizacao {
@@ -2454,20 +2465,34 @@ body {
   }
 
   .btn-launchpad {
-    padding: 0.35rem 0.5rem;
+    padding: 0;
+    min-width: 44px;
+    min-height: 44px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--raio-p);
   }
 
   .btn-tema, .btn-acao-topo {
-    width: 28px;
-    height: 28px;
+    min-width: 40px;
+    min-height: 40px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--raio-p);
   }
 
   /* BARRA DE NAVEGAÇÃO / ABAS */
   .barra-navegacao-secao {
     flex-direction: column;
     align-items: stretch;
-    padding: 0.45rem 0.65rem;
-    gap: 0.45rem;
+    padding: 0.5rem 0.65rem;
+    gap: 0.5rem;
   }
 
   .abas-navegacao {
@@ -2475,7 +2500,9 @@ body {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    padding: 0.2rem;
+    padding: 0.25rem 0;
+    scroll-snap-type: x mandatory;
+    gap: 0.4rem;
   }
 
   .abas-navegacao::-webkit-scrollbar {
@@ -2485,13 +2512,19 @@ body {
   .aba-btn {
     white-space: nowrap;
     flex-shrink: 0;
-    padding: 0.4rem 0.65rem;
-    font-size: 0.785rem;
-    min-height: 38px;
+    padding: 0.5rem 0.85rem;
+    font-size: 0.8rem;
+    min-height: 44px;
+    scroll-snap-align: start;
   }
 
   .caixa-busca {
     width: 100%;
+  }
+
+  .caixa-busca .input-busca {
+    min-height: 42px;
+    font-size: 0.85rem;
   }
 
   .caixa-busca .atalho-busca {
@@ -2501,13 +2534,15 @@ body {
   /* GRADE DE CARDS DO INDEX */
   .grade-cards {
     grid-template-columns: 1fr;
-    gap: 0.65rem;
+    gap: 0.75rem;
     padding: 0.65rem;
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 1.5rem));
   }
 
   .card-pipeline {
-    padding: 0.85rem;
+    padding: 1rem;
     min-height: auto;
+    touch-action: pan-y;
   }
 
   /* KANBAN TRILHA */
@@ -2515,7 +2550,7 @@ body {
     flex-direction: column;
     align-items: stretch;
     gap: 0.5rem;
-    padding: 0.5rem;
+    padding: 0.65rem;
   }
 
   .kanban-cabecalho-esquerda {
@@ -2530,29 +2565,49 @@ body {
   .esteira-topologica-visual {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    padding-bottom: 0.4rem;
+    padding-bottom: 0.5rem;
     scrollbar-width: none;
+    scroll-snap-type: x proximity;
+  }
+
+  .esteira-passo {
+    scroll-snap-align: start;
+    flex-shrink: 0;
   }
 
   .barra-atalhos-colunas {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    scroll-snap-type: x proximity;
+    padding-bottom: 0.3rem;
+  }
+
+  .btn-atalho-coluna {
+    min-height: 40px;
+    scroll-snap-align: start;
+    padding: 0.4rem 0.75rem;
   }
 
   .kanban-quadro {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: x mandatory;
-    gap: 0.65rem;
-    padding: 0.5rem;
+    gap: 0.75rem;
+    padding: 0.65rem;
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 1.5rem));
   }
 
   .coluna-kanban {
-    min-width: 85vw;
-    width: 85vw;
-    max-width: 85vw;
+    min-width: 88vw;
+    width: 88vw;
+    max-width: 88vw;
     scroll-snap-align: center;
+  }
+
+  .cartao-kanban {
+    padding: 0.85rem;
+    touch-action: pan-y;
   }
 
   /* GAVETA LATERAL (FULLSCREEN NO SMARTPHONE) */
@@ -2560,63 +2615,113 @@ body {
     width: 100% !important;
     max-width: 100% !important;
     border-left: none;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 1.5rem));
   }
 
   .gaveta-cabecalho {
-    padding: 0.75rem 1rem;
+    padding: 0.85rem 1rem;
+  }
+
+  .btn-fechar {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    font-size: 1.1rem;
+  }
+
+  .gaveta-abas-topo {
+    padding: 0.4rem 0.75rem;
+    gap: 0.4rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .gaveta-aba-btn {
+    min-height: 40px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    white-space: nowrap;
   }
 
   .gaveta-corpo {
-    padding: 0.75rem;
-    gap: 0.75rem;
+    padding: 0.85rem;
+    gap: 0.85rem;
+    -webkit-overflow-scrolling: touch;
   }
 
   .gaveta-resumo-grid {
     grid-template-columns: 1fr 1fr;
-    gap: 0.4rem;
-    padding: 0.5rem;
+    gap: 0.5rem;
+    padding: 0.65rem;
   }
 
   .grade-botoes-remediacao-clean {
     grid-template-columns: 1fr;
+    gap: 0.5rem;
   }
 
   .btn-remediacao {
-    min-height: 42px;
-    font-size: 0.785rem;
+    min-height: 46px;
+    font-size: 0.825rem;
   }
 
   .bloco-custos-grid {
     grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
   }
 
   /* MATRIZ DE GATES (72 LEDS) */
   .painel-resumo-gates {
     flex-wrap: wrap;
-    gap: 0.4rem;
+    gap: 0.45rem;
   }
 
   .grade-leds-gates {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 0.35rem;
-    padding: 0.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 0.4rem;
+    padding: 0.65rem;
   }
 
   /* WORKTREES */
   .grade-worktrees {
     grid-template-columns: 1fr;
+    gap: 0.65rem;
   }
 
   /* MODAL QR CODE */
   .modal-qrcode-janela {
-    width: 95%;
-    padding: 1rem;
+    width: 92%;
+    max-width: 360px;
+    padding: 1.25rem;
   }
 
   .qrcode-matriz-wrapper {
-    width: 160px;
-    height: 160px;
-    padding: 8px;
+    width: 170px;
+    height: 170px;
+    padding: 10px;
+  }
+
+  .btn-fechar-modal {
+    min-width: 44px;
+    min-height: 44px;
+    font-size: 1.2rem;
+  }
+}
+
+/* ERGONOMIA TOUCH (DISPOSITIVOS MÓVEIS REAIS) */
+@media (hover: none) and (pointer: coarse) {
+  .card-pipeline:active,
+  .cartao-kanban:active,
+  .aba-btn:active,
+  .btn-acao-topo:active,
+  .btn-launchpad:active,
+  .btn-remediacao:active,
+  .btn-atalho-coluna:active,
+  .btn-fechar:active {
+    transform: scale(0.97);
+    transition: transform 0.08s ease;
   }
 }
 

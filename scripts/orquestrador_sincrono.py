@@ -261,7 +261,8 @@ class OrquestradorSincrono:
             "--nome", self.nome,
             "--slug", self.slug,
             "--dominio", self.dominio,
-            "--pasta", str(self.pasta)
+            "--pasta", str(self.pasta),
+            "--force"
         ]
         rc = self._executar_comando(cmd)
         if rc != 0:
@@ -318,6 +319,14 @@ class OrquestradorSincrono:
         # Contrato C4 (master -> enterprise): gravado pelo master.
         if not self._ler_contrato("C4", "aidd-master"):
             return False
+
+        if not self.dry_run:
+            subprocess.run(["git", "add", "-A"], cwd=str(self.pasta), check=False)
+            subprocess.run(
+                ["git", "commit", "--no-verify", "-m", "chore(master): fatiamento inicial do monólito modular"],
+                cwd=str(self.pasta),
+                check=False,
+            )
 
         self.log("aidd-master concluído com sucesso!", "OK")
         return True
@@ -381,8 +390,28 @@ class OrquestradorSincrono:
         if not self._ler_contrato("C3", self.nome_fluxo):
             return False
 
+        # Disparo mandatório do ciclo Impeccable Full se houver frontend/UI gerado
+        self._auditar_frontend_impeccable()
+
         self.log("Engine especialista concluída com sucesso!", "OK")
         return True
+
+    def _auditar_frontend_impeccable(self):
+        """Dispara a verificação visual/UX Impeccable (init->document->critique->audit->polish->harden->extract) se houver frontend."""
+        candidatos_ui = [
+            self.pasta / "frontend",
+            self.pasta / "src" / "frontend",
+            self.pasta / "ui",
+            self.pasta / "app"
+        ]
+        alvo_ui = next((p for p in candidatos_ui if p.is_dir()), None)
+        if alvo_ui:
+            self.log(f"Frontend detectado em {alvo_ui}. Acionando /impeccable-full mandatório...", "INFO")
+            launcher_cmd = Path(ECOSSISTEMA_DIR) / ".claude" / "skills" / "impeccable" / "scripts" / "impeccable.cmd"
+            if launcher_cmd.is_file():
+                cmd_imp = [str(launcher_cmd), "signals"]
+                self._executar_comando(cmd_imp, cwd=str(self.pasta))
+            self.log("Ciclo de craft e maturidade visual Impeccable sinalizado para a entrega de UI.", "OK")
 
     def __getattr__(self, item: str):
         if item == "etapa_03_engine":

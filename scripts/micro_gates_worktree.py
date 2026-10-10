@@ -125,17 +125,37 @@ def executar_micro_gates(
 
     # 3. Testes unitários direcionados da fatia
     if comandos_teste:
+        # Garante defensivamente inicialização de pacotes Python quando as pastas existirem
+        if (wt / "src").is_dir():
+            (wt / "src" / "__init__.py").touch(exist_ok=True)
+            if (wt / "src" / "slices").is_dir():
+                (wt / "src" / "slices" / "__init__.py").touch(exist_ok=True)
+        if (wt / "tests").is_dir():
+            (wt / "tests" / "__init__.py").touch(exist_ok=True)
+            if (wt / "tests" / "slices").is_dir():
+                (wt / "tests" / "slices" / "__init__.py").touch(exist_ok=True)
+
+        env_cmd = dict(os.environ)
+        caminhos_python = [str(wt), str(wt / "src")]
+        if "PYTHONPATH" in env_cmd:
+            caminhos_python.append(env_cmd["PYTHONPATH"])
+        env_cmd["PYTHONPATH"] = os.pathsep.join(caminhos_python)
+
         for cmd in comandos_teste:
+            cmd_exec = cmd
+            if cmd_exec.startswith("pytest ") or cmd_exec == "pytest":
+                cmd_exec = f'"{sys.executable}" -m ' + cmd_exec
             if verbose:
-                print(f"[MICRO-GATES] [TESTE] Executando: {cmd}")
+                print(f"[MICRO-GATES] [TESTE] Executando: {cmd_exec}")
             res = subprocess.run(
-                cmd,
+                cmd_exec,
                 cwd=str(wt),
                 shell=True,
                 capture_output=True,
                 text=True,
                 encoding="utf-8",
                 errors="replace",
+                env=env_cmd,
             )
             if res.returncode != 0:
                 msg = f"Falha no teste '{cmd}' (exit {res.returncode}):\n{res.stderr or res.stdout}"

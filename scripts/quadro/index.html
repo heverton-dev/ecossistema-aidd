@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="theme-color" content="#080b11">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Quadro AIDD · Pipelines</title>
   <link rel="stylesheet" href="/quadro.css">
@@ -269,7 +270,7 @@
 
   <!-- GAVETA LATERAL DO CARTÃO (DRAWER) -->
   <div id="gaveta-backdrop" class="gaveta-backdrop escondido" onclick="fecharGaveta()"></div>
-  <aside id="gaveta-detalhes" class="gaveta escondido" aria-hidden="true" role="dialog" aria-labelledby="gaveta-titulo">
+  <aside id="gaveta-detalhes" class="gaveta escondido" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="gaveta-titulo">
     <div class="gaveta-cabecalho">
       <div>
         <span class="gaveta-meta-tipo">Execução Ativa</span>

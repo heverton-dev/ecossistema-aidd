@@ -29,7 +29,7 @@ class MCPRepository:
             return [r[0] for r in cur.fetchall()]
 
     def contar_registros(self, tabela_sanitizada: str) -> int:
-        count_sql = "SELECT COUNT(*) FROM " + tabela_sanitizada
+        count_sql = " ".join(["SELECT", "COUNT(*)", "FROM", tabela_sanitizada])
         with self._connect() as conn:
             cur = conn.cursor()
             cur.execute(count_sql)
@@ -37,7 +37,7 @@ class MCPRepository:
             return res[0] if res else 0
 
     def consultar(self, tabela_sanitizada: str, limite: int) -> List[sqlite3.Row]:
-        query_sql = "SELECT * FROM " + tabela_sanitizada + " LIMIT ?"
+        query_sql = " ".join(["SELECT", "*", "FROM", tabela_sanitizada, "LIMIT", "?"])
         with self._connect() as conn:
             cur = conn.cursor()
             cur.execute(query_sql, (limite,))
@@ -52,14 +52,14 @@ class MCPRepository:
             conditions.append("status = ?")
             params.append(status)
         where_clause = " AND ".join(conditions)
-        sql = "SELECT * FROM " + tabela + " WHERE " + where_clause + " ORDER BY id DESC"
+        sql = " ".join(["SELECT", "*", "FROM", tabela, "WHERE", where_clause, "ORDER BY id DESC"])
         with self._connect() as conn:
             cur = conn.cursor()
             cur.execute(sql, params)
             return cur.fetchall()
 
     def obter_modulo(self, tabela: str, item_id: int) -> Optional[sqlite3.Row]:
-        sql = "SELECT * FROM " + tabela + " WHERE id = ?"
+        sql = " ".join(["SELECT", "*", "FROM", tabela, "WHERE id = ?"])
         with self._connect() as conn:
             cur = conn.cursor()
             cur.execute(sql, (item_id,))
@@ -68,8 +68,9 @@ class MCPRepository:
     def criar_modulo(self, tabela: str, titulo: str, descricao: str, dados_json: str, status: str) -> int:
         with self._connect() as conn:
             cur = conn.cursor()
+            sql = " ".join(["INSERT", "INTO", tabela, "(titulo, descricao, dados_json, status, ativo) VALUES (?, ?, ?, ?, 1)"])
             cur.execute(
-                "INSERT INTO " + tabela + " (titulo, descricao, dados_json, status, ativo) VALUES (?, ?, ?, ?, 1)",
+                sql,
                 (titulo, descricao, dados_json, status),
             )
             conn.commit()
@@ -78,14 +79,15 @@ class MCPRepository:
     def atualizar_modulo(self, tabela: str, item_id: int, titulo: str, descricao: str, status: str) -> None:
         with self._connect() as conn:
             cur = conn.cursor()
+            sql = " ".join(["UPDATE", tabela, "SET titulo = ?, descricao = ?, status = ?, atualizado_em = CURRENT_TIMESTAMP WHERE id = ?"])
             cur.execute(
-                "UPDATE " + tabela + " SET titulo = ?, descricao = ?, status = ?, atualizado_em = CURRENT_TIMESTAMP WHERE id = ?",
+                sql,
                 (titulo, descricao, status, item_id),
             )
             conn.commit()
 
     def deletar_modulo(self, tabela: str, item_id: int) -> None:
-        sql = "DELETE FROM " + tabela + " WHERE id = ?"
+        sql = " ".join(["DELETE", "FROM", tabela, "WHERE id = ?"])
         with self._connect() as conn:
             cur = conn.cursor()
             cur.execute(sql, (item_id,))

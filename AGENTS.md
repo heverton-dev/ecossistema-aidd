@@ -108,6 +108,7 @@
    - Portão: modulos/03-plataforma-e-entrega/gates/G_CONTRACT_ROT.py (provado)
    - Portão: modulos/03-plataforma-e-entrega/gates/G_QUARTETO_SINE_QUA_NON.py (provado)
 11. **Padrão-Ouro de Stack Tecnológica:** Todo fluxo (`generator`, `master`, `factory`, `bridge`) DEVE gerar o Frontend na stack Padrão-Ouro canônica soberana: **TanStack Start / TanStack Router + React + TypeScript + Tailwind CSS** (PWA e Offline-First resiliente com fila HMAC, Backend em Python puro + SQLite WAL, API em OpenAPI 3.1), conforme definido em `docs/protocolos/PADRAO-OURO-STACK-TECNOLOGICA.md` e `docs/padroes/PADRAO-OURO-ARQUITETURA-CAMADAS-MERCADO.md`. O framework Next.js está formalmente abolido do ecossistema devido ao acoplamento proprietário de runtime, fragilidade na navegação offline por RSC e ausência de type-safety nativa em Search Params.
+   - **Gatilho Canônico Impeccable:** Qualquer criação, scaffold ou evolução de telas, páginas ou componentes de frontend DEVE disparar mandatoriamente a skill `/impeccable-full` (`aidd-impeccable-full`: init -> document -> critique -> audit -> polish -> harden -> extract) para garantir padrão de craft máximo e blindagem de UI.
    - Portão: modulos/02-triade-motores/fluxo-01-pure/gates/G_STACK_PADRAO_OURO.py (provado)
    - Portão: modulos/02-triade-motores/fluxo-01-pure/gates/G_TEMPLATE_TANSTACK_OFFLINE.py (provado)
    - Portão: modulos/02-triade-motores/fluxo-01-pure/gates/G_NOVE_CAMADAS_MERCADO.py (provado)
@@ -229,3 +230,4 @@ Canonical workflow skills available across all harnesses to eliminate vibe codin
 - `/aidd-reexplain`: Re-explain last message in plain PT-BR using the glossary above.
 - `/aidd-delivery`: Delivery template with before/after evidence and real exit codes.
 - `/aidd-wizard`: Bash wizard for steps only the human can do.
+- `/aidd-impeccable-full` (ou `/impeccable-full`): Orquestrador do ciclo completo de maturidade visual e craft do Impeccable (init -> document -> critique -> audit -> polish -> harden -> extract), mandatório na criação/alteração de páginas e componentes de frontend.

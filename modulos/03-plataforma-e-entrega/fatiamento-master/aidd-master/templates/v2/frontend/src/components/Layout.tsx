@@ -1,22 +1,18 @@
 import { Outlet, NavLink } from 'react-router-dom'
 import {
   LayoutDashboard,
-  Stethoscope,
-  FileText,
-  Scissors,
-  Pill,
-  Receipt,
+  Layers,
+  BookOpen,
+  Settings,
   LogOut,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/triagem', label: 'Triagem', icon: Stethoscope },
-  { to: '/pep', label: 'PEP', icon: FileText },
-  { to: '/cirurgico', label: 'Cirúrgico', icon: Scissors },
-  { to: '/farmacia', label: 'Farmácia', icon: Pill },
-  { to: '/faturamento', label: 'Faturamento', icon: Receipt },
+  { to: '/modulos', label: 'Módulos', icon: Layers },
+  { to: '/docs', label: 'Documentação', icon: BookOpen },
+  { to: '/config', label: 'Configurações', icon: Settings },
 ]
 
 export default function Layout() {
@@ -31,9 +27,9 @@ export default function Layout() {
       <aside className="w-60 flex-shrink-0 border-r border-slate-800 bg-sidebar flex flex-col">
         <div className="px-4 py-5 border-b border-slate-800">
           <h1 className="text-lg font-bold tracking-tight">
-            <span className="text-primary">AIDD</span> Enterprise
+            <span className="text-primary">AIDD</span> Modular
           </h1>
-          <p className="text-xs text-muted-foreground mt-0.5">Suite Hospitalar</p>
+          <p className="text-xs text-muted-foreground mt-0.5">Vertical Slice Architecture</p>
         </div>
 
         <nav className="flex-1 px-3 py-4 space-y-1">

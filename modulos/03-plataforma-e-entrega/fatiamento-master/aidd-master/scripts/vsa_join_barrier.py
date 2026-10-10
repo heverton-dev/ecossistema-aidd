@@ -86,6 +86,8 @@ def validar_fronteiras_fatia(worktree_path: Path, slice_info: Dict[str, Any]) ->
                 continue
             if caminho_norm.rstrip("/") in ("src", "src/slices", "tests", "tests/slices"):
                 continue
+            if caminho_norm in ("src/__init__.py", "src/slices/__init__.py", "tests/__init__.py", "tests/slices/__init__.py"):
+                continue
             if not padrao_autorizado.search(caminho_norm):
                 erros.append(
                     f"Violação de fronteira: fatia '{slice_id}' modificou arquivo fora de seu escopo: '{caminho_norm}'"
@@ -172,10 +174,28 @@ def executar_barreira_fatia(
 
     # 3. Executa Quality Gates locais
     for gate_cmd in quality_gates:
+        cmd_exec = gate_cmd
+        if cmd_exec.startswith("python "):
+            partes = cmd_exec.split(maxsplit=2)
+            if len(partes) >= 2:
+                script_alvo = partes[1].strip('"\'')
+                caminho_script = wt_path / script_alvo
+                if not caminho_script.is_file():
+                    alt_wt = wt_path / "gates" / Path(script_alvo).name
+                    alt_parent = wt_path.parent.parent / "gates" / Path(script_alvo).name
+                    alt_root = ROOT_DIR / script_alvo
+                    if alt_wt.is_file():
+                        script_alvo = str(alt_wt)
+                    elif alt_parent.is_file():
+                        script_alvo = str(alt_parent)
+                    elif alt_root.is_file():
+                        script_alvo = str(alt_root)
+                resto = f" {partes[2]}" if len(partes) > 2 else ""
+                cmd_exec = f'"{sys.executable}" "{script_alvo}"{resto}'
         if verbose:
-            print(f"[BARREIRA-VSA] [{slice_id}] Gate: {gate_cmd}")
+            print(f"[BARREIRA-VSA] [{slice_id}] Gate: {cmd_exec}")
         res = subprocess.run(
-            gate_cmd,
+            cmd_exec,
             cwd=str(wt_path),
             shell=True,
             capture_output=True,

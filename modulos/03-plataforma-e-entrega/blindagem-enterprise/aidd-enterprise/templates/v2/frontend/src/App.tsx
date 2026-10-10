@@ -1,11 +1,10 @@
+import React from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import Layout from './components/Layout'
 import DashboardPage from './pages/DashboardPage'
-import TriagemPage from './pages/TriagemPage'
-import PEPPage from './pages/PEPPage'
-import CirurgicoPage from './pages/CirurgicoPage'
-import FarmaciaPage from './pages/FarmaciaPage'
-import FaturamentoPage from './pages/FaturamentoPage'
+import ModulosPage from './pages/ModulosPage'
+import DocsPage from './pages/DocsPage'
+import ConfigPage from './pages/ConfigPage'
 
 export default function App() {
   return (
@@ -14,11 +13,9 @@ export default function App() {
       <Route element={<Layout />}>
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/triagem" element={<TriagemPage />} />
-        <Route path="/pep" element={<PEPPage />} />
-        <Route path="/cirurgico" element={<CirurgicoPage />} />
-        <Route path="/farmacia" element={<FarmaciaPage />} />
-        <Route path="/faturamento" element={<FaturamentoPage />} />
+        <Route path="/modulos" element={<ModulosPage />} />
+        <Route path="/docs" element={<DocsPage />} />
+        <Route path="/config" element={<ConfigPage />} />
       </Route>
     </Routes>
   )

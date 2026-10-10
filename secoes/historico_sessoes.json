@@ -1,7 +1,7 @@
 {
   "versao": "1.0",
-  "atualizado_em": "2026-10-10T14:36:21.101166",
-  "total_sessoes": 47,
+  "atualizado_em": "2026-10-10T16:08:09.233760",
+  "total_sessoes": 50,
   "sessoes": [
     {
       "id": "fc4566a8-0804-4748-ab5f-ec105414273c",
@@ -410,12 +410,13 @@
     },
     {
       "id": "43c353a8-21b3-48f1-9947-9402b3d239e5",
-      "registrado_em": "2026-10-10 12:28:19",
-      "harness": "antigravity",
-      "modelo": "gemini-3.8-flash-low",
-      "titulo": "Sessão Ativa (Auto-Registrada)",
-      "workspace": "C:/Users/trcnologia/Desktop/ecossistema-aidd",
-      "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-cli/brain/43c353a8-21b3-48f1-9947-9402b3d239e5/.system_generated/logs/transcript_full.jsonl"
+      "registrado_em": "2026-10-10 15:51:46",
+      "harness": "Antigravity CLI",
+      "modelo": "Gemini 3.8 Flash",
+      "titulo": "Correção E2E dos 3 Fluxos Canônicos e Despacho VSA",
+      "workspace": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd",
+      "transcript_path": "",
+      "atualizado_em": "2026-10-10 15:51:46"
     },
     {
       "id": "b128f664-3658-4454-9451-7a4223cb878b",
@@ -443,6 +444,33 @@
       "titulo": "Sessão Ativa (Auto-Registrada)",
       "workspace": "C:/Users/trcnologia/Desktop/ecossistema-aidd",
       "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-cli/brain/23577c50-317d-4155-b128-e9c3730b4009/.system_generated/logs/transcript_full.jsonl"
+    },
+    {
+      "id": "de35c4b4-983f-4fe0-8825-027ee9ba2d7e",
+      "registrado_em": "2026-10-10 15:38:16",
+      "harness": "claude",
+      "modelo": "code-fast",
+      "titulo": "Aidd evolution ecossistema aidd",
+      "workspace": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd",
+      "transcript_path": ""
+    },
+    {
+      "id": "2a3d4f81-b3b2-4149-8685-49411b1a79b9",
+      "registrado_em": "2026-10-10 16:06:26",
+      "harness": "antigravity",
+      "modelo": "gemini-3.8-flash-low",
+      "titulo": "Sessão Ativa (Auto-Registrada)",
+      "workspace": "C:/Users/trcnologia/Desktop/ecossistema-aidd",
+      "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-cli/brain/2a3d4f81-b3b2-4149-8685-49411b1a79b9/.system_generated/logs/transcript_full.jsonl"
+    },
+    {
+      "id": "51cb0e7a-242f-40c4-891f-e30419369e95",
+      "registrado_em": "2026-10-10 16:08:09",
+      "harness": "antigravity",
+      "modelo": "gemini-3.8-flash-low",
+      "titulo": "Sessão Ativa (Auto-Registrada)",
+      "workspace": "C:/Users/trcnologia/Desktop/ecossistema-aidd",
+      "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-cli/brain/51cb0e7a-242f-40c4-891f-e30419369e95/.system_generated/logs/transcript_full.jsonl"
     }
   ]
 }

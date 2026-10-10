@@ -128,6 +128,7 @@ def cmd_init(args: argparse.Namespace) -> int:
         tela_referencia=tela_referencia,
         plataforma="web"
     )
+    os.makedirs(os.path.dirname(os.path.abspath(caminho_design_system)), exist_ok=True)
     with open(caminho_design_system, "w", encoding="utf-8") as f:
         json.dump(design_system, f, indent=2, ensure_ascii=False)
 

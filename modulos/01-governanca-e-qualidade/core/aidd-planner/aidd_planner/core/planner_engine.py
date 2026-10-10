@@ -226,7 +226,7 @@ def gerar_template_plano(
           }
         },
         "infraestrutura_alvo": {
-            "banco_dados": "postgresql",
+            "banco_dados": "sqlite",
             "porta_api": 8000,
             "ambiente": "vps_docker"
         }
@@ -607,7 +607,7 @@ def compilar_grafo_topologico_vsa(plano: Dict[str, Any]) -> Dict[str, Any]:
             "arquivos_esperados": arquivos_alvo,
             "barreira_validacao": {
                 "comandos_teste": [f"pytest tests/slices/test_{slug_bc}.py"],
-                "quality_gates": ["python modulos/04-nucleo-compartilhado/gates/G_SAIDA_BINARIA.py", "python modulos/01-governanca-e-qualidade/gates/G_TESTES_REAIS.py"],
+                "quality_gates": ["python gates/G_SAIDA_BINARIA.py", "python gates/G_TESTES_REAIS.py"],
             },
         })
 

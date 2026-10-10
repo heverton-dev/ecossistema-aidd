@@ -189,6 +189,36 @@ def ler_entrada_ops(pasta_projeto: str) -> Optional[Result]:
 # Serviços derivados do perfil
 # ---------------------------------------------------------------------------
 
+def projeto_usa_sqlite_wal(pasta_projeto: str, perfil: Optional[Dict[str, Any]] = None) -> bool:
+    """Detecta se o projeto adota arquitetura soberana baseada em SQLite WAL (T-005)."""
+    banco_perfil = str((perfil or {}).get("banco") or "").lower()
+    if "sqlite" in banco_perfil:
+        return True
+
+    server_py = os.path.join(pasta_projeto, "src", "server.py")
+    if os.path.isfile(server_py):
+        try:
+            with open(server_py, "r", encoding="utf-8", errors="ignore") as f:
+                content = f.read().lower()
+                if "sqlite" in content:
+                    return True
+        except Exception:
+            pass
+
+    planner_json = os.path.join(pasta_projeto, "PLANNER.json")
+    if os.path.isfile(planner_json):
+        try:
+            with open(planner_json, "r", encoding="utf-8") as f:
+                pj = json.load(f)
+                infra = pj.get("infraestrutura_alvo", {})
+                if "sqlite" in str(infra.get("banco_dados") or "").lower():
+                    return True
+        except Exception:
+            pass
+
+    return False
+
+
 def tem_banco_relacional(perfil: Dict[str, Any]) -> bool:
     return "postgres" in str(perfil.get("banco") or "").lower()
 
@@ -211,7 +241,7 @@ def servicos_do_perfil(perfil: Dict[str, Any], pasta_projeto: str) -> List[str]:
     servicos = ["app", "nginx"]
     if tem_frontend(pasta_projeto):
         servicos.append("web")
-    if tem_banco_relacional(perfil):
+    if tem_banco_relacional(perfil) and not projeto_usa_sqlite_wal(pasta_projeto, perfil):
         servicos.append("db")
     if perfil.get("filas"):
         servicos.append("fila")
@@ -258,6 +288,14 @@ def renderizar_compose(
             f"DATABASE_URL=postgresql://{USUARIO_BANCO}:{SENHA_BANCO}@db:{PORTA_BANCO}/{banco}"
         )
         depende["db"] = {"condition": "service_healthy"}
+    else:
+        # T-005: Suporte soberano a SQLite WAL
+        ambiente.append("DATABASE_URL=sqlite:////app/data/suite.db")
+        ambiente.append("DB_PATH=/app/data/suite.db")
+        vols = app.get("volumes") or []
+        if "app_data:/app/data" not in vols:
+            vols.append("app_data:/app/data")
+        app["volumes"] = vols
     if "fila" in servicos:
         ambiente.append(f"REDIS_URL=redis://fila:{PORTA_FILA}/0")
         ambiente.append(f"AIDD_FILAS={','.join(perfil['filas'])}")
@@ -298,6 +336,8 @@ def renderizar_compose(
             },
         }
         volumes["db_data"] = {"driver": "local"}
+    else:
+        volumes["app_data"] = {"driver": "local"}
     if "fila" in servicos:
         saida["fila"] = {
             "image": IMAGEM_FILA,

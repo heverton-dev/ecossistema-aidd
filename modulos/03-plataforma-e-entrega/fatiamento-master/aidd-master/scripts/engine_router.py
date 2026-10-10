@@ -180,6 +180,11 @@ def _rotear_fluxo_01_generator(
     tests_dir = worktree_path / "tests" / "slices"
     slice_dir.mkdir(parents=True, exist_ok=True)
     tests_dir.mkdir(parents=True, exist_ok=True)
+    (worktree_path / "src" / "__init__.py").touch(exist_ok=True)
+    (worktree_path / "src" / "slices" / "__init__.py").touch(exist_ok=True)
+    (slice_dir / "__init__.py").touch(exist_ok=True)
+    (worktree_path / "tests" / "__init__.py").touch(exist_ok=True)
+    (tests_dir / "__init__.py").touch(exist_ok=True)
 
     # 1. Models
     models_code = f'''# -*- coding: utf-8 -*-
@@ -290,6 +295,11 @@ def _rotear_fluxo_02_factory(
     tests_dir = worktree_path / "tests" / "slices"
     slice_dir.mkdir(parents=True, exist_ok=True)
     tests_dir.mkdir(parents=True, exist_ok=True)
+    (worktree_path / "src" / "__init__.py").touch(exist_ok=True)
+    (worktree_path / "src" / "slices" / "__init__.py").touch(exist_ok=True)
+    (slice_dir / "__init__.py").touch(exist_ok=True)
+    (worktree_path / "tests" / "__init__.py").touch(exist_ok=True)
+    (tests_dir / "__init__.py").touch(exist_ok=True)
 
     # Conector de serviço e proxy
     connector_code = f'''# -*- coding: utf-8 -*-
@@ -306,11 +316,27 @@ class {slug.capitalize()}FactoryAdapter:
 '''
     (slice_dir / "adapter.py").write_text(connector_code, encoding="utf-8")
 
+    service_code = f'''# -*- coding: utf-8 -*-
+"""Service de fachada para a fatia open-source {modulo_ddd}."""
+from .adapter import {slug.capitalize()}FactoryAdapter
+
+
+class {slug.capitalize()}Service:
+    def __init__(self, adapter: {slug.capitalize()}FactoryAdapter = None):
+        self.adapter = adapter or {slug.capitalize()}FactoryAdapter()
+
+    def status(self) -> dict:
+        return {{"service": "{slug}", "healthy": self.adapter.ping()}}
+'''
+    (slice_dir / "service.py").write_text(service_code, encoding="utf-8")
+
     router_code = f'''# -*- coding: utf-8 -*-
 """Router de integração da fatia {modulo_ddd}."""
 from .adapter import {slug.capitalize()}FactoryAdapter
+from .service import {slug.capitalize()}Service
 
 adapter = {slug.capitalize()}FactoryAdapter()
+service = {slug.capitalize()}Service(adapter)
 
 def healthcheck():
     return {{"status": "ok", "service": "{slug}", "healthy": adapter.ping()}}
@@ -326,11 +352,19 @@ def healthcheck():
     test_code = f'''# -*- coding: utf-8 -*-
 import pytest
 from src.slices.{slug}.adapter import {slug.capitalize()}FactoryAdapter
+from src.slices.{slug}.service import {slug.capitalize()}Service
 
 
 def test_factory_adapter_ping():
     adp = {slug.capitalize()}FactoryAdapter()
     assert adp.ping() is True
+
+
+def test_factory_service_status():
+    srv = {slug.capitalize()}Service()
+    res = srv.status()
+    assert res["service"] == "{slug}"
+    assert res["healthy"] is True
 '''
     (tests_dir / f"test_{slug}.py").write_text(test_code, encoding="utf-8")
     for arq in slice_info.get("arquivos_esperados", []):
@@ -367,6 +401,11 @@ def _rotear_fluxo_03_bridge(
     tests_dir = worktree_path / "tests" / "slices"
     slice_dir.mkdir(parents=True, exist_ok=True)
     tests_dir.mkdir(parents=True, exist_ok=True)
+    (worktree_path / "src" / "__init__.py").touch(exist_ok=True)
+    (worktree_path / "src" / "slices" / "__init__.py").touch(exist_ok=True)
+    (slice_dir / "__init__.py").touch(exist_ok=True)
+    (worktree_path / "tests" / "__init__.py").touch(exist_ok=True)
+    (tests_dir / "__init__.py").touch(exist_ok=True)
 
     bridge_code = f'''# -*- coding: utf-8 -*-
 """Desacoplamento soberano de low-code para a fatia {modulo_ddd}."""
@@ -385,10 +424,31 @@ class {slug.capitalize()}BridgeRepository:
 '''
     (slice_dir / "repository.py").write_text(bridge_code, encoding="utf-8")
 
-    router_code = f'''# -*- coding: utf-8 -*-
+    service_code = f'''# -*- coding: utf-8 -*-
+"""Service soberano para a fatia {modulo_ddd}."""
+from typing import Any, Dict
 from .repository import {slug.capitalize()}BridgeRepository
 
+
+class {slug.capitalize()}Service:
+    def __init__(self, repo: {slug.capitalize()}BridgeRepository = None):
+        self.repo = repo or {slug.capitalize()}BridgeRepository()
+
+    def salvar(self, chave: str, dados: Any) -> Dict[str, Any]:
+        self.repo.salvar(chave, dados)
+        return {{"status": "salvo", "chave": chave}}
+
+    def obter(self, chave: str) -> Any:
+        return self.repo.obter(chave)
+'''
+    (slice_dir / "service.py").write_text(service_code, encoding="utf-8")
+
+    router_code = f'''# -*- coding: utf-8 -*-
+from .repository import {slug.capitalize()}BridgeRepository
+from .service import {slug.capitalize()}Service
+
 repo = {slug.capitalize()}BridgeRepository()
+service = {slug.capitalize()}Service(repo)
 
 def store_record(key: str, value: str):
     repo.salvar(key, value)
@@ -405,12 +465,20 @@ def store_record(key: str, value: str):
     test_code = f'''# -*- coding: utf-8 -*-
 import pytest
 from src.slices.{slug}.repository import {slug.capitalize()}BridgeRepository
+from src.slices.{slug}.service import {slug.capitalize()}Service
 
 
 def test_bridge_repository():
     repo = {slug.capitalize()}BridgeRepository()
     repo.salvar("rec_1", {{"valor": 42}})
     assert repo.obter("rec_1") == {{"valor": 42}}
+
+
+def test_bridge_service():
+    srv = {slug.capitalize()}Service()
+    res = srv.salvar("rec_test", {{"ok": True}})
+    assert res["status"] == "salvo"
+    assert srv.obter("rec_test") == {{"ok": True}}
 '''
     (tests_dir / f"test_{slug}.py").write_text(test_code, encoding="utf-8")
     for arq in slice_info.get("arquivos_esperados", []):
