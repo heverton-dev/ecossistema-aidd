@@ -1,8 +1,8 @@
 # Apêndice B — Estado honesto
 
-Tabela consolidada de todos os achados dos mapas, gerada de `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`. Em aberto por gravidade: 0 alta, 3 média, 26 baixa. Cada achado em aberto traz no arquivo o texto pronto para abrir o fluxo de melhoria (`pedido_melhoria`).
+Tabela consolidada de todos os achados dos mapas, gerada de `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`. Em aberto por gravidade: 0 alta, 3 média, 25 baixa. Cada achado em aberto traz no arquivo o texto pronto para abrir o fluxo de melhoria (`pedido_melhoria`).
 
-## Em aberto (29)
+## Em aberto (28)
 
 | Achado | Gravidade · mapa |
 | :-------------------------------------- | :-------------------------------------------- |
@@ -32,7 +32,6 @@ Tabela consolidada de todos os achados dos mapas, gerada de `docs/auditoria/mapa
 | Ciclo de auditoria sem todos os documentos: fluxo-02-runner/ciclo-01 (`CAT-ciclo-fluxo-02-runner-ciclo-01`) | Baixa · oficina |
 | Ciclo de auditoria sem todos os documentos: fluxo-03-runner/ciclo-01 (`CAT-ciclo-fluxo-03-runner-ciclo-01`) | Baixa · oficina |
 | Ciclo de auditoria sem todos os documentos: fronteiras-ferramentas/ciclo-01 (`CAT-ciclo-fronteiras-ferramentas-ciclo-01`) | Baixa · oficina |
-| Ciclo de auditoria sem todos os documentos: modularizacao-vsa/ciclo-03 (`CAT-ciclo-modularizacao-vsa-ciclo-03`) | Baixa · oficina |
 | 1 guardas da raiz que nenhuma lei declara (`CAT-guardas-sem-lei`) | Baixa · leis |
 | 4 scripts que nenhum código chama (`CAT-scripts-sem-chamador`) | Baixa · scripts |
 

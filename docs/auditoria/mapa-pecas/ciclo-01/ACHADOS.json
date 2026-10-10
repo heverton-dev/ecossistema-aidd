@@ -7,12 +7,12 @@
   ],
   "como_usar": "Cada achado em aberto traz pedido_melhoria: o texto para python ecossistema.py melhoria init --pedido \"...\".",
   "totais": {
-    "aberto": 29,
+    "aberto": 28,
     "suspeita": 0,
     "resolvido": 14,
     "abertos_alta": 0,
     "abertos_media": 3,
-    "abertos_baixa": 26
+    "abertos_baixa": 25
   },
   "achados": [
     {
@@ -337,21 +337,9 @@
       "origem": "catalogo",
       "mapa": "oficina",
       "evidencia": [
-        "faltam: laudo_inicial, laudo_revisado"
+        "faltam: laudo_revisado"
       ],
       "pedido_melhoria": "Completar ou fechar o ciclo fronteiras-ferramentas/ciclo-01."
-    },
-    {
-      "id": "CAT-ciclo-modularizacao-vsa-ciclo-03",
-      "titulo": "Ciclo de auditoria sem todos os documentos: modularizacao-vsa/ciclo-03",
-      "gravidade": "baixa",
-      "estado": "aberto",
-      "origem": "catalogo",
-      "mapa": "oficina",
-      "evidencia": [
-        "faltam: laudo_inicial, laudo_revisado"
-      ],
-      "pedido_melhoria": "Completar ou fechar o ciclo modularizacao-vsa/ciclo-03."
     },
     {
       "id": "CAT-guardas-sem-lei",

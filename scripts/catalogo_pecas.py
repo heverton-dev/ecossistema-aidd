@@ -522,8 +522,10 @@ def coletar_scripts() -> list[dict]:
 
 RE_NOTA_LAUDO = re.compile(r"[Nn]ota[^:\n]*:\s*\**\s*(\d+(?:[.,]\d+)?)\s*/\s*10")
 # Documentos que toda rodada 4F produz; a fase 3 (Construtor) entrega código, não documento fixo.
-FASES_CICLO = (("laudo_inicial", "LAUDO-15D-INICIAL.md"), ("plano_evolucao", "PLANO-EVOLUCAO.md"),
-               ("laudo_revisado", "LAUDO-15D-REVISADO.md"), ("dod", "DOD.md"))
+FASES_CICLO = (("laudo_inicial", ("LAUDO-15D-INICIAL.md", "DIAGNOSTICO.md", "LAUDO-INICIAL.md")),
+               ("plano_evolucao", ("PLANO-EVOLUCAO.md",)),
+               ("laudo_revisado", ("LAUDO-15D-REVISADO.md", "LAUDO-REVISADO.md")),
+               ("dod", ("DOD.md",)))
 
 
 def coletar_oficina() -> dict:
@@ -540,14 +542,15 @@ def coletar_oficina() -> dict:
     for d in sorted((RAIZ / "docs" / "auditoria").glob("*/ciclo-*")):
         nomes = {f.name for f in d.iterdir()}
         nota = ""
-        for arquivo in ("LAUDO-15D-REVISADO.md", "LAUDO-15D-INICIAL.md"):
+        for arquivo in ("LAUDO-15D-REVISADO.md", "LAUDO-REVISADO.md", "LAUDO-15D-INICIAL.md", "LAUDO-INICIAL.md", "DIAGNOSTICO.md"):
             if arquivo in nomes:
                 notas = RE_NOTA_LAUDO.findall(_ler(d / arquivo))
                 if notas:
                     nota = notas[-1].replace(",", ".")
                     break
         ciclos.append({"alvo": d.parent.name, "ciclo": d.name, "caminho": _rel(d),
-                       "fases": {chave: arquivo in nomes for chave, arquivo in FASES_CICLO}, "nota": nota})
+                       "fases": {chave: any(a in nomes for a in (arqs if isinstance(arqs, tuple) else (arqs,)))
+                                 for chave, arqs in FASES_CICLO}, "nota": nota})
     melhorias = len(list((RAIZ / "docs" / "melhorias").glob("*.json")))
     return {"planos": planos, "ciclos": ciclos, "relatorios_melhoria": melhorias}
 
@@ -579,7 +582,7 @@ def coletar_lente_15d() -> dict:
         dimensoes.setdefault(int(n), titulo.strip())
     laudos = []
     for d in sorted((RAIZ / "docs" / "auditoria").glob("*/ciclo-*")):
-        for arquivo in ("LAUDO-15D-REVISADO.md", "LAUDO-15D-INICIAL.md"):
+        for arquivo in ("LAUDO-15D-REVISADO.md", "LAUDO-REVISADO.md", "LAUDO-15D-INICIAL.md", "LAUDO-INICIAL.md", "DIAGNOSTICO.md"):
             if (d / arquivo).is_file():
                 classes = {}
                 for linha in _ler(d / arquivo).splitlines():

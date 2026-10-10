@@ -1818,6 +1818,12 @@
         }
       },
       {
+        "alvo": "fronteiras-ferramentas",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/fronteiras-ferramentas/ciclo-01/DIAGNOSTICO.md",
+        "dimensoes": {}
+      },
+      {
         "alvo": "mapa-pecas",
         "ciclo": "ciclo-01",
         "laudo": "docs/auditoria/mapa-pecas/ciclo-01/LAUDO-15D-REVISADO.md",
@@ -1910,6 +1916,12 @@
           "14": "descrito",
           "15": "descrito"
         }
+      },
+      {
+        "alvo": "modularizacao-vsa",
+        "ciclo": "ciclo-03",
+        "laudo": "docs/auditoria/modularizacao-vsa/ciclo-03/LAUDO-REVISADO.md",
+        "dimensoes": {}
       },
       {
         "alvo": "skills-ddd",
@@ -2637,7 +2649,7 @@
         "ciclo": "ciclo-01",
         "caminho": "docs/auditoria/fronteiras-ferramentas/ciclo-01",
         "fases": {
-          "laudo_inicial": false,
+          "laudo_inicial": true,
           "plano_evolucao": true,
           "laudo_revisado": false,
           "dod": true
@@ -2721,9 +2733,9 @@
         "ciclo": "ciclo-03",
         "caminho": "docs/auditoria/modularizacao-vsa/ciclo-03",
         "fases": {
-          "laudo_inicial": false,
+          "laudo_inicial": true,
           "plano_evolucao": true,
-          "laudo_revisado": false,
+          "laudo_revisado": true,
           "dod": true
         },
         "nota": ""
