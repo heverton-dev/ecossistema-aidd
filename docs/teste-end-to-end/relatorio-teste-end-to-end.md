@@ -1604,3 +1604,22 @@
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 09/10/2026.
 
+## 54. Pós-ciclo-03 (Item 6): Inclusão de tests/integration em pytest.ini e correção de testes de fronteira
+
+- **Objetivo da Correção:**
+  Ativar a execução dos testes de integração das ferramentas que possuíam `testpaths = tests/unit` (`aidd-enterprise` e `aidd-master`), diagnosticar e corrigir os 4 testes de drift falhos na `main` em `test_fronteira_enterprise.py` e validar o impacto de tempo no gate `G_TESTES_REAIS`.
+- **Ferramentas Tocadas:**
+  `aidd-enterprise` (`pytest.ini`, `tests/test_fronteira_enterprise.py`) e `aidd-master` (`pytest.ini`, `tests/integration/test_scaffold_gate_arquitetura_deliverable.py`).
+- **O que executou:**
+  1. `aidd-enterprise/pytest.ini`: adicionados `tests/integration` e `tests/test_fronteira_enterprise.py` aos `testpaths`.
+  2. `aidd-master/pytest.ini`: adicionado `tests/integration` aos `testpaths`.
+  3. `test_fronteira_enterprise.py`: corrigida fixture `_raiz_fake_drift` com criação de diretório `contracts/` e espelhamento de `MAPA-DONOS-FERRAMENTAS.json` (4 testes de drift corrigidos com evidência).
+  4. `test_scaffold_gate_arquitetura_deliverable.py`: busca ascendente da raiz do monorepo (`_achar_raiz_repo`) eliminando path duplicado pós-VSA.
+- **Resultados de Testes (10/10/2026):**
+  - `aidd-enterprise` pytest: 367 passed (+29 testes cobertos), 3 skipped (exit 0).
+  - `aidd-master` pytest: 426 passed (+9 testes cobertos), 3 skipped (exit 0).
+  - `G_TESTES_REAIS` v2: 2467 passed, 0 failed, 12 skipped em 683.47 s (exit 0).
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 10/10/2026.
+
+

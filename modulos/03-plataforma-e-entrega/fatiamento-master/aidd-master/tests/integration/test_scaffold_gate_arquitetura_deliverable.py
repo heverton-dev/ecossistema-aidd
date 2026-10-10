@@ -22,7 +22,15 @@ import sys
 
 import pytest
 
-REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
+def _achar_raiz_repo(inicio: str) -> str:
+    curr = os.path.abspath(inicio)
+    while os.path.dirname(curr) != curr:
+        if os.path.isfile(os.path.join(curr, "ecossistema.py")):
+            return curr
+        curr = os.path.dirname(curr)
+    return curr
+
+REPO_ROOT = _achar_raiz_repo(os.path.dirname(__file__))
 GATE_PATH = os.path.join(REPO_ROOT, "modulos", "03-plataforma-e-entrega", "gates", "G_ARQUITETURA_DELIVERABLE.py")
 
 SCRIPTS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "scripts"))

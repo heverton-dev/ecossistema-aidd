@@ -355,7 +355,12 @@ def _raiz_fake_drift(tmp_path: Path, copias: dict[str, bytes], peca: bytes, docu
                    "sha256": "sha256-" + hashlib.sha256(peca).hexdigest(), "copias": sorted(copias)}],
     }
     (raiz / "componentes" / "compartilhado" / "CATALOGO.json").write_text(json.dumps(catalogo), encoding="utf-8")
+    mapa_donos = ROOT_DIR / "componentes" / "compartilhado" / "specs" / "MAPA-DONOS-FERRAMENTAS.json"
+    if mapa_donos.is_file():
+        (raiz / "componentes" / "compartilhado" / "specs").mkdir(parents=True, exist_ok=True)
+        shutil.copy2(mapa_donos, raiz / "componentes" / "compartilhado" / "specs" / "MAPA-DONOS-FERRAMENTAS.json")
     baseline = {"arquivos": {}, "catalogo": {"divergencias_documentadas": documentadas}}
+    (raiz / "modulos" / "04-nucleo-compartilhado" / "contracts").mkdir(parents=True, exist_ok=True)
     (raiz / "modulos" / "04-nucleo-compartilhado" / "contracts" / "baseline_nucleo_compartilhado.json").write_text(json.dumps(baseline), encoding="utf-8")
     return raiz
 
