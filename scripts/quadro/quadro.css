@@ -990,27 +990,86 @@ body {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  font-size: 0.785rem;
-  font-family: var(--fonte-mono);
+  gap: 0.85rem;
+  font-size: 0.8rem;
+  padding: 0.5rem 0.25rem 0.5rem 0.5rem;
+  position: relative;
 }
 
 .linha-tempo-item {
   display: flex;
-  gap: 0.5rem;
-  align-items: baseline;
-  color: var(--texto-secundario);
+  gap: 0.75rem;
+  align-items: flex-start;
+  position: relative;
+  padding-left: 1.25rem;
+}
+
+.linha-tempo-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 4px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--c-vivo);
+  box-shadow: 0 0 6px var(--c-vivo);
+  z-index: 2;
+}
+
+.linha-tempo-item::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 13px;
+  bottom: -12px;
+  width: 1px;
+  background: var(--borda-base);
+  z-index: 1;
+}
+
+.linha-tempo-item:last-child::after {
+  display: none;
+}
+
+.linha-tempo-item.sucesso::before {
+  background: var(--c-sucesso);
+  box-shadow: 0 0 6px var(--c-sucesso);
+}
+
+.linha-tempo-item.falha::before {
+  background: var(--c-falha);
+  box-shadow: 0 0 6px var(--c-falha);
 }
 
 .linha-tempo-hora {
   color: var(--texto-mutado);
-  font-size: 0.72rem;
+  font-size: 0.725rem;
+  font-family: var(--fonte-mono);
   flex-shrink: 0;
+  padding-top: 1px;
+}
+
+.linha-tempo-corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+  flex: 1;
 }
 
 .linha-tempo-evento {
-  color: var(--c-vivo);
+  color: var(--texto-primario);
   font-weight: 600;
+  font-size: 0.825rem;
+}
+
+.linha-tempo-msg {
+  color: var(--texto-secundario);
+  font-size: 0.75rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 /* RESUMO EXECUTIVO DO DRAWER */

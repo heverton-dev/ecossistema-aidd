@@ -1024,20 +1024,88 @@ async function abrirGaveta(runId) {
     `;
     corpo.appendChild(bRaw);
 
-    // 7. PREENCHER ABA TIMELINE (DEDICADA)
-    corpoTimeline.innerHTML = `<h4 class="bloco-gaveta-titulo" style="margin-bottom:0.75rem;">Histórico Cronológico de Eventos</h4>`;
-    if (!ex.historico || ex.historico.length === 0) {
-      corpoTimeline.innerHTML += `<p class="gaveta-texto-mutado">Sem histórico cronológico registrado.</p>`;
+    // 7. PREENCHER ABA TIMELINE (DEDICADA COM RESILIÊNCIA FACTUAL)
+    corpoTimeline.innerHTML = `<h4 class="bloco-gaveta-titulo" style="margin-bottom:0.85rem;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:-1px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Histórico Cronológico da Execução</h4>`;
+    
+    // Coletar eventos ordenados: de ex.historico ou derivados factualmente do ciclo
+    let eventos = [];
+    if (Array.isArray(ex.historico) && ex.historico.length > 0) {
+      eventos = ex.historico.map(h => ({
+        hora: (h.em || "").substring(11, 19) || "--:--:--",
+        evento: h.evento || "Evento",
+        mensagem: h.mensagem || "",
+        tipo: h.tipo || "info"
+      }));
+    } else {
+      // Reconstrução factual caso historico nao tenha sido persistido
+      const inicio = ex.processo?.inicio || ex.atualizado_em || "";
+      if (inicio) {
+        eventos.push({
+          hora: inicio.substring(11, 19) || "00:00:00",
+          evento: "Início do Processo",
+          mensagem: `Disparo do comando (PID ${ex.processo?.pid || '-'})`,
+          tipo: "vivo"
+        });
+      }
+
+      // Adiciona etapas registradas
+      if (Array.isArray(ex.etapas) && ex.etapas.length > 0) {
+        ex.etapas.forEach((et, idx) => {
+          const st = et.status || "pendente";
+          const tipoEt = st === "concluido" ? "sucesso" : (st === "falhou" ? "falha" : "vivo");
+          eventos.push({
+            hora: (et.atualizado_em || inicio || "").substring(11, 19) || `--:--:--`,
+            evento: `Etapa ${idx + 1}: ${et.nome || et.chave}`,
+            mensagem: `Status: ${st.toUpperCase()}${et.duracao ? ` ∙ ${et.duracao}` : ''}`,
+            tipo: tipoEt
+          });
+        });
+      }
+
+      // Gates executados se houver
+      if (Array.isArray(ex.gates) && ex.gates.length > 0) {
+        ex.gates.forEach(g => {
+          eventos.push({
+            hora: (g.em || inicio || "").substring(11, 19) || `--:--:--`,
+            evento: `Quality Gate: ${g.nome}`,
+            mensagem: g.aprovado ? "Aprovado com exit 0" : `Reprovado: ${g.motivo || 'Violacao'}`,
+            tipo: g.aprovado ? "sucesso" : "falha"
+          });
+        });
+      }
+
+      // Parada ou Término
+      if (ex.parada) {
+        eventos.push({
+          hora: (ex.atualizado_em || "").substring(11, 19) || "--:--:--",
+          evento: "Interrupção / Falha",
+          mensagem: ex.parada.motivo || "Falha detectada no pipeline",
+          tipo: "falha"
+        });
+      } else if (ex.status === "concluido") {
+        eventos.push({
+          hora: (ex.processo?.fim || ex.atualizado_em || "").substring(11, 19) || "--:--:--",
+          evento: "Conclusão com Sucesso",
+          mensagem: "Todos os gates e fatias foram validados com êxito",
+          tipo: "sucesso"
+        });
+      }
+    }
+
+    if (eventos.length === 0) {
+      corpoTimeline.innerHTML += `<p class="gaveta-texto-mutado">Sem histórico cronológico registrado para esta execução.</p>`;
     } else {
       const listaT = document.createElement("ul");
       listaT.className = "linha-tempo-lista";
-      for (const h of ex.historico) {
+      for (const ev of eventos) {
         const li = document.createElement("li");
-        li.className = "linha-tempo-item";
+        li.className = `linha-tempo-item ${ev.tipo || ''}`;
         li.innerHTML = `
-          <span class="linha-tempo-hora">${(h.em || "").substring(11, 19)}</span>
-          <span class="linha-tempo-evento">${h.evento}:</span>
-          <span>${h.mensagem || ""}</span>
+          <span class="linha-tempo-hora">${ev.hora}</span>
+          <div class="linha-tempo-corpo">
+            <span class="linha-tempo-evento">${ev.evento}</span>
+            <span class="linha-tempo-msg">${ev.mensagem}</span>
+          </div>
         `;
         listaT.appendChild(li);
       }
@@ -1246,14 +1314,20 @@ window.addEventListener("keydown", (e) => {
 // ==========================================
 function alternarAbaGaveta(aba) {
   const btnDet = document.getElementById("gaveta-aba-detalhes");
+  const btnTime = document.getElementById("gaveta-aba-timeline");
   const btnTerm = document.getElementById("gaveta-aba-terminal");
   const conDet = document.getElementById("gaveta-conteudo");
+  const conTime = document.getElementById("gaveta-timeline-conteudo");
   const conTerm = document.getElementById("gaveta-terminal-conteudo");
 
   if (btnDet) btnDet.classList.toggle("ativa", aba === "detalhes");
+  if (btnTime) btnTime.classList.toggle("ativa", aba === "timeline");
   if (btnTerm) btnTerm.classList.toggle("ativa", aba === "terminal");
+
   if (conDet) conDet.classList.toggle("escondido", aba !== "detalhes");
+  if (conTime) conTime.classList.toggle("escondido", aba !== "timeline");
   if (conTerm) conTerm.classList.toggle("escondido", aba !== "terminal");
+
   tocarSom("clique");
 }
 
