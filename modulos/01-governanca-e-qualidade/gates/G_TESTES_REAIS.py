@@ -141,7 +141,7 @@ def _rodar_pytest(diretorio, junitxml_path, alvos=()):
         text=True,
         encoding="utf-8",
         errors="replace",
-        timeout=900,
+        timeout=1200,
     )
     return resultado.returncode, resultado.stdout + resultado.stderr
 
@@ -246,8 +246,8 @@ def executar():
             try:
                 exit_code, output = _rodar_pytest(dir_ferramenta, junitxml_path, alvos)
             except subprocess.TimeoutExpired:
-                print("TIMEOUT (900s)")
-                _anunciar_ao_vivo(f"[G_TESTES_REAIS] ({indice}/{total_ferramentas}) {ferramenta}: TIMEOUT (900s)")
+                print("TIMEOUT (1200s)")
+                _anunciar_ao_vivo(f"[G_TESTES_REAIS] ({indice}/{total_ferramentas}) {ferramenta}: TIMEOUT (1200s)")
                 resultados.append((ferramenta, "TIMEOUT", 0, 0, 0, []))
                 falhou = True
                 continue

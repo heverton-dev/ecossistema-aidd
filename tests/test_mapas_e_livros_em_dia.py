@@ -72,9 +72,10 @@ TIPOS_MAPA = [
 
 @pytest.mark.parametrize("tipo_mapa", TIPOS_MAPA)
 def test_mapa_visual_em_dia(tipo_mapa: str):
-    cmd = [sys.executable, str(RAIZ / "scripts" / "mapa_visual.py"), tipo_mapa, "--check"]
-    proc = subprocess.run(cmd, cwd=RAIZ, capture_output=True, text=True, encoding="utf-8")
-    assert proc.returncode == 0, f"Mapa {tipo_mapa} divergiu: {proc.stdout}\n{proc.stderr}"
+    import scripts.mapa_visual as mv
+    rc = mv.main([tipo_mapa, "--check"])
+    assert rc == 0, f"Mapa {tipo_mapa} divergiu"
+
 
 
 def test_livros_series_com_data_do_fechamento_do_ciclo():

@@ -22,13 +22,15 @@ CLI = "componentes/compartilhado/skills/aidd-visual-maps/scripts/cli.py"
 MAPAS = Path("docs/mapas-visuais")
 
 
+import shutil
+
+
 @pytest.fixture(scope="module")
-def repo(tmp_path_factory):
-    raiz = copiar_repo(tmp_path_factory.mktemp("repo_gate_vmaps"))
-    commitar(raiz, ".", mensagem="fixture")
-    proc = rodar(raiz, CLI, "gerar", env={"AIDD_MEDICOES_DIR": str(raiz.parent / "medicoes")})
-    assert proc.returncode == 0, proc.stdout + proc.stderr
-    return raiz
+def repo(tmp_path_factory, repo_mapas_gerado_sessao):
+    destino = tmp_path_factory.mktemp("repo_gate_vmaps") / "repo"
+    shutil.copytree(repo_mapas_gerado_sessao, destino)
+    return destino
+
 
 
 def _script_novo(raiz: Path):

@@ -50,3 +50,17 @@ def rodar(raiz: Path, *args: str, env: dict | None = None) -> subprocess.Complet
     ambiente = {**os.environ, "PYTHONIOENCODING": "utf-8", **(env or {})}
     return subprocess.run([sys.executable, *args], cwd=raiz, capture_output=True, text=True,
                           encoding="utf-8", errors="replace", env=ambiente, timeout=600)
+
+
+CLI_VMAPS = "componentes/compartilhado/skills/aidd-visual-maps/scripts/cli.py"
+
+
+def obter_repo_base_gerado(tmp_path_factory) -> Path:
+    """Gera um repositório base completo uma única vez para ser copiado rapidamente."""
+    base = tmp_path_factory.mktemp("repo_mapas_gerado_base") / "repo"
+    copiar_repo(base)
+    commitar(base, ".", mensagem="fixture base")
+    proc = rodar(base, CLI_VMAPS, "gerar", env={"AIDD_MEDICOES_DIR": str(base.parent / "medicoes")})
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    return base
+

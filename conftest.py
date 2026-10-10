@@ -111,3 +111,11 @@ def _sem_aviso_do_sistema(monkeypatch):
         sys.modules["fila_ciclos"] = modulo
     monkeypatch.setattr(modulo, "notificar", lambda titulo, mensagem: False)
     yield
+
+
+@pytest.fixture(scope="session")
+def repo_mapas_gerado_sessao(tmp_path_factory):
+    """Fixture de sessão: constrói o repositório base dos mapas visuais uma única vez."""
+    from tests._repo_mapas import obter_repo_base_gerado
+    return obter_repo_base_gerado(tmp_path_factory)
+
