@@ -2487,29 +2487,39 @@ body {
 
   .conteudo-principal {
     height: auto !important;
-    min-height: calc(100vh - 56px) !important;
+    min-height: calc(100vh - 52px) !important;
     max-height: none !important;
     overflow: visible !important;
     display: block !important;
     flex: none !important;
-    padding: 0.5rem 0.5rem max(2rem, env(safe-area-inset-bottom, 2rem)) 0.5rem !important;
+    padding: 0.35rem 0.35rem max(2rem, env(safe-area-inset-bottom, 2rem)) 0.35rem !important;
   }
 
   .visao-secao {
-    height: auto !important;
-    max-height: none !important;
-    overflow: visible !important;
-    display: block !important;
-    flex: none !important;
+    height: auto;
+    max-height: none;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    flex: none;
+  }
+
+  /* BLINDAGEM DE SEÇÕES ESCONDIDAS (IMPEDE HISTÓRICO/GATES DE APARECEREM NA TELA ERRADA) */
+  .escondido,
+  .visao-secao.escondido,
+  .kanban-wrapper.escondido,
+  .grade-cards.escondido {
+    display: none !important;
   }
 
   .marca {
-    gap: 0.35rem;
+    gap: 0.25rem;
     flex-shrink: 0;
   }
 
   .marca-titulo {
-    font-size: 0.95rem;
+    font-size: 0.85rem;
+    font-weight: 700;
   }
 
   .marca-subtitulo {
@@ -2517,8 +2527,8 @@ body {
   }
 
   .barra-topo {
-    padding: max(0.45rem, env(safe-area-inset-top, 0.45rem)) 0.5rem 0.45rem 0.5rem;
-    gap: 0.35rem;
+    padding: max(0.35rem, env(safe-area-inset-top, 0.35rem)) 0.4rem 0.35rem 0.4rem;
+    gap: 0.25rem;
     width: 100%;
     max-width: 100vw;
     box-sizing: border-box;
@@ -2526,7 +2536,7 @@ body {
   }
 
   .painel-acoes-topo {
-    gap: 0.35rem;
+    gap: 0.25rem;
     flex-shrink: 0;
   }
 
@@ -2548,8 +2558,9 @@ body {
   }
 
   .status-conexao {
-    padding: 0.2rem 0.4rem;
-    min-height: 38px;
+    padding: 0.15rem 0.35rem;
+    min-height: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     border-radius: 999px;
@@ -2565,10 +2576,10 @@ body {
 
   .btn-launchpad {
     padding: 0;
-    min-width: 38px;
-    min-height: 38px;
-    width: 38px;
-    height: 38px;
+    min-width: 32px;
+    min-height: 32px;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2576,10 +2587,10 @@ body {
   }
 
   .btn-tema, .btn-acao-topo {
-    min-width: 38px;
-    min-height: 38px;
-    width: 38px;
-    height: 38px;
+    min-width: 32px;
+    min-height: 32px;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2667,28 +2678,32 @@ body {
     flex-direction: column;
   }
 
+  /* KANBAN CABEÇALHO COMPACTO PARA 320px+ */
   .kanban-cabecalho {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 0.4rem 0.65rem;
-    margin-bottom: 0.35rem;
-    gap: 0.5rem;
+    padding: 0.25rem 0.4rem;
+    margin-bottom: 0.25rem;
+    gap: 0.35rem;
+    flex-shrink: 0;
   }
 
   .kanban-cabecalho-esquerda {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.35rem;
     flex: 1;
     min-width: 0;
   }
 
   .btn-voltar {
-    min-height: 38px;
-    padding: 0.35rem 0.65rem;
-    font-size: 0.775rem;
+    min-height: 32px;
+    height: 32px;
+    padding: 0.2rem 0.45rem;
+    font-size: 0.725rem;
     flex-shrink: 0;
+    gap: 0.25rem;
   }
 
   .kanban-titulo-bloco {
@@ -2701,7 +2716,8 @@ body {
   }
 
   .kanban-titulo-texto {
-    font-size: 0.95rem;
+    font-size: 0.85rem;
+    font-weight: 700;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -2713,13 +2729,14 @@ body {
   }
 
   .caixa-busca-kanban {
-    width: 120px;
+    width: 85px;
   }
 
   .caixa-busca-kanban .input-busca {
-    min-height: 36px;
-    font-size: 0.75rem;
-    padding: 0.25rem 0.45rem 0.25rem 1.6rem;
+    min-height: 30px;
+    height: 30px;
+    font-size: 0.7rem;
+    padding: 0.15rem 0.35rem 0.15rem 1.4rem;
   }
 
   .kanban-cabecalho-direita {
@@ -2728,9 +2745,9 @@ body {
 
   /* ESTEIRA COMPACTA EM LINHA */
   .esteira-topologica-visual {
-    padding: 0.25rem 0.5rem;
-    margin-bottom: 0.35rem;
-    gap: 0.35rem;
+    padding: 0.15rem 0.35rem;
+    margin-bottom: 0.25rem;
+    gap: 0.25rem;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
@@ -2739,38 +2756,45 @@ body {
   }
 
   .passo-esteira {
-    padding: 0.15rem 0.4rem;
-    font-size: 0.685rem;
+    padding: 0.1rem 0.35rem;
+    font-size: 0.65rem;
     white-space: nowrap;
     flex-shrink: 0;
   }
 
   .seta-esteira {
-    font-size: 0.6rem;
+    font-size: 0.55rem;
     flex-shrink: 0;
   }
 
   /* BARRA DE TABS / ATALHOS DE COLUNAS NO MOBILE */
   #kanban-atalhos-colunas {
     display: flex;
-    gap: 0.4rem;
+    gap: 0.3rem;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    padding: 0.2rem 0.1rem 0.4rem 0.1rem;
-    margin-bottom: 0.45rem;
+    padding: 0.15rem 0.1rem 0.3rem 0.1rem;
+    margin-bottom: 0.35rem;
     scroll-snap-type: x mandatory;
     flex-shrink: 0;
   }
 
   .chip-coluna-atalho {
-    min-height: 38px;
-    padding: 0.35rem 0.75rem;
-    font-size: 0.775rem;
+    min-height: 32px;
+    height: 32px;
+    padding: 0.2rem 0.55rem;
+    font-size: 0.725rem;
     white-space: nowrap;
     flex-shrink: 0;
     scroll-snap-align: start;
     border-radius: 999px;
+    gap: 0.25rem;
+  }
+
+  .chip-coluna-atalho .chip-badge {
+    font-size: 0.65rem;
+    padding: 0.05rem 0.3rem;
   }
 
   .chip-coluna-atalho.ativa {
@@ -2781,24 +2805,24 @@ body {
     box-shadow: 0 0 8px rgba(56, 189, 248, 0.25);
   }
 
-  /* TRILHA E COLUNAS KANBAN EM TELA CHEIA RESPONSIVA */
+  /* TRILHA E COLUNAS KANBAN EM TELA CHEIA RESPONSIVA (320px+) */
   .kanban-trilha {
     flex: 1;
     height: 100%;
     min-height: 0;
     display: flex;
-    gap: 0.75rem;
+    gap: 0.5rem;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: x mandatory;
-    scroll-padding: 0.5rem;
-    padding: 0.25rem 0.25rem max(1.5rem, env(safe-area-inset-bottom, 1.5rem)) 0.25rem;
+    scroll-padding: 0.25rem;
+    padding: 0.15rem 0.25rem max(1.25rem, env(safe-area-inset-bottom, 1.25rem)) 0.25rem;
   }
 
   .kanban-coluna {
-    min-width: 90vw !important;
-    width: 90vw !important;
-    max-width: 90vw !important;
+    min-width: calc(100vw - 16px) !important;
+    width: calc(100vw - 16px) !important;
+    max-width: calc(100vw - 16px) !important;
     scroll-snap-align: center;
     height: 100%;
     max-height: 100%;
@@ -2808,10 +2832,11 @@ body {
     border: 1px solid var(--borda-base);
     border-radius: var(--raio-m);
     box-sizing: border-box;
+    flex-shrink: 0;
   }
 
   .coluna-topo {
-    padding: 0.65rem 0.85rem;
+    padding: 0.5rem 0.65rem;
     background: var(--bg-elevado);
     border-bottom: 1px solid var(--borda-suave);
     border-top-left-radius: var(--raio-m);
@@ -2824,15 +2849,15 @@ body {
     min-height: 0;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding: 0.65rem;
-    gap: 0.65rem;
+    padding: 0.5rem;
+    gap: 0.5rem;
   }
 
   .cartao-execucao {
-    padding: 0.85rem;
+    padding: 0.65rem;
     touch-action: pan-y;
-    border-radius: var(--raio-m);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    border-radius: var(--raio-p);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
   }
 
   /* GAVETA LATERAL (FULLSCREEN NO SMARTPHONE) */
