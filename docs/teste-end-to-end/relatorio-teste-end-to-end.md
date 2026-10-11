@@ -1676,3 +1676,26 @@
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 11/10/2026.
 
+## 58. Resolução Cirúrgica das Inconsistências E2E dos 3 Fluxos Canônicos (Pure, Open, Freedom)
+
+- **Objetivo da Correção:**
+  Sanar todas as inconsistências identificadas nos testes paralelos ponta a ponta dos três fluxos canônicos (`aidd-pure`, `aidd-open`, `aidd-freedom`) no teste real do Daily Task Manager (Kanban, Auth Google/Email, Compartilhamento via QR/Link/WhatsApp).
+- **Ferramentas e Fatias Tocadas:**
+  `aidd-forge` (`prontidao.py`), `aidd-planner` (`planner_engine.py`), `aidd-open` (`05_init_db.py`, `G_FACTORY_INIT_DB.py`), `aidd-master` (`dispatch_pipeline.py`), `aidd-enterprise` (`audit.py`), e raiz (`ecossistema.py`).
+- **O que executou:**
+  1. `TKT-FIX-01 (CLI Facade Normalization)`: Em `ecossistema.py`, implementado mapeamento de aliases canônicos para `--harden` (forge), `--intake` (planner), `--motor` (pure/open/freedom), `--manifest` (open), `--compose`/`--pack` (ops), `--compile-vsa` (master), `--audit` (enterprise) e auto-detecção de `PLANNER.json`/`vsa_dispatch.json` local em `dispatch --barrier-sync`.
+  2. `TKT-FIX-02 (Canonical Gate Resolution)`: Em `dispatch_pipeline.py`, resolução de caminhos de gates das worktrees efêmeras atualizada para inspecionar `repo_root` e `modulos/` de forma canônica, eliminando o erro de arquivo ausente código 2.
+  3. `TKT-FIX-03 (Prontidão PyPI vs Import Mismatch)`: Em `prontidao.py`, adicionado mapa de equivalências de pacotes PyPI para nomes de módulos (`python-dotenv` -> `dotenv`, `pyyaml` -> `yaml`, `PyJWT` -> `jwt`, etc.) e introspecção via `importlib.metadata.packages_distributions()`, eliminando falsos negativos pós-clone.
+  4. `TKT-FIX-04 (Init DB Gate Alignment)`: Em `05_init_db.py` e `G_FACTORY_INIT_DB.py`, harmonizada a geração determinística do script de banco quando bancos extras não são requeridos pelo nicho.
+  5. `TKT-FIX-05 (Enterprise Audit Gate Resolution)`: Em `audit.py` de `aidd-enterprise`, atualizada a lista de busca de gates para cobrir `componentes/compartilhado/gates/` sem violar fronteiras VSA.
+  6. `TKT-FIX-06 (Master Compile VSA Deterministico)`: Em `ecossistema.py`, `--compile-vsa` invoca diretamente o compilador topológico formal a partir do `PLANNER.json`, evitando geração espúria de fatias por Click.
+  7. `TKT-FIX-07 (Micro-Gates vs Macro-Gates)`: Em `planner_engine.py`, removido o macro-gate `G_TESTES_REAIS` dos micro-gates de worktree de fatia, preservando a validação focada nos testes da fatia e `G_SAIDA_BINARIA`.
+  8. `TKT-FIX-08 (Component Drift Sync)`: Executada e comitada a sincronização forçada multi-harness (`python ecossistema.py components sync --tipo todos --force`).
+- **Resultados de Testes (11/10/2026):**
+  - `aidd-open` Testes Unitários: **21 passed** em 115s (exit 0).
+  - Testes de Nomes Padronizados & Fiscais VSA (`test_nomes_padronizados.py`, `test_fiscais_vsa_bloqueio.py`): **74 passed** (exit 0).
+  - `G_DISCIPLINA_TESTE_FERRAMENTA`: **PASS (Exit 0)**.
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 11/10/2026.
+
+

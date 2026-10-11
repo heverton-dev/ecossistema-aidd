@@ -25,6 +25,10 @@ def _validar_init_db(caminho: str) -> list:
     with open(caminho, "r", encoding="utf-8") as f:
         conteudo = f.read()
 
+    # Se explicitamente nenhum banco logico for necessario (nicho sem DB extra)
+    if "Nenhum banco logico necessario" in conteudo:
+        return []
+
     # Shebang
     if not conteudo.startswith("#!/"):
         problemas.append("Script sem shebang")

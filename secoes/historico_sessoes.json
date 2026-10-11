@@ -1,7 +1,7 @@
 {
   "versao": "1.0",
-  "atualizado_em": "2026-10-10T19:40:39.864095",
-  "total_sessoes": 54,
+  "atualizado_em": "2026-10-11T15:24:01.714977",
+  "total_sessoes": 57,
   "sessoes": [
     {
       "id": "fc4566a8-0804-4748-ab5f-ec105414273c",
@@ -507,6 +507,33 @@
       "titulo": "Sessão Ativa (Auto-Registrada)",
       "workspace": "C:/Users/trcnologia/Desktop/ecossistema-aidd",
       "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-cli/brain/94f14718-7810-4b05-894e-766a2e03304f/.system_generated/logs/transcript_full.jsonl"
+    },
+    {
+      "id": "7fa0a00c-64d6-4874-8af5-16349f4f87b8",
+      "registrado_em": "2026-10-11 15:23:59",
+      "harness": "antigravity",
+      "modelo": "gemini-3.8-flash-low",
+      "titulo": "Sessão Ativa (Auto-Registrada)",
+      "workspace": "C:/Users/trcnologia/Desktop/ecossistema-aidd",
+      "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-cli/brain/7fa0a00c-64d6-4874-8af5-16349f4f87b8/.system_generated/logs/transcript_full.jsonl"
+    },
+    {
+      "id": "9d5cf18f-4056-45fb-b990-1726be3e56ff",
+      "registrado_em": "2026-10-11 15:24:00",
+      "harness": "antigravity",
+      "modelo": "gemini-3.8-flash-low",
+      "titulo": "Sessão Ativa (Auto-Registrada)",
+      "workspace": "C:/Users/trcnologia/Desktop/ecossistema-aidd",
+      "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-cli/brain/9d5cf18f-4056-45fb-b990-1726be3e56ff/.system_generated/logs/transcript_full.jsonl"
+    },
+    {
+      "id": "77703856-a208-4079-9516-fd2949635d33",
+      "registrado_em": "2026-10-11 15:24:01",
+      "harness": "antigravity",
+      "modelo": "gemini-3.8-flash-low",
+      "titulo": "Sessão Ativa (Auto-Registrada)",
+      "workspace": "C:/Users/trcnologia/Desktop/ecossistema-aidd",
+      "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-cli/brain/77703856-a208-4079-9516-fd2949635d33/.system_generated/logs/transcript_full.jsonl"
     }
   ]
 }

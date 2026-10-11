@@ -295,14 +295,24 @@ def _reparar_instalacao_editable_aidd_forge(forge_dir):
 def cmd_forge(args):
     # Roteia para a script local deterministica da skill (D4): exit 1 em
     # entrada invalida, sem interpretacao por prompt. Fallback: pacote pip.
+    args_lista = list(args)
+    if "--harden" in args_lista or "harden" in args_lista:
+        args_lista = [a for a in args_lista if a not in ("--harden", "harden")]
+        if not args_lista or args_lista == ["."]:
+            args_lista = ["init", ".", "--force"]
+        elif "init" not in args_lista:
+            args_lista = ["init"] + args_lista + ["--force"]
+        elif "--force" not in args_lista:
+            args_lista.append("--force")
+
     skill_cli = os.path.join(ROOT_DIR, ".agents", "skills", "aidd-forge", "scripts", "cli.py")
     if os.path.isfile(skill_cli):
-        cmd = [sys.executable, skill_cli] + list(args)
+        cmd = [sys.executable, skill_cli] + args_lista
         return run_command(cmd, cwd=os.getcwd())
     forge_dir = pasta_ferramenta("aidd-forge")
     _reparar_instalacao_editable_aidd_forge(forge_dir)
     env = {"PYTHONPATH": forge_dir}
-    cmd = [sys.executable, "-m", "aidd_forge.cli"] + args
+    cmd = [sys.executable, "-m", "aidd_forge.cli"] + args_lista
     return run_command(cmd, cwd=os.getcwd(), env=env)
 
 def cmd_pure_motor(args):
@@ -315,23 +325,56 @@ def cmd_pure_motor(args):
 
 def cmd_master(args):
     master_dir = pasta_ferramenta("aidd-master")
+    args_lista = list(args)
+    if "--compile-vsa" in args_lista:
+        planner_file = "PLANNER.json"
+        if "--planner" in args_lista:
+            idx = args_lista.index("--planner")
+            if idx + 1 < len(args_lista):
+                planner_file = args_lista[idx + 1]
+        elif len(args_lista) > 1 and not args_lista[1].startswith("-"):
+            planner_file = args_lista[1]
+        try:
+            tools_planner = os.path.join(ROOT_DIR, "modulos", "01-governanca-e-qualidade", "core", "aidd-planner")
+            if tools_planner not in sys.path:
+                sys.path.insert(0, tools_planner)
+            from aidd_planner.core.planner_engine import compilar_grafo_topologico_vsa
+            with open(planner_file, "r", encoding="utf-8") as f:
+                plano = json.load(f)
+            manifesto = compilar_grafo_topologico_vsa(plano)
+            out_file = os.path.join(os.path.dirname(planner_file) or ".", "vsa_dispatch.json")
+            with open(out_file, "w", encoding="utf-8") as f:
+                json.dump(manifesto, f, indent=2, ensure_ascii=False)
+            print(f"[MASTER] VSA compilado com sucesso a partir de {planner_file} -> {out_file}")
+            return 0
+        except Exception as exc:
+            print(f"[MASTER] Erro na compilacao VSA de {planner_file}: {exc}")
+            return 1
     aidd_script = os.path.join(master_dir, "scripts", "aidd.py")
     env = {"PYTHONPATH": master_dir}
-    cmd = [sys.executable, aidd_script] + args
+    cmd = [sys.executable, aidd_script] + args_lista
     return run_command(cmd, cwd=os.getcwd(), env=env)
 
 def cmd_enterprise(args):
     ent_dir = pasta_ferramenta("aidd-enterprise")
+    args_lista = list(args)
+    if "--audit" in args_lista:
+        args_lista = ["audit" if a == "--audit" else a for a in args_lista]
     aidd_script = os.path.join(ent_dir, "scripts", "aidd.py")
     env = {"PYTHONPATH": ent_dir}
-    cmd = [sys.executable, aidd_script] + args
+    cmd = [sys.executable, aidd_script] + args_lista
     return run_command(cmd, cwd=os.getcwd(), env=env)
 
 def cmd_ops(args):
     ops_dir = pasta_ferramenta("aidd-ops")
+    args_lista = list(args)
+    if "--pack" in args_lista or "--compose" in args_lista:
+        args_lista = ["plan" if a in ("--pack", "--compose") else a for a in args_lista]
+        if "--pasta" not in args_lista:
+            args_lista.extend(["--pasta", "."])
     pipeline_script = os.path.join(ops_dir, "scripts", "pipeline_ops.py")
     env = {"PYTHONPATH": ops_dir}
-    cmd = [sys.executable, pipeline_script] + args
+    cmd = [sys.executable, pipeline_script] + args_lista
     return run_command(cmd, cwd=os.getcwd(), env=env)
 
 def cmd_freedom_motor(args):
@@ -346,15 +389,33 @@ def cmd_freedom_motor(args):
 
 def cmd_pure(args):
     """Atalho de alta ergonomia para run-fluxo --fluxo pure."""
-    return cmd_run_fluxo(["--fluxo", "pure"] + args)
+    args_lista = list(args)
+    if "--motor" in args_lista:
+        args_lista = [a for a in args_lista if a != "--motor"]
+        return cmd_pure_motor(args_lista)
+    return cmd_run_fluxo(["--fluxo", "pure"] + args_lista)
 
 def cmd_open(args):
     """Atalho de alta ergonomia para run-fluxo --fluxo open."""
-    return cmd_run_fluxo(["--fluxo", "open"] + args)
+    args_lista = list(args)
+    if "--motor" in args_lista:
+        args_lista = [a for a in args_lista if a != "--motor"]
+        for idx, a in enumerate(args_lista):
+            if a == "--manifest":
+                args_lista[idx] = "--plano"
+        if "--pasta" not in args_lista:
+            args_lista.extend(["--pasta", "./saida-open"])
+        return cmd_open_motor(args_lista)
+    return cmd_run_fluxo(["--fluxo", "open"] + args_lista)
 
 def cmd_freedom(args):
     """Atalho de alta ergonomia para run-fluxo --fluxo freedom (Fluxo 03 da Tríade)."""
-    return cmd_run_fluxo(["--fluxo", "freedom"] + args)
+    args_lista = list(args)
+    if any(a in args_lista for a in ("--scan", "--convert-db", "--motor", "--merge", "--pack", "--validate")):
+        if "--motor" in args_lista:
+            args_lista = [a for a in args_lista if a != "--motor"]
+        return cmd_freedom_motor(args_lista)
+    return cmd_run_fluxo(["--fluxo", "freedom"] + args_lista)
 
 def cmd_open_motor(args):
     """Executa só o gerador de stack multi-serviço do Fluxo 02 (modulos/02-triade-motores/fluxo-02-open/core/aidd-open ou VSA)."""
@@ -367,8 +428,11 @@ def cmd_open_motor(args):
 def cmd_planner(args):
     planner_dir = pasta_ferramenta("aidd-planner")
     env = {"PYTHONPATH": planner_dir}
+    args_lista = list(args)
+    if "--intake" in args_lista or "intake" in args_lista:
+        args_lista = ["init" if a in ("--intake", "intake") else a for a in args_lista]
     modulo_cli = "aidd_planner.cli" if os.path.isdir(os.path.join(planner_dir, "aidd_planner")) else "src.cli"
-    cmd = [sys.executable, "-m", modulo_cli] + args
+    cmd = [sys.executable, "-m", modulo_cli] + args_lista
     return run_command(cmd, cwd=os.getcwd(), env=env)
 
 def cmd_run_fluxo(args):
@@ -516,8 +580,13 @@ def cmd_dispatch(args):
         caminho_manifesto = extra[0]
 
     if not caminho_manifesto:
-        parser.print_help()
-        return 1
+        if os.path.isfile("PLANNER.json"):
+            caminho_manifesto = "PLANNER.json"
+        elif os.path.isfile("vsa_dispatch.json"):
+            caminho_manifesto = "vsa_dispatch.json"
+        else:
+            parser.print_help()
+            return 1
 
     cmd = [
         sys.executable, dispatch_script,

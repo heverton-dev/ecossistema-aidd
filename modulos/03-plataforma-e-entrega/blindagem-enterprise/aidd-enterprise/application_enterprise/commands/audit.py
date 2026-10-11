@@ -26,16 +26,32 @@ def cmd_audit(args):
         ("G_HARNESS_COMPAT", "Compatibilidade Multi-Harness e Portabilidade")
     ]
 
-    gates_dir = os.path.join(target_dir, "scripts", "gates")
-    # Fallback para pasta global do aidd-master
-    master_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    fallback_gates_dir = os.path.join(master_root, "scripts", "gates")
+    def _achar_raiz_repo(inicio: str) -> str:
+        curr = os.path.abspath(inicio)
+        while os.path.dirname(curr) != curr:
+            if os.path.isfile(os.path.join(curr, "ecossistema.py")):
+                return curr
+            curr = os.path.dirname(curr)
+        return os.path.abspath(inicio)
+
+    repo_root = _achar_raiz_repo(__file__)
+    pastas_gates_candidatas = [
+        os.path.join(target_dir, "scripts", "gates"),
+        os.path.join(target_dir, "gates"),
+        os.path.join(repo_root, "componentes", "compartilhado", "gates"),
+        os.path.join(repo_root, "gates"),
+    ]
+
+    def _resolver_gate(nome: str) -> str | None:
+        for p in pastas_gates_candidatas:
+            arq = os.path.join(p, f"{nome}.py")
+            if os.path.isfile(arq):
+                return arq
+        return None
 
     # Verifica se G_SEGURANCA existe
-    sec_gate_path = os.path.join(gates_dir, "G_SEGURANCA.py")
-    if not os.path.isfile(sec_gate_path):
-        sec_gate_path = os.path.join(fallback_gates_dir, "G_SEGURANCA.py")
-    if os.path.isfile(sec_gate_path):
+    sec_gate_path = _resolver_gate("G_SEGURANCA")
+    if sec_gate_path:
         gates.append(("G_SEGURANCA", "Auditoria OWASP, Criptografia JWT e Blindagem Militar"))
 
     relatorio = {
@@ -60,14 +76,12 @@ def cmd_audit(args):
     has_failure = False
 
     for gate_name, gate_desc in gates:
-        gate_file = os.path.join(gates_dir, f"{gate_name}.py")
-        if not os.path.isfile(gate_file):
-            gate_file = os.path.join(fallback_gates_dir, f"{gate_name}.py")
+        gate_file = _resolver_gate(gate_name)
 
         print(f"\n▶️  Executando Gate: [{gate_name}] — {gate_desc}...")
 
-        if not os.path.isfile(gate_file):
-            print(f"  ❌ [FAIL] Arquivo do gate não encontrado: {gate_file}")
+        if not gate_file or not os.path.isfile(gate_file):
+            print(f"  ❌ [FAIL] Arquivo do gate não encontrado: {gate_name}.py")
             relatorio["gates"].append({
                 "gate": gate_name,
                 "descricao": gate_desc,

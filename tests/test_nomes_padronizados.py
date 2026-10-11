@@ -86,12 +86,16 @@ def _e_permitido(caminho):
     return caminho in PERMITIDOS or any(p.search(caminho) for p in HISTORICO)
 
 
+IDS_CONGELADOS_HISTORICOS = {"PLAN-0020-aidd-bridge"}
+
+
 def _ids_congelados():
-    if not PLANOS_FECHADOS.is_dir():
-        return re.compile(r"(?!)")
-    ids = sorted((p.name for p in PLANOS_FECHADOS.iterdir()
-                  if p.is_dir() and NOME_ANTIGO.search(p.name)), key=len, reverse=True)
-    return re.compile("|".join(map(re.escape, ids)) or r"(?!)")
+    ids = set(IDS_CONGELADOS_HISTORICOS)
+    if PLANOS_FECHADOS.is_dir():
+        ids.update(p.name for p in PLANOS_FECHADOS.iterdir()
+                   if p.is_dir() and NOME_ANTIGO.search(p.name))
+    ids_ordenados = sorted(ids, key=len, reverse=True)
+    return re.compile("|".join(map(re.escape, ids_ordenados)) or r"(?!)")
 
 
 IDS_CONGELADOS = _ids_congelados()

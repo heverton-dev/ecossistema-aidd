@@ -487,15 +487,28 @@ class VSADispatchPipeline:
                         script_alvo = partes[1].strip('"\'')
                         caminho_script = active_wt.worktree_path / script_alvo
                         if not caminho_script.is_file():
-                            alt_worktree = active_wt.worktree_path / "gates" / Path(script_alvo).name
-                            alt_repo = self.repo_root / "gates" / Path(script_alvo).name
-                            alt_eco = ECOSSISTEMA_DIR / script_alvo
-                            if alt_worktree.is_file():
-                                script_alvo = str(alt_worktree)
-                            elif alt_repo.is_file():
-                                script_alvo = str(alt_repo)
-                            elif alt_eco.is_file():
-                                script_alvo = str(alt_eco)
+                            nome_base = Path(script_alvo).name
+                            candidatos = [
+                                self.repo_root / script_alvo,
+                                ECOSSISTEMA_DIR / script_alvo,
+                                active_wt.worktree_path / "gates" / nome_base,
+                                self.repo_root / "gates" / nome_base,
+                                self.repo_root / "modulos" / "04-nucleo-compartilhado" / "gates" / nome_base,
+                                self.repo_root / "modulos" / "01-governanca-e-qualidade" / "gates" / nome_base,
+                                self.repo_root / "modulos" / "03-plataforma-e-entrega" / "gates" / nome_base,
+                                self.repo_root / "componentes" / "compartilhado" / "gates" / nome_base,
+                            ]
+                            achado = None
+                            for cand in candidatos:
+                                if cand.is_file():
+                                    achado = str(cand)
+                                    break
+                            if not achado:
+                                matches = list(self.repo_root.glob(f"**/gates/{nome_base}"))
+                                if matches:
+                                    achado = str(matches[0])
+                            if achado:
+                                script_alvo = achado
                         resto = f" {partes[2]}" if len(partes) > 2 else ""
                         cmd_exec = f'"{sys.executable}" "{script_alvo}"{resto}'
                 self.log(f"[{slice_id}] Executando: {cmd_exec}")

@@ -112,10 +112,50 @@ def _sha256(caminho: Path) -> str:
     return hashlib.sha256(caminho.read_bytes()).hexdigest()
 
 
+MAPA_PYPI_PARA_MODULO = {
+    "python-dotenv": "dotenv",
+    "pyyaml": "yaml",
+    "pyjwt": "jwt",
+    "psycopg2-binary": "psycopg2",
+    "pypandoc-binary": "pypandoc",
+    "opentelemetry-api": "opentelemetry",
+    "opentelemetry-sdk": "opentelemetry.sdk",
+    "opentelemetry-instrumentation-fastapi": "opentelemetry.instrumentation.fastapi",
+    "opentelemetry-exporter-otlp": "opentelemetry.exporter.otlp",
+    "beautifulsoup4": "bs4",
+    "pillow": "PIL",
+    "scikit-learn": "sklearn",
+}
+
+
 def _importavel(nome: str) -> bool:
-    """Prova real de import: `find_spec` acha o modulo top-level do pacote."""
+    """Prova real de import: find_spec acha o modulo top-level do pacote."""
+    # 1. Mapa explícito PyPI -> módulo
+    mod_mapeado = MAPA_PYPI_PARA_MODULO.get(nome) or MAPA_PYPI_PARA_MODULO.get(nome.lower())
+    if mod_mapeado:
+        try:
+            if importlib.util.find_spec(mod_mapeado) is not None:
+                return True
+        except (ImportError, ValueError, ModuleNotFoundError):
+            pass
+
+    # 2. Resolução dinâmica via pacotes instalados no ambiente
+    try:
+        dist_map = importlib.metadata.packages_distributions()
+        top_levels = dist_map.get(nome) or dist_map.get(nome.lower())
+        if top_levels:
+            for top in top_levels:
+                try:
+                    if importlib.util.find_spec(top) is not None:
+                        return True
+                except (ImportError, ValueError, ModuleNotFoundError):
+                    continue
+    except Exception:
+        pass
+
+    # 3. Candidatos padrão por heurística de string
     candidatos = dict.fromkeys(
-        (nome.replace("-", "_"), nome.replace("-", "."), nome)
+        (nome.replace("-", "_"), nome.replace("-", "."), nome, nome.lower().replace("-", "_"))
     )
     for candidato in candidatos:
         if not candidato.isidentifier():
@@ -125,6 +165,14 @@ def _importavel(nome: str) -> bool:
                 return True
         except (ImportError, ValueError, ModuleNotFoundError):
             continue
+
+    # 4. Fallback final: se distribution existe e está instalada no ambiente pip
+    try:
+        importlib.metadata.distribution(nome)
+        return True
+    except (importlib.metadata.PackageNotFoundError, Exception):
+        pass
+
     return False
 
 
