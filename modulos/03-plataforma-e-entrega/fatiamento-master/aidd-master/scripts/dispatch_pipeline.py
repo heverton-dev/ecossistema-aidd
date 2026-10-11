@@ -369,6 +369,16 @@ class VSADispatchPipeline:
         (worktree_path / "tests" / "slices" / "__init__.py").touch(exist_ok=True)
         (worktree_path / "tests" / "slices" / clean_id).mkdir(parents=True, exist_ok=True)
         (worktree_path / "tests" / "slices" / clean_id / "__init__.py").touch(exist_ok=True)
+        ini_path = worktree_path / "pytest.ini"
+        if not ini_path.is_file():
+            ini_path.write_text(
+                "[pytest]\n"
+                "testpaths = tests\n"
+                "python_files = test_*.py *_test.py\n"
+                "pythonpath = . src\n"
+                "norecursedirs = scripts/gates gates .venv node_modules\n",
+                encoding="utf-8",
+            )
 
         active = ActiveSliceWorktree(slice_id=slice_id, branch_name=branch_name, worktree_path=worktree_path)
         self.active_worktrees.append(active)

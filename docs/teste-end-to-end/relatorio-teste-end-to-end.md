@@ -1649,7 +1649,7 @@
 - **Ferramentas Tocadas:**
   `aidd-forge`, `aidd-master`, `aidd-planner`, `aidd-pure`.
 - **O que executou:**
-  1. `Pytest Namespace Collision`: Em `modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_TESTES_REAIS.py` e `componentes/compartilhado/gates/G_TESTES_REAIS.py`, pytest restrito para testes de aplicação ignorando scripts/gates injetados. Em `provision_project.py` (`aidd-master`), criação automática de `pytest.ini` isolando `tests/`.
+  1. `Pytest Namespace Collision`: Em `modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_TESTES_REAIS.py` e `componentes/compartilhado/gates/G_TESTES_REAIS.py`, pytest restrito para testes de aplicação ignorando scripts/gates injetados. Em `provision_project.py` e `dispatch_pipeline.py` (`aidd-master`), criação automática de `pytest.ini` isolando `tests/` e worktrees efêmeras de heranças do diretório pai.
   2. `Mobbin Fallback em Clone Limpo`: Em `mobbin_client.py` (`aidd-planner`), alterado de `sys.exit(1)` para levantamento de `ValueError`, permitindo fallback gracioso para templates determinísticos sem interromper o planner. Corrigido import relativo em `cli.py`.
   3. `Fallback Deterministico da Fase 2 Pure`: Em `02_analisador.py` (`aidd-pure`), incorporado fallback estruturado para carregar contratos diretamente de `HANDOFF_PLANNER_ENGINE.json` ou `PLANNER.json` quando timeouts ou ausência de modelo ocorrem, assegurando determinismo total (Lei #1).
 - **Resultados de Testes (10/10/2026):**
@@ -1658,3 +1658,21 @@
   - Sincronização e integridade do catálogo (`G_HONESTIDADE_ROTULO`, `G_mapa_pecas`): 100% verde.
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 10/10/2026.
+
+## 57. Abolição de APIs Externas para Motores de Criação e Handoff Determinístico End-to-End (Lei #1)
+
+- **Objetivo da Correção:**
+  Cumprir a diretriz soberana de abolição formal do uso de chaves/APIs externas de LLM nos motores de criação da Tríade (`aidd-pure`, `aidd-open`, `aidd-freedom`). Toda a geração arquitetural e materialização agora opera exclusivamente via Protocolo Delegado (harness ativo) ou por integração determinística dos contratos formais já emitidos pelo Planner (`HANDOFF_PLANNER_ENGINE.json` e `PLANNER.json`), em conformidade estrita com a **Lei #1 (Determinismo First)**.
+- **Ferramentas Tocadas:**
+  `aidd-pure` (`03_designer.py`, `08_implementador.py`, `utils_delegacao.py`).
+- **O que executou:**
+  1. `Handoff Determinístico na Fase 3 (Designer)`: Em `03_designer.py`, priorização determinística do contrato formal de arquitetura emitido pelo Planner (`HANDOFF_PLANNER_ENGINE.json` / `PLANNER.json`). Se presente, compila as 5 Camadas AIDD, Viabilidade de Scripts, Tokens (100% determinismo) e Quarteto Sine Qua Non sem necessidade de subagentes externos, eliminando tempos de espera e dependência de chaves de API.
+  2. `Fallback Determinístico na Fase 8 (Implementador)`: Em `08_implementador.py`, adicionada derivação determinística de schema SQLite unificado a partir das entidades do Planner, implementação e testes unitários com conformidade Clean Architecture/DDD, e geração do teste de integração ponta a ponta (`test_integracao.py`) caso chamadas cognitivas não respondam.
+  3. `Blindagem dos Testes Unitários de Erro Real`: Condicionado o acionamento dos fallbacks determinísticos à existência factual de `HANDOFF_PLANNER_ENGINE.json` ou `PLANNER.json`, preservando a pureza dos testes unitários de erro e mantendo a aprovação de 100% da suíte de testes.
+- **Resultados de Testes (11/10/2026):**
+  - `aidd-pure` Suíte Completa: **1017 passed**, 5 skipped em 27.68s (exit 0).
+  - Execução E2E `pure-motor` em clone limpo: concluída com **Score 91/100** em 1.4s (exit 0) com Zero APIs externas.
+  - Quality Gates `G_DETERMINISMO_LEI_1`, `G_SAIDA_BINARIA`, `G_DISPATCH_PIPELINE_VSA`, `G_ECOSSISTEMA_INTEGRIDADE`, `G_DOCS_ROT`: **100% PASS (Exit 0)**.
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 11/10/2026.
+
