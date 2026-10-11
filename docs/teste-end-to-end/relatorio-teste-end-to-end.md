@@ -1642,4 +1642,19 @@
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 10/10/2026.
 
+## 56. Resolução dos 3 Bloqueios E2E da Tríade (Pytest Namespace, Mobbin Fallback e Pure Handoff)
 
+- **Objetivo da Correção:**
+  Resolver os três bloqueios observados durante os testes em ambientes isolados de clone limpo (`TESTE-ecossistema-aidd_04102026`): colisão de namespace no pytest em projetos provisionados, quebra catastrófica no planner por ausência de `MOBBIN_API_KEY`, e travamento do analisador na fase 2 do `aidd-pure` quando sem LLM/ADE configurada.
+- **Ferramentas Tocadas:**
+  `aidd-forge`, `aidd-master`, `aidd-planner`, `aidd-pure`.
+- **O que executou:**
+  1. `Pytest Namespace Collision`: Em `modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_TESTES_REAIS.py` e `componentes/compartilhado/gates/G_TESTES_REAIS.py`, pytest restrito para testes de aplicação ignorando scripts/gates injetados. Em `provision_project.py` (`aidd-master`), criação automática de `pytest.ini` isolando `tests/`.
+  2. `Mobbin Fallback em Clone Limpo`: Em `mobbin_client.py` (`aidd-planner`), alterado de `sys.exit(1)` para levantamento de `ValueError`, permitindo fallback gracioso para templates determinísticos sem interromper o planner. Corrigido import relativo em `cli.py`.
+  3. `Fallback Deterministico da Fase 2 Pure`: Em `02_analisador.py` (`aidd-pure`), incorporado fallback estruturado para carregar contratos diretamente de `HANDOFF_PLANNER_ENGINE.json` ou `PLANNER.json` quando timeouts ou ausência de modelo ocorrem, assegurando determinismo total (Lei #1).
+- **Resultados de Testes (10/10/2026):**
+  - `aidd-pure` Fase 2 unit tests: 21 passed (exit 0).
+  - `G_DISCIPLINA_TESTE_FERRAMENTA`: exit 0.
+  - Sincronização e integridade do catálogo (`G_HONESTIDADE_ROTULO`, `G_mapa_pecas`): 100% verde.
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 10/10/2026.

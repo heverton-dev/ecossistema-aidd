@@ -237,7 +237,31 @@ def test_executar_reprova_quando_llm_nao_cita_referencias_e_sem_refs_reais(tmp_p
     monkeypatch.setattr(analisador_02, 'solicitar_llm', fake_solicitar_llm_sucesso(analise_sem_refs))
     analisador = analisador_02.AnalisadorFase2(tmp_path / 'cache')
     resultado = analisador.executar('ideia', {})
-    assert resultado is None
+def test_analisar_ideia_com_handoff_deterministico_quando_llm_falha(tmp_path, analisador_02, monkeypatch):
+    """Garante que a Fase 2 aproveita o handoff formal do planner quando o LLM falha."""
+    monkeypatch.setattr(analisador_02, 'solicitar_llm', lambda **kwargs: None)
+    
+    # Criar estrutura tmp_path / .aidd / cache
+    cache_dir = tmp_path / '.aidd' / 'cache'
+    cache_dir.mkdir(parents=True)
+    
+    # Gravar HANDOFF_PLANNER_ENGINE.json na raiz do projeto
+    handoff_conteudo = {
+        "metadados_projeto": {
+            "nome": "Kanban App",
+            "dominio": "Produtividade",
+            "descricao": "Sistema completo de kanban com login e link sharing"
+        }
+    }
+    (tmp_path / "HANDOFF_PLANNER_ENGINE.json").write_text(json.dumps(handoff_conteudo), encoding="utf-8")
+    
+    analisador = analisador_02.AnalisadorFase2(cache_dir)
+    resultado = analisador._analisar_ideia_com_llm('Kanban App', {})
+    
+    assert resultado is not None
+    assert "Kanban App" in resultado["objetivo"]
+    assert resultado["_tokens_reais_consumidos"] == 0
+    assert resultado["_origem_medicao"] == "deterministico_handoff"
 
 
 # =============================================================================

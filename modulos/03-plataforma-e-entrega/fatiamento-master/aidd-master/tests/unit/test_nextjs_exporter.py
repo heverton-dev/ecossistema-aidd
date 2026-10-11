@@ -22,7 +22,18 @@ for p in (SCRIPTS_DIR, SRC_CORE_DIR):
     if p not in sys.path:
         sys.path.insert(0, p)
 
-NPM_DISPONIVEL = shutil.which("npm") is not None
+def _node_suportado_para_nextjs() -> bool:
+    if not (shutil.which("npm") and shutil.which("node")):
+        return False
+    try:
+        r = subprocess.run(["node", "-v"], capture_output=True, text=True, timeout=5)
+        v_str = r.stdout.strip().lstrip("v").split(".")[0]
+        return 18 <= int(v_str) <= 22
+    except Exception:
+        return False
+
+
+NPM_DISPONIVEL = _node_suportado_para_nextjs()
 
 
 @pytest.fixture

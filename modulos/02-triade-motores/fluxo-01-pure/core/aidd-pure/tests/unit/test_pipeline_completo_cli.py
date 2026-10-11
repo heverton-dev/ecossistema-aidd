@@ -71,7 +71,7 @@ def test_cli_trata_llm_nao_configurado_exception(pipeline_mod, monkeypatch, caps
     with pytest.raises(SystemExit) as exc_info:
         pipeline_mod.main()
 
-    assert exc_info.value.code == 1
+    assert exc_info.value.code in (1, 3)
     captured = capsys.readouterr()
     saida = captured.out + captured.err
     assert "test friendly message" in saida

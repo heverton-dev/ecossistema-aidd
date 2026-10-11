@@ -9,6 +9,7 @@ import json
 import os
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 import pytest
@@ -128,19 +129,20 @@ def test_morde_achado_critico_aberto(tmp_path):
     assert "Achado crítico/alto não resolvido: [VER-TEST-999]" in res.stdout
 
 
-def test_morde_mapa_visual_ausente(tmp_path):
+def test_morde_mapa_visual_ausente():
     """Lei #13: Prova que morde com exit 1 quando falta um mapa visual obrigatório."""
-    fake_mapas = tmp_path / "mapas_incompletos"
-    fake_mapas.mkdir()
-    # Cria apenas 1 dos 14 arquivos obrigatórios
-    (fake_mapas / "mapa-00-indice.html").write_text("<!DOCTYPE html><html><body>ok</body></html>", encoding="utf-8")
+    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmp_dir:
+        fake_mapas = Path(tmp_dir) / "mapas_incompletos"
+        fake_mapas.mkdir()
+        # Cria apenas 1 dos 14 arquivos obrigatórios
+        (fake_mapas / "mapa-00-indice.html").write_text("<!DOCTYPE html><html><body>ok</body></html>", encoding="utf-8")
 
-    res = subprocess.run(
-        [sys.executable, str(GATE_SCRIPT), "--mapas-dir", str(fake_mapas)],
-        cwd=str(RAIZ),
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-    )
-    assert res.returncode == 1
-    assert "Mapa visual obrigatório ausente" in res.stdout
+        res = subprocess.run(
+            [sys.executable, str(GATE_SCRIPT), "--mapas-dir", str(fake_mapas)],
+            cwd=str(RAIZ),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+        )
+        assert res.returncode == 1
+        assert "Mapa visual obrigatório ausente" in res.stdout

@@ -1,7 +1,7 @@
 {
   "versao": "1.0",
-  "atualizado_em": "2026-10-10T16:08:09.233760",
-  "total_sessoes": 50,
+  "atualizado_em": "2026-10-10T19:40:39.864095",
+  "total_sessoes": 54,
   "sessoes": [
     {
       "id": "fc4566a8-0804-4748-ab5f-ec105414273c",
@@ -471,6 +471,42 @@
       "titulo": "Sessão Ativa (Auto-Registrada)",
       "workspace": "C:/Users/trcnologia/Desktop/ecossistema-aidd",
       "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-cli/brain/51cb0e7a-242f-40c4-891f-e30419369e95/.system_generated/logs/transcript_full.jsonl"
+    },
+    {
+      "id": "796547d0-fa0c-43ee-a3a4-cb3a25ddd379",
+      "registrado_em": "2026-10-10 19:36:41",
+      "harness": "antigravity",
+      "modelo": "gemini-3.8-flash-low",
+      "titulo": "Sessão Ativa (Auto-Registrada)",
+      "workspace": "C:/Users/trcnologia/Desktop/ecossistema-aidd",
+      "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-cli/brain/796547d0-fa0c-43ee-a3a4-cb3a25ddd379/.system_generated/logs/transcript_full.jsonl"
+    },
+    {
+      "id": "c8aeec23-28a5-4203-8b63-26eaf9c096f9",
+      "registrado_em": "2026-10-10 19:39:11",
+      "harness": "antigravity",
+      "modelo": "gemini-3.8-flash-low",
+      "titulo": "Sessão Ativa (Auto-Registrada)",
+      "workspace": "C:/Users/trcnologia/Desktop/ecossistema-aidd",
+      "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-cli/brain/c8aeec23-28a5-4203-8b63-26eaf9c096f9/.system_generated/logs/transcript_full.jsonl"
+    },
+    {
+      "id": "fe3c8017-3204-448f-bc85-9b983de4b370",
+      "registrado_em": "2026-10-10 19:39:46",
+      "harness": "antigravity",
+      "modelo": "gemini-3.8-flash-low",
+      "titulo": "Sessão Ativa (Auto-Registrada)",
+      "workspace": "C:/Users/trcnologia/Desktop/ecossistema-aidd",
+      "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-cli/brain/fe3c8017-3204-448f-bc85-9b983de4b370/.system_generated/logs/transcript_full.jsonl"
+    },
+    {
+      "id": "94f14718-7810-4b05-894e-766a2e03304f",
+      "registrado_em": "2026-10-10 19:40:39",
+      "harness": "antigravity",
+      "modelo": "gemini-3.8-flash-low",
+      "titulo": "Sessão Ativa (Auto-Registrada)",
+      "workspace": "C:/Users/trcnologia/Desktop/ecossistema-aidd",
+      "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-cli/brain/94f14718-7810-4b05-894e-766a2e03304f/.system_generated/logs/transcript_full.jsonl"
     }
   ]
 }

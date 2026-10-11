@@ -46,8 +46,17 @@ def scan(repo_root: Path) -> GateResult:
         return GateResult(passed=True, messages=["nenhum arquivo de teste encontrado, gate passa"])
 
     try:
+        cmd = [
+            sys.executable, "-m", "pytest", "-q",
+            "-o", "python_files=test_*.py *_test.py",
+            "--ignore=scripts/gates",
+            "--ignore=gates",
+        ]
+        tests_dir = repo_root / "tests"
+        if tests_dir.is_dir():
+            cmd.append("tests")
         proc = subprocess.run(
-            [sys.executable, "-m", "pytest", "-q"],
+            cmd,
             cwd=repo_root, capture_output=True, text=True, timeout=600, check=False,
         )
     except FileNotFoundError:

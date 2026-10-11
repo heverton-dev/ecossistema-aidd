@@ -48,14 +48,11 @@ def executar_busca(
 ) -> Dict[str, Any]:
     """Executa POST /v1/screens/search com a chave Enterprise."""
     if not requests:
-        print("[ERRO] Biblioteca 'requests' não encontrada no ambiente Python.", file=sys.stderr)
-        sys.exit(1)
+        raise RuntimeError("Biblioteca 'requests' não encontrada no ambiente Python.")
 
     api_key, api_url = obter_config()
     if not api_key:
-        print("[ERRO] MOBBIN_API_KEY não configurada no arquivo .env.", file=sys.stderr)
-        print("Adicione sua chave Enterprise em .env na raiz antes de executar.", file=sys.stderr)
-        sys.exit(1)
+        raise ValueError("MOBBIN_API_KEY não configurada no arquivo .env.")
 
     url = f"{api_url}/v1/screens/search"
     headers = {
@@ -113,12 +110,16 @@ def cmd_search(args) -> int:
     modo = getattr(args, "modo", "standard") or "standard"
     limite = getattr(args, "limite", 10) or 10
 
-    res = executar_busca(
-        query=args.query,
-        platform=plataforma,
-        mode=modo,
-        limit=limite
-    )
+    try:
+        res = executar_busca(
+            query=args.query,
+            platform=plataforma,
+            mode=modo,
+            limit=limite
+        )
+    except Exception as exc:
+        print(f"[ERRO] {exc}", file=sys.stderr)
+        return 1
 
     if getattr(args, "json", False) or getattr(args, "as_json", False):
         print(json.dumps(res, indent=2, ensure_ascii=False))

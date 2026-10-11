@@ -104,13 +104,17 @@ def cmd_init(args: argparse.Namespace) -> int:
     # 18/09/2026: um design fixo faria todo projeto gerado ter a mesma cara).
     caminho_design_system = os.path.join(pasta_destino, "DESIGN-SYSTEM.json")
     try:
-        from design_system import gerar_design_system
-        from ui_reference_resolver import resolver_referencia_ui
+        from src.core_planner.design_system import gerar_design_system
+        from src.core_planner.ui_reference_resolver import resolver_referencia_ui
     except ImportError:
-        _planner_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        sys.path.insert(0, os.path.join(_planner_root, "src", "core_planner"))
-        from design_system import gerar_design_system
-        from ui_reference_resolver import resolver_referencia_ui
+        try:
+            from .core_planner.design_system import gerar_design_system
+            from .core_planner.ui_reference_resolver import resolver_referencia_ui
+        except ImportError:
+            _planner_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            sys.path.insert(0, os.path.join(_planner_root, "src", "core_planner"))
+            from design_system import gerar_design_system
+            from ui_reference_resolver import resolver_referencia_ui
 
     ui_ref_modo = getattr(args, "ui_ref", None)
     _, tela_referencia = resolver_referencia_ui(
@@ -280,7 +284,10 @@ def cmd_export_dispatch(args: argparse.Namespace) -> int:
 
 def cmd_mobbin(args: argparse.Namespace) -> int:
     """Delegação direta para o cliente Mobbin do aidd-planner."""
-    from .core.mobbin_client import cmd_search, cmd_status
+    try:
+        from src.core_planner.mobbin_client import cmd_search, cmd_status
+    except ImportError:
+        from .core_planner.mobbin_client import cmd_search, cmd_status
     if getattr(args, "subcmd", None) == "status" or not getattr(args, "subcmd", None):
         return cmd_status()
     elif getattr(args, "subcmd", None) == "search":

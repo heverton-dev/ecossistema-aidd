@@ -107,6 +107,17 @@ def provision(project_desc, base_dir=None, frontend_stack='tanstack'):
     for g, origem in sorted(gates_de_projeto(gates_dir).items()):
         shutil.copyfile(origem, os.path.join(project_dir, 'scripts', 'gates', g))
 
+    # 4.1. Garantir pytest.ini isolado para prevencao de colisao de namespace
+    pytest_ini_path = os.path.join(project_dir, 'pytest.ini')
+    if not os.path.exists(pytest_ini_path):
+        with open(pytest_ini_path, 'w', encoding='utf-8') as f_ini:
+            f_ini.write(
+                "[pytest]\n"
+                "testpaths = tests\n"
+                "python_files = test_*.py *_test.py\n"
+                "norecursedirs = scripts/gates gates .venv node_modules\n"
+            )
+
     # 4.5. Gerar PLANO-EXECUCAO-ESTRUTURADO.json ANTES do módulo padrão inicial.
     # Achado real (18/09/2026): quando o plano só era escrito no passo 7 (depois
     # do módulo "principal" já criado), `criar_modulo()` via `add_module.py`
