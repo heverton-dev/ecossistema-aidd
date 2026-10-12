@@ -1,0 +1,16 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 5. Target tool: e2e-pure.
+DIMENSION: D8
+DELIVER: modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/phases/05_criador.py
+
+STEPS:
+- Update gitignore generator in Phase 5 to include node_modules entry
+- Update AGENTS template in Phase 5 to include execution directives in English
+- Verify forge audit compliance achieves high score on generated project
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/phases/05_criador.py

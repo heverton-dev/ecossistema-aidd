@@ -1,0 +1,16 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 2. Target tool: e2e-pure.
+DIMENSION: D2
+DELIVER: modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/phases/08_implementador.py
+
+STEPS:
+- Update default destination for SQLite persistence scripts to infrastructure subfolder
+- Adjust import statements in generated unit tests and integration tests
+- Confirm G_ARQUITETURA_DELIVERABLE passes without SQL-fora-infra violations for generated persistence
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/phases/08_implementador.py

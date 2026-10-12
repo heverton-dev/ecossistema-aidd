@@ -1,0 +1,44 @@
+{
+  "pipeline_id": "evolucao-e2e-pure-ciclo-02-bloco-1",
+  "target_tool": "e2e-pure",
+  "bloco": 1,
+  "descricao": "Manifesto do Bloco 1 (3 fases) montado a partir de PLANO-EVOLUCAO.md",
+  "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
+  "definition_of_done": "docs/auditoria/e2e-pure/ciclo-02/DOD.md",
+  "gate_final": "python ecossistema.py audit",
+  "fases": [
+    {
+      "ticket_id": "TICKET-01",
+      "nome": "Fase_1_Ticket_1_Corre__o_do_DDL_Inicial_no_Fallback_Determin_stico_do_SQLite",
+      "dimensao_15d": "D11. Tratamento de Exceções",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/e2e-pure/ciclo-02/prompts_tickets/PROMPT-TICKET-01.txt",
+      "output_handoff": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/phases/08_implementador.py",
+      "gate_fase": "pytest modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/tests/unit/test_phase8_verifier.py"
+    },
+    {
+      "ticket_id": "TICKET-02",
+      "nome": "Fase_2_Ticket_2_Reorganiza__o_de_Pastas_de_Persist_ncia_per_Clean_Architecture",
+      "dimensao_15d": "D2. Modularidade e Acoplamento",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/e2e-pure/ciclo-02/prompts_tickets/PROMPT-TICKET-02.txt",
+      "output_handoff": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/phases/08_implementador.py",
+      "gate_fase": "python modulos/03-plataforma-e-entrega/gates/G_ARQUITETURA_DELIVERABLE.py"
+    },
+    {
+      "ticket_id": "TICKET-03",
+      "nome": "Fase_3_Ticket_3_Isola__o_de_SQL_no_Servidor_Modular_do_Master",
+      "dimensao_15d": "D2. Modularidade e Acoplamento",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/e2e-pure/ciclo-02/prompts_tickets/PROMPT-TICKET-03.txt",
+      "output_handoff": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/templates/cookiecutter-scaffold/suite/{{cookiecutter.suite_slug}}/server.py.j2",
+      "gate_fase": "python modulos/03-plataforma-e-entrega/gates/G_ARQUITETURA_DELIVERABLE.py"
+    }
+  ]
+}

@@ -705,28 +705,26 @@ if __name__ == '__main__':
         # AGENTS.md — fonte única (padrão Zero Duplicidade Desnecessária,
         # ver AGENTS.md do próprio aidd-pure). .claude/CLAUDE.md é
         # symlink para este arquivo, nunca uma cópia separada.
-        agents_md = f"""# AI-Driven Development Setup
+        agents_md = f"""# AI-Driven Development Project Governance
 
-Este projeto foi gerado pela skill aidd-project-generator v2.1
+> Repository governance rules, execution directives and agent invariants.
 
-> Fonte única de verdade para configuração de agentes (Zero Duplicidade
-> Desnecessária) — outros harness (.codex/CODEX.md, .gemini/GEMINI.md
-> etc) devem apontar aqui via symlink, nunca duplicar conteúdo.
+## 1. Core Execution Directives
+- Thinking constraint: Think strictly in compact English. Under 150 words of reasoning.
+- Execution limit: Resolve tasks in 3 to 5 discrete steps. Stop and request user confirmation if more steps are required.
+- Output format (Rule 10 — Formato de Resposta): Silent executor. Return code edits and 1-line execution status only.
+- Bash rule: Always pipe verbose commands to tail/grep. Never dump raw bundle output.
+- Graph-first (Lei #14): Always query knowledge graph before Grep, Glob, or full file reads via codebase-memory-mcp.
 
-## Ideia Original
-{ideia}
+## 2. Project Specification
+- Scope: {ideia}
 
-## Estrutura AIDD
-- Camada 1: Contratos e Schemas (JSON Schema Draft 2020-12)
-- Camada 2: Determinismo Primeiro (Python puro)
-- Camada 3: Gates Mecânicos (validação)
-- Camada 4: Persistência SQLite
-- Camada 5: Bundles Modulares
-
-## Próximas Etapas
-1. Implementar Phase 2 (Análise)
-2. Implementar Phase 3 (Design AIDD)
-3. Implementar Phase 6 (Documentação)
+## 3. AIDD Architecture Layers
+- Layer 1: Contracts and Schemas (JSON Schema Draft 2020-12)
+- Layer 2: Determinism First (Pure Python)
+- Layer 3: Mechanical Gates (Validation)
+- Layer 4: SQLite Persistence
+- Layer 5: Modular Vertical Slices
 """
         escrever_atomico(self.pasta_projeto / 'AGENTS.md', agents_md)
 
@@ -831,7 +829,8 @@ python scripts/orquestrador.py --modo interativo
         escrever_atomico(self.pasta_projeto / 'README.md', readme)
 
     def _criar_gitignore(self):
-        gitignore = """# Ambiente
+        gitignore = """# Dependências & Ambiente
+node_modules/
 .env
 .env.local
 .env.*.local

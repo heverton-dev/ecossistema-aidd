@@ -1274,7 +1274,7 @@ class ImplementadorFase8:
                 linhas_chamadas.append("    servico = ServicoDominio()")
                 linhas_chamadas.append("    assert servico.executar({'id': 'e2e-1', 'acao': 'ok'})['sucesso'] is True")
             elif "persistencia" in mod or "sqlite" in mod:
-                linhas_import.append(f"from {mod} import RepositorioSQLite")
+                linhas_import.append(f"from infrastructure.{mod} import RepositorioSQLite")
                 linhas_chamadas.append("    repo = RepositorioSQLite(':memory:')")
                 linhas_chamadas.append("    assert repo.salvar('e2e-1', 'conteudo') is True")
                 linhas_chamadas.append("    assert repo.buscar('e2e-1') == 'conteudo'")
@@ -1367,37 +1367,57 @@ class ImplementadorFase8:
             )
         elif "persistencia" in nome_m or "sqlite" in nome_m or "repo" in nome_m:
             codigo = (
-                '"""Módulo de persistência atômica SQLite."""\n'
+                '"""Módulo de persistência atômica SQLite na camada de infraestrutura."""\n'
                 'import sqlite3\n'
                 'from typing import Optional\n\n'
                 'class RepositorioSQLite:\n'
                 '    """Repositório de persistência em SQLite."""\n'
                 '    def __init__(self, db_path: str = ":memory:"):\n'
                 '        self.db_path = db_path\n'
+                '        self._conn: Optional[sqlite3.Connection] = None\n'
+                '        if self.db_path == ":memory:":\n'
+                '            self._conn = sqlite3.connect(":memory:")\n'
                 '        self._inicializar()\n\n'
+                '    def _obter_conn(self) -> sqlite3.Connection:\n'
+                '        if self._conn is not None:\n'
+                '            return self._conn\n'
+                '        return sqlite3.connect(self.db_path)\n\n'
                 '    def _inicializar(self) -> None:\n'
-                '        with sqlite3.connect(self.db_path) as conn:\n'
+                '        conn = self._obter_conn()\n'
+                '        try:\n'
                 '            conn.execute(\n'
                 '                "CREATE TABLE IF NOT EXISTS registros (id TEXT PRIMARY KEY, dados TEXT)"\n'
                 '            )\n'
-                '            conn.commit()\n\n'
+                '            conn.commit()\n'
+                '        finally:\n'
+                '            if self._conn is None:\n'
+                '                conn.close()\n\n'
                 '    def salvar(self, registro_id: str, dados: str) -> bool:\n'
-                '        with sqlite3.connect(self.db_path) as conn:\n'
+                '        conn = self._obter_conn()\n'
+                '        try:\n'
                 '            conn.execute(\n'
                 '                "INSERT OR REPLACE INTO registros (id, dados) VALUES (?, ?)",\n'
                 '                (registro_id, dados)\n'
                 '            )\n'
-                '            conn.commit()\n\n'
+                '            conn.commit()\n'
+                '            return True\n'
+                '        finally:\n'
+                '            if self._conn is None:\n'
+                '                conn.close()\n\n'
                 '    def buscar(self, registro_id: str) -> Optional[str]:\n'
-                '        with sqlite3.connect(self.db_path) as conn:\n'
+                '        conn = self._obter_conn()\n'
+                '        try:\n'
                 '            cur = conn.cursor()\n'
                 '            cur.execute("SELECT dados FROM registros WHERE id = ?", (registro_id,))\n'
                 '            row = cur.fetchone()\n'
                 '            return row[0] if row else None\n'
+                '        finally:\n'
+                '            if self._conn is None:\n'
+                '                conn.close()\n'
             )
             teste = (
                 '"""Testes unitários para persistencia_sqlite."""\n'
-                f'from {modulo} import RepositorioSQLite\n\n'
+                f'from infrastructure.{modulo} import RepositorioSQLite\n\n'
                 'def test_repositorio_salvar_e_buscar():\n'
                 '    repo = RepositorioSQLite(":memory:")\n'
                 '    assert repo.salvar("1", "dados_teste") is True\n'
@@ -1479,7 +1499,13 @@ class ImplementadorFase8:
         else:
             modulo = nome_base
             caminho_sugerido = f"{nome_base}.py"
-        caminho_teste_sugerido = f"test_{caminho_sugerido}"
+
+        # Clean Architecture: scripts de persistência pertencem à camada infrastructure/
+        if "persistencia" in modulo.lower() or "sqlite" in modulo.lower() or "repo" in modulo.lower():
+            caminho_sugerido = f"infrastructure/{nome_base if nome_base.endswith('.py') else f'{nome_base}.py'}"
+            caminho_teste_sugerido = f"test_{nome_base if nome_base.endswith('.py') else f'{nome_base}.py'}"
+        else:
+            caminho_teste_sugerido = f"test_{caminho_sugerido}"
 
         reaproveitado = self._reaproveitar_implementacao_existente(caminho_sugerido, caminho_teste_sugerido)
         if reaproveitado is not None:

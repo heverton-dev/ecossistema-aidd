@@ -257,3 +257,67 @@ class WebhookDispatcher:
         if primary_hover:
             _html = _html.replace("--primary-hover: #0369a1;", f"--primary-hover: {primary_hover};")
         return _html
+
+    def init_schema(self, conn, demo_url: str = "https://webhook.site/demo-aidd-master"):
+        """Inicializa tabelas de webhooks e logs na infraestrutura do núcleo."""
+        conn.executescript('''
+            CREATE TABLE IF NOT EXISTS webhooks (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                url TEXT NOT NULL,
+                secret TEXT,
+                eventos TEXT DEFAULT '*',
+                ativo INTEGER DEFAULT 1,
+                criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+            CREATE TABLE IF NOT EXISTS webhook_logs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                webhook_id INTEGER,
+                evento TEXT,
+                url TEXT,
+                payload_json TEXT,
+                status_code INTEGER,
+                resposta TEXT,
+                sucesso INTEGER,
+                criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        ''')
+        cur = conn.cursor()
+        cur.execute("SELECT count(*) FROM webhooks")
+        if cur.fetchone()[0] == 0:
+            conn.execute("INSERT INTO webhooks (url, secret, eventos, ativo) VALUES (?, 'sec_demo_2026', '*', 1)", (demo_url,))
+        cur.execute("SELECT count(*) FROM webhook_logs")
+        if cur.fetchone()[0] == 0:
+            conn.execute("INSERT INTO webhook_logs (webhook_id, evento, url, payload_json, status_code, resposta, sucesso) VALUES (1, 'suite.criado', ?, '{\"event\":\"suite.criado\",\"data\":{\"id\":1}}', 200, '{\"received\": true}', 1)", (demo_url,))
+        conn.commit()
+
+    def listar_webhooks(self):
+        """Retorna todos os webhooks cadastrados."""
+        with self.db.get_connection() as conn:
+            rows = conn.execute("SELECT id, url, secret, eventos, ativo, criado_em FROM webhooks").fetchall()
+            return [dict(r) for r in rows]
+
+    def cadastrar_webhook(self, url: str, secret: str = "", eventos: str = "*"):
+        """Cadastra um novo endpoint de webhook."""
+        with self.db.get_connection() as conn:
+            cur = conn.execute("INSERT INTO webhooks (url, secret, eventos, ativo) VALUES (?, ?, ?, 1)", (url, secret, eventos))
+            conn.commit()
+            return cur.lastrowid
+
+    def listar_logs(self, limite: int = 50):
+        """Lista histórico de logs de disparo."""
+        with self.db.get_connection() as conn:
+            rows = conn.execute("SELECT id, webhook_id, evento, url, payload_json, status_code, resposta, sucesso, criado_em FROM webhook_logs ORDER BY id DESC LIMIT ?", (limite,)).fetchall()
+            return [dict(r) for r in rows]
+
+    def remover_webhook(self, wh_id: int):
+        """Remove endpoint de webhook por ID."""
+        with self.db.get_connection() as conn:
+            conn.execute("DELETE FROM webhooks WHERE id = ?", (wh_id,))
+            conn.commit()
+            return True
+
+    def obter_log(self, log_id: int):
+        """Obtém registro de log específico."""
+        with self.db.get_connection() as conn:
+            row = conn.execute("SELECT url, evento, payload_json FROM webhook_logs WHERE id = ?", (log_id,)).fetchone()
+            return dict(row) if row else None

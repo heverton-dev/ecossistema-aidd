@@ -1,0 +1,33 @@
+{
+  "pipeline_id": "evolucao-e2e-pure-ciclo-02-bloco-2",
+  "target_tool": "e2e-pure",
+  "bloco": 2,
+  "descricao": "Manifesto do Bloco 2 (2 fases) montado a partir de PLANO-EVOLUCAO.md",
+  "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
+  "definition_of_done": "docs/auditoria/e2e-pure/ciclo-02/DOD.md",
+  "gate_final": "python ecossistema.py audit",
+  "fases": [
+    {
+      "ticket_id": "TICKET-04",
+      "nome": "Fase_4_Ticket_4_Emiss_o_Expl_cita_do_Contrato_C5_Handoff_Enterprise_to_Ops",
+      "dimensao_15d": "D1. Contratos Formais",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/e2e-pure/ciclo-02/prompts_tickets/PROMPT-TICKET-04.txt",
+      "output_handoff": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/application_enterprise/commands/verificar_drift.py",
+      "gate_fase": "pytest tests/test_orquestrador_contratos_reais.py"
+    },
+    {
+      "ticket_id": "TICKET-05",
+      "nome": "Fase_5_Ticket_5_Atualiza__o_dos_Templates_de_Governan_a_do_Forge_e_Criador",
+      "dimensao_15d": "D8. Higiene de Repositório",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/e2e-pure/ciclo-02/prompts_tickets/PROMPT-TICKET-05.txt",
+      "output_handoff": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/phases/05_criador.py",
+      "gate_fase": "python modulos/01-governanca-e-qualidade/gates/G_SAIDA_BINARIA.py"
+    }
+  ]
+}

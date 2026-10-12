@@ -103,23 +103,50 @@ def extrair_classes_publicas(codigo_fonte: str) -> List[Dict[str, Any]]:
     return classes
 
 
-def extrair_variaveis_publicas(codigo_fonte: str) -> List[str]:
-    """Extrai constantes e variáveis públicas de nível de módulo via AST."""
+def extrair_variaveis_publicas(codigo_fonte: str, caminho: Optional[Path] = None) -> List[str]:
+    """Extrai constantes, variáveis públicas, re-exports e __all__ via AST."""
     try:
         arvore = ast.parse(codigo_fonte)
     except SyntaxError:
         return []
 
     nomes = []
+    tem_all = False
+    all_names = set()
     for node in arvore.body:
         if isinstance(node, ast.Assign):
             for target in node.targets:
-                if isinstance(target, ast.Name) and not target.id.startswith('_'):
-                    nomes.append(target.id)
+                if isinstance(target, ast.Name):
+                    if target.id == '__all__' and isinstance(node.value, (ast.List, ast.Tuple, ast.Set)):
+                        tem_all = True
+                        for elt in node.value.elts:
+                            if isinstance(elt, ast.Constant) and isinstance(elt.value, str):
+                                all_names.add(elt.value)
+                    elif not target.id.startswith('_') or target.id.startswith('_RLS_'):
+                        nomes.append(target.id)
         elif isinstance(node, ast.AnnAssign):
-            if isinstance(node.target, ast.Name) and not node.target.id.startswith('_'):
+            if isinstance(node.target, ast.Name) and (not node.target.id.startswith('_') or node.target.id.startswith('_RLS_')):
                 nomes.append(node.target.id)
-    return nomes
+        elif isinstance(node, (ast.Import, ast.ImportFrom)):
+            for alias in node.names:
+                nome_imp = alias.asname or alias.name
+                if not nome_imp.startswith('_') or nome_imp.startswith('_RLS_'):
+                    nomes.append(nome_imp)
+
+    if tem_all:
+        nomes.extend(list(all_names))
+
+    if caminho and caminho.name == '__init__.py':
+        try:
+            for child in caminho.parent.iterdir():
+                if child.is_file() and child.suffix == '.py' and child.stem != '__init__':
+                    nomes.append(child.stem)
+                elif child.is_dir() and (child / '__init__.py').exists():
+                    nomes.append(child.name)
+        except OSError:
+            pass
+
+    return list(set(nomes))
 
 
 def extrair_schema_json(caminho: Path) -> Optional[Dict]:
@@ -187,30 +214,48 @@ def validar_importabilidade(modulos: List[Tuple[str, Path]]) -> List[ResultadoVa
 
 def validar_contratos_entre_modulos(
     modulos: List[Tuple[str, Path]],
+    pasta_projeto: Optional[Path] = None,
 ) -> List[ResultadoValidacao]:
     """I2: Funções exportadas por um módulo que são chamadas por outro existem
     com assinatura compatível. Verificação estática via AST (cross-reference)."""
 
     resultados = []
 
+    if not pasta_projeto and modulos:
+        try:
+            pasta_projeto = Path(Path(*modulos[0][1].parts[:-1]))
+        except Exception:
+            pasta_projeto = modulos[0][1].parent
+
     # Coletar todas as funções públicas exportadas por cada módulo
-    exportacoes: Dict[str, Dict[str, Any]] = {}
+    exportacoes_por_caminho: Dict[Path, Dict[str, Any]] = {}
+    exportacoes_por_nome: Dict[str, List[Dict[str, Any]]] = {}
+
     for nome, caminho in modulos:
         try:
             with open(caminho, 'r', encoding='utf-8', errors='replace') as f:
                 codigo = f.read()
             funcoes = extrair_funcoes_publicas(codigo)
             classes = extrair_classes_publicas(codigo)
-            variaveis = extrair_variaveis_publicas(codigo)
-            exportacoes[nome] = {
+            variaveis = extrair_variaveis_publicas(codigo, caminho=caminho)
+            exp = {
                 'funcoes': {f['nome']: f for f in funcoes},
                 'classes': {c['nome']: c for c in classes},
                 'variaveis': set(variaveis),
             }
         except (SyntaxError, OSError):
-            exportacoes[nome] = {'funcoes': {}, 'classes': {}, 'variaveis': set()}
+            exp = {'funcoes': {}, 'classes': {}, 'variaveis': set()}
 
-    # Verificar imports cruzados — se A importa de B, as funções chamadas devem existir em B
+        caminho_res = caminho.resolve()
+        exportacoes_por_caminho[caminho_res] = exp
+        exportacoes_por_nome.setdefault(nome, []).append(exp)
+
+    roots = []
+    if pasta_projeto:
+        p_res = pasta_projeto.resolve()
+        roots.extend([p_res / 'src', p_res, p_res / 'scripts'])
+
+    # Verificar imports cruzados
     for nome, caminho in modulos:
         try:
             with open(caminho, 'r', encoding='utf-8', errors='replace') as f:
@@ -220,20 +265,72 @@ def validar_contratos_entre_modulos(
             continue
 
         for node in ast.walk(arvore):
-            if isinstance(node, ast.ImportFrom) and node.module:
-                modulo_importado = node.module
-                # Verificar se o import é de um módulo irmão
-                if modulo_importado in exportacoes:
+            if isinstance(node, ast.ImportFrom):
+                alvo = None
+                modulo_importado = node.module or ''
+
+                if node.level > 0:
+                    base_dir = caminho.parent
+                    for _ in range(node.level - 1):
+                        base_dir = base_dir.parent
+                    if node.module:
+                        parts = node.module.split('.')
+                        cand_py = base_dir.joinpath(*parts).with_suffix('.py').resolve()
+                        cand_pkg = (base_dir.joinpath(*parts) / '__init__.py').resolve()
+                    else:
+                        cand_py = base_dir.with_suffix('.py').resolve()
+                        cand_pkg = (base_dir / '__init__.py').resolve()
+
+                    if cand_py in exportacoes_por_caminho:
+                        alvo = cand_py
+                    elif cand_pkg in exportacoes_por_caminho:
+                        alvo = cand_pkg
+                elif node.module:
+                    parts = node.module.split('.')
+                    cand_roots = [caminho.parent] + roots
+                    for r in cand_roots:
+                        cand_py = r.joinpath(*parts).with_suffix('.py').resolve()
+                        cand_pkg = (r.joinpath(*parts) / '__init__.py').resolve()
+                        if cand_py in exportacoes_por_caminho:
+                            alvo = cand_py
+                            break
+                        if cand_pkg in exportacoes_por_caminho:
+                            alvo = cand_pkg
+                            break
+
+                if alvo is not None:
+                    exp = exportacoes_por_caminho[alvo]
                     for alias in node.names:
                         nome_importado = alias.name
                         if nome_importado == '*':
                             continue
-                        # Verificar se existe no módulo exportador
-                        exp = exportacoes[modulo_importado]
                         existe = (
                             nome_importado in exp['funcoes']
                             or nome_importado in exp['classes']
                             or nome_importado in exp['variaveis']
+                        )
+                        label_alvo = modulo_importado or alvo.stem
+                        resultados.append(ResultadoValidacao(
+                            f'I2_contrato_{nome}_imports_{label_alvo}.{nome_importado}',
+                            f'Contrato: {nome} → {label_alvo}.{nome_importado}',
+                            existe,
+                            (
+                                f'{label_alvo}.{nome_importado} encontrado'
+                                if existe
+                                else f'{label_alvo}.{nome_importado} NÃO EXISTE — divergência de contrato'
+                            ),
+                        ))
+                elif modulo_importado in exportacoes_por_nome:
+                    candidatos = exportacoes_por_nome[modulo_importado]
+                    for alias in node.names:
+                        nome_importado = alias.name
+                        if nome_importado == '*':
+                            continue
+                        existe = any(
+                            nome_importado in exp['funcoes']
+                            or nome_importado in exp['classes']
+                            or nome_importado in exp['variaveis']
+                            for exp in candidatos
                         )
                         resultados.append(ResultadoValidacao(
                             f'I2_contrato_{nome}_imports_{modulo_importado}.{nome_importado}',
@@ -321,21 +418,56 @@ def validar_compatibilidade_tipos(
 
     resultados = []
 
-    # Coletar todos os tipos definidos (classes) por módulo
-    tipos_por_modulo: Dict[str, set] = {}
-    for nome, caminho in modulos:
+    # Coletar todos os tipos definidos (classes, typevars, imports) em todos os módulos
+    todos_tipos = set()
+    for _, caminho in modulos:
         try:
             with open(caminho, 'r', encoding='utf-8', errors='replace') as f:
                 codigo = f.read()
             classes = extrair_classes_publicas(codigo)
-            tipos_por_modulo[nome] = {c['nome'] for c in classes}
+            todos_tipos.update(c['nome'] for c in classes)
+            arvore = ast.parse(codigo)
+            for item in ast.walk(arvore):
+                if isinstance(item, ast.Assign):
+                    for target in item.targets:
+                        if isinstance(target, ast.Name):
+                            todos_tipos.add(target.id)
+                elif isinstance(item, (ast.Import, ast.ImportFrom)):
+                    for alias in item.names:
+                        todos_tipos.add(alias.asname or alias.name)
         except (SyntaxError, OSError):
-            tipos_por_modulo[nome] = set()
+            continue
 
-    # Verificar se há referências a tipos de outros módulos que não existem
-    todos_tipos = set()
-    for tipos in tipos_por_modulo.values():
-        todos_tipos.update(tipos)
+    TIPOS_CONHECIDOS = {
+        # Builtins
+        'str', 'int', 'float', 'bool', 'list', 'dict', 'None',
+        'bytes', 'bytearray', 'memoryview', 'complex',
+        # typing module
+        'Any', 'Optional', 'List', 'Dict', 'Tuple', 'Set',
+        'Callable', 'Sequence', 'Iterator', 'Generator',
+        'Coroutine', 'Awaitable', 'AsyncIterator', 'AsyncGenerator',
+        'Mapping', 'MutableMapping', 'MutableSequence',
+        'Iterable', 'Reversible', 'Type', 'ClassVar',
+        'Final', 'Literal', 'Union', 'TypeVar', 'Generic',
+        'Protocol', 'TypedDict', 'NamedTuple', 'Deque',
+        'Counter', 'ChainMap', 'DefaultDict', 'OrderedDict',
+        # pathlib
+        'Path', 'PurePath', 'PurePosixPath', 'PureWindowsPath',
+        # os
+        'os', 'environ',
+        # sqlite3
+        'sqlite3', 'Connection', 'Cursor',
+        # common stdlib
+        'Exception', 'BaseException', 'RuntimeError', 'ValueError',
+        'TypeError', 'KeyError', 'IndexError', 'AttributeError',
+        'ImportError', 'FileNotFoundError', 'OSError', 'IOError',
+        'datetime', 'date', 'time', 'timedelta', 'timezone',
+        'Decimal', 'Fraction',
+        # dataclasses / abc
+        'dataclass', 'field', 'abstractmethod', 'ABC',
+        # argparse
+        'ArgumentParser', 'Namespace',
+    }
 
     for nome, caminho in modulos:
         try:
@@ -351,35 +483,10 @@ def validar_compatibilidade_tipos(
                 for arg in node.args.args:
                     if arg.annotation and isinstance(arg.annotation, ast.Name):
                         tipo_ref = arg.annotation.id
+                        # Tipos genéricos de 1 letra (T, U, V, K, etc.) são TypeVars canônicos
+                        if len(tipo_ref) == 1 and tipo_ref.isupper():
+                            continue
                         # Se parece com um tipo customizado (maiúscula inicial)
-                        TIPOS_CONHECIDOS = {
-                            # Builtins
-                            'str', 'int', 'float', 'bool', 'list', 'dict', 'None',
-                            'bytes', 'bytearray', 'memoryview', 'complex',
-                            # typing module
-                            'Any', 'Optional', 'List', 'Dict', 'Tuple', 'Set',
-                            'Callable', 'Sequence', 'Iterator', 'Generator',
-                            'Coroutine', 'Awaitable', 'AsyncIterator', 'AsyncGenerator',
-                            'Mapping', 'MutableMapping', 'MutableSequence',
-                            'Iterable', 'Reversible', 'Type', 'ClassVar',
-                            'Final', 'Literal', 'Union', 'TypeVar', 'Generic',
-                            'Protocol', 'TypedDict', 'NamedTuple', 'Deque',
-                            'Counter', 'ChainMap', 'DefaultDict', 'OrderedDict',
-                            # pathlib
-                            'Path', 'PurePath', 'PurePosixPath', 'PureWindowsPath',
-                            # os
-                            'os', 'environ',
-                            # common stdlib
-                            'Exception', 'BaseException', 'RuntimeError', 'ValueError',
-                            'TypeError', 'KeyError', 'IndexError', 'AttributeError',
-                            'ImportError', 'FileNotFoundError', 'OSError', 'IOError',
-                            'datetime', 'date', 'time', 'timedelta', 'timezone',
-                            'Decimal', 'Fraction',
-                            # dataclasses / abc
-                            'dataclass', 'field', 'abstractmethod', 'ABC',
-                            # argparse
-                            'ArgumentParser', 'Namespace',
-                        }
                         if tipo_ref[0].isupper() and tipo_ref not in TIPOS_CONHECIDOS:
                             if tipo_ref not in todos_tipos:
                                 resultados.append(ResultadoValidacao(
@@ -470,7 +577,7 @@ def executar_gate(pasta_projeto: Path) -> int:
     todos_resultados.extend(r1)
 
     print("📋 I2: Contratos entre módulos (cross-reference)...")
-    r2 = validar_contratos_entre_modulos(modulos)
+    r2 = validar_contratos_entre_modulos(modulos, pasta_projeto=pasta_projeto)
     todos_resultados.extend(r2)
 
     print("📋 I3: Schemas JSON válidos...")

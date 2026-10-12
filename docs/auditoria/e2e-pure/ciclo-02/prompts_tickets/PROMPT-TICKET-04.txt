@@ -1,0 +1,16 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 4. Target tool: e2e-pure.
+DIMENSION: D1
+DELIVER: modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/application_enterprise/commands/verificar_drift.py
+
+STEPS:
+- Generate HANDOFF_ENTERPRISE_OPS.json upon successful drift verification
+- Validate output contract against handoff-enterprise-to-ops schema
+- Ensure synchronizer passes C5 gate to ops stage
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/application_enterprise/commands/verificar_drift.py
