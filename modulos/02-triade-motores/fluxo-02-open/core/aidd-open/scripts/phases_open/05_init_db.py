@@ -80,7 +80,13 @@ def gerar_init_db(analysis: dict, pasta_saida: str) -> Result:
     bancos = analysis.get("bancos_logicos", [])
 
     if not bancos:
-        return Result.ok("# Nenhum banco logico necessario.\nexit 0\n")
+        conteudo_vazio = (
+            "#!/bin/bash\n"
+            "# Nenhum banco logico necessario.\n"
+            "set -euo pipefail\n"
+            "exit 0\n"
+        )
+        return Result.ok(conteudo_vazio)
 
     # Montar string default para BANCOS_LOGICOS
     bancos_default = ",".join(

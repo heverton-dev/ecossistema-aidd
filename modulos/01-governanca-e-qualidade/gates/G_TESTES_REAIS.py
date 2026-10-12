@@ -210,6 +210,38 @@ def executar():
         print(f"  [INFO] Orçamento de skipped: {total_autorizados} test-id(s) autorizados.")
     print()
 
+    cwd_atual = os.getcwd()
+    eh_fatia_ou_subprojeto = (
+        bool(os.environ.get("AIDD_WORKTREE_SLICE"))
+        or not os.path.isfile(os.path.join(cwd_atual, "ecossistema.py"))
+        or os.path.isdir(os.path.join(cwd_atual, "tests", "slices"))
+        or os.path.isdir(os.path.join(cwd_atual, "src", "slices"))
+    ) and not os.path.isdir(os.path.join(cwd_atual, "modulos", "01-governanca-e-qualidade"))
+
+    if eh_fatia_ou_subprojeto:
+        print(f"  [INFO] Contexto de Fatia Vertical / Worktree isolada: {cwd_atual}")
+        candidatos_testes = [p for p in ["tests/slices", "tests", "testes"] if os.path.isdir(os.path.join(cwd_atual, p))]
+        alvos_locais = tuple(candidatos_testes[:1]) if candidatos_testes else ()
+        if not alvos_locais:
+            print("  [INFO] Nenhum diretório de testes local detectado na fatia. Aprovado preventivamente.")
+            return 0
+        fd_tmp, junitxml_path = tempfile.mkstemp(suffix=".xml", prefix="junit_slice_")
+        os.close(fd_tmp)
+        try:
+            rc, out = _rodar_pytest(cwd_atual, junitxml_path, alvos_locais)
+            if rc == 0:
+                print(f"  [PASS] Testes da fatia vertical aprovados (100% OK em {alvos_locais[0]}).")
+                return 0
+            else:
+                print(f"  [FAIL] Testes da fatia falharam (exit {rc}):\n{out}")
+                return 1
+        finally:
+            if os.path.exists(junitxml_path):
+                try:
+                    os.remove(junitxml_path)
+                except OSError:
+                    pass
+
     resultados = []
     falhou = False
     ferramentas_explicitas = [

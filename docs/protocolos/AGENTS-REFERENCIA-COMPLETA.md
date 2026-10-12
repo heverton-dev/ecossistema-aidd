@@ -149,6 +149,12 @@ O ecossistema dispõe de Quality Gates globais em gates/:
 - modulos/04-nucleo-compartilhado/gates/G_PIPELINE_HANDOFF.py: Valida formalmente a conformidade de manifestos de handoff de execução contra o schema canônico handoff-execucao.schema.json, prevenindo dados inválidos, stubs e comandos triviais (ISSUE-PIPE-0002).
 - modulos/01-governanca-e-qualidade/gates/G_aidd_grill.py: Quality gate da ferramenta `aidd-grill` (ciclo-01) — exige os 8 scripts obrigatórios da skill em componentes/compartilhado/skills/aidd-grill/scripts/.
 - modulos/04-nucleo-compartilhado/gates/G_MODULO_FRONTEIRA.py: Audita via AST a fronteira entre as 7 fatias VSA (MAPA-FATIAS.json): sys.path, caminho literal e import para outra fatia fora do interface.py, e referência a tools/; allowlist datada que só diminui; modo bloqueio por padrão desde o Ticket 20 (AIDD_MODULO_FRONTEIRA_MODO=aviso só relata).
+- gates/G_BLOQUEAR_SEGREDOS.py: Bloqueio estrito de segredos e credenciais hardcoded.
+- gates/G_CONTRACTS.py: Validação de conformidade OpenAPI e contratos de integração.
+- gates/G_CYBERSECURITY_OWASP.py: Verificação de segurança cibernética e blindagem OWASP.
+- gates/G_ESTRUTURA_AST.py: Análise estática da árvore AST e integridade estrutural.
+- gates/G_INJECT.py: Validação de integridade de componentes e injeção multi-harness.
+- gates/G_PERFORMANCE.py: Aferição determinística de benchmarks e limites de performance.
 
 - **Execução unificada:** `python ecossistema.py audit` delega para `pre-commit run --all-files`.
 

@@ -266,8 +266,24 @@ def _verificar_drift_cmd(dir):
     cmd_verificar_drift(types.SimpleNamespace(dir=dir))
 
 
+@cli.command("compile-vsa", help="Compila grafo VSA a partir de PLANNER.json gerando vsa_dispatch.json")
+@click.option("--planner", default="PLANNER.json", help="Caminho do arquivo PLANNER.json")
+@click.option("--output", "-o", default=None, help="Caminho do arquivo de saída (default: vsa_dispatch.json no mesmo diretório)")
+def _compile_vsa_cmd(planner, output):
+    planner_file = os.path.abspath(planner)
+    if not os.path.isfile(planner_file):
+        click.echo(f"[MASTER] Erro: arquivo do planner não encontrado: {planner_file}", err=True)
+        sys.exit(1)
+    # Delega deterministamente ao ecossistema facade para preservar fronteiras de fatias VSA (G_MODULO_FRONTEIRA)
+    cmd = [sys.executable, "ecossistema.py", "master", "--compile-vsa", "--planner", planner_file]
+    if output:
+        cmd.extend(["--output", output])
+    res = subprocess.run(cmd)
+    sys.exit(res.returncode)
+
+
 def main():
-    known_cmds = {"setup", "init", "plan", "apply", "prompt", "compose", "compose-orca", "add-module", "attach-vsa", "test", "audit", "bench", "heal", "deploy", "status", "export-frontend", "refine-module", "scaffold-infra", "inject", "verificar-drift", "-h", "--help"}
+    known_cmds = {"setup", "init", "plan", "apply", "prompt", "compose", "compose-orca", "add-module", "attach-vsa", "test", "audit", "bench", "heal", "deploy", "status", "export-frontend", "refine-module", "scaffold-infra", "inject", "verificar-drift", "compile-vsa", "-h", "--help"}
     if len(sys.argv) > 1 and sys.argv[1] not in known_cmds:
         raw_prompt = " ".join(sys.argv[1:])
         if _tentar_injecao_por_linguagem_natural(raw_prompt):

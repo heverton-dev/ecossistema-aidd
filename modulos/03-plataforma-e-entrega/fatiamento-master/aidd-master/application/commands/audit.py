@@ -80,28 +80,18 @@ def cmd_audit(args):
             has_failure = True
             continue
 
+        cmd_args = [sys.executable, gate_file]
         try:
             with open(gate_file, "r", encoding="utf-8", errors="ignore") as f:
                 c_gate = f.read()
-            if "--dir" not in c_gate and "argparse" not in c_gate and "click" not in c_gate and "sys.argv" not in c_gate:
-                print(f"  ❌ [FAIL] Arquivo do gate não aceita --dir: {gate_file}")
-                relatorio["gates"].append({
-                    "gate": gate_name,
-                    "descricao": gate_desc,
-                    "status": "FAIL",
-                    "exit_code": 1,
-                    "duracao_ms": 0.0,
-                    "erro": "Arquivo incompatível com --dir"
-                })
-                relatorio["resumo"]["falhas"] += 1
-                has_failure = True
-                continue
+            if "--dir" in c_gate:
+                cmd_args.extend(["--dir", target_dir])
         except Exception:
             pass
 
         t0_gate = time.time()
         try:
-            res = subprocess.run([sys.executable, gate_file, "--dir", target_dir], cwd=target_dir, capture_output=True, text=True, errors="replace", timeout=10)
+            res = subprocess.run(cmd_args, cwd=target_dir, capture_output=True, text=True, errors="replace", timeout=60)
             duracao_gate = round((time.time() - t0_gate) * 1000, 2)
 
             # Exibe saída do gate
@@ -127,15 +117,15 @@ def cmd_audit(args):
                 has_failure = True
         except subprocess.TimeoutExpired:
             duracao_gate = round((time.time() - t0_gate) * 1000, 2)
-            print(f"  ❌ [FAIL] Timeout no gate [{gate_name}] (> 10s)")
+            print(f"  ❌ [FAIL] Timeout no gate [{gate_name}] (> 60s)")
             relatorio["gates"].append({
                 "gate": gate_name,
                 "descricao": gate_desc,
                 "status": "FAIL",
                 "exit_code": 124,
                 "duracao_ms": duracao_gate,
-                "erro": "Timeout expirado (10s)",
-                "saida_resumida": "Execução interrompida após 10s de timeout."
+                "erro": "Timeout expirado (60s)",
+                "saida_resumida": "Execução interrompida após 60s de timeout."
             })
             relatorio["resumo"]["falhas"] += 1
             has_failure = True

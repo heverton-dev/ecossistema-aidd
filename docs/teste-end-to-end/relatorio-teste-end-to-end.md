@@ -1721,3 +1721,28 @@
   - `G_ESTRUTURA.py`: **23/23 checagens aprovadas** (exit 0).
   - `G_DISCIPLINA_TESTE_FERRAMENTA`: **PASS (Exit 0)**.
 - **Status:** **RESOLVIDO & 100% CONFORME**.
+
+---
+
+## 14. Resolução Integrada e Auditoria 4F — Fluxo Canônico Freedom e Worktrees (`aidd-freedom`, `aidd-master`, `aidd-enterprise`, `aidd-open`)
+
+- **Data da Auditoria e Validação:** 12/10/2026
+- **Ambiente:** `C:\Users\trcnologia\Desktop\TESTE-ecossistema-aidd_04102026\fluxo-03-freedom`
+- **Ferramentas Tocadas:**
+  `aidd-freedom` (`cli.py`, `ecossistema.py`), `aidd-master` (`dispatch_pipeline.py`, `aidd.py`), `aidd-enterprise` (`audit.py`), `aidd-open` (`05_init_db.py`).
+- **O que executou:**
+  1. `TKT-FIX-01 / TKT-FIX-09`: Normalização da CLI raiz para o `aidd-freedom` e suporte a subcomandos com ou sem prefixo `--` (`scan`, `convert-db`, `pack`, `unpack`) sem desvios indevidos para orquestrador geral.
+  2. `TKT-FIX-02 / TKT-FIX-10`: Resolução absoluta de Quality Gates em `dispatch_pipeline.py` e pós-merge, consultando os submódulos de `ECOSSISTEMA_DIR` e garantindo isolamento de worktree sem erro de código 2.
+  3. `TKT-FIX-04 / TKT-FIX-11`: Blindagem de script bash `init-multiple-databases.sh` no `aidd-open` com shebang e `set -euo pipefail` mesmo sem bancos extras.
+  4. `TKT-FIX-05`: Inclusão de `modulos/04-nucleo-compartilhado/gates/` nas pastas candidatas do `aidd-enterprise audit` e timeout expandido para 60s.
+  5. `TKT-FIX-06`: Registro explícito do subcomando `@cli.command("compile-vsa")` no Click do `aidd-master`.
+  6. `TKT-FIX-07`: Isolamento de execução de `G_TESTES_REAIS.py` no escopo da fatia (`AIDD_WORKTREE_SLICE`), eliminando execução do monorepo global dentro de worktrees.
+- **Resultados Medidos (12/10/2026):**
+  - `G_DISCIPLINA_TESTE_FERRAMENTA`: **PASS (Exit 0)**.
+  - `G_SAIDA_BINARIA`: **PASS (Exit 0)**.
+  - `G_DISPATCH_PIPELINE_VSA`: **PASS (Exit 0)**.
+  - `G_ECOSSISTEMA_INTEGRIDADE`: **PASS (Exit 0)**.
+  - `G_HARNESS_COMPAT`: **PASS (Exit 0)**.
+  - `G_ENV_ROT`: **PASS (Exit 0)**.
+- **Status:** **RESOLVIDO & 100% CONFORME**.
+

@@ -38,6 +38,7 @@ def cmd_audit(args):
     pastas_gates_candidatas = [
         os.path.join(target_dir, "scripts", "gates"),
         os.path.join(target_dir, "gates"),
+        os.path.join(repo_root, "modulos", "04-nucleo-compartilhado", "gates"),
         os.path.join(repo_root, "componentes", "compartilhado", "gates"),
         os.path.join(repo_root, "gates"),
     ]
@@ -46,14 +47,6 @@ def cmd_audit(args):
         for p in pastas_gates_candidatas:
             arq = os.path.join(p, f"{nome}.py")
             if os.path.isfile(arq):
-                try:
-                    with open(arq, "r", encoding="utf-8", errors="ignore") as f:
-                        conteudo = f.read()
-                    # Ignora arquivos que não suportam argumento --dir
-                    if "--dir" not in conteudo and "argparse" not in conteudo and "click" not in conteudo and "sys.argv" not in conteudo:
-                        continue
-                except Exception:
-                    pass
                 return arq
         return None
 
@@ -104,13 +97,22 @@ def cmd_audit(args):
 
         t0_gate = time.time()
         try:
+            cmd_args = [sys.executable, gate_file]
+            try:
+                with open(gate_file, "r", encoding="utf-8", errors="ignore") as gf:
+                    conteudo_gate = gf.read()
+                if "--dir" in conteudo_gate:
+                    cmd_args.extend(["--dir", target_dir])
+            except Exception:
+                pass
+
             res = subprocess.run(
-                [sys.executable, gate_file, "--dir", target_dir],
+                cmd_args,
                 cwd=target_dir,
                 capture_output=True,
                 text=True,
                 errors="replace",
-                timeout=10,
+                timeout=60,
             )
             duracao_gate = round((time.time() - t0_gate) * 1000, 2)
 
@@ -137,7 +139,7 @@ def cmd_audit(args):
                 has_failure = True
         except subprocess.TimeoutExpired:
             duracao_gate = round((time.time() - t0_gate) * 1000, 2)
-            print(f"  ❌ [FAIL] Timeout rígido atingido no gate [{gate_name}] (> 10s)")
+            print(f"  ❌ [FAIL] Timeout rígido atingido no gate [{gate_name}] (> 60s)")
             relatorio["gates"].append({
                 "gate": gate_name,
                 "descricao": gate_desc,

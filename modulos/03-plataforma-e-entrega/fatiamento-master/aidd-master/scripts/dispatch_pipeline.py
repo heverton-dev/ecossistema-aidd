@@ -477,6 +477,7 @@ class VSADispatchPipeline:
         if "PYTHONPATH" in env_cmd:
             caminhos_python.append(env_cmd["PYTHONPATH"])
         env_cmd["PYTHONPATH"] = os.pathsep.join(caminhos_python)
+        env_cmd["AIDD_WORKTREE_SLICE"] = str(slice_id)
 
         try:
             for cmd_str in todos_comandos:
@@ -495,10 +496,15 @@ class VSADispatchPipeline:
                                 ECOSSISTEMA_DIR / script_alvo,
                                 active_wt.worktree_path / "gates" / nome_base,
                                 self.repo_root / "gates" / nome_base,
+                                ECOSSISTEMA_DIR / "gates" / nome_base,
                                 self.repo_root / "modulos" / "04-nucleo-compartilhado" / "gates" / nome_base,
+                                ECOSSISTEMA_DIR / "modulos" / "04-nucleo-compartilhado" / "gates" / nome_base,
                                 self.repo_root / "modulos" / "01-governanca-e-qualidade" / "gates" / nome_base,
+                                ECOSSISTEMA_DIR / "modulos" / "01-governanca-e-qualidade" / "gates" / nome_base,
                                 self.repo_root / "modulos" / "03-plataforma-e-entrega" / "gates" / nome_base,
+                                ECOSSISTEMA_DIR / "modulos" / "03-plataforma-e-entrega" / "gates" / nome_base,
                                 self.repo_root / "componentes" / "compartilhado" / "gates" / nome_base,
+                                ECOSSISTEMA_DIR / "componentes" / "compartilhado" / "gates" / nome_base,
                             ]
                             achado = None
                             for cand in candidatos:
@@ -507,6 +513,8 @@ class VSADispatchPipeline:
                                     break
                             if not achado:
                                 matches = list(self.repo_root.glob(f"**/gates/{nome_base}"))
+                                if not matches and ECOSSISTEMA_DIR != self.repo_root:
+                                    matches = list(ECOSSISTEMA_DIR.glob(f"**/gates/{nome_base}"))
                                 if matches:
                                     achado = str(matches[0])
                             if achado:
@@ -729,16 +737,38 @@ class VSADispatchPipeline:
                     script_alvo = partes[1].strip('"\'')
                     caminho_script = self.repo_root / script_alvo
                     if not caminho_script.is_file():
-                        alt_repo = self.repo_root / "gates" / Path(script_alvo).name
-                        alt_eco = ECOSSISTEMA_DIR / script_alvo
-                        if alt_repo.is_file():
-                            script_alvo = str(alt_repo)
-                        elif alt_eco.is_file():
+                        nome_base = Path(script_alvo).name
+                        candidatos_post = [
+                            self.repo_root / script_alvo,
+                            ECOSSISTEMA_DIR / script_alvo,
+                            self.repo_root / "gates" / nome_base,
+                            ECOSSISTEMA_DIR / "gates" / nome_base,
+                            self.repo_root / "modulos" / "04-nucleo-compartilhado" / "gates" / nome_base,
+                            ECOSSISTEMA_DIR / "modulos" / "04-nucleo-compartilhado" / "gates" / nome_base,
+                            self.repo_root / "modulos" / "01-governanca-e-qualidade" / "gates" / nome_base,
+                            ECOSSISTEMA_DIR / "modulos" / "01-governanca-e-qualidade" / "gates" / nome_base,
+                            self.repo_root / "modulos" / "03-plataforma-e-entrega" / "gates" / nome_base,
+                            ECOSSISTEMA_DIR / "modulos" / "03-plataforma-e-entrega" / "gates" / nome_base,
+                            self.repo_root / "componentes" / "compartilhado" / "gates" / nome_base,
+                            ECOSSISTEMA_DIR / "componentes" / "compartilhado" / "gates" / nome_base,
+                        ]
+                        achado_post = None
+                        for cand in candidatos_post:
+                            if cand.is_file():
+                                achado_post = str(cand)
+                                break
+                        if not achado_post:
+                            matches = list(self.repo_root.glob(f"**/gates/{nome_base}"))
+                            if not matches and ECOSSISTEMA_DIR != self.repo_root:
+                                matches = list(ECOSSISTEMA_DIR.glob(f"**/gates/{nome_base}"))
+                            if matches:
+                                achado_post = str(matches[0])
+                        if achado_post:
                             if script_alvo == "ecossistema.py" and len(partes) > 2 and "audit" in partes[2]:
-                                cmd_exec = f'"{sys.executable}" "{alt_eco}" forge audit "{self.repo_root}"'
+                                cmd_exec = f'"{sys.executable}" "{ECOSSISTEMA_DIR / "ecossistema.py"}" forge audit "{self.repo_root}"'
                                 script_alvo = None
                             else:
-                                script_alvo = str(alt_eco)
+                                script_alvo = achado_post
                     if script_alvo is not None:
                         resto = f" {partes[2]}" if len(partes) > 2 else ""
                         cmd_exec = f'"{sys.executable}" "{script_alvo}"{resto}'

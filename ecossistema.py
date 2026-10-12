@@ -358,7 +358,7 @@ def cmd_pure_motor(args):
 def cmd_master(args):
     master_dir = pasta_ferramenta("aidd-master")
     args_lista = list(args)
-    if "--compile-vsa" in args_lista:
+    if "--compile-vsa" in args_lista or "compile-vsa" in args_lista:
         planner_file = "PLANNER.json"
         if "--planner" in args_lista:
             idx = args_lista.index("--planner")
@@ -412,13 +412,20 @@ def cmd_ops(args):
     return run_command(cmd, cwd=os.getcwd(), env=env)
 
 def cmd_freedom_motor(args):
-    """Executa o motor do Fluxo 03, modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom ou VSA (scan, convert-db, merge, pack, validate)."""
-    if any(arg.startswith("--nome") or arg.startswith("--pasta") or arg.startswith("--slug") or arg.startswith("--dry-run") for arg in args):
+    """Executa o motor do Fluxo 03, modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom ou VSA (scan, convert-db, merge, pack, validate, unpack, migrate-auth, destroy)."""
+    args_lista = list(args)
+    subcomandos_validos = {"scan", "convert-db", "merge", "pack", "migrate-auth", "destroy", "unpack", "validate"}
+    # Normaliza primeiro argumento caso venha com prefixo -- (ex: --scan -> scan)
+    if args_lista and args_lista[0].lstrip("-") in subcomandos_validos:
+        args_lista[0] = args_lista[0].lstrip("-")
+
+    tem_subcomando = any(a in subcomandos_validos for a in args_lista)
+    if not tem_subcomando and any(arg.startswith("--nome") or arg.startswith("--slug") or arg.startswith("--dry-run") for arg in args_lista):
         print("[AVISO] Para executar o Fluxo 03 completo da Tríade, utilize 'python ecossistema.py freedom' (ou /freedom).")
-        return cmd_run_fluxo(["--fluxo", "freedom"] + args)
+        return cmd_run_fluxo(["--fluxo", "freedom"] + args_lista)
     freedom_dir = pasta_ferramenta("aidd-freedom")
     env = {"PYTHONPATH": freedom_dir}
-    cmd = [sys.executable, "-m", "aidd_freedom.cli"] + args
+    cmd = [sys.executable, "-m", "aidd_freedom.cli"] + args_lista
     return run_command(cmd, cwd=os.getcwd(), env=env)
 
 def cmd_pure(args):
@@ -445,7 +452,9 @@ def cmd_open(args):
 def cmd_freedom(args):
     """Atalho de alta ergonomia para run-fluxo --fluxo freedom (Fluxo 03 da Tríade)."""
     args_lista = list(args)
-    if any(a in args_lista for a in ("--scan", "--convert-db", "--motor", "--merge", "--pack", "--validate")):
+    subcmds_motor = {"scan", "convert-db", "merge", "pack", "migrate-auth", "destroy", "unpack", "validate"}
+    subcmds_flags = {f"--{c}" for c in subcmds_motor} | {"--motor"}
+    if any(a in subcmds_flags or a in subcmds_motor for a in args_lista):
         if "--motor" in args_lista:
             args_lista = [a for a in args_lista if a != "--motor"]
         return cmd_freedom_motor(args_lista)

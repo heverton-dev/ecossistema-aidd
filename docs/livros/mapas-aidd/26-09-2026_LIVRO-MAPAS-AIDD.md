@@ -73,8 +73,8 @@ Onde mora: `AGENTS.md`, seção 2. Quem confere: o meta-guarda `G_LEI_DECLARA_PO
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| leis | 13 |
-| declarações de guarda | 0 |
+| leis | 14 |
+| declarações de guarda | 71 |
 | declarações que o meta-guarda não lê | 0 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_leis`), os mesmos do mapa `mapa-01-leis.html`.
@@ -120,7 +120,7 @@ Onde mora: `tools/`. Quem confere: o `G_TESTES_REAIS` (pytest de cada ferramenta
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | ferramentas | 8 |
-| comandos de CLI | 74 |
+| comandos de CLI | 75 |
 | verbos em mais de uma ferramenta | 0 |
 | tarefas com várias donas | 0 |
 
@@ -220,7 +220,7 @@ Onde mora: `gates/` e `tools/<f>/gates/`. Quem confere: o próprio pre-commit e 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | guardas (nomes) | 105 |
-| no ecossistema | 78 |
+| no ecossistema | 72 |
 | rodam no commit | 67 |
 | com versões diferentes | 10 |
 
@@ -447,7 +447,7 @@ Onde mora: `tools/<f>/templates/`. Quem confere: os guardas de entrega gerados p
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | moldes | 21 |
-| arquivos de molde | 341 |
+| arquivos de molde | 335 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_moldes_entrega`), os mesmos do mapa `mapa-09-moldes.html`.
 
