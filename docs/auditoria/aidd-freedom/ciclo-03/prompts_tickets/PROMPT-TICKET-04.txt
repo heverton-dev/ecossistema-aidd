@@ -1,0 +1,15 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 4. Target tool: aidd-freedom.
+DIMENSION: D13
+DELIVER: modulos/02-triade-motores/fluxo-03-freedom/gates/G_MIGRATION_ROT.py
+
+STEPS:
+- In G_MIGRATION_ROT.py, check if init-db.sql exists when alembic.ini is absent. If valid, approve migration audit for PostgreSQL declarative scope.
+- Verify G_MIGRATION_ROT returns exit 0 on projects with init-db.sql.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: modulos/02-triade-motores/fluxo-03-freedom/gates/G_MIGRATION_ROT.py

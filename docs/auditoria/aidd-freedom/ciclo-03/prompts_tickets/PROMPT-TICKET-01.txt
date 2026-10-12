@@ -1,0 +1,16 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 1. Target tool: aidd-freedom.
+DIMENSION: D15
+DELIVER: modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/application_enterprise/commands/verificar_drift.py
+
+STEPS:
+- In application_enterprise/commands/verificar_drift.py, after successful drift check, construct C5 dictionary adhering to handoff-enterprise-to-ops.schema.json.
+- Save to target_dir/HANDOFF_ENTERPRISE_OPS.json.
+- Assert schema validation passes and exit code 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/application_enterprise/commands/verificar_drift.py

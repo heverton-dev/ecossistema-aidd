@@ -1,0 +1,18 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 1. Target tool: fluxo-02-runner.
+DIMENSION: D1
+DELIVER: docs/auditoria/fluxo-02-runner/ciclo-02/ENTREGA-TICKET-01.json
+
+STEPS:
+- Update application_enterprise verificar_drift.py to write HANDOFF_ENTERPRISE_OPS.json when drift check succeeds.
+- Ensure HANDOFF_ENTERPRISE_OPS.json conforms to handoff-enterprise-to-ops.schema.json.
+- Export verificar_integridade_payload as alias to validar_integridade_contrato in contratos/validador_sha256.py.
+- Run pytest on tests/test_orquestrador_contratos_reais.py and assert exit 0.
+- Write handoff json to docs/auditoria/fluxo-02-runner/ciclo-02/ENTREGA-TICKET-01.json.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: docs/auditoria/fluxo-02-runner/ciclo-02/ENTREGA-TICKET-01.json

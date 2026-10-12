@@ -1,0 +1,5 @@
+Fortify Frontend Templates in aidd-master and aidd-enterprise:
+- Add src/lib/utils.ts and src/lib/api.ts to templates/v2/frontend in both aidd-master and aidd-enterprise.
+- Fix react-router-dom useNavigate import in App.tsx.
+- Add @types/node to devDependencies in package.json.
+- Run python modulos/04-nucleo-compartilhado/gates/G_DRIFT_NUCLEO_COMPARTILHADO.py.

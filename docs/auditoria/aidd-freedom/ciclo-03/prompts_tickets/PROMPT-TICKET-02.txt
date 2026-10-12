@@ -1,0 +1,15 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 2. Target tool: aidd-freedom.
+DIMENSION: D11
+DELIVER: modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom/aidd_freedom/pipeline_bridge.py
+
+STEPS:
+- In pipeline_bridge.py, ensure os.makedirs(self.output_dir, exist_ok=True) is called before opening manifest_path for writing.
+- Verify test with nonexistent output folder passes.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom/aidd_freedom/pipeline_bridge.py

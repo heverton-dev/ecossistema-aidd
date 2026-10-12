@@ -941,7 +941,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-ops",
       "versao": "1.0.0",
-      "sha256": "sha256-2b19460ded71a1bd155b115374ea3f234fbe9146f05c830dc39d5be49baaf413",
+      "sha256": "sha256-77085966e298ae91b084f86ae28bbb059f65494b7fdb6cdbb0090e6f0fee0729",
       "consumidores": [
         "aidd-enterprise",
         "aidd-master",

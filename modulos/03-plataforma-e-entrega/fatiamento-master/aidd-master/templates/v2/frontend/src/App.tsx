@@ -1,5 +1,5 @@
 import React from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import Layout from './components/Layout'
 import DashboardPage from './pages/DashboardPage'
 import ModulosPage from './pages/ModulosPage'
@@ -26,7 +26,7 @@ function LoginPage() {
   const [password, setPassword] = React.useState('')
   const [error, setError] = React.useState('')
   const [loading, setLoading] = React.useState(false)
-  const navigate = React.useNavigate()
+  const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 2. Target tool: fluxo-02-runner.
+DIMENSION: D13
+DELIVER: docs/auditoria/fluxo-02-runner/ciclo-02/ENTREGA-TICKET-02.json
+
+STEPS:
+- Update tests/test_orquestrador_contratos_reais.py to test real contract persistence without fake C5 generation.
+- Verify that C5 validation passes through both jsonschema and validar_handoff.
+- Run pytest on tests/test_orquestrador_contratos_reais.py and assert exit 0.
+- Write handoff json to docs/auditoria/fluxo-02-runner/ciclo-02/ENTREGA-TICKET-02.json.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: docs/auditoria/fluxo-02-runner/ciclo-02/ENTREGA-TICKET-02.json

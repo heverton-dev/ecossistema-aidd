@@ -379,6 +379,22 @@ def renderizar_nginx(molde: str, perfil: Dict[str, Any], servicos: List[str]) ->
 # Geração no projeto
 # ---------------------------------------------------------------------------
 
+def obter_ferramentas_opensource_projeto(pasta_projeto: str) -> List[Dict[str, Any]]:
+    """Recupera ferramentas open-source declaradas no PLANNER.json ou C2 do projeto."""
+    for nome in ("PLANNER.json", "HANDOFF_PLANNER_ENGINE.json"):
+        caminho = os.path.join(pasta_projeto, nome)
+        if os.path.isfile(caminho):
+            try:
+                with open(caminho, "r", encoding="utf-8") as f:
+                    dados = json.load(f)
+                    ferr = (dados.get("payload_especifico_fluxo") or {}).get("ferramentas_opensource")
+                    if isinstance(ferr, list) and ferr:
+                        return ferr
+            except Exception:
+                pass
+    return []
+
+
 def gerar_infra(entrada: Dict[str, Any]) -> List[Tuple[str, str]]:
     """Busca as peças `moldes/infra/*` no almoxarifado e as ajusta ao perfil.
 
@@ -404,6 +420,21 @@ def gerar_infra(entrada: Dict[str, Any]) -> List[Tuple[str, str]]:
 
     compose = renderizar_compose(
         _ler(arquivo[PECA_COMPOSE]), perfil, servicos, nome_banco(entrada["projeto"]))
+
+    # Injeção determinística de ferramentas open-source curadas (Ticket 03)
+    ferrs_oss = obter_ferramentas_opensource_projeto(pasta_projeto)
+    rede_nome = next(iter(compose.get("networks") or {"aidd_network": None}))
+    for f in ferrs_oss:
+        slug_f = _slug_python(f.get("nome"))
+        if slug_f and slug_f not in compose["services"]:
+            servicos.append(slug_f)
+            compose["services"][slug_f] = {
+                "image": f.get("imagem_docker", "alpine:latest"),
+                "restart": "always",
+                "ports": [f"{f.get('porta_host', 8080)}:{f.get('porta_container', 8080)}"],
+                "networks": [rede_nome],
+            }
+
     cabecalho = (
         f"# Gerado pelo aidd-ops a partir da peça {PECA_COMPOSE} (almoxarifado)\n"
         f"# e do perfil_app da planta ({ENTRADA_C2}). Serviços: {', '.join(servicos)}.\n"

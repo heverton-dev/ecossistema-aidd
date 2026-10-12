@@ -1,0 +1,25 @@
+{
+  "ticket_id": "04",
+  "titulo": "Fortify Frontend Templates in aidd-master and aidd-enterprise",
+  "status": "CONCLUIDO",
+  "data_execucao": "2026-10-12T19:14:00-03:00",
+  "falha_15d": "D11. Padrao-Ouro de Stack e UI",
+  "arquivos_modificados": [
+    "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/templates/v2/frontend/src/lib/utils.ts",
+    "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/templates/v2/frontend/src/lib/api.ts",
+    "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/templates/v2/frontend/package.json",
+    "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/templates/v2/frontend/src/App.tsx",
+    "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/templates/v2/frontend/src/lib/utils.ts",
+    "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/templates/v2/frontend/src/lib/api.ts",
+    "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/templates/v2/frontend/package.json",
+    "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/templates/v2/frontend/src/App.tsx"
+  ],
+  "gate_executado": "python modulos/04-nucleo-compartilhado/gates/G_DRIFT_NUCLEO_COMPARTILHADO.py",
+  "resultado_gate": "APROVADO (exit 0)",
+  "evidencias": [
+    "utils.ts e api.ts criados para resolver imports quebrados de Vite",
+    "useNavigate importado de react-router-dom corrigindo runtime error",
+    "@types/node adicionado para garantir compilacao type-safe",
+    "G_DRIFT_NUCLEO_COMPARTILHADO validado com paridade 100% entre aidd-master e aidd-enterprise"
+  ]
+}

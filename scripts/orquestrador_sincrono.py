@@ -370,6 +370,10 @@ class OrquestradorSincrono:
                 "--pasta", str(self.pasta),
                 "--implementar-codigo"
             ]
+            rc = self._executar_comando(cmd, env_extra=env_construtor)
+            if rc != 0:
+                self.log(f"Falha na execução do {self.nome_fluxo}", "ERRO")
+                return False
         elif self.fluxo == 2:
             # A factory recebe a planta do planner (C2)
             cmd = [
@@ -377,16 +381,29 @@ class OrquestradorSincrono:
                 "--plano", str(self.pasta / CONTRATOS["C2"][0]),
                 "--pasta", str(self.pasta)
             ]
+            rc = self._executar_comando(cmd, env_extra=env_construtor)
+            if rc != 0:
+                self.log(f"Falha na execução do {self.nome_fluxo}", "ERRO")
+                return False
         else:
             origem = str(self.origem_export or (self.pasta / "origem"))
             cmd = [
                 sys.executable, "ecossistema.py", "freedom-motor", "scan",
                 origem
             ]
-        rc = self._executar_comando(cmd, env_extra=env_construtor)
-        if rc != 0:
-            self.log(f"Falha na execução do {self.nome_fluxo}", "ERRO")
-            return False
+            rc = self._executar_comando(cmd, env_extra=env_construtor)
+            if rc != 0:
+                self.log(f"Falha na execução do {self.nome_fluxo} (scan)", "ERRO")
+                return False
+            # Converte e materializa as migrações em init-db.sql no destino
+            cmd_db = [
+                sys.executable, "ecossistema.py", "freedom-motor", "convert-db",
+                origem, "--output", str(self.pasta / "init-db.sql")
+            ]
+            rc_db = self._executar_comando(cmd_db, env_extra=env_construtor)
+            if rc_db != 0:
+                self.log("Falha na conversão de banco (convert-db)", "ERRO")
+                return False
 
         # Contrato C3 (engine -> master): gravado pelo construtor.
         if not self._ler_contrato("C3", self.nome_fluxo):

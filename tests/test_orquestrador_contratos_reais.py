@@ -430,3 +430,33 @@ def test_factory_aceita_c2_real_do_planner(tmp_path):
     resultado = json.loads(proc.stdout.strip().splitlines()[-1])
     assert resultado["sucesso"] is True, resultado
     assert resultado["tem_sizing"] is True
+
+
+def test_enterprise_verificar_drift_grava_contrato_c5_real(tmp_path):
+    """Comprova que enterprise verificar-drift grava HANDOFF_ENTERPRISE_OPS.json real (Ticket 01)."""
+    pasta = tmp_path / "projeto-teste-enterprise"
+    pasta.mkdir()
+    (pasta / "CAPABILITIES.json").write_text("{}", encoding="utf-8")
+    (pasta / "PLANNER.json").write_text(
+        json.dumps({
+            "perfil_app": {
+                "tipo_runtime": "monolito_modular_docker",
+                "portas": [8000],
+                "banco": "sqlite"
+            }
+        }),
+        encoding="utf-8"
+    )
+
+    proc = subprocess.run(
+        [sys.executable, str(ROOT_DIR / "ecossistema.py"), "enterprise", "verificar-drift", "--dir", str(pasta)],
+        cwd=str(ROOT_DIR), capture_output=True, text=True, encoding="utf-8", errors="replace"
+    )
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    c5_path = pasta / "HANDOFF_ENTERPRISE_OPS.json"
+    assert c5_path.is_file(), "HANDOFF_ENTERPRISE_OPS.json não foi gravado no disco"
+
+    # Validações formais do contrato
+    orq = _orquestrador(tmp_path, 2)
+    orq.pasta = pasta
+    assert orq._ler_contrato("C5", "aidd-enterprise") is True

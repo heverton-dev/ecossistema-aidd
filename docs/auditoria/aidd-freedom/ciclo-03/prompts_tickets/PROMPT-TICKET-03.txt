@@ -1,0 +1,15 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 3. Target tool: aidd-freedom.
+DIMENSION: D13
+DELIVER: componentes/compartilhado/moldes/infra/Dockerfile
+
+STEPS:
+- Update componentes/compartilhado/moldes/infra/Dockerfile with explicit builder stage 'FROM python:3.12-slim AS builder' and runtime stage.
+- Verify G_BRIDGE_DOCKER_OCI passes with exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: componentes/compartilhado/moldes/infra/Dockerfile

@@ -1803,6 +1803,28 @@
         }
       },
       {
+        "alvo": "fluxo-02-runner",
+        "ciclo": "ciclo-02",
+        "laudo": "docs/auditoria/fluxo-02-runner/ciclo-02/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "descrito",
+          "4": "ok",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "descrito",
+          "12": "descrito",
+          "13": "descrito",
+          "14": "descrito",
+          "15": "descrito"
+        }
+      },
+      {
         "alvo": "fluxo-03-runner",
         "ciclo": "ciclo-01",
         "laudo": "docs/auditoria/fluxo-03-runner/ciclo-01/LAUDO-15D-REVISADO.md",
@@ -2116,6 +2138,18 @@
           "dod": true
         },
         "nota": "10"
+      },
+      {
+        "alvo": "aidd-freedom",
+        "ciclo": "ciclo-03",
+        "caminho": "docs/auditoria/aidd-freedom/ciclo-03",
+        "fases": {
+          "laudo_inicial": false,
+          "plano_evolucao": true,
+          "laudo_revisado": false,
+          "dod": false
+        },
+        "nota": ""
       },
       {
         "alvo": "aidd-freedom-runner",
@@ -2466,6 +2500,18 @@
         "nota": ""
       },
       {
+        "alvo": "e2e-pure",
+        "ciclo": "ciclo-02",
+        "caminho": "docs/auditoria/e2e-pure/ciclo-02",
+        "fases": {
+          "laudo_inicial": false,
+          "plano_evolucao": true,
+          "laudo_revisado": false,
+          "dod": false
+        },
+        "nota": ""
+      },
+      {
         "alvo": "fluxo-01-runner",
         "ciclo": "ciclo-01",
         "caminho": "docs/auditoria/fluxo-01-runner/ciclo-01",
@@ -2484,6 +2530,18 @@
         "fases": {
           "laudo_inicial": true,
           "plano_evolucao": false,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
+      },
+      {
+        "alvo": "fluxo-02-runner",
+        "ciclo": "ciclo-02",
+        "caminho": "docs/auditoria/fluxo-02-runner/ciclo-02",
+        "fases": {
+          "laudo_inicial": false,
+          "plano_evolucao": true,
           "laudo_revisado": true,
           "dod": true
         },
@@ -3226,7 +3284,7 @@
       "ferramenta": "aidd-enterprise",
       "molde": "v2",
       "caminho": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/templates/v2",
-      "arquivos": 67,
+      "arquivos": 69,
       "dona_canonica": "aidd-master"
     },
     {
@@ -3261,7 +3319,7 @@
       "ferramenta": "aidd-master",
       "molde": "v2",
       "caminho": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/templates/v2",
-      "arquivos": 55,
+      "arquivos": 57,
       "dona_canonica": "aidd-master"
     },
     {
@@ -5511,6 +5569,7 @@
       "id": "handoff-enterprise-to-ops",
       "titulo": "HandoffEnterpriseToOpsSchema",
       "usado_por": [
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/application_enterprise/commands/verificar_drift.py",
         "modulos/04-nucleo-compartilhado/gates/G_ORQUESTRADOR_SINCRONO.py",
         "scripts/orquestrador_sincrono.py"
       ]
@@ -5686,6 +5745,13 @@
             "freedom-motor",
             "scan",
             "<var>"
+          ],
+          [
+            "freedom-motor",
+            "convert-db",
+            "<var>",
+            "--output",
+            "<var>"
           ]
         ],
         "chamadas_por_fluxo": {
@@ -5818,6 +5884,12 @@
     {
       "etapa": "etapa_04_engine",
       "chamada": "ecossistema.py freedom-motor scan <var>",
+      "encaixa": true,
+      "problemas": []
+    },
+    {
+      "etapa": "etapa_04_engine",
+      "chamada": "ecossistema.py freedom-motor convert-db <var> --output <var>",
       "encaixa": true,
       "problemas": []
     },

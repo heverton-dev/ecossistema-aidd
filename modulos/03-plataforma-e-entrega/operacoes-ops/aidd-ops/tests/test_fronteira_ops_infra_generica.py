@@ -360,3 +360,28 @@ def test_dockerfile_instala_requirements_antes_de_copiar_o_codigo(dois_projetos)
         conteudo = (dois_projetos[chave][0] / "Dockerfile").read_text(encoding="utf-8")
         assert "pip install" in conteudo and "requirements.txt" in conteudo
         assert conteudo.index("pip install") < conteudo.index("COPY --chown=aidduser:aiddgroup src/")
+
+
+def test_compose_injeta_ferramentas_opensource_do_planner(tmp_path):
+    """Comprova injeção de ferramentas open-source no compose a partir do PLANNER.json (Ticket 03)."""
+    pasta = _projeto(tmp_path, "projeto_com_oss", PERFIL_SQLITE_SEM_FILA)
+    planner_payload = {
+        "payload_especifico_fluxo": {
+            "ferramentas_opensource": [
+                {
+                    "nome": "Evolution API",
+                    "categoria": "whatsapp",
+                    "imagem_docker": "atendai/evolution-api:v2.1.2",
+                    "porta_host": 8080,
+                    "porta_container": 8080
+                }
+            ]
+        }
+    }
+    (pasta / "PLANNER.json").write_text(json.dumps(planner_payload), encoding="utf-8")
+    codigo, saida = _ops_plan(pasta)
+    assert codigo == 0, saida
+    compose_yaml = yaml.safe_load((pasta / "docker-compose.yml").read_text(encoding="utf-8"))
+    assert "evolution_api" in compose_yaml["services"]
+    assert compose_yaml["services"]["evolution_api"]["image"] == "atendai/evolution-api:v2.1.2"
+    assert "8080:8080" in compose_yaml["services"]["evolution_api"]["ports"]

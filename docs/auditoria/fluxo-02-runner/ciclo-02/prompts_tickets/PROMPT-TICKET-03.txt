@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 3. Target tool: fluxo-02-runner.
+DIMENSION: D4
+DELIVER: docs/auditoria/fluxo-02-runner/ciclo-02/ENTREGA-TICKET-03.json
+
+STEPS:
+- Update infra_perfil.py in aidd-ops to parse external open-source tools from PLANNER.json or C2 entrada.
+- Inject external tool services into docker-compose.yml structure when specified.
+- Run pytest on modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/tests and assert exit 0.
+- Write handoff json to docs/auditoria/fluxo-02-runner/ciclo-02/ENTREGA-TICKET-03.json.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: docs/auditoria/fluxo-02-runner/ciclo-02/ENTREGA-TICKET-03.json
