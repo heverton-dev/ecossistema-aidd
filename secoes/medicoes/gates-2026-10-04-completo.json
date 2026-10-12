@@ -1,0 +1,374 @@
+[
+  {
+    "id": "g-ecossistema-integridade",
+    "segundos": 0.0692,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-drift-nucleo-compartilhado",
+    "segundos": 0.1,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-harness-compat",
+    "segundos": 0.7425,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-universal-harness",
+    "segundos": 0.105,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-segredos",
+    "segundos": 442.1923,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-cli-help-consistencia",
+    "segundos": 0.2122,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-componente-agnostico",
+    "segundos": 0.8477,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-zero-headless",
+    "segundos": 0.3012,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-infra-compose",
+    "segundos": 10.6939,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-hadolint",
+    "segundos": 1.0373,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-testes-reais",
+    "segundos": 1110.9898,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-dependencias-pin-hash",
+    "segundos": 0.1648,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-honestidade-rotulo",
+    "segundos": 1.0269,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-arquitetura-deliverable",
+    "segundos": 1.2001,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-frontend-layers",
+    "segundos": 0.361,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-isolation-audit",
+    "segundos": 0.1263,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-protocol-fallback",
+    "segundos": 0.2269,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-llm-prompt-shield",
+    "segundos": 1.8223,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-drift-analyzer",
+    "segundos": 0.1381,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-prototype-rewrite",
+    "segundos": 0.1206,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-portao-prova-que-morde",
+    "segundos": 119.5796,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-lei-declara-portao",
+    "segundos": 0.2404,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-contract-rot",
+    "segundos": 3.4221,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-env-rot",
+    "segundos": 10.4141,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-skill-rot",
+    "segundos": 0.3365,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-skill-formato",
+    "segundos": 0.2988,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-migration-rot",
+    "segundos": 10.6912,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-ant-lockin-legado",
+    "segundos": 0.1123,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-resumo-usuario",
+    "segundos": 0.1107,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-pacote-core",
+    "segundos": 0.2029,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-user-facing-ptbr",
+    "segundos": 0.1124,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-layout-entrega",
+    "segundos": 0.1107,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-sync-cmd-rot",
+    "segundos": 0.1574,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-idioma-lei-4",
+    "segundos": 0.2678,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-determinismo-lei-1",
+    "segundos": 0.3995,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-saida-binaria",
+    "segundos": 0.3986,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-estrutura-estado",
+    "segundos": 0.4189,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-disciplina-teste-ferramenta",
+    "segundos": 0.2931,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-quarteto-sine-qua-non",
+    "segundos": 0.2108,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-stack-padrao-ouro",
+    "segundos": 0.1826,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-pipeline-handoff",
+    "segundos": 0.3284,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-dispatch-pipeline-vsa",
+    "segundos": 0.3706,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-gestor-sessoes",
+    "segundos": 0.6199,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-mapa-pecas",
+    "segundos": 0.1969,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-fronteira-ferramentas",
+    "segundos": 0.8915,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-template-forge-rot",
+    "segundos": 0.1216,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-amelhoria",
+    "segundos": 0.1601,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-aidd-diagnose",
+    "segundos": 0.1867,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-aidd-forge",
+    "segundos": 0.1753,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-aidd-spec",
+    "segundos": 0.1603,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-aidd-tdd",
+    "segundos": 0.1721,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-aidd-tickets",
+    "segundos": 0.164,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-aidd-grill",
+    "segundos": 0.1524,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-aidd-enterprise",
+    "segundos": 0.313,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-template-tanstack-offline",
+    "segundos": 0.1174,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-nove-camadas-mercado",
+    "segundos": 0.167,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-handoff-melhoria",
+    "segundos": 0.3405,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-docs-rot",
+    "segundos": 0.1611,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-escritor-atomico",
+    "segundos": 0.3563,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-orquestrador-sincrono",
+    "segundos": 0.7237,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-transaction-log-lru",
+    "segundos": 0.1278,
+    "exit_code": 0,
+    "modo": "completo"
+  },
+  {
+    "id": "g-supply-chain",
+    "segundos": 55.4933,
+    "exit_code": 0,
+    "modo": "completo"
+  }
+]

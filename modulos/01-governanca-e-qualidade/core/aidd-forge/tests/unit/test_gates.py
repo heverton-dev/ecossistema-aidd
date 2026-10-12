@@ -134,7 +134,7 @@ def test_harness_gate_fails_when_dirs_missing(tmp_path: Path) -> None:
 
 def test_harness_gate_passes_when_all_dirs_present(tmp_path: Path) -> None:
     gate = _load_gate("G_HARNESS_COMPAT.py")
-    for name in (".agent", ".claude", ".cursor"):
+    for name in (".agents", ".claude", ".cursor"):
         (tmp_path / name).mkdir()
 
     result = gate.scan(tmp_path)
@@ -144,10 +144,10 @@ def test_harness_gate_passes_when_all_dirs_present(tmp_path: Path) -> None:
 
 def test_harness_gate_fails_on_broken_symlink(tmp_path: Path) -> None:
     gate = _load_gate("G_HARNESS_COMPAT.py")
-    for name in (".agent", ".claude", ".cursor"):
+    for name in (".agents", ".claude", ".cursor"):
         (tmp_path / name).mkdir()
 
-    link = tmp_path / ".agent" / "skills"
+    link = tmp_path / ".agents" / "skills"
     try:
         link.symlink_to(tmp_path / "nao-existe", target_is_directory=True)
     except OSError:

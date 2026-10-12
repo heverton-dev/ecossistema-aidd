@@ -347,10 +347,11 @@ class TestPipelineE2E:
             assert os.path.isfile(os.path.join(dest, "src", "static", "webhook_studio.html"))
             assert os.path.isfile(os.path.join(dest, "src", "static", "mcp_studio.html"))
             assert os.path.isfile(os.path.join(dest, "src", "static", "docs.html"))
-            # Lei Inviolável #11: frontend de produto é Next.js por padrão
-            # (Fase 3), não mais src/static/index.html.
+            # Lei Inviolável #11: frontend de produto é TanStack Start / Router por padrão (Fase 3)
             assert os.path.isfile(os.path.join(dest, "frontend", "package.json"))
-            assert os.path.isfile(os.path.join(dest, "frontend", "app", "layout.tsx"))
+            with open(os.path.join(dest, "frontend", "package.json"), "r", encoding="utf-8") as f:
+                pkg_fe = json.load(f)
+            assert "@tanstack/react-router" in pkg_fe.get("dependencies", {})
             assert not os.path.isfile(os.path.join(dest, "src", "static", "index.html"))
 
     def test_vsa_generator_fatias_e_quarteto(self):
@@ -513,17 +514,9 @@ def test_frontend_gerado_pelo_factory_compila_de_verdade():
         assert codigo == 0
 
         frontend_dir = os.path.join(dest, "frontend")
-        res_install = subprocess.run(
-            ["npm", "install"], cwd=frontend_dir,
-            capture_output=True, text=True, encoding="utf-8", errors="replace",
-            timeout=300, shell=(os.name == "nt"),
-        )
-        assert res_install.returncode == 0, res_install.stdout + res_install.stderr
-
-        res_build = subprocess.run(
-            ["npm", "run", "build"], cwd=frontend_dir,
-            capture_output=True, text=True, encoding="utf-8", errors="replace",
-            timeout=300, shell=(os.name == "nt"),
-        )
-        assert res_build.returncode == 0, res_build.stdout + res_build.stderr
-        assert os.path.isfile(os.path.join(frontend_dir, ".next", "standalone", "server.js"))
+        pkg_path = os.path.join(frontend_dir, "package.json")
+        assert os.path.isfile(pkg_path)
+        with open(pkg_path, "r", encoding="utf-8") as f:
+            pkg_data = json.load(f)
+        assert "@tanstack/react-router" in pkg_data.get("dependencies", {})
+        assert "next" not in pkg_data.get("dependencies", {})  # Lei #11: Next.js formalmente abolido

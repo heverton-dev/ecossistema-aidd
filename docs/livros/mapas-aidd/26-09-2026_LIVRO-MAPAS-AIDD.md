@@ -73,8 +73,8 @@ Onde mora: `AGENTS.md`, seção 2. Quem confere: o meta-guarda `G_LEI_DECLARA_PO
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| leis | 14 |
-| declarações de guarda | 71 |
+| leis | 13 |
+| declarações de guarda | 0 |
 | declarações que o meta-guarda não lê | 0 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_leis`), os mesmos do mapa `mapa-01-leis.html`.
@@ -220,7 +220,7 @@ Onde mora: `gates/` e `tools/<f>/gates/`. Quem confere: o próprio pre-commit e 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | guardas (nomes) | 105 |
-| no ecossistema | 72 |
+| no ecossistema | 78 |
 | rodam no commit | 67 |
 | com versões diferentes | 10 |
 
@@ -537,7 +537,7 @@ Onde mora: `docs/planos/` e `docs/auditoria/`. Quem confere: o `scripts/atualiza
 | :-------------------------------------- | :-------------------------------------------- |
 | planos | 0 |
 | em execução | 0 |
-| ciclos de auditoria | 54 |
+| ciclos de auditoria | 55 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_oficina`), os mesmos do mapa `mapa-11-oficina.html`.
 

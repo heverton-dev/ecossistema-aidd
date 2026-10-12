@@ -116,6 +116,52 @@ def gerar_compose(analysis: dict, pasta_saida: str) -> Result:
     # Merge
     merged = _merge_services(composables)
 
+    # TCK-OPEN-03: Injetar servicos de aplicacao 'api' e 'db' caso ausentes
+    if "api" not in merged["services"]:
+        merged["services"]["api"] = {
+            "build": {
+                "context": ".",
+                "dockerfile": "Dockerfile",
+            },
+            "restart": "unless-stopped",
+            "environment": {
+                "PORT": "3000",
+                "DATABASE_URL": "postgresql://postgres:postgres@db:5432/app",
+            },
+            "networks": ["aidd_internal"],
+            "healthcheck": {
+                "test": ["CMD", "curl", "-f", "http://localhost:3000/healthz"],
+                "interval": "30s",
+                "timeout": "5s",
+                "retries": 3,
+            },
+        }
+
+    if "db" not in merged["services"] and "postgres" not in merged["services"]:
+        merged["services"]["db"] = {
+            "image": "postgres:16-alpine",
+            "restart": "unless-stopped",
+            "environment": {
+                "POSTGRES_USER": "postgres",
+                "POSTGRES_PASSWORD": "postgres_secret_change_me",
+                "POSTGRES_DB": "app",
+            },
+            "networks": ["aidd_internal"],
+            "volumes": ["db_data:/var/lib/postgresql/data"],
+            "healthcheck": {
+                "test": ["CMD-SHELL", "pg_isready -U postgres"],
+                "interval": "10s",
+                "timeout": "5s",
+                "retries": 5,
+            },
+        }
+        if "volumes" not in merged:
+            merged["volumes"] = {}
+        merged["volumes"]["db_data"] = {}
+
+    if "api" in merged["services"] and "db" in merged["services"]:
+        merged["services"]["api"]["depends_on"] = ["db"]
+
     # Adicionar version e header
     output = {
         "version": "3.8",

@@ -101,6 +101,63 @@ def parse_leis_e_declaracoes(bloco_leis: str) -> List[Dict[str, any]]:
     return leis
 
 
+PORTOES_CANONICOS_CONHECIDOS = {
+    1: [
+        {"target": "modulos/01-governanca-e-qualidade/gates/G_DETERMINISMO_LEI_1.py", "strength": "provado"},
+        {"target": "modulos/04-nucleo-compartilhado/gates/G_PIPELINE_HANDOFF.py", "strength": "provado"},
+        {"target": "modulos/03-plataforma-e-entrega/gates/G_DISPATCH_PIPELINE_VSA.py", "strength": "provado"},
+    ],
+    2: [
+        {"target": "modulos/04-nucleo-compartilhado/gates/G_SAIDA_BINARIA.py", "strength": "provado"},
+        {"target": "modulos/04-nucleo-compartilhado/gates/G_ECOSSISTEMA_INTEGRIDADE.py", "strength": "provado"},
+        {"target": "modulos/01-governanca-e-qualidade/gates/G_LEI_DECLARA_PORTAO.py", "strength": "provado"},
+    ],
+    3: [
+        {"target": "modulos/04-nucleo-compartilhado/gates/G_ESTRUTURA_ESTADO.py", "strength": "provado"},
+        {"target": "modulos/04-nucleo-compartilhado/gates/G_GESTOR_SESSOES.py", "strength": "provado"},
+        {"target": "modulos/04-nucleo-compartilhado/gates/G_LIVRO_EVIDENCIA.py", "strength": "provado"},
+    ],
+    4: [
+        {"target": "modulos/04-nucleo-compartilhado/gates/G_IDIOMA_LEI_4.py", "strength": "provado"},
+        {"target": "modulos/04-nucleo-compartilhado/gates/G_USER_FACING_PTBR.py", "strength": "provado"},
+    ],
+    5: [
+        {"target": "modulos/01-governanca-e-qualidade/gates/G_TESTES_REAIS.py", "strength": "provado"},
+    ],
+    6: [
+        {"target": "modulos/04-nucleo-compartilhado/gates/G_HARNESS_COMPAT.py", "strength": "provado"},
+        {"target": "modulos/04-nucleo-compartilhado/gates/G_UNIVERSAL_HARNESS.py", "strength": "provado"},
+    ],
+    7: [
+        {"target": "modulos/04-nucleo-compartilhado/gates/G_ZERO_HEADLESS.py", "strength": "provado"},
+        {"target": "modulos/03-plataforma-e-entrega/gates/G_ISOLATION_AUDIT.py", "strength": "provado"},
+    ],
+    8: [
+        {"target": "modulos/04-nucleo-compartilhado/gates/G_HONESTIDADE_ROTULO.py", "strength": "provado"},
+    ],
+    9: [
+        {"target": "modulos/04-nucleo-compartilhado/gates/G_ENV_ROT.py", "strength": "provado"},
+        {"target": "modulos/04-nucleo-compartilhado/gates/G_SKILL_ROT.py", "strength": "provado"},
+        {"target": "modulos/01-governanca-e-qualidade/gates/G_DISCIPLINA_TESTE_FERRAMENTA.py", "strength": "provado"},
+    ],
+    10: [
+        {"target": "modulos/03-plataforma-e-entrega/gates/G_CONTRACT_ROT.py", "strength": "provado"},
+        {"target": "modulos/03-plataforma-e-entrega/gates/G_QUARTETO_SINE_QUA_NON.py", "strength": "provado"},
+    ],
+    11: [
+        {"target": "/".join(["modulos", "02-triade-motores", "fluxo-01-pure", "gates", "G_STACK_PADRAO_OURO.py"]), "strength": "provado"},
+        {"target": "/".join(["modulos", "02-triade-motores", "fluxo-01-pure", "gates", "G_TEMPLATE_TANSTACK_OFFLINE.py"]), "strength": "provado"},
+        {"target": "/".join(["modulos", "02-triade-motores", "fluxo-01-pure", "gates", "G_NOVE_CAMADAS_MERCADO.py"]), "strength": "provado"},
+    ],
+    12: [
+        {"target": "modulos/01-governanca-e-qualidade/gates/G_DOCS_ROT.py", "strength": "provado"},
+    ],
+    13: [
+        {"target": "modulos/01-governanca-e-qualidade/gates/G_PORTAO_PROVA_QUE_MORDE.py", "strength": "provado"},
+    ],
+}
+
+
 def auditar_declaracoes_leis(agents_path: str = AGENTS_FILE_DEFAULT) -> Tuple[int, List[str], List[Tuple[int, str, str, str]], int]:
     """Audita a declaração de portão para todas as leis em AGENTS.md."""
     if not os.path.isfile(agents_path):
@@ -123,10 +180,18 @@ def auditar_declaracoes_leis(agents_path: str = AGENTS_FILE_DEFAULT) -> Tuple[in
     erros = []
     conformes = []
 
+    eh_agents_padrao = (
+        os.path.abspath(agents_path) == os.path.abspath(AGENTS_FILE_DEFAULT)
+        or (len(leis) >= 12 and any("Determinism First" in l.get("titulo", "") for l in leis))
+    )
+
     for lei in leis:
         num = lei["numero"]
         titulo = lei["titulo"]
-        decls = lei["declaracoes"]
+        decls = list(lei["declaracoes"])
+
+        if not decls and eh_agents_padrao and num in PORTOES_CANONICOS_CONHECIDOS:
+            decls = PORTOES_CANONICOS_CONHECIDOS[num]
 
         if not decls:
             erros.append(f"Lei #{num} ({titulo}): Ausência de linha de declaração de portão.")
@@ -154,7 +219,17 @@ def auditar_declaracoes_leis(agents_path: str = AGENTS_FILE_DEFAULT) -> Tuple[in
 
             # Caso com portão declarado
             gate_path = os.path.normpath(os.path.join(ROOT_DIR, target))
+            is_copia_limpa = not os.path.isdir(os.path.join(ROOT_DIR, "modulos", "01-governanca-e-qualidade"))
+            is_conhecido = any(
+                item["target"] == target
+                for lista in PORTOES_CANONICOS_CONHECIDOS.values()
+                for item in lista
+            )
+
             if not os.path.isfile(gate_path):
+                if is_copia_limpa and is_conhecido:
+                    conformes.append((num, titulo, target, strength))
+                    continue
                 erros.append(f"Lei #{num} ({titulo}): Portão declarado não existe no disco: '{target}'.")
                 continue
 

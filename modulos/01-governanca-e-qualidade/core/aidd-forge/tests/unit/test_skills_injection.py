@@ -53,7 +53,7 @@ def test_no_extra_or_missing_skill_directories() -> None:
     assert found == sorted(EXPECTED_SKILLS)
 
 
-# --- link_skills: vinculador para a pasta canonica .agent/skills/ --------
+# --- link_skills: vinculador para a pasta canonica .agents/skills/ --------
 
 
 def test_link_skills_creates_canonical_symlinks(tmp_path: Path) -> None:
@@ -66,7 +66,7 @@ def test_link_skills_creates_canonical_symlinks(tmp_path: Path) -> None:
     injector.run()
     result = injector.link_skills()
 
-    canonical = target / ".agent" / "skills"
+    canonical = target / ".agents" / "skills"
     for name in ("caveman-ultra", "post-mortem"):
         link = canonical / name
         assert link.exists()
@@ -84,7 +84,7 @@ def test_link_skills_ignores_directories_without_skill_md(tmp_path: Path) -> Non
     injector.run()
     result = injector.link_skills()
 
-    canonical = target / ".agent" / "skills"
+    canonical = target / ".agents" / "skills"
     assert (canonical / "caveman-ultra").exists()
     assert not (canonical / "nao-e-skill").exists()
     assert len(result.created) == 1
@@ -118,7 +118,7 @@ def test_link_skills_overwrites_with_force(tmp_path: Path) -> None:
     injector.run()
     result = injector.link_skills()
 
-    link = target / ".agent" / "skills" / "caveman-ultra" / "SKILL.md"
+    link = target / ".agents" / "skills" / "caveman-ultra" / "SKILL.md"
     assert link.read_text(encoding="utf-8").endswith("v3\n")
     assert result.overwritten
 
@@ -134,7 +134,7 @@ def test_link_skills_returns_empty_result_when_skills_dir_missing(tmp_path: Path
 
     assert not result.created
     assert not result.skipped
-    assert not (target / ".agent").exists()
+    assert not (target / ".agents").exists()
 
 
 def test_link_skills_on_real_templates_links_all_six(tmp_path: Path) -> None:
@@ -143,7 +143,7 @@ def test_link_skills_on_real_templates_links_all_six(tmp_path: Path) -> None:
     injector.run()
     result = injector.link_skills()
 
-    canonical = target / ".agent" / "skills"
+    canonical = target / ".agents" / "skills"
     linked = sorted(p.name for p in canonical.iterdir() if p.is_dir())
 
     assert linked == sorted(EXPECTED_SKILLS)

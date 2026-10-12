@@ -23,7 +23,7 @@ def test_materializar_skill_grava_arquivo(tmp_path: Path):
         _request(tipo="skill", nome="demo-skill", conteudo="# Demo\n")
     )
 
-    dest = tmp_path / ".agent" / "skills" / "demo-skill" / "SKILL.md"
+    dest = tmp_path / ".agents" / "skills" / "demo-skill" / "SKILL.md"
     assert resultado.dest == dest
     assert dest.read_text(encoding="utf-8") == "# Demo\n"
     assert resultado.registry_updated is None

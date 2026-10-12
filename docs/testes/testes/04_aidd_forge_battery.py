@@ -206,11 +206,11 @@ def run_battery() -> None:
                             missing.append(f".aidd/pipeline/{phase}/{sub}")
                 # Skills
                 for skill in EXPECTED_SKILLS:
-                    p = target / ".agent" / "skills" / skill / "SKILL.md"
+                    p = target / ".agents" / "skills" / skill / "SKILL.md"
                     if not p.exists():
-                        missing.append(f".agent/skills/{skill}/SKILL.md")
+                        missing.append(f".agents/skills/{skill}/SKILL.md")
                 # IDE rules
-                for ide_dir in [".cursor/rules", ".claude/commands", ".agent/commands"]:
+                for ide_dir in [".cursor/rules", ".claude/commands", ".agents/commands"]:
                     for fname in ["forge.md", "aidd-init.md"]:
                         if not (target / ide_dir / fname).exists():
                             missing.append(f"{ide_dir}/{fname}")
@@ -370,7 +370,7 @@ def run_battery() -> None:
         # ------------------------------------------------------------------ #
         # 4.8 — inject skill                                                   #
         # ------------------------------------------------------------------ #
-        s = step("4.8", "inject skill → exit 0, .agent/skills/<nome>/SKILL.md criado")
+        s = step("4.8", "inject skill → exit 0, .agents/skills/<nome>/SKILL.md criado")
         try:
             skill_content = (
                 "---\n"
@@ -386,7 +386,7 @@ def run_battery() -> None:
                 "--conteudo", skill_content,
                 "--path", str(target),
             ])
-            skill_md = target / ".agent" / "skills" / "b4-test-skill" / "SKILL.md"
+            skill_md = target / ".agents" / "skills" / "b4-test-skill" / "SKILL.md"
             exists = skill_md.exists()
             content_ok = exists and "B4 Test Skill" in skill_md.read_text(encoding="utf-8")
             s.note(f"exit code: {proc.returncode}")
@@ -544,7 +544,7 @@ def run_battery() -> None:
                 REPO_ROOT / "componentes" / "aidd-forge" / "skills" / nome,
                 REPO_ROOT / "componentes" / "aidd-forge" / "mcps" / nome,
                 FORGE_DIR / ".claude" / "skills" / nome,
-                FORGE_DIR / ".agent" / "skills" / nome,
+                FORGE_DIR / ".agents" / "skills" / nome,
                 FORGE_DIR / ".gemini" / "skills" / nome,
                 FORGE_DIR / ".skills" / nome,
                 FORGE_DIR / "skills" / nome,

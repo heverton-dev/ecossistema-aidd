@@ -20,15 +20,15 @@ def test_todos_os_tipos_suportados_tem_perfil():
 @pytest.mark.parametrize(
     "tipo,esperado",
     [
-        ("skill", ".agent/skills/demo/SKILL.md"),
+        ("skill", ".agents/skills/demo/SKILL.md"),
         ("mcp", "aidd_forge/mcps/demo.py"),
         ("rule", "docs/rules/demo.md"),
         ("spec", "docs/specs/demo.md"),
         ("roteiro", "tutoriais/demo.md"),
         ("config", "config/demo.json"),
-        ("command", ".agent/commands/demo.md"),
-        ("hook", ".agent/hooks/demo/hook.sh"),
-        ("sub-agent", ".agent/agents/demo.md"),
+        ("command", ".agents/commands/demo.md"),
+        ("hook", ".agents/hooks/demo/hook.sh"),
+        ("sub-agent", ".agents/agents/demo.md"),
         ("script", "scripts/demo.py"),
     ],
 )

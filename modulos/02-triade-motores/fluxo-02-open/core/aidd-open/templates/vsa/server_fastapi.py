@@ -548,6 +548,14 @@ async def serve_webhook_studio(request: Request):
 async def serve_mcp_studio(request: Request):
     return _html_com_nonce(request, mcp_engine.get_studio_html("AIDD Enterprise Suite — MCP Native Server Studio"))
 
+@app.get("/docs/guia", include_in_schema=False)
+async def serve_user_guide(request: Request):
+    docs_file = os.path.join(STATIC_DIR, "docs.html")
+    if os.path.exists(docs_file):
+        with open(docs_file, "rb") as f:
+            return _html_com_nonce(request, f.read())
+    return HTMLResponse("<h1>Manual do Utilizador — AIDD Suite</h1>")
+
 @app.post("/mcp", include_in_schema=False)
 async def handle_mcp(request: Request):
     body = await request.json()

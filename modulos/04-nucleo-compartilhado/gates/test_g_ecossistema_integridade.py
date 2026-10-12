@@ -83,8 +83,8 @@ def _montar_arvore_valida(root_dir):
         with open(os.path.join(sdir, "SKILL.md"), "w", encoding="utf-8") as f:
             f.write(f"---\nname: {skill}\ndescription: Test skill\n---\n# Content\n")
 
-    # 4. Slash commands em .agents, .agent e .claude
-    for harness in [".agents/commands", ".agent/commands", ".claude/commands"]:
+    # 4. Slash commands em .agents e .claude
+    for harness in [".agents/commands", ".claude/commands"]:
         hdir = os.path.join(root_dir, harness)
         os.makedirs(hdir, exist_ok=True)
         for cmd in COMMANDS_REQUIRED:
@@ -183,7 +183,7 @@ def test_falha_se_skill_aidd_ops_runner_ausente(tmp_path):
 
 
 def test_falha_se_command_ops_md_ausente(tmp_path):
-    """Gate reprova quando .agent/commands/ops.md não existe."""
+    """Gate reprova quando .agents/commands/ops.md não existe."""
     gate_path = _montar_arvore_valida(tmp_path)
     os.remove(tmp_path / ".agents" / "commands" / "ops.md")
 

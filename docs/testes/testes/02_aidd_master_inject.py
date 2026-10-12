@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 02_aidd_master_inject.py
@@ -239,7 +239,7 @@ def main():
             for base in (
                 os.path.join(REPO_ROOT, "componentes", "aidd-master", "hooks", nome_hook),
                 os.path.join(REPO_ROOT, "tools", "aidd-master", ".claude", "hooks", nome_hook),
-                os.path.join(REPO_ROOT, "tools", "aidd-master", ".agent", "hooks", nome_hook),
+                os.path.join(REPO_ROOT, "tools", "aidd-master", ".agents", "hooks", nome_hook),
                 os.path.join(REPO_ROOT, "tools", "aidd-master", ".gemini", "hooks", nome_hook),
             ):
                 if os.path.isdir(base):

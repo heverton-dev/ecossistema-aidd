@@ -255,14 +255,14 @@ def test_g14_passes_without_componentes(tmp_path: Path) -> None:
 
 def test_g14_passes_when_no_duplicates(tmp_path: Path) -> None:
     _write(tmp_path / "componentes" / "skill" / "SKILL.md", "# Skill\n")
-    _write(tmp_path / ".agent" / "skills" / "other" / "SKILL.md", "# Other\n")
+    _write(tmp_path / ".agents" / "skills" / "other" / "SKILL.md", "# Other\n")
     result = check_g14_no_duplicates(tmp_path)
     assert result.status == "PASS"
 
 
 def test_g14_warns_on_duplicates(tmp_path: Path) -> None:
     _write(tmp_path / "componentes" / "skill" / "SKILL.md", "# Skill\n")
-    _write(tmp_path / ".agent" / "skill" / "SKILL.md", "# Skill\n")
+    _write(tmp_path / ".agents" / "skill" / "SKILL.md", "# Skill\n")
     result = check_g14_no_duplicates(tmp_path)
     assert result.status == "WARN"
 

@@ -46,6 +46,14 @@ def cmd_audit(args):
         for p in pastas_gates_candidatas:
             arq = os.path.join(p, f"{nome}.py")
             if os.path.isfile(arq):
+                try:
+                    with open(arq, "r", encoding="utf-8", errors="ignore") as f:
+                        conteudo = f.read()
+                    # Ignora arquivos que não suportam argumento --dir
+                    if "--dir" not in conteudo and "argparse" not in conteudo and "click" not in conteudo and "sys.argv" not in conteudo:
+                        continue
+                except Exception:
+                    pass
                 return arq
         return None
 
@@ -81,42 +89,64 @@ def cmd_audit(args):
         print(f"\n▶️  Executando Gate: [{gate_name}] — {gate_desc}...")
 
         if not gate_file or not os.path.isfile(gate_file):
-            print(f"  ❌ [FAIL] Arquivo do gate não encontrado: {gate_name}.py")
+            print(f"  ❌ [FAIL] Arquivo do gate não encontrado ou não recebe --dir: {gate_name}.py")
             relatorio["gates"].append({
                 "gate": gate_name,
                 "descricao": gate_desc,
                 "status": "FAIL",
                 "exit_code": 1,
                 "duracao_ms": 0.0,
-                "erro": "Arquivo do gate ausente"
+                "erro": "Arquivo do gate ausente ou incompatível com --dir"
             })
             relatorio["resumo"]["falhas"] += 1
             has_failure = True
             continue
 
         t0_gate = time.time()
-        res = subprocess.run([sys.executable, gate_file, "--dir", target_dir], cwd=target_dir, capture_output=True, text=True, errors="replace")
-        duracao_gate = round((time.time() - t0_gate) * 1000, 2)
+        try:
+            res = subprocess.run(
+                [sys.executable, gate_file, "--dir", target_dir],
+                cwd=target_dir,
+                capture_output=True,
+                text=True,
+                errors="replace",
+                timeout=10,
+            )
+            duracao_gate = round((time.time() - t0_gate) * 1000, 2)
 
-        # Exibe saída do gate
-        if res.stdout:
-            print(res.stdout.strip())
-        if res.stderr:
-            print(res.stderr.strip())
+            # Exibe saída do gate
+            if res.stdout:
+                print(res.stdout.strip())
+            if res.stderr:
+                print(res.stderr.strip())
 
-        status = "PASS" if res.returncode == 0 else "FAIL"
-        relatorio["gates"].append({
-            "gate": gate_name,
-            "descricao": gate_desc,
-            "status": status,
-            "exit_code": res.returncode,
-            "duracao_ms": duracao_gate,
-            "saida_resumida": res.stdout[-400:] if res.stdout else ""
-        })
+            status = "PASS" if res.returncode == 0 else "FAIL"
+            relatorio["gates"].append({
+                "gate": gate_name,
+                "descricao": gate_desc,
+                "status": status,
+                "exit_code": res.returncode,
+                "duracao_ms": duracao_gate,
+                "saida_resumida": res.stdout[-400:] if res.stdout else ""
+            })
 
-        if res.returncode == 0:
-            relatorio["resumo"]["aprovados"] += 1
-        else:
+            if res.returncode == 0:
+                relatorio["resumo"]["aprovados"] += 1
+            else:
+                relatorio["resumo"]["falhas"] += 1
+                has_failure = True
+        except subprocess.TimeoutExpired:
+            duracao_gate = round((time.time() - t0_gate) * 1000, 2)
+            print(f"  ❌ [FAIL] Timeout rígido atingido no gate [{gate_name}] (> 10s)")
+            relatorio["gates"].append({
+                "gate": gate_name,
+                "descricao": gate_desc,
+                "status": "FAIL",
+                "exit_code": 124,
+                "duracao_ms": duracao_gate,
+                "erro": "Timeout expirado (10s)",
+                "saida_resumida": "Execução interrompida após 10s de timeout."
+            })
             relatorio["resumo"]["falhas"] += 1
             has_failure = True
 

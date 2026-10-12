@@ -23,7 +23,7 @@ Onde mora: `gates/` e `tools/<f>/gates/`. Quem confere: o próprio pre-commit e 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | guardas (nomes) | 105 |
-| no ecossistema | 72 |
+| no ecossistema | 78 |
 | rodam no commit | 67 |
 | com versões diferentes | 10 |
 

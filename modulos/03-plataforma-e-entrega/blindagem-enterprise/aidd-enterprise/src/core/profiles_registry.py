@@ -45,7 +45,7 @@ PROFILES: Dict[str, Dict[str, Dict[str, Any]]] = {
             "dest": ".skills/{nome}/SKILL.md",
             "mirrors": [
                 ".claude/skills/{nome}/SKILL.md",
-                ".agent/skills/{nome}/SKILL.md",
+                ".agents/skills/{nome}/SKILL.md",
                 ".gemini/skills/{nome}/SKILL.md",
             ],
             "registry": "CAPABILITIES.json",
@@ -84,7 +84,7 @@ PROFILES: Dict[str, Dict[str, Dict[str, Any]]] = {
             "camada_alvo": "interface_orquestracao",
         },
         "hook": {
-            "dest": ".agent/hooks/{nome}/hook.sh",
+            "dest": ".agents/hooks/{nome}/hook.sh",
             "mirrors": [
                 ".claude/hooks/{nome}/hook.sh",
                 ".gemini/hooks/{nome}/hook.sh",
@@ -97,7 +97,7 @@ PROFILES: Dict[str, Dict[str, Dict[str, Any]]] = {
         "skill": {
             "dest": ".claude/skills/{nome}/SKILL.md",
             "mirrors": [
-                ".agent/skills/{nome}/SKILL.md",
+                ".agents/skills/{nome}/SKILL.md",
                 ".mimocode/skills/{nome}/SKILL.md",
                 ".gemini/skills/{nome}/SKILL.md",
                 ".skills/{nome}/SKILL.md",
@@ -108,7 +108,7 @@ PROFILES: Dict[str, Dict[str, Dict[str, Any]]] = {
         "hook": {
             "dest": ".claude/hooks/{nome}.json",
             "mirrors": [
-                ".agent/hooks/{nome}.json",
+                ".agents/hooks/{nome}.json",
                 ".mimocode/hooks/{nome}.json",
                 ".gemini/hooks/{nome}.json",
                 ".hooks/{nome}.json",

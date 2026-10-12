@@ -7,11 +7,11 @@ def test_render_creates_section_when_marker_absent():
     original = "# AGENTS.md\n\nRegras basicas.\n"
 
     updated = render_component_table(
-        original, tipo="skill", nome="demo", descricao="Demo", caminho=".agent/skills/demo/SKILL.md"
+        original, tipo="skill", nome="demo", descricao="Demo", caminho=".agents/skills/demo/SKILL.md"
     )
 
     assert MARKER in updated
-    assert "| skill | demo | Demo | .agent/skills/demo/SKILL.md |" in updated
+    assert "| skill | demo | Demo | .agents/skills/demo/SKILL.md |" in updated
     assert "Regras basicas." in updated
 
 

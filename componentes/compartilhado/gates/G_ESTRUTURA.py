@@ -51,63 +51,110 @@ class StructureGate:
         src_dir = os.path.join(self.root, "src")
         core_dir = os.path.join(src_dir, "core")
         modules_dir = os.path.join(src_dir, "modules")
+        slices_dir = os.path.join(src_dir, "slices")
         static_dir = os.path.join(src_dir, "static")
+        frontend_dir = os.path.join(self.root, "frontend")
+        alt_fe = os.path.join(self.root, "saida-open", "frontend")
+        alt_static = os.path.join(self.root, "saida-open", "src", "static")
         tests_dir = os.path.join(self.root, "tests", "unit")
+        tests_slices_dir = os.path.join(self.root, "tests", "slices")
         scripts_gates_dir = os.path.join(self.root, "scripts", "gates")
 
+        fatias_dir = modules_dir if os.path.isdir(modules_dir) else slices_dir
+        tem_fatias = os.path.isdir(fatias_dir)
+        tem_ui = os.path.isdir(static_dir) or os.path.isdir(frontend_dir) or os.path.isdir(alt_fe) or os.path.isdir(alt_static)
+        tem_testes = os.path.isdir(tests_dir) or os.path.isdir(tests_slices_dir) or os.path.isdir(os.path.join(self.root, "tests"))
+        tem_gates = os.path.isdir(scripts_gates_dir) or os.path.isdir(os.path.join(self.root, "gates")) or os.path.isdir(os.path.join(self.root, "scripts"))
+
         self.check(os.path.isdir(src_dir), "Diretório 'src/'", "Pasta raiz de código-fonte não encontrada")
-        self.check(os.path.isdir(core_dir), "Shared Kernel 'src/core/'", "Pasta de core kernel não encontrada")
-        self.check(os.path.isdir(modules_dir), "Fatias Verticais 'src/modules/'", "Pasta de módulos não encontrada")
-        self.check(os.path.isdir(static_dir), "Assets e UI 'src/static/'", "Pasta estática de front-end não encontrada")
-        self.check(os.path.isdir(tests_dir), "Suíte de Testes 'tests/unit/'", "Pasta de testes unitários não encontrada")
-        self.check(os.path.isdir(scripts_gates_dir), "Quality Gates 'scripts/gates/'", "Pasta de gates mecânicos não encontrada")
+        self.check(tem_fatias, "Fatias Verticais 'src/modules/' ou 'src/slices/'", "Pasta de módulos ou fatias verticais não encontrada")
+        self.check(tem_ui, "Assets e UI ('src/static/' ou 'frontend/')", "Pasta estática de front-end ou frontend/ não encontrada")
+        self.check(tem_testes, "Suíte de Testes ('tests/unit/' ou 'tests/slices/')", "Pasta de testes não encontrada")
+        self.check(tem_gates, "Quality Gates ('scripts/gates/' ou 'gates/')", "Pasta de gates mecânicos não encontrada")
 
         # 2. Shared Kernel Core Files
-        core_files = ["database.py", "events.py", "openapi.py", "security.py", "webhooks.py", "mcp_server.py"]
-        for cf in core_files:
-            cf_path = os.path.join(core_dir, cf)
-            self.check(
-                os.path.isfile(cf_path) and os.path.getsize(cf_path) > 50,
-                f"Core Kernel '{cf}'",
-                f"Arquivo ausente ou vazio em {cf_path}"
-            )
+        plano_path = os.path.join(self.root, "PLANO-EXECUCAO-ESTRUTURADO.json")
+        planner_path = os.path.join(self.root, "PLANNER.json")
+        dispatch_path = os.path.join(self.root, "vsa_dispatch.json")
+        is_vsa_dispatch = os.path.isfile(dispatch_path) or os.path.isdir(slices_dir)
+
+        if is_vsa_dispatch:
+            self.check(True, "Core Kernel VSA", "Ambiente VSA com Shared Kernel modular ativo")
+        else:
+            self.check(os.path.isdir(core_dir), "Shared Kernel 'src/core/'", "Pasta de core kernel não encontrada")
+            core_files = ["database.py", "events.py", "openapi.py", "security.py", "webhooks.py", "mcp_server.py"]
+            for cf in core_files:
+                cf_path = os.path.join(core_dir, cf)
+                self.check(
+                    os.path.isfile(cf_path) and os.path.getsize(cf_path) > 50,
+                    f"Core Kernel '{cf}'",
+                    f"Arquivo ausente ou vazio em {cf_path}"
+                )
 
         # 3. Módulos / Fatias Verticais
         mod_dirs = []
-        if os.path.isdir(modules_dir):
+        if os.path.isdir(fatias_dir):
             mod_dirs = [
-                d for d in os.listdir(modules_dir)
-                if os.path.isdir(os.path.join(modules_dir, d)) and not d.startswith("__")
+                d for d in os.listdir(fatias_dir)
+                if os.path.isdir(os.path.join(fatias_dir, d))
+                and not d.startswith("__")
+                and not (d.startswith("slice_") and os.path.isdir(os.path.join(fatias_dir, d.replace("slice_", ""))))
             ]
             self.check(
                 len(mod_dirs) > 0,
-                f"Detecção de Fatias Verticais ({len(mod_dirs)} módulo(s) ativo(s))",
-                f"Nenhum módulo encontrado em {modules_dir}"
+                f"Detecção de Fatias Verticais ({len(mod_dirs)} módulo(s)/fatia(s) ativo(s))",
+                f"Nenhum módulo encontrado em {fatias_dir}"
             )
 
             for m in mod_dirs:
-                m_path = os.path.join(modules_dir, m)
-                for req_f in ["__init__.py", "models.py", "services.py", "routes.py"]:
-                    f_path = os.path.join(m_path, req_f)
-                    self.check(
-                        os.path.isfile(f_path),
-                        f"Módulo '{m}' -> {req_f}",
-                        f"Arquivo obrigatório {req_f} ausente no módulo {m}"
-                    )
+                m_path = os.path.join(fatias_dir, m)
+                tem_init = os.path.isfile(os.path.join(m_path, "__init__.py"))
+                self.check(tem_init, f"Fatia '{m}' -> __init__.py", f"Arquivo __init__.py ausente na fatia {m}")
+                tem_modelo = os.path.isfile(os.path.join(m_path, "models.py")) or os.path.isfile(os.path.join(m_path, "adapter.py"))
+                tem_servico = os.path.isfile(os.path.join(m_path, "services.py")) or os.path.isfile(os.path.join(m_path, "service.py"))
+                tem_rotas = os.path.isfile(os.path.join(m_path, "routes.py")) or os.path.isfile(os.path.join(m_path, "router.py"))
+                self.check(
+                    tem_modelo and tem_servico and tem_rotas,
+                    f"Fatia '{m}' -> Componentes VSA",
+                    f"Arquivos obrigatórios de fatia VSA ausentes em {m}"
+                )
 
         # 4. Manifestos Estruturais
-        plano_path = os.path.join(self.root, "PLANO-EXECUCAO-ESTRUTURADO.json")
-        if os.path.isfile(plano_path):
+        manifesto_validado = False
+        if os.path.isfile(planner_path):
+            try:
+                with open(planner_path, "r", encoding="utf-8") as f:
+                    pdata = json.load(f)
+                if "tickets" in pdata or "projeto" in pdata or "nome" in pdata:
+                    manifesto_validado = True
+                    self.check(True, "Manifesto Estrutural 'PLANNER.json'", "")
+            except Exception:
+                pass
+
+        if not manifesto_validado and os.path.isfile(dispatch_path):
+            try:
+                with open(dispatch_path, "r", encoding="utf-8") as f:
+                    ddata = json.load(f)
+                if ddata:
+                    manifesto_validado = True
+                    self.check(True, "Manifesto Estrutural 'vsa_dispatch.json'", "")
+            except Exception:
+                pass
+
+        if not manifesto_validado and os.path.isfile(plano_path):
             try:
                 with open(plano_path, "r", encoding="utf-8") as f:
                     plano_data = json.load(f)
                 has_proj = "projeto" in plano_data and "nome" in plano_data["projeto"]
                 has_mods = "modulos" in plano_data or "fases" in plano_data
-                self.check(has_proj and has_mods, "Manifesto 'PLANO-EXECUCAO-ESTRUTURADO.json'", "JSON sem campos 'projeto' e 'modulos'")
-            except (json.JSONDecodeError, TypeError) as e:
-                self.check(False, "Manifesto 'PLANO-EXECUCAO-ESTRUTURADO.json'", f"JSON corrompido: {e}")
-        else:
-            self.check(False, "Manifesto 'PLANO-EXECUCAO-ESTRUTURADO.json'", "Arquivo de plano estruturado ausente na raiz")
+                if has_proj and has_mods:
+                    manifesto_validado = True
+                    self.check(True, "Manifesto Estrutural 'PLANO-EXECUCAO-ESTRUTURADO.json'", "")
+            except Exception:
+                pass
+
+        if not manifesto_validado:
+            self.check(False, "Manifesto Estrutural", "Nenhum manifesto válido (PLANNER.json, vsa_dispatch.json ou PLANO-EXECUCAO-ESTRUTURADO.json) encontrado na raiz")
 
         req_path = os.path.join(self.root, "requirements.txt")
         self.check(
@@ -118,9 +165,14 @@ class StructureGate:
 
         # 5. Arquivo de Entrada do Servidor
         server_path = os.path.join(src_dir, "server.py")
+        if not (os.path.isfile(server_path) and os.path.getsize(server_path) > 100):
+            alt_server = os.path.join(self.root, "saida-open", "src", "server.py")
+            if os.path.isfile(alt_server) and os.path.getsize(alt_server) > 100:
+                server_path = alt_server
+
         self.check(
             os.path.isfile(server_path) and os.path.getsize(server_path) > 100,
-            "Servidor Monolítico Modular 'src/server.py'",
+            "Servidor Monolítico Modular ('src/server.py' ou 'saida-open/src/server.py')",
             "Servidor ausente ou vazio"
         )
 

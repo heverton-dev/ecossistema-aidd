@@ -123,7 +123,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-forge",
       "versao": "1.0.0",
-      "sha256": "sha256-72830c6d0688f3618bb9283372f570f34fdba47680e2d38e279f57f632fa2618",
+      "sha256": "sha256-ca72649d432edfd266765ee4586273a1bee11808a8065bfd7057864b6dc7eda6",
       "consumidores": [
         "aidd-enterprise",
         "aidd-master"
@@ -377,7 +377,7 @@
       "papel": "variante",
       "dono_do_conteudo": "aidd-forge",
       "versao": "1.0.0",
-      "sha256": "sha256-794772bbb6a25acee118a50d94d82d6dbed3c42b96e27b878ad431a12c83b061",
+      "sha256": "sha256-96ef1603140ca8e5c407358d0f984ff9cf8243d601eadf9e3e8cc6ff2da9e30d",
       "consumidores": [
         "aidd-forge"
       ],
@@ -498,7 +498,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-enterprise",
       "versao": "1.0.0",
-      "sha256": "sha256-0e2ab9f9b5bffd375b9be3fe6a0bf2352a94dd7245130618e1716929083f6f9a",
+      "sha256": "sha256-4aca42e0b495c2bf445f2221a49637a48674323af7be1a028ce29aeaa28c8530",
       "consumidores": [
         "aidd-enterprise",
         "aidd-master"
@@ -549,7 +549,7 @@
       "papel": "variante",
       "dono_do_conteudo": "aidd-enterprise",
       "versao": "1.0.0",
-      "sha256": "sha256-4a5718ca92afb6c3557b71d3f1fec464170b36e1e6b7b93fea77eaa43ab95f65",
+      "sha256": "sha256-3177bc8ee06e3f79fbbaa11d4be5b48c7c57e1a5a1c9883ed0f6e9398d989f21",
       "consumidores": [
         "aidd-enterprise"
       ],
@@ -606,7 +606,7 @@
       "papel": "variante",
       "dono_do_conteudo": "aidd-enterprise",
       "versao": "1.0.0",
-      "sha256": "sha256-464dc94e44735c689f1fb7288cfaabd2b00029a4a9bfdd1dc1578317df5e359b",
+      "sha256": "sha256-44b8e78870a5ea5f1d82eb228407c79948870d23e3bdd0ed7bbea8977e2c3986",
       "consumidores": [
         "aidd-forge"
       ],
@@ -625,7 +625,7 @@
       "papel": "variante",
       "dono_do_conteudo": "aidd-enterprise",
       "versao": "1.0.0",
-      "sha256": "sha256-8f7b5d2a9f586c32f172f50606911a0a60a6832884ef98f06172d07692379fd5",
+      "sha256": "sha256-ac1e59c8f55d1b86851e35faaece0b985751161858f7e5ee4349fbb844f77bfa",
       "consumidores": [
         "aidd-forge"
       ],

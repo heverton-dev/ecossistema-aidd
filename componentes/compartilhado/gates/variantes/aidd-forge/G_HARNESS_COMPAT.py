@@ -17,7 +17,7 @@ import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 
-HARNESS_DIRS: tuple[str, ...] = (".agent", ".claude", ".cursor")
+HARNESS_DIRS: tuple[str, ...] = (".agents", ".claude", ".cursor")
 
 
 @dataclass

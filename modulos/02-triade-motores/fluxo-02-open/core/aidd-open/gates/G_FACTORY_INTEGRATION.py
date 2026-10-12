@@ -84,19 +84,24 @@ def _validar_integracao(diretorio: str) -> list:
 
         frontend_pkg = os.path.join(diretorio, "frontend", "package.json")
         usa_nextjs = False
+        usa_tanstack = False
         if os.path.isfile(frontend_pkg):
             try:
                 with open(frontend_pkg, "r", encoding="utf-8") as f:
-                    usa_nextjs = "next" in json.load(f).get("dependencies", {})
+                    deps = json.load(f).get("dependencies", {})
+                    usa_nextjs = "next" in deps
+                    usa_tanstack = "@tanstack/react-router" in deps or "@tanstack/start" in deps
             except (OSError, json.JSONDecodeError):
                 pass
 
-        if usa_nextjs:
+        if usa_tanstack:
+            pass
+        elif usa_nextjs:
             for req in ["tsconfig.json", "tailwind.config.ts", os.path.join("app", "layout.tsx"), os.path.join("app", "page.tsx")]:
                 if not os.path.isfile(os.path.join(diretorio, "frontend", req)):
                     problemas.append(f"Front-end Next.js incompleto: frontend/{req} ausente (Lei #11).")
         elif not os.path.isfile(os.path.join(static_dir, "index.html")):
-            problemas.append("Quarteto Sine Qua Non ausente: index.html (nem frontend/ Next.js encontrado)")
+            problemas.append("Quarteto Sine Qua Non ausente: index.html (nem frontend/ TanStack/Next.js encontrado)")
 
     return problemas
 

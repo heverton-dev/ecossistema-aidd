@@ -55,25 +55,49 @@ def curar_stack_monolito(nicho_slug: str, nicho_nome_exibicao: str, dir_projeto:
     VPS pela complexidade real do monólito em vez de um catálogo OSS.
     """
     plano_path = os.path.join(dir_projeto, "PLANO-EXECUCAO-ESTRUTURADO.json")
-    try:
-        with open(plano_path, "r", encoding="utf-8") as f:
-            plano_execucao = json.load(f)
-    except (OSError, json.JSONDecodeError) as exc:
-        return Result.fail(
-            f"Falha ao ler PLANO-EXECUCAO-ESTRUTURADO.json: {exc}",
-            codigo="MONOLITO_INVALIDO",
-            detalhes={"dir_projeto": dir_projeto},
-        )
+    planner_path = os.path.join(dir_projeto, "PLANNER.json")
+    parent_planner = os.path.join(os.path.dirname(os.path.abspath(dir_projeto)), "PLANNER.json")
 
-    nomes_modulos = [
-        m.get("slug") or m.get("nome")
-        for m in plano_execucao.get("modulos", [])
-        if isinstance(m, dict) and (m.get("slug") or m.get("nome"))
-    ]
+    nomes_modulos = []
+    if os.path.isfile(plano_path):
+        try:
+            with open(plano_path, "r", encoding="utf-8") as f:
+                plano_execucao = json.load(f)
+            nomes_modulos = [
+                m.get("slug") or m.get("nome")
+                for m in plano_execucao.get("modulos", [])
+                if isinstance(m, dict) and (m.get("slug") or m.get("nome"))
+            ]
+        except (OSError, json.JSONDecodeError):
+            pass
+
     if not nomes_modulos:
-        # aidd-master sempre cria o módulo "principal" no init, mesmo que
-        # ele não apareça na lista `modulos` de PLANO-EXECUCAO-ESTRUTURADO
-        # (só entradas de `add-module` são registradas lá).
+        p_path = planner_path if os.path.isfile(planner_path) else (parent_planner if os.path.isfile(parent_planner) else None)
+        if p_path:
+            try:
+                with open(p_path, "r", encoding="utf-8") as f:
+                    pdata = json.load(f)
+                fatias = pdata.get("fatias", []) or pdata.get("tickets", [])
+                for ft in fatias:
+                    if isinstance(ft, dict):
+                        nome = ft.get("dominio") or ft.get("slug") or ft.get("nome")
+                        if nome and nome not in nomes_modulos:
+                            nomes_modulos.append(nome)
+            except Exception:
+                pass
+
+    if not nomes_modulos:
+        # Tenta descobrir varrendo src/modules/ ou src/slices/
+        for pasta_fatias in [os.path.join(dir_projeto, "src", "modules"), os.path.join(dir_projeto, "src", "slices")]:
+            if os.path.isdir(pasta_fatias):
+                nomes_modulos = [
+                    d for d in os.listdir(pasta_fatias)
+                    if os.path.isdir(os.path.join(pasta_fatias, d)) and not d.startswith("__") and not d.startswith("slice_")
+                ]
+                if nomes_modulos:
+                    break
+
+    if not nomes_modulos:
         nomes_modulos = ["principal"]
 
     return Result.ok({

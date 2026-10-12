@@ -5,11 +5,16 @@ from aidd_forge.core.harness_manifest import (
     carregar_skill_dirs_canonicos,
     carregar_skill_overrides_canonicos,
 )
-from aidd_forge.core.harness_sync import sincronizar_command, sincronizar_skill
+from aidd_forge.core.harness_sync import (
+    CANONICAL_COMMANDS_DIR,
+    CANONICAL_SKILLS_DIR,
+    sincronizar_command,
+    sincronizar_skill,
+)
 
 
 def _create_skill(target_root: Path, nome: str) -> None:
-    skill_dir = target_root / ".agent" / "skills" / nome
+    skill_dir = target_root / ".agents" / "skills" / nome
     skill_dir.mkdir(parents=True)
     (skill_dir / "SKILL.md").write_text("# Demo\n", encoding="utf-8")
 
@@ -22,6 +27,8 @@ def test_sincronizar_skill_espelha_em_todos_harnesses_mesmo_sem_existir(tmp_path
     resultado = sincronizar_skill("demo-skill", tmp_path)
 
     for harness_dir in carregar_skill_dirs_canonicos():
+        if harness_dir == CANONICAL_SKILLS_DIR:
+            continue
         mirror = tmp_path / harness_dir / "demo-skill"
         assert mirror in resultado.mirrored
         assert (mirror / "SKILL.md").exists()
@@ -65,7 +72,7 @@ def test_sincronizar_skill_e_idempotente_sem_force(tmp_path: Path):
 
 
 def _create_command(target_root: Path, nome: str) -> None:
-    commands_dir = target_root / ".agent" / "commands"
+    commands_dir = target_root / ".agents" / "commands"
     commands_dir.mkdir(parents=True)
     (commands_dir / f"{nome}.md").write_text(f"# /{nome}\n\nComando de demo.\n", encoding="utf-8")
 
@@ -82,6 +89,8 @@ def test_sincronizar_command_espelha_em_todos_harnesses_do_manifesto_mesmo_sem_e
     dirs_canonicos = carregar_command_dirs_canonicos()
     assert dirs_canonicos, "manifesto de harnesses deveria estar acessivel no monorepo de teste"
     for harness_dir in dirs_canonicos:
+        if harness_dir == CANONICAL_COMMANDS_DIR:
+            continue
         mirror = tmp_path / harness_dir / "demo-command.md"
         assert mirror in resultado.mirrored
         assert mirror.exists()
@@ -107,7 +116,7 @@ def test_sincronizar_command_sobrescreve_com_force(tmp_path: Path):
     _create_command(tmp_path, "demo-command")
     sincronizar_command("demo-command", tmp_path)
 
-    canonical = tmp_path / ".agent" / "commands" / "demo-command.md"
+    canonical = tmp_path / ".agents" / "commands" / "demo-command.md"
     canonical.write_text("# /demo-command\n\nConteudo atualizado.\n", encoding="utf-8")
 
     resultado = sincronizar_command("demo-command", tmp_path, force=True)

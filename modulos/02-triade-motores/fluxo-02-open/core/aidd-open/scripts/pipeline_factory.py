@@ -230,21 +230,17 @@ def executar_pipeline(plano_path: str, pasta_destino: str, incluir_llm: bool = T
             print(f"  [ERRO] VSA App: {exc}")
             erros += 1
 
-    # Fase 3: Frontend Next.js + TypeScript + Tailwind (Lei Inviolavel #11).
-    # Fonte unica compartilhada (NextJSExporter) — substitui o antigo
-    # core/frontend_generator.py (templates .j2 proprios, incompativeis com
-    # a mesma stack gerada por aidd-master) e a geracao duplicada de
-    # Super-App que vsa_generator.py fazia na Fase 2 (achado real: os dois
-    # geradores produziam frontends divergentes para o mesmo projeto).
+    # Fase 3: Frontend TanStack Start / Router + TypeScript + Tailwind (Lei Inviolavel #11).
+    # Substitui formalmente o Next.js abolido pela Lei Inviolavel #11.
     if incluir_llm and res_analysis.sucesso:
         fase_num += 1
-        print(f"\n[{fase_num}/{total_fases}] Fase 3 - Frontend Next.js + TypeScript + Tailwind...")
+        print(f"\n[{fase_num}/{total_fases}] Fase 3 - Frontend TanStack Start / Router + TypeScript + Tailwind (Lei #11)...")
         try:
-            from nextjs_exporter import NextJSExporter
+            from tanstack_exporter import TanStackRouterExporter
             suite_name_fe = res_analysis.valor.get("nicho_nome_exibicao", "") or res_analysis.valor.get("nicho_slug", "")
-            resultado_fe = NextJSExporter().export_project(pasta_destino, os.path.join(pasta_destino, "frontend"), suite_name=suite_name_fe)
+            resultado_fe = TanStackRouterExporter().export_project(pasta_destino, os.path.join(pasta_destino, "frontend"), suite_name=suite_name_fe)
             artefatos.append({"tipo": "frontend", "caminho": os.path.join(pasta_destino, "frontend"), "status": "gerado"})
-            print(f"  [OK] Frontend Next.js gerado ({len(resultado_fe['files_created'])} arquivos)")
+            print(f"  [OK] Frontend TanStack Start / Router gerado ({len(resultado_fe['files_created'])} arquivos)")
         except Exception as exc:
             artefatos.append({"tipo": "frontend", "caminho": "", "status": "erro", "detalhes": str(exc)})
             print(f"  [ERRO] Frontend: {exc}")

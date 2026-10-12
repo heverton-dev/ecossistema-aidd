@@ -471,10 +471,7 @@ def check_g14_no_duplicates(project_path: Path) -> AuditItem:
             impact=IMPACT_MAP["G14"], fixable=False,
         )
 
-    # ".agent" e a pasta canonica-fonte (nao um harness em si); os demais vem do
-    # manifesto (achado real 2026-09-15: a lista fixa antiga faltava Antigravity,
-    # OpenCode e CodeBuddy — duplicatas nessas pastas passavam batido).
-    harness_dirs = [".agent", *carregar_todos_prefixos_harness()]
+    harness_dirs = list(carregar_todos_prefixos_harness())
     duplicates: list[str] = []
 
     for harness_name in harness_dirs:

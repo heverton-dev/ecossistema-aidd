@@ -1,162 +1,29 @@
-# Python
-__pycache__/
-*.py[cod]
-*.class
-*.so
-.Python
-env/
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-/lib/
-/lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-.pytest_cache/
-.coverage
-htmlcov/
-.tox/
-.nox/
-.hypothesis/
+# AIDD Framework - Repository Hygiene
+node_modules/
 
-# Ambientes Virtuais & Dependências
+# Environments & Python
 .venv/
 venv/
-ENV/
-env.bak/
-venv.bak/
-node_modules/
-package-lock.json
-pnpm-lock.yaml
-yarn.lock
-bun.lockb
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
 
-# Logs e Telemetria
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-logs/
-
-# Segredos e Configurações Sensíveis
-.env
-.env.local
-.env.*.local
-*.pem
-*.key
-*.cert
-
-# IDEs e Editores
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
+# OS
 .DS_Store
 Thumbs.db
 
-# Banco de dados e caches locais
-*.db
-*.sqlite3
-*.db-journal
-.cache/
-.worktrees/
-.ade_tmp/
-
-# Dependencias externas instaladas via 'python ecossistema.py dependencia bootstrap'
-*/skills/impeccable/
-*/agents/impeccable-*.md
-*/commands/impeccable.md
-*/hooks/impeccable.json
-
-# Configuracoes e artefatos de harnesses
-.codebuddy/
-.cursor/mcp.json
-.cursor/hooks.json
-.cursorrules
-.windsurfrules
-CODEBUDDY.md
-QODER.md
-.kiro/
-.qoder/
-.vscode/mcp.json
-opencode.jsonc
-.gemini/settings.json
-.gemini/hooks/
-
-# sandeco-token-reduce: .venv por copia de skill nunca deve ser commitado
-*/skills/sandeco-token-reduce/.venv/
-
-# orca-plan-orchestrator: mesas de trabalho (git worktree) criadas na raiz do
-# repo pelo motor nativo (orchestrator_engine.py). Sao sempre temporarias -
-# apagadas automaticamente apos merge bem sucedido - mas ficam aqui como
-# rede de seguranca caso a limpeza automatica falhe ou o processo trave.
-wt-*/
-.orca/
-testes/
-
-# Documentação Efêmera & Anti-Inchaço (Docs Rot)
-docs/secoes/*.md
-docs/rascunhos/
-docs/arquivo/
-docs/tmp/
-.tmp/
-*.tmp.md
-*.draft.md
-
-
-# credenciais — nunca versionar
-docs/VPS-CONEXAO.md
-
-# Skills da Cloudflare (cloudflare/skills), instaladas via 'python ecossistema.py dependencia bootstrap'
-*/skills/agents-sdk/
-skills-lock.json
-*/skills/cloudflare/
-*/skills/cloudflare-email-service/
-*/skills/cloudflare-one/
-*/skills/cloudflare-one-migrations/
-*/skills/durable-objects/
-*/skills/nextjs-on-cloudflare/
-*/skills/sandbox-migrate-to-next/
-*/skills/sandbox-next/
-*/skills/sandbox-stable/
-*/skills/turnstile-spin/
-*/skills/web-perf/
-*/skills/workers-best-practices/
-*/skills/wrangler/
-
-# Fila de ciclos pesados e medicoes locais (scripts/fila_ciclos.py, scripts/medir_gates.py)
-.aidd/fila-ciclos.lock
-# Cache do protocolo delegado das ferramentas: vive no PROJETO (V11/Ticket 15),
-# nunca dentro de tools/<ferramenta>/.
-/.aidd/cache/
-secoes/medicoes/
-
-# Codebase Memory MCP local index
-.codebase-memory/
-
-# Playwright MCP artifacts
+# Ferramentas locais, logs e caches
+*.log
+audit_report.html
+.orca/logs/
+.orca/reports/
 .playwright-mcp/
-
-
-
-
-
-
-
-
-
-
-# VSA ciclo-03 T6: lixo que nao volta para modulos/
-sandbox-forge-teste/
-_destino_teste*/
-materiais-extras/
-modulos/**/.aidd/cache/
+.codebase-memory/
+.aidd/
+**/.aidd/
+keys/
+.vscode/
+*.db
+*.db-shm
+*.db-wal

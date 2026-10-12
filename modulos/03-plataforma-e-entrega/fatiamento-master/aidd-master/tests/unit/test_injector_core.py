@@ -93,7 +93,7 @@ def test_gate_aceita_payload_hook():
     ("spec", os.path.join("docs", "specs", "meu-componente.md")),
     ("config", os.path.join("templates", "core", "config", "meu-componente.json")),
     ("agent", os.path.join("templates", "agents", "meu-componente.md")),
-    ("hook", os.path.join(".agent", "hooks", "meu-componente", "meu-componente.json")),
+    ("hook", os.path.join(".agents", "hooks", "meu-componente", "meu-componente.json")),
 ])
 def test_perfis_resolvem_destino_exato_por_tipo(tmp_path, tipo, sufixo_esperado):
     payload = {"tipo": tipo, "nome": "meu-componente", "descricao": "abc", "alvo_projeto": "aidd-master"}
@@ -113,7 +113,7 @@ def test_perfil_skill_inclui_espelhos_multi_harness(tmp_path):
     payload = {"tipo": "skill", "nome": "x", "descricao": "abc", "alvo_projeto": "aidd-master"}
     resultado = profiles_registry.resolver_destinos(payload, str(tmp_path))
     mirrors = resultado.valor["mirrors"]
-    for harness in (".claude", ".agent", ".gemini"):
+    for harness in (".claude", ".agents", ".gemini"):
         assert any(harness in m for m in mirrors), f"harness {harness} não espelhado"
     assert not any("mimocode" in m for m in mirrors), "mimocode não deve mais constar em mirrors de skill"
 
@@ -321,7 +321,7 @@ def test_materializador_hook_escreve_alvo_espelhos_e_canonico(tmp_path):
 
     resultado = materializador.materializar(payload, resolucao)
     assert resultado.sucesso is True
-    assert (tmp_path / ".agent" / "hooks" / "pre-commit-hook" / "pre-commit-hook.json").is_file()
+    assert (tmp_path / ".agents" / "hooks" / "pre-commit-hook" / "pre-commit-hook.json").is_file()
     assert (tmp_path / ".claude" / "hooks" / "pre-commit-hook" / "pre-commit-hook.json").is_file()
     assert (tmp_path / ".gemini" / "hooks" / "pre-commit-hook" / "pre-commit-hook.json").is_file()
 
@@ -345,7 +345,7 @@ def test_cli_inject_hook_ponta_a_ponta(tmp_path):
         env={**os.environ, "AIDD_ECOSSISTEMA_ROOT": str(raiz_fake)},
     )
     assert res.returncode == 0, res.stdout + res.stderr
-    assert (projeto / ".agent" / "hooks" / "ci-audit" / "ci-audit.json").is_file()
+    assert (projeto / ".agents" / "hooks" / "ci-audit" / "ci-audit.json").is_file()
     assert (projeto / ".claude" / "hooks" / "ci-audit" / "ci-audit.json").is_file()
     assert (raiz_fake / "componentes" / "aidd-master" / "hooks" / "ci-audit" / "ci-audit.json").is_file()
     assert repo_canonico.exists() == existia_antes, "inject hook gravou no repo real"

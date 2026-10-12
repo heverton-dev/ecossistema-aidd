@@ -55,6 +55,7 @@ PECA_POR_MOLDE = {
     "openapi.py": "moldes/quarteto/variantes/aidd-open/openapi.py",
     "webhooks.py": "moldes/quarteto/variantes/aidd-open/webhooks.py",
     "mcp_server.py": "moldes/quarteto/variantes/aidd-open/mcp_server.py",
+    "mcp_repository.py": "src-core/mcp_repository.py",
     "security.py": "src-core/security.py",
     "token_revocation.py": "src-core/token_revocation.py",
     "result.py": "src-core/result.py",
@@ -413,7 +414,7 @@ def _gerar_shared_kernel(pasta_saida: str) -> List[str]:
     # Shared Kernel .py files
     kernel_files = [
         "database.py", "events.py", "openapi.py", "webhooks.py",
-        "mcp_server.py", "security.py", "token_revocation.py", "result.py"
+        "mcp_server.py", "mcp_repository.py", "security.py", "token_revocation.py", "result.py"
     ]
     for kf in kernel_files:
         try:
@@ -621,16 +622,16 @@ class ModularHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         query = urllib.parse.parse_qs(parsed.query)
         params = {{k: v[0] if len(v) == 1 else v for k, v in query.items()}}
 
-        # 1. Quarteto Sine Qua Non & UI Routes
+        # 1. Quarteto Sine Qua Non & UI Routes (Lei Inviolavel #10)
         if path in ("/", "/index.html"):
             return self._serve_file("index.html", "text/html; charset=utf-8")
-        elif path == "/swagger":
+        elif path in ("/docs", "/swagger"):
             return self._serve_file("swagger.html", "text/html; charset=utf-8")
         elif path == "/webhooks":
             return self._serve_file("webhook_studio.html", "text/html; charset=utf-8")
         elif path == "/mcp":
             return self._serve_file("mcp_studio.html", "text/html; charset=utf-8")
-        elif path == "/docs":
+        elif path in ("/docs/guia", "/guia"):
             return self._serve_file("docs.html", "text/html; charset=utf-8")
         elif path == "/openapi.json":
             self.send_response(200)

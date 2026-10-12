@@ -733,7 +733,7 @@ Este projeto foi gerado pela skill aidd-project-generator v2.1
         # Sincronização multi-harness (Universalidade — Zero Duplicidade)
         harnesses_alvos = [
             ('.claude', 'CLAUDE.md'),
-            ('.agent', 'AGENT.md'),
+            ('.agents', 'AGENTS.md'),
             ('.codex', 'CODEX.md'),
             ('.gemini', 'GEMINI.md'),
             ('.mimocode', 'MIMO.md'),

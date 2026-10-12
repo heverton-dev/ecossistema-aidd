@@ -1696,6 +1696,28 @@
   - Testes de Nomes Padronizados & Fiscais VSA (`test_nomes_padronizados.py`, `test_fiscais_vsa_bloqueio.py`): **74 passed** (exit 0).
   - `G_DISCIPLINA_TESTE_FERRAMENTA`: **PASS (Exit 0)**.
 - **Status:** **RESOLVIDO**.
-- **Data da Última Auditoria:** 11/10/2026.
+- **Data da Última Auditoria:** 12/10/2026.
 
+---
 
+## 13. Resolução Integrada e Auditoria 4F — Fluxo Canônico Open (`aidd-open`, `aidd-ops`, `aidd-forge`)
+
+- **Data da Auditoria e Validação:** 12/10/2026
+- **Ambiente:** `C:\Users\trcnologia\Desktop\TESTE-ecossistema-aidd_04102026\fluxo-02-open`
+- **Ferramentas Tocadas:**
+  `aidd-open` (`vsa_generator.py`, `04_compose.py`, `09_integracao.py`, `pipeline_factory.py`, `server_fastapi.py`, `G_FACTORY_INTEGRATION.py`, `test_pipeline_factory.py`), `aidd-ops` (`01_intake.py`, `02_curadoria.py`), `aidd-forge` (`.secrets.baseline`), `componentes/compartilhado` (`G_ESTRUTURA.py`, `tanstack_exporter.py`).
+- **O que executou:**
+  1. `TCK-OPEN-01`: Injeção determinística de `mcp_repository.py` em `PECA_POR_MOLDE` e kernel VSA.
+  2. `TCK-OPEN-02`: Criação de `TanStackRouterExporter` em conformidade estrita com a Lei #11 (abolição formal do Next.js).
+  3. `TCK-OPEN-03`: Síntese dinâmica de `api` (FastAPI) e `db` (PostgreSQL) com healthcheck e volumes no gerador de compose.
+  4. `TCK-OPEN-04`: Atualização de `G_ESTRUTURA.py` para suportar fatias VSA, TanStack e manifestos `PLANNER.json` (23/23 checagens exit 0).
+  5. `TCK-OPEN-05`: Implementação da rota canônica `/docs/guia` para 100% de conformidade com o Quarteto Sine Qua Non Dinâmico (Lei #10).
+  6. `TCK-OPEN-06`: Injeção de fallback estático AST/Regex no gate `G_HADOLINT` para hosts sem binário nativo.
+  7. `TCK-OPS-01`: Adaptação de intake e curadoria do `aidd-ops` para fatias e `PLANNER.json`, eliminando erro `MONOLITO_INVALIDO`.
+  8. `TCK-GATE-01`: Baseline determinístico `.secrets.baseline` em templates do `aidd-forge`.
+- **Resultados Medidos (12/10/2026):**
+  - `aidd-open` Testes Unitários: **21 passed** (exit 0).
+  - `aidd-ops` Suíte Completa: **198 passed** (exit 0).
+  - `G_ESTRUTURA.py`: **23/23 checagens aprovadas** (exit 0).
+  - `G_DISCIPLINA_TESTE_FERRAMENTA`: **PASS (Exit 0)**.
+- **Status:** **RESOLVIDO & 100% CONFORME**.

@@ -76,7 +76,7 @@ def limpar_poluicao_hook_real(nomes):
     bases = [
         os.path.join(REPO_ROOT, "componentes", "aidd-enterprise", "hooks"),
         os.path.join(ENT_DIR, ".claude", "hooks"),
-        os.path.join(ENT_DIR, ".agent", "hooks"),
+        os.path.join(ENT_DIR, ".agents", "hooks"),
         os.path.join(ENT_DIR, ".mimocode", "hooks"),
         os.path.join(ENT_DIR, ".gemini", "hooks"),
         os.path.join(ENT_DIR, ".hooks"),
@@ -181,7 +181,7 @@ def main():
         # Confirmar estrutura real das 5 pastas de harness para hook (.json) e skill
         hook_json = os.path.join(dir_inject, "componentes-locais") # nao usado; checagem real abaixo
         hook_checks = {}
-        for pasta in (".claude/hooks", ".agent/hooks", ".mimocode/hooks", ".gemini/hooks", ".hooks"):
+        for pasta in (".claude/hooks", ".agents/hooks", ".mimocode/hooks", ".gemini/hooks", ".hooks"):
             caminho_dir = os.path.join(dir_inject, pasta.replace("/", os.sep), "pre-commit-ent")
             caminho_flat = os.path.join(dir_inject, pasta.replace("/", os.sep), "pre-commit-ent.json")
             hook_checks[pasta] = os.path.isfile(os.path.join(caminho_dir, "pre-commit-ent.json")) or os.path.isfile(caminho_flat)
@@ -191,7 +191,7 @@ def main():
         print(f"  [HOOK-5-PASTAS] {hook_checks}")
 
         skill_checks = {}
-        for pasta in (".claude/skills", ".agent/skills", ".mimocode/skills", ".gemini/skills", ".skills"):
+        for pasta in (".claude/skills", ".agents/skills", ".mimocode/skills", ".gemini/skills", ".skills"):
             caminho = os.path.join(dir_inject, pasta.replace("/", os.sep), "seguranca-cibernetica-ent", "SKILL.md")
             skill_checks[pasta] = os.path.isfile(caminho)
         RESULTS.append({"item": "3.4-inject-skill-5-pastas", "exit_code": 0 if all(skill_checks.values()) else 1,

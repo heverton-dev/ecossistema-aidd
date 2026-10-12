@@ -51,7 +51,7 @@ class ComponentProfile:
 
 
 FORGE_PROFILE: dict[str, ComponentProfile] = {
-    "skill": ComponentProfile(dest_template=".agent/skills/{nome}/SKILL.md"),
+    "skill": ComponentProfile(dest_template=".agents/skills/{nome}/SKILL.md"),
     "mcp": ComponentProfile(
         dest_template="aidd_forge/mcps/{nome}.py",
         registry="aidd_forge/mcps/registry.json",
@@ -60,9 +60,9 @@ FORGE_PROFILE: dict[str, ComponentProfile] = {
     "spec": ComponentProfile(dest_template="docs/specs/{nome}.md"),
     "roteiro": ComponentProfile(dest_template="tutoriais/{nome}.md"),
     "config": ComponentProfile(dest_template="config/{nome}.json"),
-    "command": ComponentProfile(dest_template=".agent/commands/{nome}.md"),
-    "hook": ComponentProfile(dest_template=".agent/hooks/{nome}/hook.sh"),
-    "sub-agent": ComponentProfile(dest_template=".agent/agents/{nome}.md"),
+    "command": ComponentProfile(dest_template=".agents/commands/{nome}.md"),
+    "hook": ComponentProfile(dest_template=".agents/hooks/{nome}/hook.sh"),
+    "sub-agent": ComponentProfile(dest_template=".agents/agents/{nome}.md"),
     "script": ComponentProfile(dest_template="scripts/{nome}.py"),
 }
 

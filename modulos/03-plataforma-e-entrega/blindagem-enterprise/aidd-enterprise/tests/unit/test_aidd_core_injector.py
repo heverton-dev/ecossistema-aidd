@@ -98,7 +98,7 @@ def test_resolve_targets_skill_fan_out_5_harnesses(tmp_path):
     destinos_rel = {os.path.relpath(d, str(tmp_path)).replace("\\", "/") for d in destinos}
     assert destinos_rel == {
         ".claude/skills/minha-skill/SKILL.md",
-        ".agent/skills/minha-skill/SKILL.md",
+        ".agents/skills/minha-skill/SKILL.md",
         ".mimocode/skills/minha-skill/SKILL.md",
         ".gemini/skills/minha-skill/SKILL.md",
         ".skills/minha-skill/SKILL.md",
@@ -119,7 +119,7 @@ def test_resolve_targets_hook_fan_out_5_harnesses(tmp_path):
     destinos_rel = {os.path.relpath(d, str(tmp_path)).replace("\\", "/") for d in destinos}
     assert destinos_rel == {
         ".claude/hooks/meu-hook.json",
-        ".agent/hooks/meu-hook.json",
+        ".agents/hooks/meu-hook.json",
         ".mimocode/hooks/meu-hook.json",
         ".gemini/hooks/meu-hook.json",
         ".hooks/meu-hook.json",

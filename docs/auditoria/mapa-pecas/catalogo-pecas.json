@@ -5,7 +5,7 @@
     "ferramentas": 8,
     "comandos_cli": 74,
     "skills": 45,
-    "leis": 14,
+    "leis": 13,
     "lente_15d": 15,
     "oficina": 0,
     "scripts": 59,
@@ -527,454 +527,79 @@
     {
       "numero": 1,
       "titulo": "Determinism First",
-      "portoes": [
-        {
-          "gate": "G_DETERMINISMO_LEI_1",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_PIPELINE_HANDOFF",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_DISPATCH_PIPELINE_VSA",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_ESCRITOR_ATOMICO",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_ORQUESTRADOR_SINCRONO",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_TRANSACTION_LOG_LRU",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_SYNC_CMD_ROT",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_LAYOUT_ENTREGA",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_PACOTE_CORE",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_RESUMO_USUARIO",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_ANT_LOCKIN_LEGADO",
-          "forca": "provado",
-          "visivel": true
-        }
-      ],
+      "portoes": [],
       "sem_gate": false
     },
     {
       "numero": 2,
       "titulo": "Binary Quality",
-      "portoes": [
-        {
-          "gate": "G_SAIDA_BINARIA",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_ECOSSISTEMA_INTEGRIDADE",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_LEI_DECLARA_PORTAO",
-          "forca": "provado",
-          "visivel": true
-        }
-      ],
+      "portoes": [],
       "sem_gate": false
     },
     {
       "numero": 3,
       "titulo": "Structured Persistence",
-      "portoes": [
-        {
-          "gate": "G_MIGRATION_ROT",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_ESTRUTURA_ESTADO",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_GESTOR_SESSOES",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_LIVRO_EVIDENCIA",
-          "forca": "provado",
-          "visivel": true
-        }
-      ],
+      "portoes": [],
       "sem_gate": false
     },
     {
       "numero": 4,
       "titulo": "Extreme Token Economy",
-      "portoes": [
-        {
-          "gate": "G_IDIOMA_LEI_4",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_USER_FACING_PTBR",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_CLI_HELP_CONSISTENCIA",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_LLM_PROMPT_SHIELD",
-          "forca": "provado",
-          "visivel": true
-        }
-      ],
+      "portoes": [],
       "sem_gate": false
     },
     {
       "numero": 5,
       "titulo": "Zero Stubs / Zero Mocks",
-      "portoes": [
-        {
-          "gate": "G_TESTES_REAIS",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_PROTOTYPE_REWRITE",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_PROTOCOL_FALLBACK",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_SEGREDOS",
-          "forca": "provado",
-          "visivel": true
-        }
-      ],
+      "portoes": [],
       "sem_gate": false
     },
     {
       "numero": 6,
       "titulo": "Agnostic Supremacy",
-      "portoes": [
-        {
-          "gate": "G_COMPONENTE_AGNOSTICO",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_HARNESS_COMPAT",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_UNIVERSAL_HARNESS",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_DEPENDENCIAS_PIN_HASH",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_SUPPLY_CHAIN",
-          "forca": "provado",
-          "visivel": true
-        }
-      ],
+      "portoes": [],
       "sem_gate": false
     },
     {
       "numero": 7,
       "titulo": "Developer in Control",
-      "portoes": [
-        {
-          "gate": "G_ZERO_HEADLESS",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_ISOLATION_AUDIT",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_HADOLINT",
-          "forca": "provado",
-          "visivel": true
-        }
-      ],
+      "portoes": [],
       "sem_gate": false
     },
     {
       "numero": 8,
       "titulo": "Label Honesty",
-      "portoes": [
-        {
-          "gate": "G_HONESTIDADE_ROTULO",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_mapa_pecas",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_DRIFT_ANALYZER",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_DRIFT_NUCLEO_COMPARTILHADO",
-          "forca": "provado",
-          "visivel": true
-        }
-      ],
+      "portoes": [],
       "sem_gate": false
     },
     {
       "numero": 9,
       "titulo": "Tool Testing Discipline",
-      "portoes": [
-        {
-          "gate": "G_ENV_ROT",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_SKILL_ROT",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_SKILL_FORMATO",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_DISCIPLINA_TESTE_FERRAMENTA",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_TEMPLATE_FORGE_ROT",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_FRONTEIRA_FERRAMENTAS",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_amelhoria",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_aidd_diagnose",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_aidd_forge",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_aidd_enterprise",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_aidd_spec",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_aidd_tdd",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_aidd_tickets",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_aidd_grill",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_aidd_handoff",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_aidd_plan",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_aidd_planner_runner",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_aidd_visual_maps",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_aidd_session",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_PROVA_SKILLS_POCOCK",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_HANDOFF_MELHORIA",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_INFRA_COMPOSE",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_MODULO_FRONTEIRA",
-          "forca": "provado",
-          "visivel": true
-        }
-      ],
+      "portoes": [],
       "sem_gate": false
     },
     {
       "numero": 10,
-      "titulo": "Quarteto Sine Qua Non Dinâmico (Lei #10 — Quarteto; distinto de Rule 10 Formato de Resposta)",
-      "portoes": [
-        {
-          "gate": "G_CONTRACT_ROT",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_QUARTETO_SINE_QUA_NON",
-          "forca": "provado",
-          "visivel": true
-        }
-      ],
+      "titulo": "Quarteto Sine Qua Non Dinâmico",
+      "portoes": [],
       "sem_gate": false
     },
     {
       "numero": 11,
       "titulo": "Padrão-Ouro de Stack Tecnológica",
-      "portoes": [
-        {
-          "gate": "G_STACK_PADRAO_OURO",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_TEMPLATE_TANSTACK_OFFLINE",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_NOVE_CAMADAS_MERCADO",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_FRONTEND_LAYERS",
-          "forca": "provado",
-          "visivel": true
-        },
-        {
-          "gate": "G_ARQUITETURA_DELIVERABLE",
-          "forca": "provado",
-          "visivel": true
-        }
-      ],
+      "portoes": [],
       "sem_gate": false
     },
     {
       "numero": 12,
       "titulo": "Anti-Docs Rot & Canonical Ingestion",
-      "portoes": [
-        {
-          "gate": "G_DOCS_ROT",
-          "forca": "provado",
-          "visivel": true
-        }
-      ],
+      "portoes": [],
       "sem_gate": false
     },
     {
       "numero": 13,
       "titulo": "Todo Portão Deve Provar que Morde",
-      "portoes": [
-        {
-          "gate": "G_PORTAO_PROVA_QUE_MORDE",
-          "forca": "provado",
-          "visivel": true
-        }
-      ],
-      "sem_gate": false
-    },
-    {
-      "numero": 14,
-      "titulo": "Graph-First Obrigatório",
-      "portoes": [
-        {
-          "gate": "G_GRAPH_FIRST",
-          "forca": "provado",
-          "visivel": true
-        }
-      ],
+      "portoes": [],
       "sem_gate": false
     }
   ],
@@ -2453,6 +2078,18 @@
         "nota": "10"
       },
       {
+        "alvo": "e2e-pure",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/e2e-pure/ciclo-01",
+        "fases": {
+          "laudo_inicial": false,
+          "plano_evolucao": false,
+          "laudo_revisado": false,
+          "dod": false
+        },
+        "nota": ""
+      },
+      {
         "alvo": "fluxo-01-runner",
         "ciclo": "ciclo-01",
         "caminho": "docs/auditoria/fluxo-01-runner/ciclo-01",
@@ -3277,9 +2914,9 @@
           "hook": ".claude/hooks/{nome}",
           "sub-agent": ".claude/agents/{nome}"
         },
-        "skills_em_disco": 60,
+        "skills_em_disco": 66,
         "nossas_faltando": [],
-        "terceiros_em_disco": 15,
+        "terceiros_em_disco": 21,
         "config_mcp": ".mcp.json"
       },
       {
@@ -3298,9 +2935,9 @@
           "hook": ".agents/hooks/{nome}",
           "sub-agent": ".agents/agents/{nome}"
         },
-        "skills_em_disco": 60,
+        "skills_em_disco": 66,
         "nossas_faltando": [],
-        "terceiros_em_disco": 15,
+        "terceiros_em_disco": 21,
         "config_mcp": ".agents/mcp_config.json"
       },
       {
@@ -3319,9 +2956,9 @@
           "hook": ".opencode/hooks/{nome}",
           "sub-agent": ".opencode/agents/{nome}"
         },
-        "skills_em_disco": 46,
+        "skills_em_disco": 52,
         "nossas_faltando": [],
-        "terceiros_em_disco": 1,
+        "terceiros_em_disco": 7,
         "config_mcp": "opencode.jsonc"
       },
       {
@@ -3340,9 +2977,9 @@
           "hook": ".mimocode/hooks/{nome}",
           "sub-agent": ".mimocode/agents/{nome}"
         },
-        "skills_em_disco": 46,
+        "skills_em_disco": 52,
         "nossas_faltando": [],
-        "terceiros_em_disco": 1,
+        "terceiros_em_disco": 7,
         "config_mcp": "mimocode.jsonc"
       },
       {
@@ -3359,9 +2996,9 @@
           "hook": ".gemini/hooks/{nome}",
           "sub-agent": ".gemini/agents/{nome}"
         },
-        "skills_em_disco": 45,
+        "skills_em_disco": 51,
         "nossas_faltando": [],
-        "terceiros_em_disco": 0,
+        "terceiros_em_disco": 6,
         "config_mcp": ".gemini/settings.json"
       },
       {
@@ -3378,9 +3015,9 @@
           "command": ".cursor/commands/{nome}",
           "hook": ".cursor/hooks/{nome}"
         },
-        "skills_em_disco": 46,
+        "skills_em_disco": 52,
         "nossas_faltando": [],
-        "terceiros_em_disco": 1,
+        "terceiros_em_disco": 7,
         "config_mcp": ".cursor/mcp.json"
       },
       {
@@ -3397,9 +3034,9 @@
           "command": ".codebuddy/commands/{nome}",
           "hook": ".codebuddy/hooks/{nome}"
         },
-        "skills_em_disco": 45,
+        "skills_em_disco": 51,
         "nossas_faltando": [],
-        "terceiros_em_disco": 0,
+        "terceiros_em_disco": 6,
         "config_mcp": ""
       }
     ],
@@ -3640,9 +3277,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        1
-      ]
+      "leis": []
     },
     {
       "id": "G_ARQUITETURA",
@@ -3672,9 +3307,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        11
-      ]
+      "leis": []
     },
     {
       "id": "G_AST_IMPORT_GUARD",
@@ -3693,7 +3326,7 @@
     },
     {
       "id": "G_BLOQUEAR_SEGREDOS",
-      "descricao": "Bloqueio mecânico de segredos hardcoded.",
+      "descricao": "bloqueia commits contendo segredos expostos.",
       "copias": [
         {
           "caminho": "componentes/compartilhado/gates/G_BLOQUEAR_SEGREDOS.py",
@@ -3713,7 +3346,7 @@
       ],
       "versoes_distintas": 2,
       "no_pre_commit": false,
-      "prova_que_morde": null,
+      "prova_que_morde": false,
       "leis": []
     },
     {
@@ -3804,9 +3437,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        4
-      ]
+      "leis": []
     },
     {
       "id": "G_COMPONENTE_AGNOSTICO",
@@ -3821,13 +3452,11 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        6
-      ]
+      "leis": []
     },
     {
       "id": "G_CONTRACTS",
-      "descricao": "Valida a conformidade de 100% das rotas registradas no RouteRegistry com o padrão OpenAPI 3.1, ferramentas expostas no MCP Server, integridade dos 4 Portais e Snapshot SHA-256.",
+      "descricao": "valida integridade e compatibilidade de Schemas JSON Draft 2020-12.",
       "copias": [
         {
           "caminho": "componentes/compartilhado/gates/G_CONTRACTS.py",
@@ -3847,7 +3476,7 @@
       ],
       "versoes_distintas": 2,
       "no_pre_commit": false,
-      "prova_que_morde": null,
+      "prova_que_morde": false,
       "leis": []
     },
     {
@@ -3863,9 +3492,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        10
-      ]
+      "leis": []
     },
     {
       "id": "G_COPIA_UNICA_VSA",
@@ -3884,7 +3511,7 @@
     },
     {
       "id": "G_CYBERSECURITY_OWASP",
-      "descricao": "Varredura de vulnerabilidades OWASP Top 10.",
+      "descricao": "varredura estatica de vulnerabilidades OWASP Top 10.",
       "copias": [
         {
           "caminho": "componentes/compartilhado/gates/G_CYBERSECURITY_OWASP.py",
@@ -3904,7 +3531,7 @@
       ],
       "versoes_distintas": 2,
       "no_pre_commit": false,
-      "prova_que_morde": null,
+      "prova_que_morde": false,
       "leis": []
     },
     {
@@ -3920,9 +3547,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        6
-      ]
+      "leis": []
     },
     {
       "id": "G_DETERMINISMO_LEI_1",
@@ -3947,9 +3572,7 @@
       "versoes_distintas": 2,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        1
-      ]
+      "leis": []
     },
     {
       "id": "G_DISCIPLINA_TESTE_FERRAMENTA",
@@ -3964,9 +3587,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        9
-      ]
+      "leis": []
     },
     {
       "id": "G_DISPATCH_PIPELINE_VSA",
@@ -3981,9 +3602,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        1
-      ]
+      "leis": []
     },
     {
       "id": "G_DOCS_ROT",
@@ -3998,9 +3617,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        12
-      ]
+      "leis": []
     },
     {
       "id": "G_DRIFT_ANALYZER",
@@ -4015,9 +3632,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        8
-      ]
+      "leis": []
     },
     {
       "id": "G_DRIFT_NUCLEO_COMPARTILHADO",
@@ -4032,9 +3647,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        8
-      ]
+      "leis": []
     },
     {
       "id": "G_ECOSSISTEMA_INTEGRIDADE",
@@ -4049,9 +3662,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        2
-      ]
+      "leis": []
     },
     {
       "id": "G_ENV_ROT",
@@ -4066,9 +3677,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        9
-      ]
+      "leis": []
     },
     {
       "id": "G_ESCRITOR_ATOMICO",
@@ -4083,9 +3692,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        1
-      ]
+      "leis": []
     },
     {
       "id": "G_ESTRUTURA",
@@ -4119,7 +3726,7 @@
       ],
       "versoes_distintas": 1,
       "no_pre_commit": false,
-      "prova_que_morde": null,
+      "prova_que_morde": false,
       "leis": []
     },
     {
@@ -4135,9 +3742,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        3
-      ]
+      "leis": []
     },
     {
       "id": "G_FACTORY_ANALYSIS",
@@ -4242,9 +3847,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        9
-      ]
+      "leis": []
     },
     {
       "id": "G_FRONTEND_LAYERS",
@@ -4259,9 +3862,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        11
-      ]
+      "leis": []
     },
     {
       "id": "G_GESTOR_SESSOES",
@@ -4276,9 +3877,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        3
-      ]
+      "leis": []
     },
     {
       "id": "G_GRAPH_FIRST",
@@ -4293,9 +3892,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": false,
       "prova_que_morde": true,
-      "leis": [
-        14
-      ]
+      "leis": []
     },
     {
       "id": "G_HADOLINT",
@@ -4310,9 +3907,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        7
-      ]
+      "leis": []
     },
     {
       "id": "G_HANDOFF_MELHORIA",
@@ -4327,9 +3922,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        9
-      ]
+      "leis": []
     },
     {
       "id": "G_HARNESS_COMPAT",
@@ -4364,9 +3957,7 @@
       "versoes_distintas": 4,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        6
-      ]
+      "leis": []
     },
     {
       "id": "G_HONESTIDADE_ROTULO",
@@ -4381,9 +3972,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        8
-      ]
+      "leis": []
     },
     {
       "id": "G_IDIOMA_LEI_4",
@@ -4398,9 +3987,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        4
-      ]
+      "leis": []
     },
     {
       "id": "G_INFRA_COMPOSE",
@@ -4415,13 +4002,11 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        9
-      ]
+      "leis": []
     },
     {
       "id": "G_INJECT",
-      "descricao": "Valida a implementação do Injetor Universal de Componentes: Infraestrutura do motor: contrato JSON Schema, arquivos core (profiles_registry,",
+      "descricao": "valida os componentes gravados pelo Injetor Universal.",
       "copias": [
         {
           "caminho": "componentes/compartilhado/injetor/G_INJECT.py",
@@ -4451,7 +4036,7 @@
       ],
       "versoes_distintas": 4,
       "no_pre_commit": false,
-      "prova_que_morde": null,
+      "prova_que_morde": false,
       "leis": []
     },
     {
@@ -4482,9 +4067,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        7
-      ]
+      "leis": []
     },
     {
       "id": "G_LAYOUT_ENTREGA",
@@ -4499,9 +4082,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        1
-      ]
+      "leis": []
     },
     {
       "id": "G_LEI_DECLARA_PORTAO",
@@ -4516,9 +4097,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        2
-      ]
+      "leis": []
     },
     {
       "id": "G_LIVRO_EVIDENCIA",
@@ -4533,9 +4112,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        3
-      ]
+      "leis": []
     },
     {
       "id": "G_LLM_PROMPT_SHIELD",
@@ -4550,9 +4127,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        4
-      ]
+      "leis": []
     },
     {
       "id": "G_MIGRATION_ROT",
@@ -4567,9 +4142,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        3
-      ]
+      "leis": []
     },
     {
       "id": "G_MODULO_FRONTEIRA",
@@ -4584,9 +4157,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        9
-      ]
+      "leis": []
     },
     {
       "id": "G_NOVE_CAMADAS_MERCADO",
@@ -4601,9 +4172,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        11
-      ]
+      "leis": []
     },
     {
       "id": "G_OPS_MVP",
@@ -4648,9 +4217,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        1
-      ]
+      "leis": []
     },
     {
       "id": "G_PACOTE_CORE",
@@ -4665,13 +4232,11 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        1
-      ]
+      "leis": []
     },
     {
       "id": "G_PERFORMANCE",
-      "descricao": "Executa a bateria completa de 6 camadas de testes de performance: Response time histogram (p99 < 200ms)",
+      "descricao": "checa latencia de execucao dos endpoints/comandos do projeto.",
       "copias": [
         {
           "caminho": "componentes/compartilhado/gates/G_PERFORMANCE.py",
@@ -4691,7 +4256,7 @@
       ],
       "versoes_distintas": 2,
       "no_pre_commit": false,
-      "prova_que_morde": null,
+      "prova_que_morde": false,
       "leis": []
     },
     {
@@ -4707,9 +4272,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        1
-      ]
+      "leis": []
     },
     {
       "id": "G_PLANNER_COERENCIA_FLUXO",
@@ -4769,9 +4332,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        13
-      ]
+      "leis": []
     },
     {
       "id": "G_PROTOCOL_FALLBACK",
@@ -4786,9 +4347,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        5
-      ]
+      "leis": []
     },
     {
       "id": "G_PROTOTYPE_REWRITE",
@@ -4803,9 +4362,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        5
-      ]
+      "leis": []
     },
     {
       "id": "G_PROVA_SKILLS_POCOCK",
@@ -4820,9 +4377,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        9
-      ]
+      "leis": []
     },
     {
       "id": "G_QUALIDADE",
@@ -4862,9 +4417,7 @@
       "versoes_distintas": 2,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        10
-      ]
+      "leis": []
     },
     {
       "id": "G_RESUMO_USUARIO",
@@ -4879,9 +4432,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        1
-      ]
+      "leis": []
     },
     {
       "id": "G_SAIDA_BINARIA",
@@ -4906,9 +4457,7 @@
       "versoes_distintas": 2,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        2
-      ]
+      "leis": []
     },
     {
       "id": "G_SANDBOX_NIVEL_1",
@@ -4943,9 +4492,7 @@
       "versoes_distintas": 2,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        5
-      ]
+      "leis": []
     },
     {
       "id": "G_SEGURANCA",
@@ -4990,9 +4537,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        9
-      ]
+      "leis": []
     },
     {
       "id": "G_SKILL_ROT",
@@ -5007,9 +4552,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        9
-      ]
+      "leis": []
     },
     {
       "id": "G_STACK_PADRAO_OURO",
@@ -5034,9 +4577,7 @@
       "versoes_distintas": 2,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        11
-      ]
+      "leis": []
     },
     {
       "id": "G_SUPPLY_CHAIN",
@@ -5051,9 +4592,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        6
-      ]
+      "leis": []
     },
     {
       "id": "G_SYNC_CMD_ROT",
@@ -5068,9 +4607,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        1
-      ]
+      "leis": []
     },
     {
       "id": "G_TEMPLATE_FORGE_ROT",
@@ -5085,9 +4622,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        9
-      ]
+      "leis": []
     },
     {
       "id": "G_TEMPLATE_TANSTACK_OFFLINE",
@@ -5102,9 +4637,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        11
-      ]
+      "leis": []
     },
     {
       "id": "G_TESTES",
@@ -5144,9 +4677,7 @@
       "versoes_distintas": 2,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        5
-      ]
+      "leis": []
     },
     {
       "id": "G_TOKENOMICS",
@@ -5176,9 +4707,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        1
-      ]
+      "leis": []
     },
     {
       "id": "G_UNIVERSAL_HARNESS",
@@ -5193,9 +4722,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        6
-      ]
+      "leis": []
     },
     {
       "id": "G_USER_FACING_PTBR",
@@ -5210,9 +4737,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        4
-      ]
+      "leis": []
     },
     {
       "id": "G_VERIFICAR_LLM_PRONTO",
@@ -5242,9 +4767,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        7
-      ]
+      "leis": []
     },
     {
       "id": "G_aidd_diagnose",
@@ -5259,9 +4782,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        9
-      ]
+      "leis": []
     },
     {
       "id": "G_aidd_enterprise",
@@ -5276,9 +4797,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        9
-      ]
+      "leis": []
     },
     {
       "id": "G_aidd_forge",
@@ -5293,9 +4812,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        9
-      ]
+      "leis": []
     },
     {
       "id": "G_aidd_grill",
@@ -5310,9 +4827,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        9
-      ]
+      "leis": []
     },
     {
       "id": "G_aidd_handoff",
@@ -5327,9 +4842,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": false,
       "prova_que_morde": true,
-      "leis": [
-        9
-      ]
+      "leis": []
     },
     {
       "id": "G_aidd_plan",
@@ -5344,9 +4857,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": false,
       "prova_que_morde": true,
-      "leis": [
-        9
-      ]
+      "leis": []
     },
     {
       "id": "G_aidd_planner_runner",
@@ -5361,9 +4872,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": false,
       "prova_que_morde": true,
-      "leis": [
-        9
-      ]
+      "leis": []
     },
     {
       "id": "G_aidd_session",
@@ -5378,9 +4887,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": false,
       "prova_que_morde": true,
-      "leis": [
-        9
-      ]
+      "leis": []
     },
     {
       "id": "G_aidd_spec",
@@ -5395,9 +4902,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        9
-      ]
+      "leis": []
     },
     {
       "id": "G_aidd_tdd",
@@ -5412,9 +4917,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        9
-      ]
+      "leis": []
     },
     {
       "id": "G_aidd_tickets",
@@ -5429,9 +4932,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        9
-      ]
+      "leis": []
     },
     {
       "id": "G_aidd_visual_maps",
@@ -5446,9 +4947,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        9
-      ]
+      "leis": []
     },
     {
       "id": "G_amelhoria",
@@ -5463,9 +4962,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        9
-      ]
+      "leis": []
     },
     {
       "id": "G_mapa_pecas",
@@ -5480,9 +4977,7 @@
       "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": [
-        8
-      ]
+      "leis": []
     }
   ],
   "contratos": [

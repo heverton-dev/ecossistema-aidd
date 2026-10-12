@@ -778,7 +778,7 @@ def _copy_governance_and_rules(
 
     cursor_rules_dir = os.path.join(target_dir, ".cursor", "rules")
     claude_dir = os.path.join(target_dir, ".claude")
-    agent_rules_dir = os.path.join(target_dir, ".agent", "rules")
+    agent_rules_dir = os.path.join(target_dir, ".agents", "rules")
     os.makedirs(cursor_rules_dir, exist_ok=True)
     os.makedirs(claude_dir, exist_ok=True)
     os.makedirs(agent_rules_dir, exist_ok=True)
@@ -794,7 +794,7 @@ def _copy_governance_and_rules(
     escrever_atomico(os.path.join(cursor_rules_dir, "aidd_rules.mdc"), rules_content)
     escrever_atomico(os.path.join(claude_dir, "CLAUDE.md"), rules_content)
     escrever_atomico(os.path.join(agent_rules_dir, "rules.md"), rules_content)
-    print("  [+] Multi-IDE Rules (.cursor, .claude, .agent) sincronizadas!")
+    print("  [+] Multi-IDE Rules (.cursor, .claude, .agents) sincronizadas!")
 
     contexto_md = f"""# Grafo de Contexto e Memória do Projeto: {suite_name}
 

@@ -63,7 +63,8 @@ def test_injetar_command_sincroniza_todos_harnesses_mesmo_sem_pre_existir(tmp_pa
     assert resultado.harness_sync is not None
 
     dirs_canonicos = carregar_command_dirs_canonicos()
-    assert len(resultado.harness_sync.mirrored) == len(dirs_canonicos)
+    dirs_espelhados = [d for d in dirs_canonicos if d != ".agents/commands"]
+    assert len(resultado.harness_sync.mirrored) == len(dirs_espelhados)
     for harness_dir in dirs_canonicos:
         assert (tmp_path / harness_dir / "demo-command.md").exists()
 

@@ -32,8 +32,8 @@ from aidd_forge.core.harness_manifest import (
     carregar_skill_overrides_canonicos,
 )
 
-CANONICAL_SKILLS_DIR = ".agent/skills"
-CANONICAL_COMMANDS_DIR = ".agent/commands"
+CANONICAL_SKILLS_DIR = ".agents/skills"
+CANONICAL_COMMANDS_DIR = ".agents/commands"
 
 
 @dataclass
@@ -63,7 +63,7 @@ def _mirror_dir(canonical_dir: Path, mirror_path: Path, force: bool) -> Path | N
 
 
 def sincronizar_skill(nome: str, target_root: Path, force: bool = False) -> HarnessSyncResult:
-    """Espelha `target_root/.agent/skills/<nome>` em TODOS os harnesses do manifesto.
+    """Espelha `target_root/.agents/skills/<nome>` em TODOS os harnesses do manifesto.
 
     Nao pula harness cuja pasta ainda nao existe — cria as que faltarem. Para
     gemini-cli, usa o formato de extensions (pasta aninhada + manifesto
@@ -78,6 +78,8 @@ def sincronizar_skill(nome: str, target_root: Path, force: bool = False) -> Harn
 
     for harness_dir in carregar_skill_dirs_canonicos():
         mirror_path = target_root / harness_dir / nome
+        if mirror_path == canonical_dir:
+            continue
         mirrored = _mirror_dir(canonical_dir, mirror_path, force)
         if mirrored is not None:
             result.mirrored.append(mirrored)
@@ -106,7 +108,7 @@ def sincronizar_skill(nome: str, target_root: Path, force: bool = False) -> Harn
 
 
 def sincronizar_command(nome: str, target_root: Path, force: bool = False) -> HarnessSyncResult:
-    """Espelha `target_root/.agent/commands/<nome>.md` em TODOS os harnesses do manifesto.
+    """Espelha `target_root/.agents/commands/<nome>.md` em TODOS os harnesses do manifesto.
 
     Diferente de `sincronizar_skill`, nao pula harness cuja pasta ainda nao
     existe — cria as que faltarem, igual ao `SlashRouter` ja faz pro `/forge`.

@@ -121,6 +121,7 @@ class VSADispatchPipeline:
         verbose: bool = True,
         max_workers: int = 2,
         barrier_sync: bool = False,
+        skip_audit: bool = False,
     ) -> None:
         self.dispatch_path = Path(dispatch_path).resolve()
         if not self.dispatch_path.is_file():
@@ -131,6 +132,7 @@ class VSADispatchPipeline:
         self.verbose = verbose
         self.max_workers = max(1, max_workers)
         self.barrier_sync = barrier_sync
+        self.skip_audit = skip_audit
         self.active_worktrees: List[ActiveSliceWorktree] = []
         self.rollback_history: List[Dict[str, Any]] = []
         self.git_env: Dict[str, str] = obter_env_sanitizado()
@@ -687,6 +689,26 @@ class VSADispatchPipeline:
 
     def _run_post_merge_suite(self) -> bool:
         """Executa a suíte de pós-merge de convergência master."""
+        if self.skip_audit:
+            self.log("[POST-MERGE] Auditoria global pós-merge ignorada (--skip-audit).")
+            testes_fatias = self.repo_root / "tests" / "slices"
+            if testes_fatias.is_dir():
+                self.log("[POST-MERGE] Executando testes focados das fatias (pytest tests/slices)...")
+                cmd_slices = f'"{sys.executable}" -m pytest tests/slices'
+                res = subprocess.run(
+                    cmd_slices,
+                    cwd=str(self.repo_root),
+                    shell=True,
+                    capture_output=True,
+                    text=True,
+                    encoding="utf-8",
+                    errors="replace",
+                )
+                if res.returncode != 0:
+                    self.log(f"ERRO: Falha nos testes de fatias:\n{res.stderr}\n{res.stdout}")
+                    return False
+            return True
+
         cm = self.manifest_data.get("convergencia_master", {})
         suite = cm.get("post_merge_suite", [])
         if not suite:
@@ -893,6 +915,11 @@ def main(argv: Optional[List[str]] = None) -> int:
         action="store_false",
         help="Desativa o rebase preventivo pré-merge"
     )
+    parser.add_argument(
+        "--skip-audit",
+        action="store_true",
+        help="Pula a auditoria global completa pós-merge e executa apenas testes focados de fatias"
+    )
 
     args = parser.parse_args(argv)
 
@@ -903,6 +930,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         dry_run=args.dry_run,
         max_workers=args.workers,
         barrier_sync=args.barrier_sync,
+        skip_audit=args.skip_audit,
     )
     return pipeline.run()
 

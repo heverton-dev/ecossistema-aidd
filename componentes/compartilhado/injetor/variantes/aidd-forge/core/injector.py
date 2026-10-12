@@ -125,10 +125,6 @@ class Injector:
             return result
 
         destinos = [canonical_dir]
-        if canonical_dir == ".agents/skills":
-            destinos.append(".agent/skills")
-        elif canonical_dir == ".agent/skills":
-            destinos.append(".agents/skills")
 
         for i, c_dir in enumerate(destinos):
             canonical_root = self.target_root / c_dir

@@ -73,7 +73,7 @@ def test_forge_init_provisions_the_entire_governance_tree(tmp_path: Path) -> Non
         assert (phase_dir / "mcp_config.json").exists()
 
     for skill in EXPECTED_SKILLS:
-        assert (target / ".agent" / "skills" / skill / "SKILL.md").exists()
+        assert (target / ".agents" / "skills" / skill / "SKILL.md").exists()
 
     for ide_dir in IDE_COMMAND_DIRS:
         assert (target / ide_dir / "forge.md").exists()
@@ -239,7 +239,7 @@ def test_forge_inject_creates_a_cybersecurity_skill_and_an_mcp_end_to_end(tmp_pa
 
     assert skill_exit == 0
     assert mcp_exit == 0
-    assert (target / ".agent" / "skills" / "seguranca-ciber" / "SKILL.md").exists()
+    assert (target / ".agents" / "skills" / "seguranca-ciber" / "SKILL.md").exists()
     assert (target / "aidd_forge" / "mcps" / "meu-mcp.py").exists()
 
     registry = json.loads((target / "aidd_forge" / "mcps" / "registry.json").read_text(encoding="utf-8"))

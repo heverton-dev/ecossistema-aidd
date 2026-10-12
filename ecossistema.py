@@ -320,7 +320,39 @@ def cmd_pure_motor(args):
     gen_dir = pasta_ferramenta("aidd-pure")
     pipeline_script = os.path.join(gen_dir, "scripts", "pipeline_completo.py")
     env = {"PYTHONPATH": gen_dir}
-    cmd = [sys.executable, pipeline_script] + args
+
+    args_lista = list(args)
+    ideia = None
+    if "--planner" in args_lista:
+        idx = args_lista.index("--planner")
+        planner_file = args_lista[idx + 1] if idx + 1 < len(args_lista) else None
+        args_lista = args_lista[:idx] + (args_lista[idx + 2:] if idx + 1 < len(args_lista) else [])
+        if planner_file and os.path.isfile(planner_file):
+            try:
+                with open(planner_file, "r", encoding="utf-8") as f:
+                    plano_data = json.load(f)
+                ideia = (
+                    plano_data.get("descricao")
+                    or (plano_data.get("intake", {}).get("descricao") if isinstance(plano_data.get("intake"), dict) else None)
+                    or plano_data.get("nome")
+                )
+            except Exception as e:
+                print(f"[PURE] Aviso: falha ao extrair ideia de {planner_file}: {e}")
+    if "--ideia" in args_lista:
+        idx_id = args_lista.index("--ideia")
+        if idx_id + 1 < len(args_lista):
+            ideia = args_lista[idx_id + 1]
+            args_lista = args_lista[:idx_id] + args_lista[idx_id + 2:]
+        else:
+            args_lista = args_lista[:idx_id]
+
+    tem_posicional = any(not a.startswith("-") for a in args_lista)
+    if not tem_posicional and ideia:
+        args_lista.insert(0, str(ideia))
+    elif not tem_posicional and "--help" not in args_lista and "-h" not in args_lista:
+        args_lista.insert(0, "Projeto Pure Gerado")
+
+    cmd = [sys.executable, pipeline_script] + args_lista
     return run_command(cmd, cwd=os.getcwd(), env=env)
 
 def cmd_master(args):
@@ -370,6 +402,8 @@ def cmd_ops(args):
     args_lista = list(args)
     if "--pack" in args_lista or "--compose" in args_lista:
         args_lista = ["plan" if a in ("--pack", "--compose") else a for a in args_lista]
+        if "--dir-projeto" not in args_lista:
+            args_lista.extend(["--dir-projeto", "."])
         if "--pasta" not in args_lista:
             args_lista.extend(["--pasta", "."])
     pipeline_script = os.path.join(ops_dir, "scripts", "pipeline_ops.py")
@@ -573,6 +607,7 @@ def cmd_dispatch(args):
     parser.add_argument("--workers", "-w", type=int, default=2, help="Número máximo de worktrees simultâneas")
     parser.add_argument("--barrier-sync", action="store_true", default=True, help="Executa rebase da branch base em cada worktree antes do merge (padrão: ativo)")
     parser.add_argument("--no-barrier-sync", dest="barrier_sync", action="store_false", help="Desativa o rebase preventivo pré-merge")
+    parser.add_argument("--skip-audit", action="store_true", help="Pula auditoria global pós-merge na convergência master")
 
     parsed, extra = parser.parse_known_args(args)
     caminho_manifesto = parsed.dispatch or parsed.planner
@@ -602,6 +637,8 @@ def cmd_dispatch(args):
         cmd.extend(["--workers", str(parsed.workers)])
     if not parsed.barrier_sync:
         cmd.append("--no-barrier-sync")
+    if parsed.skip_audit:
+        cmd.append("--skip-audit")
 
     return run_command(cmd, cwd=ROOT_DIR)
 

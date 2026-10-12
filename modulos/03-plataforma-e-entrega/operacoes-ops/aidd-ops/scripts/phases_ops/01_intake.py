@@ -81,36 +81,61 @@ def reconhecer_origem_monolito(dir_projeto: str) -> Result:
         monólito gerado por `aidd-master`.
     """
     plano_path = os.path.join(dir_projeto, "PLANO-EXECUCAO-ESTRUTURADO.json")
+    planner_path = os.path.join(dir_projeto, "PLANNER.json")
+    parent_planner = os.path.join(os.path.dirname(os.path.abspath(dir_projeto)), "PLANNER.json")
     compose_path = os.path.join(dir_projeto, "docker-compose.yml")
     dockerfile_path = os.path.join(dir_projeto, "Dockerfile")
-    ausentes = [
-        nome for nome, caminho in [
-            ("PLANO-EXECUCAO-ESTRUTURADO.json", plano_path),
-            ("docker-compose.yml", compose_path),
-            ("Dockerfile", dockerfile_path),
-        ] if not os.path.isfile(caminho)
-    ]
-    if ausentes:
-        return Result.fail(
-            f"Diretório '{dir_projeto}' não parece um monólito gerado por "
-            f"aidd-master (arquivo(s) ausente(s): {', '.join(ausentes)}).",
-            codigo="MONOLITO_INVALIDO",
-            detalhes={"dir_projeto": dir_projeto, "arquivos_ausentes": ausentes},
-        )
+    server_path = os.path.join(dir_projeto, "src", "server.py")
 
-    try:
-        with open(plano_path, "r", encoding="utf-8") as f:
-            plano_execucao = json.load(f)
-    except (OSError, json.JSONDecodeError) as exc:
-        return Result.fail(
-            f"Falha ao ler PLANO-EXECUCAO-ESTRUTURADO.json: {exc}",
-            codigo="MONOLITO_INVALIDO",
-            detalhes={"dir_projeto": dir_projeto},
-        )
+    eh_vsa_open = os.path.isfile(planner_path) or os.path.isfile(parent_planner) or (os.path.isfile(server_path) and os.path.isfile(compose_path))
 
-    nome_projeto = plano_execucao.get("projeto", {}).get("nome") or os.path.basename(
-        os.path.normpath(dir_projeto)
-    )
+    if eh_vsa_open:
+        # Se for VSA/Open e não tiver Dockerfile, provisiona Dockerfile padrão para compatibilidade com o pipeline ops
+        if not os.path.isfile(dockerfile_path):
+            try:
+                with open(dockerfile_path, "w", encoding="utf-8") as df:
+                    df.write("""FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt* ./
+RUN if [ -f requirements.txt ]; then pip install --no-cache-dir -r requirements.txt; fi
+COPY . .
+EXPOSE 3000
+CMD ["python", "src/server.py"]
+""")
+            except Exception:
+                pass
+    else:
+        ausentes = [
+            nome for nome, caminho in [
+                ("PLANO-EXECUCAO-ESTRUTURADO.json", plano_path),
+                ("docker-compose.yml", compose_path),
+                ("Dockerfile", dockerfile_path),
+            ] if not os.path.isfile(caminho)
+        ]
+        if ausentes:
+            return Result.fail(
+                f"Diretório '{dir_projeto}' não parece um monólito gerado por "
+                f"aidd-master (arquivo(s) ausente(s): {', '.join(ausentes)}).",
+                codigo="MONOLITO_INVALIDO",
+                detalhes={"dir_projeto": dir_projeto, "arquivos_ausentes": ausentes},
+            )
+
+    nome_projeto = os.path.basename(os.path.normpath(dir_projeto))
+    if os.path.isfile(plano_path):
+        try:
+            with open(plano_path, "r", encoding="utf-8") as f:
+                plano_execucao = json.load(f)
+            nome_projeto = plano_execucao.get("projeto", {}).get("nome") or nome_projeto
+        except (OSError, json.JSONDecodeError):
+            pass
+    elif os.path.isfile(planner_path) or os.path.isfile(parent_planner):
+        p_caminho = planner_path if os.path.isfile(planner_path) else parent_planner
+        try:
+            with open(p_caminho, "r", encoding="utf-8") as f:
+                pdata = json.load(f)
+            nome_projeto = pdata.get("projeto", {}).get("nome") or pdata.get("nome") or nome_projeto
+        except Exception:
+            pass
 
     return Result.ok({
         "nicho_slug": MONOLITO_SLUG,

@@ -45,7 +45,7 @@ PROFILES: Dict[str, Dict[str, Dict[str, Any]]] = {
             "dest": ".skills/{nome}/SKILL.md",
             "mirrors": [
                 ".claude/skills/{nome}/SKILL.md",
-                ".agent/skills/{nome}/SKILL.md",
+                ".agents/skills/{nome}/SKILL.md",
                 ".gemini/skills/{nome}/SKILL.md",
             ],
             "registry": "CAPABILITIES.json",
@@ -84,7 +84,7 @@ PROFILES: Dict[str, Dict[str, Dict[str, Any]]] = {
             "camada_alvo": "interface_orquestracao",
         },
         "hook": {
-            "dest": ".agent/hooks/{nome}/{nome}.json",
+            "dest": ".agents/hooks/{nome}/{nome}.json",
             "mirrors": [
                 ".claude/hooks/{nome}/{nome}.json",
                 ".gemini/hooks/{nome}/{nome}.json",
