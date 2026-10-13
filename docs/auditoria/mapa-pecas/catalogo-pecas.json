@@ -3,7 +3,7 @@
   "gerado_por": "scripts/catalogo_pecas.py",
   "totais": {
     "ferramentas": 8,
-    "comandos_cli": 75,
+    "comandos_cli": 76,
     "skills": 45,
     "leis": 14,
     "lente_15d": 15,
@@ -199,6 +199,7 @@
       "chamada": "python ecossistema.py planner",
       "entrada_cli": "modulos/01-governanca-e-qualidade/core/aidd-planner/src/cli.py",
       "comandos": [
+        "ambiente",
         "audit",
         "export",
         "export-dispatch",
@@ -214,7 +215,7 @@
         "modulos/01-governanca-e-qualidade/core/aidd-planner/gates/G_PLANNER_SINE_QUA_NON.py"
       ],
       "mcps_proprios": [],
-      "arquivos_py": 20
+      "arquivos_py": 22
     },
     {
       "id": "aidd-pure",
@@ -3026,6 +3027,7 @@
       "chamado_por": [
         "guardas",
         "painel",
+        "scripts",
         "testes"
       ]
     },
@@ -3348,9 +3350,9 @@
           "hook": ".claude/hooks/{nome}",
           "sub-agent": ".claude/agents/{nome}"
         },
-        "skills_em_disco": 60,
+        "skills_em_disco": 59,
         "nossas_faltando": [],
-        "terceiros_em_disco": 15,
+        "terceiros_em_disco": 14,
         "config_mcp": ".mcp.json"
       },
       {
@@ -3369,9 +3371,9 @@
           "hook": ".agents/hooks/{nome}",
           "sub-agent": ".agents/agents/{nome}"
         },
-        "skills_em_disco": 60,
+        "skills_em_disco": 59,
         "nossas_faltando": [],
-        "terceiros_em_disco": 15,
+        "terceiros_em_disco": 14,
         "config_mcp": ".agents/mcp_config.json"
       },
       {
@@ -5686,6 +5688,14 @@
             "<var>",
             "--output",
             "<var>"
+          ],
+          [
+            "planner",
+            "ambiente",
+            "--pasta",
+            "<var>",
+            "--mobbin",
+            "<var>"
           ]
         ],
         "chamadas_por_fluxo": {},
@@ -5848,6 +5858,12 @@
     {
       "etapa": "etapa_02_planner",
       "chamada": "ecossistema.py planner export-dispatch <var> --output <var>",
+      "encaixa": true,
+      "problemas": []
+    },
+    {
+      "etapa": "etapa_02_planner",
+      "chamada": "ecossistema.py planner ambiente --pasta <var> --mobbin <var>",
       "encaixa": true,
       "problemas": []
     },
@@ -6390,7 +6406,7 @@
             "aidd-planner"
           ],
           "guardas": 15,
-          "arquivos_py": 62
+          "arquivos_py": 64
         },
         {
           "id": "gates",

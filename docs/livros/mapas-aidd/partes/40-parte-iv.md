@@ -8,7 +8,7 @@ Onde a fábrica é consertada: os planos, os ciclos de auditoria e a lente que o
 #ficha(
   ("Mapa", "mapa-11-oficina.html"),
   ("Para que serve", "todos os planos e ciclos de auditoria, com as fases cumpridas"),
-  ("Achados em aberto", "26"),
+  ("Achados em aberto", "30"),
 )
 ```
 
@@ -24,7 +24,7 @@ Onde mora: `docs/planos/` e `docs/auditoria/`. Quem confere: o `scripts/atualiza
 | :-------------------------------------- | :-------------------------------------------- |
 | planos | 0 |
 | em execução | 0 |
-| ciclos de auditoria | 56 |
+| ciclos de auditoria | 58 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_oficina`), os mesmos do mapa `mapa-11-oficina.html`.
 
@@ -35,6 +35,7 @@ Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `c
 - **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-dispatch-runner/ciclo-01 (`CAT-ciclo-aidd-dispatch-runner-ciclo-01`).
 - **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-enterprise-runner/ciclo-01 (`CAT-ciclo-aidd-enterprise-runner-ciclo-01`).
 - **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-forge-runner/ciclo-01 (`CAT-ciclo-aidd-forge-runner-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-freedom/ciclo-03 (`CAT-ciclo-aidd-freedom-ciclo-03`).
 - **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-freedom-runner/ciclo-01 (`CAT-ciclo-aidd-freedom-runner-ciclo-01`).
 - **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-livro-texto/ciclo-01 (`CAT-ciclo-aidd-livro-texto-ciclo-01`).
 - **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-master/ciclo-01 (`CAT-ciclo-aidd-master-ciclo-01`).
@@ -51,8 +52,11 @@ Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `c
 - **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-skills/ciclo-02 (`CAT-ciclo-aidd-skills-ciclo-02`).
 - **Baixa** · Ciclo de auditoria sem todos os documentos: calibracao-pipeline/ciclo-01 (`CAT-ciclo-calibracao-pipeline-ciclo-01`).
 - **Baixa** · Ciclo de auditoria sem todos os documentos: code-review-graph/ciclo-01 (`CAT-ciclo-code-review-graph-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: e2e-pure/ciclo-01 (`CAT-ciclo-e2e-pure-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: e2e-pure/ciclo-02 (`CAT-ciclo-e2e-pure-ciclo-02`).
 - **Baixa** · Ciclo de auditoria sem todos os documentos: fluxo-01-runner/ciclo-01 (`CAT-ciclo-fluxo-01-runner-ciclo-01`).
 - **Baixa** · Ciclo de auditoria sem todos os documentos: fluxo-02-runner/ciclo-01 (`CAT-ciclo-fluxo-02-runner-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: fluxo-02-runner/ciclo-02 (`CAT-ciclo-fluxo-02-runner-ciclo-02`).
 - **Baixa** · Ciclo de auditoria sem todos os documentos: fluxo-03-runner/ciclo-01 (`CAT-ciclo-fluxo-03-runner-ciclo-01`).
 - **Baixa** · Ciclo de auditoria sem todos os documentos: fronteiras-ferramentas/ciclo-01 (`CAT-ciclo-fronteiras-ferramentas-ciclo-01`).
 - **Baixa** · Ciclo de auditoria sem todos os documentos: quadro-kanban-pipelines/ciclo-01 (`CAT-ciclo-quadro-kanban-pipelines-ciclo-01`).
