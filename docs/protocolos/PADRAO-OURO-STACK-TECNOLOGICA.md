@@ -62,25 +62,25 @@ nenhum fluxo. Ele só é aceitável como:
 
 - fallback interno enquanto uma camada de frontend real não foi gerada, ou
 - resultado final **apenas se o usuário pedir expressamente** um frontend
-  simples/embutido em vez de Next.js.
+  simples/embutido em vez de TanStack Router.
 
 ## Achado real (17/09/2026 — validação E2E do Fluxo 01)
 
 Hoje, `aidd-pure` (Fase 5/6) e `aidd-master`
 (`provision_project.py`, `compose_suite.py`, `add_module.py`) geram o
 Super-App em Python como frontend **padrão** de todo projeto novo, e
-`export-frontend`/`nextjs_exporter.py` existem mas são um passo **manual
+`export-frontend`/`tanstack_exporter.py` existem mas são um passo **manual
 separado**, nunca disparado automaticamente por `init`/`add-module`/
 `compose`. Isso viola esta lei. Pendência registrada para correção nos
 pipelines geradores (fora do escopo da sessão que documentou esta regra —
 ver `docs/teste-end-to-end/17-09-2026_relatorio-testes-triade-fluxos-1-2-3.md`).
 
-## Convenção Canônica de Nomenclatura Frontend (Next.js)
+## Convenção Canônica de Nomenclatura Frontend (TanStack Router)
 
-Para facilitar a identificação determinística por agentes e ferramentas de auditoria, os arquivos da camada frontend Next.js devem adotar nomenclatura em `kebab-case` e sufixos padronizados por responsabilidade:
+Para facilitar a identificação determinística por agentes e ferramentas de auditoria, os arquivos da camada frontend TanStack Router devem adotar nomenclatura em `kebab-case` e sufixos padronizados por responsabilidade:
 
 - Componente de UI (React): `.component.tsx` (ex.: `metric-card.component.tsx`)
-- Página / Rota Next.js: `.page.tsx` ou padrão App Router `page.tsx`
+- Página / Rota TanStack Router: `.page.tsx` ou padrão App Router `page.tsx`
 - Contexto de Estado React: `.context.tsx` (ex.: `auth.context.tsx`)
 - Custom Hook: `.hook.ts` (ex.: `use-produtos.hook.ts`)
 - Schema de Validação (Zod): `.schema.ts` (ex.: `produto-form.schema.ts`)

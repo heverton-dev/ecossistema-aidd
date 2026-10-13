@@ -247,33 +247,33 @@ def test_servidor_gerado_sobe_e_responde(suite_composta):
             processo.kill()
 
 
-def test_paleta_dos_studios_nativos_bate_com_a_do_frontend_nextjs(tmp_path):
+def test_paleta_dos_studios_nativos_bate_com_a_do_frontend_tanstack(tmp_path):
     """Achado real (18/09/2026): sem DESIGN-SYSTEM.json, o fallback por hash
     usava textos de identidade diferentes no server.py (só suite_name) e no
-    NextJSExporter (suite_name + módulos) — o MESMO projeto acabava com uma
+    TanStackRouterExporter (suite_name + módulos) — o MESMO projeto acabava com uma
     cor no frontend e outra cor nos Studios nativos, quebrando o objetivo
     inteiro de "paleta única"."""
     from compose_suite import compose_suite
-    from nextjs_exporter import NextJSExporter
+    from tanstack_exporter import TanStackRouterExporter
 
     target = tmp_path / "suite-consistencia"
     compose_suite(str(target), "Suite Consistencia Cores", ["produtos"])
 
-    resultado_frontend = NextJSExporter().export_project(
+    resultado_frontend = TanStackRouterExporter().export_project(
         str(target), str(target / "frontend"), suite_name="Suite Consistencia Cores"
     )
     cor_frontend = resultado_frontend["paleta"]["primaria"]
 
     server_code = (target / "src" / "server.py").read_text(encoding="utf-8")
     assert f'primary="{cor_frontend}"' in server_code, (
-        f"server.py usa uma cor primaria diferente do frontend Next.js ({cor_frontend})"
+        f"server.py usa uma cor primaria diferente do frontend TanStack Router ({cor_frontend})"
     )
 
 
 def test_docs_webhooks_mcp_usam_a_paleta_dinamica_do_projeto(tmp_path):
     """Achado real do usuário (18/09/2026): os Estúdios nativos (/docs,
     /webhooks, /mcp) ficavam com cores fixas (azul/violeta) hardcoded,
-    destoando da paleta única que o resto do app (frontend Next.js) já
+    destoando da paleta única que o resto do app (frontend TanStack Router) já
     usava — quebrava o "padrão de entrega ouro" pedido. Teste de fogo real:
     sobe o servidor gerado de verdade e confere que as 3 páginas nativas
     devolvem a MESMA cor primária do DESIGN-SYSTEM.json do projeto."""

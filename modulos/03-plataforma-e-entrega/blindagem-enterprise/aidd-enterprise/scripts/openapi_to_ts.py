@@ -2,14 +2,14 @@
 # -*- coding: utf-8 -*-
 """
 =============================================================================
-AIDD v5.0-Release — Exportador de Front-End Next.js/TypeScript
+AIDD v5.0-Release — Exportador de Front-End TanStack/TypeScript
 =============================================================================
 Introspecciona os módulos gerados (mesmo RouteRegistry que alimenta /openapi.json,
 sem exigir que o servidor esteja rodando) e gera:
 1. frontend/types.ts — interfaces TypeScript por módulo, inferidas dos exemplos
    de requestBody já usados no Swagger Studio.
-2. frontend/ — projeto Next.js 14 (App Router) mínimo, com uma página por
-   módulo consumindo a API tipada via fetch.
+2. frontend/ — projeto TanStack Router + Vite (SPA), gerado pelo TanStackRouterExporter,
+   com uma página por módulo consumindo a API via fetch.
 """
 
 import os
@@ -104,196 +104,29 @@ def generate_typescript_types(spec: dict, modulos: list) -> str:
     return "\n".join(lines)
 
 
-_PACKAGE_JSON = """{
-  "name": "aidd-frontend",
-  "version": "5.0.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start"
-  },
-  "dependencies": {
-    "next": "^14.2.5",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
-  },
-  "devDependencies": {
-    "typescript": "^5.4.5",
-    "@types/node": "^20.11.0",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
-    "tailwindcss": "^3.4.4",
-    "postcss": "^8.4.38",
-    "autoprefixer": "^10.4.19"
-  }
-}
-"""
-
-_TSCONFIG_JSON = """{
-  "compilerOptions": {
-    "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true,
-    "plugins": [{ "name": "next" }],
-    "paths": { "@/*": ["./*"] }
-  },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
-}
-"""
-
-_NEXT_CONFIG_JS = """/** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
-};
-module.exports = nextConfig;
-"""
-
-_TAILWIND_CONFIG_TS = """import type { Config } from "tailwindcss";
-
-const config: Config = {
-  content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./lib/**/*.{ts,tsx}"],
-  theme: { extend: {} },
-  plugins: [],
-};
-
-export default config;
-"""
-
-_POSTCSS_CONFIG_JS = """module.exports = {
-  plugins: { tailwindcss: {}, autoprefixer: {} },
-};
-"""
-
-_GLOBALS_CSS = """@tailwind base;
-@tailwind components;
-@tailwind utilities;
-"""
-
-_API_LIB_TS = """const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
-
-export async function apiGet<T>(path: string): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, { cache: "no-store" });
-  if (!res.ok) {
-    throw new Error(`GET ${path} falhou: ${res.status}`);
-  }
-  return res.json() as Promise<T>;
-}
-
-export async function apiPost<T>(path: string, body: unknown): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) {
-    throw new Error(`POST ${path} falhou: ${res.status}`);
-  }
-  return res.json() as Promise<T>;
-}
-"""
+def _carregar_exportador():
+    """Importa o TanStackRouterExporter (copiado em scripts/ no projeto gerado, ou do núcleo compartilhado)."""
+    try:
+        from tanstack_exporter import TanStackRouterExporter
+        return TanStackRouterExporter
+    except ImportError:
+        aqui = os.path.dirname(os.path.abspath(__file__))
+        candidatos = [os.path.join(aqui, "..", "src", "core")]
+        atual = aqui
+        while os.path.dirname(atual) != atual:
+            if os.path.isfile(os.path.join(atual, "ecossistema.py")):
+                candidatos.append(os.path.join(atual, "componentes", "compartilhado", "src-core"))
+                break
+            atual = os.path.dirname(atual)
+        for c in candidatos:
+            if os.path.isdir(c) and c not in sys.path:
+                sys.path.insert(0, c)
+        from tanstack_exporter import TanStackRouterExporter
+        return TanStackRouterExporter
 
 
-def _generate_layout_tsx(suite_name: str) -> str:
-    return f"""import "./globals.css";
-import type {{ Metadata }} from "next";
-
-export const metadata: Metadata = {{
-  title: "{suite_name}",
-  description: "Frontend gerado automaticamente pelo AIDD Master Enterprise",
-}};
-
-export default function RootLayout({{ children }}: {{ children: React.ReactNode }}) {{
-  return (
-    <html lang="pt-BR">
-      <body>{{children}}</body>
-    </html>
-  );
-}}
-"""
-
-
-def _generate_home_page_tsx(suite_name: str, modulos: list) -> str:
-    modulos_ts_array = ", ".join(f'"{m}"' for m in modulos)
-    return f"""import Link from "next/link";
-
-const MODULOS = [{modulos_ts_array}];
-
-export default function Home() {{
-  return (
-    <main className="min-h-screen bg-slate-950 text-slate-100 p-8">
-      <h1 className="text-2xl font-bold mb-6">{suite_name}</h1>
-      <ul className="space-y-2">
-        {{MODULOS.map((m) => (
-          <li key={{m}}>
-            <Link href={{`/${{m}}`}} className="text-sky-400 hover:underline">
-              {{m}}
-            </Link>
-          </li>
-        ))}}
-      </ul>
-    </main>
-  );
-}}
-"""
-
-
-def _generate_module_page_tsx(slug: str, pascal: str) -> str:
-    return f"""import {{ apiGet }} from "../../lib/api";
-import type {{ {pascal} }} from "../../types";
-
-export const dynamic = "force-dynamic";
-
-export default async function {pascal}Page() {{
-  let itens: {pascal}[] = [];
-  let erro: string | null = null;
-  try {{
-    itens = await apiGet<{pascal}[]>("/api/{slug}");
-  }} catch (e) {{
-    erro = e instanceof Error ? e.message : "Erro desconhecido";
-  }}
-
-  return (
-    <main className="min-h-screen bg-slate-950 text-slate-100 p-8">
-      <h1 className="text-xl font-bold mb-4">{pascal}</h1>
-      {{erro && <p className="text-rose-400">{{erro}}</p>}}
-      <table className="w-full text-sm text-left">
-        <thead>
-          <tr className="border-b border-slate-800">
-            <th className="p-2">ID</th>
-            <th className="p-2">Titulo</th>
-            <th className="p-2">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {{itens.map((item: any) => (
-            <tr key={{item.id}} className="border-b border-slate-900">
-              <td className="p-2">{{item.id}}</td>
-              <td className="p-2">{{item.titulo}}</td>
-              <td className="p-2">{{item.status}}</td>
-            </tr>
-          ))}}
-        </tbody>
-      </table>
-    </main>
-  );
-}}
-"""
-
-
-def export_frontend(target_dir: str, suite_name: str = "AIDD Suite", stack: str = "nextjs"):
-    if stack != "nextjs":
+def export_frontend(target_dir: str, suite_name: str = "AIDD Suite", stack: str = "tanstack"):
+    if stack != "tanstack":
         raise ValueError(f"Stack de frontend não suportado: {stack}")
 
     target_dir = os.path.abspath(target_dir)
@@ -303,48 +136,23 @@ def export_frontend(target_dir: str, suite_name: str = "AIDD Suite", stack: str 
         return
 
     print("=" * 80)
-    print(f"🚀 [AIDD v5.0] Exportando Front-End Next.js/TypeScript para: {suite_name}")
+    print(f"🚀 [AIDD v5.0] Exportando Front-End TanStack/TypeScript para: {suite_name}")
     print(f"📦 Módulos: {', '.join(modulos)}")
     print("=" * 80)
 
     spec = build_openapi_spec(target_dir, suite_name)
 
     frontend_dir = os.path.join(target_dir, "frontend")
-    app_dir = os.path.join(frontend_dir, "app")
-    lib_dir = os.path.join(frontend_dir, "lib")
-    os.makedirs(app_dir, exist_ok=True)
-    os.makedirs(lib_dir, exist_ok=True)
+    resultado = _carregar_exportador()().export_project(target_dir, frontend_dir, suite_name=suite_name)
+    print(f"  [+] frontend/ ({len(resultado['files_created'])} arquivos, módulos: {', '.join(resultado['modules'])})")
 
-    def _write(rel_path, content):
-        full_path = os.path.join(frontend_dir, rel_path)
-        os.makedirs(os.path.dirname(full_path), exist_ok=True)
-        with open(full_path, "w", encoding="utf-8") as f:
-            f.write(content)
-        print(f"  [+] frontend/{rel_path}")
-
-    _write("package.json", _PACKAGE_JSON)
-    _write("tsconfig.json", _TSCONFIG_JSON)
-    _write("next.config.js", _NEXT_CONFIG_JS)
-    _write("tailwind.config.ts", _TAILWIND_CONFIG_TS)
-    _write("postcss.config.js", _POSTCSS_CONFIG_JS)
-    _write("types.ts", generate_typescript_types(spec, modulos))
-    _write(os.path.join("lib", "api.ts"), _API_LIB_TS)
-    _write(os.path.join("app", "globals.css"), _GLOBALS_CSS)
-    _write(os.path.join("app", "layout.tsx"), _generate_layout_tsx(suite_name))
-    _write(os.path.join("app", "page.tsx"), _generate_home_page_tsx(suite_name, modulos))
-
-    for slug in modulos:
-        pascal = _pascal_case(slug)
-        _write(os.path.join("app", slug, "page.tsx"), _generate_module_page_tsx(slug, pascal))
+    tipos_path = os.path.join(frontend_dir, "src", "types.ts")
+    os.makedirs(os.path.dirname(tipos_path), exist_ok=True)
+    with open(tipos_path, "w", encoding="utf-8") as f:
+        f.write(generate_typescript_types(spec, modulos))
+    print("  [+] frontend/src/types.ts")
 
     print("\n" + "=" * 80)
-    print("🏆 [SUCESSO]: Front-End Next.js/TypeScript exportado em frontend/")
+    print("🏆 [SUCESSO]: Front-End TanStack/TypeScript exportado em frontend/")
     print(f"   ➔ cd {frontend_dir} && npm install && npm run build")
     print("=" * 80)
-
-
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Uso: python openapi_to_ts.py <target_dir> [suite_name]")
-        sys.exit(1)
-    export_frontend(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else "AIDD Suite")

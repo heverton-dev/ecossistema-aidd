@@ -9,11 +9,11 @@
     "lente_15d": 15,
     "oficina": 0,
     "scripts": 59,
-    "moldes_entrega": 21,
+    "moldes_entrega": 20,
     "harnesses": 7,
     "skills_nossas": 45,
     "skills_terceiros_copiadas": 0,
-    "skills_terceiros_registradas": 15,
+    "skills_terceiros_registradas": 14,
     "comandos_slash": 20,
     "mcps_registrados": 11,
     "mcps_internos": 5,
@@ -160,7 +160,7 @@
         "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/gates/G_FACTORY_MVP.py"
       ],
       "mcps_proprios": [],
-      "arquivos_py": 41
+      "arquivos_py": 40
     },
     {
       "id": "aidd-ops",
@@ -328,7 +328,7 @@
     },
     {
       "id": "aidd-frontend-forms",
-      "descricao": "Use when creating, reviewing, or refactoring typed frontend forms in Next.js using Zod validation schemas and React Hook Form.",
+      "descricao": "Use when creating, reviewing, or refactoring typed frontend forms in TanStack Router (React) apps using Zod validation schemas and React Hook Form.",
       "linhas": 128,
       "terceiro": false
     },
@@ -515,7 +515,6 @@
     "cloudflare-one-migrations",
     "durable-objects",
     "impeccable",
-    "nextjs-on-cloudflare",
     "sandbox-migrate-to-next",
     "sandbox-next",
     "sandbox-stable",
@@ -3226,13 +3225,6 @@
     },
     {
       "ferramenta": "aidd-open",
-      "molde": "frontend",
-      "caminho": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/templates/frontend",
-      "arquivos": 4,
-      "dona_canonica": "aidd-open"
-    },
-    {
-      "ferramenta": "aidd-open",
       "molde": "gateway",
       "caminho": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/templates/gateway",
       "arquivos": 3,
@@ -3348,9 +3340,9 @@
           "hook": ".claude/hooks/{nome}",
           "sub-agent": ".claude/agents/{nome}"
         },
-        "skills_em_disco": 60,
+        "skills_em_disco": 59,
         "nossas_faltando": [],
-        "terceiros_em_disco": 15,
+        "terceiros_em_disco": 14,
         "config_mcp": ".mcp.json"
       },
       {
@@ -3369,9 +3361,9 @@
           "hook": ".agents/hooks/{nome}",
           "sub-agent": ".agents/agents/{nome}"
         },
-        "skills_em_disco": 60,
+        "skills_em_disco": 59,
         "nossas_faltando": [],
-        "terceiros_em_disco": 15,
+        "terceiros_em_disco": 14,
         "config_mcp": ".agents/mcp_config.json"
       },
       {
@@ -5084,7 +5076,7 @@
     },
     {
       "id": "G_STACK_PADRAO_OURO",
-      "descricao": "Portão determinístico do Padrão-Ouro de Stack Tecnológica (Lei Canônica #11). Audita se os projetos gerados ou entregáveis dos fluxos da Tríade aderem à stack mandatória: Frontend: Next.js + React +…",
+      "descricao": "Portão determinístico do Padrão-Ouro de Stack Tecnológica (Lei Canônica #11). Audita se os projetos gerados ou entregáveis dos fluxos da Tríade aderem à stack mandatória: Frontend: TanStack Router +…",
       "copias": [
         {
           "caminho": "componentes/compartilhado/gates/G_STACK_PADRAO_OURO.py",
@@ -6422,7 +6414,7 @@
             "aidd-open"
           ],
           "guardas": 8,
-          "arquivos_py": 44
+          "arquivos_py": 43
         },
         {
           "id": "fluxo-03-freedom",

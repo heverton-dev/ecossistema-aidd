@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Use Case: export-frontend — exportação de front-end Next.js/TypeScript tipado."""
+"""Use Case: export-frontend — exportação de front-end TanStack Router/TypeScript tipado."""
 
 import json
 import os
@@ -20,4 +20,4 @@ def cmd_export_frontend(args):
         from openapi_to_ts import export_frontend
     except ImportError:
         from scripts.openapi_to_ts import export_frontend
-    export_frontend(target_dir, suite_name, stack=getattr(args, "stack", "nextjs"))
+    export_frontend(target_dir, suite_name, stack=getattr(args, "stack", "tanstack"))

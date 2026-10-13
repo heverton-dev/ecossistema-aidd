@@ -5,7 +5,7 @@ AIDD-Open — Pipeline Orchestrator (CLI Click).
 Orquestra TODAS as 9 fases do factory:
   Fase 1: Analisador (le PLANO-INFRAESTRUTURA -> factory_analysis.json)
   Fase 2: Gateway (LLM -> src/gateway/*.py)
-  Fase 3: Frontend (LLM -> frontend/ Next.js)
+  Fase 3: Frontend (TanStack Router + Vite -> frontend/)
   Fase 4: Compose Unificado (merge templates -> docker-compose.yml)
   Fase 5: Init DB (bancos_logicos -> init-multiple-databases.sh)
   Fase 6: Env (.env per service)

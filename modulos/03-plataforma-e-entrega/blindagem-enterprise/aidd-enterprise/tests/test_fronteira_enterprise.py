@@ -164,7 +164,7 @@ CASOS_DELEGACAO = [
      lambda d: ["add-module", "pedidos", "--descricao", "Pedidos", "--dir", d]),
     ("bench", "cmd_bench", lambda d: _ns(n=7, dir=d), lambda d: ["bench", "-n", "7", "--dir", d]),
     ("export-frontend", "cmd_export_frontend",
-     lambda d: _ns(stack="nextjs", dir=d), lambda d: ["export-frontend", "--stack", "nextjs", "--dir", d]),
+     lambda d: _ns(stack="tanstack", dir=d), lambda d: ["export-frontend", "--stack", "tanstack", "--dir", d]),
     ("scaffold-infra", "cmd_scaffold_infra", lambda d: _ns(dir=d), lambda d: ["scaffold-infra", "--dir", d]),
     ("deploy", "cmd_deploy", lambda d: _ns(alvo="vps"), lambda d: ["deploy", "vps"]),
 ]

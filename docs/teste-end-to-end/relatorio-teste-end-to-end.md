@@ -1769,3 +1769,30 @@
 - **Status:** **RESOLVIDO & 100% CONFORME**.
 
 
+
+## 16. Fluxo Canônico PURE — Abolição do Next.js e geração em TanStack Router + Vite (`aidd-master`, `aidd-enterprise`, `aidd-open`, `aidd-planner`, `aidd-pure`, `aidd-ops`)
+
+- **Data da Auditoria e Validação:** 13/10/2026
+- **Ambiente:** clone `C:\Users\trcnologia\Desktop\TESTE-ecossistema-aidd_04102026\FLUXO-PURE` e motor original `C:\Users\trcnologia\Desktop\ecossistema-aidd` (branch `fix/pure-etapa-06-nextjs-para-tanstack`)
+- **Ferramentas Tocadas:**
+  `aidd-master` (`compose_suite.py`, `add_module.py`, `provision_project.py`, `openapi_to_ts.py`, `aidd.py`, `export_frontend.py`, testes), `aidd-enterprise` (mesmos scripts e testes), `aidd-open` (`vsa_generator.py`, fase 09, `G_FACTORY_INTEGRATION.py`, remoção do `frontend_generator.py` e dos templates de Next), `aidd-planner` (`design_system.py`), `aidd-pure` (prompt da fase 08), `aidd-ops` (comentário do dimensionamento). Núcleo compartilhado: novo `tanstack_exporter.py` (substitui as 3 cópias do `nextjs_exporter.py`), `G_CONTRACTS.py`, `G_STACK_PADRAO_OURO.py`, schemas de handoff, moldes `docker-compose.yml` e `nginx.conf`.
+- **Achados do teste real:**
+  1. O Next.js estava abolido só no papel: o gerador usado por `compose_suite`, `add_module`, `provision_project` e `export-frontend` ainda era o `NextJSExporter` (3 cópias idênticas), havia um segundo gerador em `openapi_to_ts.py` e um terceiro, sem chamador, no `aidd-open`.
+  2. O "TanStack" existente só copiava um template de 10 arquivos, sem `vite.config`, `index.html`, `tsconfig` nem rotas; o `provision_project` copiava um template estático e o `add_module` nunca regenerava páginas.
+  3. O prompt da fase 08 do `aidd-pure` mandava o LLM gerar em Next.js.
+  4. O healthcheck do container do frontend (`wget http://localhost:3000`) resolvia `localhost` para IPv6 e o nginx só escutava IPv4: container `unhealthy`.
+- **O que executou:**
+  1. Novo `TanStackRouterExporter` (rotas em código, SPA estática servida por nginx, offline-first, `VITE_API_URL`) com 14 testes, incluindo `npm install`, `tsc --noEmit` e `vite build` reais.
+  2. Troca dos chamadores em master, enterprise e `aidd-open`; `frontend_stack` inválido é rejeitado com erro explícito; `export-frontend` preserva os tipos TypeScript do OpenAPI em `src/types.ts`.
+  3. `G_CONTRACTS`, fase 09 e `G_FACTORY_INTEGRATION` reprovam a dependência `next` e exigem o frontend TanStack completo (`vite.config.ts`, `tsconfig.json`, `index.html`, `src/main.tsx`, `src/router.tsx`).
+  4. Remoção de todo rastro vivo de Next.js, com o guarda `tests/test_sem_nextjs_vivo.py` (225 ocorrências antes, 0 depois), schemas de handoff só com `tanstack_router`, prompt da fase 08 em TanStack, docs vivos e skills atualizados.
+  5. Prova com Docker: build da imagem do frontend gerado pelo `compose_suite` (exit 0); container `healthy` após corrigir o healthcheck para `127.0.0.1`; `/`, `/pedidos`, `/clientes` e rota inexistente respondem 200 (fallback de SPA); ativo estático com cache de 1 ano.
+- **Resultados Medidos (13/10/2026, no clone):**
+  - Suíte completa do `aidd-master`: **457 passed, 3 skipped** (exit 0).
+  - Suíte completa do `aidd-enterprise`: **389 passed, 3 skipped** (exit 0).
+  - `aidd-open`: **28 passed** (exit 0).
+  - Testes da raiz tocados (guarda, forge, skill de forms, orquestrador, livro): **35 passed**; gates do `fluxo-01-pure`: **24 passed**.
+  - `G_DRIFT_NUCLEO_COMPARTILHADO`: **PASS (Exit 0)**; `dependencia verify`: **exit 0** (65 dependências).
+  - Não verificado: compose completo (backend Python + nginx de borda + frontend) e `nginx -t` isolado.
+- **Pendências registradas:** tickets abertos nos relatórios `AUDITORIA-FLUXO-PURE/ETAPA_05` a `ETAPA_07` (planner sem entrevista e com Mobbin subaproveitado, defeitos do extrator de tokens, isolamento de teste do master, baseline de RAM do dimensionamento, `components verify` no clone, nomes de teste repetidos).
+- **Status:** **RESOLVIDO NO CLONE; AUDITORIA COMPLETA NO MOTOR ORIGINAL EM ANDAMENTO.**

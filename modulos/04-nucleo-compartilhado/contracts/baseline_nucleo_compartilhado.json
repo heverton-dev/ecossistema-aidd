@@ -91,10 +91,6 @@
         "esperado_identico": true,
         "motivo": null
       },
-      "nextjs_exporter.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
       "openapi.py": {
         "esperado_identico": true,
         "motivo": null
@@ -124,6 +120,10 @@
         "motivo": null
       },
       "subagent_engine.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
+      "tanstack_exporter.py": {
         "esperado_identico": true,
         "motivo": null
       },
@@ -162,8 +162,8 @@
         "motivo": "aidd-master busca fallback de moldes em src/core e templates/v2 específico para sua estrutura monólito modular; aidd-enterprise usa apenas PECA_POR_MOLDE do almoxarifado."
       },
       "openapi_to_ts.py": {
-        "esperado_identico": false,
-        "motivo": "String de descricao do frontend gerado diverge por nome de produto ('AIDD Master' vs 'AIDD Master Enterprise')."
+        "esperado_identico": true,
+        "motivo": null
       },
       "provision_project.py": {
         "esperado_identico": false,

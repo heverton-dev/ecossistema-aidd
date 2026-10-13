@@ -23,7 +23,6 @@
         "materializador.py",
         "mcp_server.py",
         "metrics.py",
-        "nextjs_exporter.py",
         "openapi.py",
         "opentelemetry.py",
         "outbox_worker.py",
@@ -31,6 +30,7 @@
         "security.py",
         "sincronizador_harness.py",
         "subagent_engine.py",
+        "tanstack_exporter.py",
         "token_revocation.py",
         "transaction_log.py",
         "webhooks.py"

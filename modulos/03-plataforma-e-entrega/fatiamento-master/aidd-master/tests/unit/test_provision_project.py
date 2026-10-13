@@ -78,7 +78,8 @@ def test_provision_gera_frontend_tanstack_por_padrao(tmp_path):
     projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
 
     assert (projeto_dir / "frontend" / "package.json").is_file()
-    assert (projeto_dir / "frontend" / "src" / "App.tsx").is_file()
+    assert (projeto_dir / "frontend" / "src" / "router.tsx").is_file()
+    assert (projeto_dir / "frontend" / "src" / "routes" / "principal.tsx").is_file()
     assert not (projeto_dir / "src" / "static" / "index.html").exists()
 
     pkg = json.loads((projeto_dir / "frontend" / "package.json").read_text(encoding="utf-8"))
@@ -86,24 +87,18 @@ def test_provision_gera_frontend_tanstack_por_padrao(tmp_path):
     assert "next" not in pkg.get("dependencies", {})
 
 
-def test_provision_gera_frontend_nextjs_quando_pedido_explicitamente(tmp_path):
-    """Lei Inviolável #11: Next.js só é gerado se pedido explicitamente
-    para fins de compatibilidade legada."""
+def test_provision_rejeita_frontend_stack_nextjs_abolida(tmp_path):
+    """Next.js foi abolido: pedir `nextjs` explicitamente deve falhar alto, nunca cair
+    em silêncio em outra stack."""
     from provision_project import provision
 
-    provision("Projeto Teste Nextjs Explicito", base_dir=str(tmp_path), frontend_stack="nextjs")
-    projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
-
-    assert (projeto_dir / "frontend" / "package.json").is_file()
-    assert (projeto_dir / "frontend" / "app" / "layout.tsx").is_file()
-    assert not (projeto_dir / "src" / "static" / "index.html").exists()
-
-    pkg = json.loads((projeto_dir / "frontend" / "package.json").read_text(encoding="utf-8"))
-    assert pkg["dependencies"]["next"] == "^14.2.5"
+    with pytest.raises(ValueError, match="frontend_stack"):
+        provision("Projeto Teste Nextjs Abolido", base_dir=str(tmp_path), frontend_stack="nextjs")
+    assert not list(tmp_path.iterdir()), "nada deve ser criado quando a stack é inválida"
 
 
 def test_provision_gera_index_html_python_quando_pedido_explicitamente(tmp_path):
-    """Lei #11: só muda da stack default (Next.js) se pedido explicitamente
+    """Lei #11: só muda da stack default (TanStack Router) se pedido explicitamente
     (frontend_stack="python-html") — silêncio nunca é licença para gerar
     outra coisa, mas um pedido explícito continua honrado."""
     from provision_project import provision
@@ -240,7 +235,7 @@ def test_provision_registra_modulo_principal_no_manifesto(tmp_path):
     "principal" ficava so como pasta fisica em disco, nunca contabilizado
     em `modulos`. Quando outro modulo era adicionado depois via
     `add_module`, o server.py era regenerado usando so `modulos` do
-    manifesto (sem "principal") -> a pagina Next.js de "principal" (que o
+    manifesto (sem "principal") -> a pagina TanStack Router de "principal" (que o
     frontend gera varrendo pastas em disco, nao o manifesto) chamava uma
     rota que o backend nunca registrou -> HTTP 404 real, visto pelo usuario
     rodando a aplicacao de verdade."""
@@ -277,23 +272,25 @@ def test_add_module_nao_orfa_modulo_anterior_no_server_py(tmp_path):
     assert "from modules.tarefas.routes import registrar_rotas" in server_code
 
 
-def test_add_module_religa_pagina_do_frontend_nextjs(tmp_path):
+def test_add_module_religa_pagina_do_frontend_tanstack(tmp_path):
     """Achado real: `add-module` religava `src/server.py` com o módulo novo,
-    mas nunca regenerava o frontend Next.js — o módulo novo ficava sem
-    página nenhuma em frontend/app/<modulo>/page.tsx."""
+    mas nunca regenerava o frontend — o módulo novo ficava sem página nenhuma
+    em frontend/src/routes/<modulo>.tsx."""
     from provision_project import provision
     from add_module import criar_modulo
 
-    provision("Projeto Teste Add Module Frontend", base_dir=str(tmp_path), frontend_stack="nextjs")
+    provision("Projeto Teste Add Module Frontend", base_dir=str(tmp_path))
     projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
     assert (projeto_dir / "frontend" / "package.json").is_file()
 
     criar_modulo("tarefas", "Módulo de tarefas", target_dir=str(projeto_dir))
 
-    assert (projeto_dir / "frontend" / "app" / "tarefas" / "page.tsx").is_file()
+    assert (projeto_dir / "frontend" / "src" / "routes" / "tarefas.tsx").is_file()
     # A página do módulo original ("principal") continua existindo — a
     # regeneração não pode apagar páginas de módulos já existentes.
-    assert (projeto_dir / "frontend" / "app" / "principal" / "page.tsx").is_file()
+    assert (projeto_dir / "frontend" / "src" / "routes" / "principal.tsx").is_file()
+    router = (projeto_dir / "frontend" / "src" / "router.tsx").read_text(encoding="utf-8")
+    assert '"/tarefas"' in router and '"/principal"' in router
 
 
 def test_add_module_mantem_frontend_tanstack(tmp_path):

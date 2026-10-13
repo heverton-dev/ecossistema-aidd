@@ -5,7 +5,7 @@ a um frontend low-code preservado pelo aidd-freedom, sem sobrescrever o
 Dockerfile/docker-compose.yml/Caddyfile/frontend que ja existem).
 
 Contexto do bug de arquitetura que este comando resolve: `aidd-master init`
-sempre gera seu proprio Dockerfile/docker-compose.yml/frontend (Next.js por
+sempre gera seu proprio Dockerfile/docker-compose.yml/frontend (TanStack Router por
 padrao, Lei #11) na raiz do projeto -- rodar isso direto em cima da saida do
 aidd-freedom destruiria a stack Docker (web/db/postgrest/storage/caddy) e o
 frontend original ja validados. `attach-vsa` faz so a parte que falta:

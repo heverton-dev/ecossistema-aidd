@@ -46,7 +46,7 @@ except ImportError:
 
 # Catálogo determinístico de paletas (Lei #11 — identidade visual única por
 # projeto), reusado aqui para injetar a MESMA cor primária do frontend
-# Next.js nos Estúdios nativos (Swagger/Webhooks/MCP) — achado real do
+# TanStack Router nos Estúdios nativos (Swagger/Webhooks/MCP) — achado real do
 # usuário (18/09/2026): os Estúdios nativos ficavam com azul/violeta fixos,
 # destoando do resto do app.
 try:
@@ -115,8 +115,8 @@ def generate_modular_server_code(suite_name: str, module_slugs: list, db_engine:
     fallback determinístico por hash do `suite_name` (nunca uma cor fixa).
 
     Importante: o texto de identidade usado no hash de fallback tem que ser
-    IDÊNTICO ao que `NextJSExporter._resolver_paleta` usa (achado real,
-    18/09/2026) — senão o frontend Next.js e os Studios nativos calculam
+    IDÊNTICO ao que `TanStackRouterExporter._resolver_paleta` usa (achado real,
+    18/09/2026) — senão o frontend TanStack Router e os Studios nativos calculam
     cores "dinâmicas" diferentes para o MESMO projeto sem
     `DESIGN-SYSTEM.json`."""
     identidade_paleta = f"{suite_name} {' '.join(module_slugs)}"
@@ -684,6 +684,22 @@ def _copy_gates_and_automation(
     if os.path.isfile(dc_src):
         shutil.copyfile(dc_src, os.path.join(target_scripts_dir, "design_catalog.py"))
         print(f"  [+] Script: design_catalog.py")
+
+    # Copiar tanstack_exporter.py (usado por add_module/export-frontend dentro do projeto gerado)
+    # e o template padrão-ouro de libs offline-first que ele copia para o frontend.
+    tsx_src = os.path.join(_comp_dir, "tanstack_exporter.py")
+    if not os.path.isfile(tsx_src):
+        tsx_src = os.path.join(scripts_dir, "..", "src", "core", "tanstack_exporter.py")
+    if os.path.isfile(tsx_src):
+        shutil.copyfile(tsx_src, os.path.join(target_scripts_dir, "tanstack_exporter.py"))
+        print(f"  [+] Script: tanstack_exporter.py")
+    tpl_src = os.path.join(_raiz, "componentes", "compartilhado", "templates", "frontend-tanstack")
+    if os.path.isdir(tpl_src):
+        shutil.copytree(
+            tpl_src, os.path.join(target_dir, "templates", "frontend-tanstack"),
+            dirs_exist_ok=True, ignore=shutil.ignore_patterns("node_modules", "dist", "__pycache__"),
+        )
+        print("  [+] Template: frontend-tanstack (libs offline-first)")
 
     cookiecutter_templates_src = os.path.join(skill_root, "templates", "cookiecutter-scaffold")
     cookiecutter_templates_dst = os.path.join(target_dir, "templates", "cookiecutter-scaffold")

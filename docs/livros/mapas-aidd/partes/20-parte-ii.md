@@ -23,7 +23,7 @@ Onde mora: `gates/` e `tools/<f>/gates/`. Quem confere: o próprio pre-commit e 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | guardas (nomes) | 105 |
-| no ecossistema | 72 |
+| no ecossistema | 78 |
 | rodam no commit | 67 |
 | com versões diferentes | 10 |
 
@@ -70,7 +70,7 @@ Onde mora: `componentes/compartilhado/skills/`. Quem confere: o `G_SKILL_FORMATO
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | skills nossas | 45 |
-| nomes de terceiros registrados | 15 |
+| nomes de terceiros registrados | 14 |
 | com "Use when" | 45 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_skills`), os mesmos do mapa `mapa-05-skills.html`.

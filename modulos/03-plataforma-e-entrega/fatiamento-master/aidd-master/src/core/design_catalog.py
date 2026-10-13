@@ -122,7 +122,7 @@ def resolver_paleta_projeto(project_dir: str, identidade: str, dominio: str = ""
     preferida — pode ter sido customizado por humano depois) quando existe
     na raiz do projeto; caso contrário deriva a MESMA paleta que o planner
     geraria, direto do nome do projeto (determinístico). Fonte única
-    reusada por `NextJSExporter` (frontend) e pelos Estúdios nativos
+    reusada por `TanStackRouterExporter` (frontend) e pelos Estúdios nativos
     (Swagger/Webhooks/MCP, via `server.py` gerado) — nunca duas lógicas de
     resolução divergentes para o mesmo projeto."""
     design_system_path = os.path.join(project_dir, "DESIGN-SYSTEM.json")

@@ -215,8 +215,8 @@ def _status_cmd(dir):
     cmd_status(types.SimpleNamespace(dir=dir))
 
 
-@cli.command("export-frontend", help="Exporta front-end Next.js/TypeScript tipado a partir do OpenAPI")
-@click.option("--stack", type=click.Choice(["nextjs"]), default="nextjs", help="Stack de frontend alvo")
+@cli.command("export-frontend", help="Exporta front-end TanStack Router/TypeScript tipado a partir do OpenAPI")
+@click.option("--stack", type=click.Choice(["tanstack"]), default="tanstack", help="Stack de frontend alvo")
 @click.option("--dir", default=".", help="Diretório do projeto")
 def _export_frontend_cmd(stack, dir):
     cmd_export_frontend(types.SimpleNamespace(dir=dir, stack=stack))

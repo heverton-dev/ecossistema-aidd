@@ -79,7 +79,7 @@ HANDOFF_ENGINE = {
         "tabelas_sql": ["agenda"],
     }],
     "artefatos_frontend": {
-        "tecnologia": "nextjs_app_router",
+        "tecnologia": "tanstack_router",
         "paginas_geradas": ["/agenda"],
         "origem_design": "custom_tdd",
     },

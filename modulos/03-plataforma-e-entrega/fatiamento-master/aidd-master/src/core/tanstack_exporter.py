@@ -1,50 +1,33 @@
 # -*- coding: utf-8 -*-
 """
 =============================================================================
-AIDD — Next.js Frontend Exporter (Lei Inviolavel #11: Padrao-Ouro de Stack)
+AIDD — TanStack Router Frontend Exporter (Lei Inviolavel #11: Padrao-Ouro de Stack)
 =============================================================================
-Gera o frontend `frontend/` (Next.js 14 App Router + TypeScript + Tailwind
-CSS) de qualquer suite AIDD (monolito modular com `src/modules/<nome>/`).
+Gera o frontend `frontend/` (React 18 + TanStack Router + Vite + TypeScript +
+Tailwind CSS) de qualquer suite AIDD (monolito modular com `src/modules/<nome>/`).
+SPA estatica: o build (`dist/`) e servido por nginx; sem servidor Node em producao.
+O Next.js foi abolido do ecossistema (agnosticismo de plataforma).
 
-Fonte unica de verdade (Lei #11, `docs/protocolos/PADRAO-OURO-STACK-TECNOLOGICA.md`):
-copiada identica em `modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/nextjs_exporter.py` e
-`modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/nextjs_exporter.py` — qualquer alteracao aqui
-precisa ser sincronizada nas 3 copias (G_DRIFT_NUCLEO_COMPARTILHADO cobre
-apenas master/enterprise; sincronizar manualmente com `componentes/`).
+Fonte unica de verdade, copiada byte-identica pelo `components sync` em
+`aidd-master/src/core/` e `aidd-enterprise/src/core/` (ver `src-core/MANIFEST.json`).
 
-Design funcional (corrige defeitos reais encontrados em `proj_ctt`, usado
-como referencia de "padrao-ouro" mas com inconsistencias — validacao E2E do
-Fluxo 01, 18/09/2026):
-  - UMA unica env var (`NEXT_PUBLIC_API_URL`, default vazio = mesma origem),
-    nao duas conflitantes.
-  - UMA unica camada de acesso a API (`lib/api-client.ts`), sem duplicar
-    controller+hook por modulo.
-  - NAO reimplementa em React os Studios nativos do backend (`/docs`,
-    `/webhooks`, `/mcp`, `/openapi.json`, `/health`, `/metrics`, `/api/*`) —
-    esses continuam servidos pelo processo Python (`core/openapi.py`,
-    `core/webhooks.py`, `core/mcp_server.py`), sem mock e sem duplicacao. O
-    Next.js gera apenas paginas de PRODUTO (dashboard + 1 pagina por modulo).
-    O Nginx roteia por prefixo entre os dois servicos (`app` vs `web`).
-  - Zero dependencias externas — so stdlib.
-
-Design VISUAL (achado real, corrigido 18/09/2026): a Lei #11 exige nao so a
-stack (Next.js/TS/Tailwind), mas a MESMA estetica do padrao-ouro `proj_ctt`
-em todas as camadas de frontend. A primeira versao deste gerador produzia
-paginas funcionais mas visualmente genericas (sem paleta, sem componentes
-compartilhados) — reescrito para reproduzir a paleta real do proj_ctt
-(Tailwind `slate` neutro + acentos semanticos emerald/amber/rose/blue, modo
-escuro via classe + localStorage + script anti-flash), os componentes
-compartilhados reais (`Navbar`, `Modal`, `ConfirmDialog`, `FormField`) e o
-padrao real de pagina de modulo (header com acoes, tabela em card, modais de
-criar/editar, confirmacao de exclusao, toast) — sem a cor de marca
-hardcoded da CTT (`#DA291C`), substituida por um acento neutro monocromatico
-(slate-900/white) por este ser um gerador de proposito geral, nao
-CTT-especifico.
+Design funcional (herdado do gerador anterior, achados reais da validacao E2E):
+  - UMA unica env var (`VITE_API_URL`, default vazio = mesma origem).
+  - UMA unica camada de acesso a API (`src/lib/api-client.ts`).
+  - NAO reimplementa os Studios nativos do backend (`/docs`, `/webhooks`, `/mcp`,
+    `/openapi.json`, `/health`, `/metrics`, `/api/*`): continuam no processo Python,
+    roteados por prefixo pelo Nginx. Gera so paginas de PRODUTO (dashboard + 1 por modulo).
+  - Cor de marca vinda do `DESIGN-SYSTEM.json` do planner (ou derivada do nome do
+    projeto), nunca fixa. Neutro slate e semanticas emerald/amber/rose/blue sao convencao.
+  - Rotas declaradas em codigo (`src/router.tsx`), sem plugin de geracao: deterministico.
+  - Offline-first: inclui as libs do template padrao-ouro (`frontend-tanstack`).
+  - Zero dependencias externas no gerador — so stdlib.
 """
 
 import json
 import os
 import re
+import shutil
 from typing import Any, Dict, List
 
 
@@ -69,21 +52,27 @@ except ImportError:
     from design_catalog import escolher_paleta
 
 
-class NextJSExporter:
-    """Gera um frontend Next.js (App Router) para uma suite AIDD."""
+
+class TanStackRouterExporter:
+    """Gera um frontend TanStack Router + Vite (SPA) para uma suite AIDD."""
+
+    # Libs do template padrao-ouro copiadas para o frontend gerado (offline-first).
+    _LIBS_OFFLINE = (
+        "src/lib/pwa.ts",
+        "src/lib/seguranca.ts",
+        "src/lib/banco.ts",
+        "src/lib/offline/sync-queue.ts",
+        "src/hooks/use-mobile.tsx",
+    )
+
+    def __init__(self, repo_root: str = None):
+        self.repo_root = repo_root or _achar_raiz_repo(os.path.dirname(os.path.abspath(__file__)))
 
     def export_project(self, project_dir: str, output_dir: str, suite_name: str = "") -> Dict[str, Any]:
-        """Gera o frontend Next.js em `output_dir` (tipicamente `<projeto>/frontend`).
-
-        Args:
-            project_dir: raiz do projeto AIDD (contem `src/modules/`).
-            output_dir: pasta onde o frontend Next.js sera gerado.
-            suite_name: nome do projeto/suite (usado para resolver a
-                identidade visual quando nao ha DESIGN-SYSTEM.json — ver
-                `_resolver_paleta`).
+        """Gera o frontend em `output_dir` (tipicamente `<projeto>/frontend`).
 
         Returns:
-            dict com `files_created` (list[str]) e `modules` (list[str]).
+            dict com `files_created` (list[str]), `modules` (list[str]) e `paleta`.
         """
         project_dir = os.path.abspath(project_dir)
         output_dir = os.path.abspath(output_dir)
@@ -96,72 +85,32 @@ class NextJSExporter:
 
         created: List[str] = []
         created += self._write(output_dir, "package.json", self._package_json())
-        created += self._write(output_dir, "next.config.js", self._next_config())
+        created += self._write(output_dir, "vite.config.ts", self._vite_config())
         created += self._write(output_dir, "tsconfig.json", self._tsconfig())
         created += self._write(output_dir, "tailwind.config.ts", self._tailwind_config(paleta))
         created += self._write(output_dir, "postcss.config.js", self._postcss_config())
-        created += self._write(output_dir, ".eslintrc.json", self._eslintrc())
+        created += self._write(output_dir, "index.html", self._index_html())
         created += self._write(output_dir, ".gitignore", self._gitignore())
         created += self._write(output_dir, ".dockerignore", self._dockerignore())
         created += self._write(output_dir, "Dockerfile", self._dockerfile())
-        created += self._write(output_dir, "lib/api-client.ts", self._api_client())
-        created += self._write(output_dir, "lib/theme-script.ts", self._theme_script())
-        created += self._write(output_dir, "components/icons.tsx", self._icons_component())
-        created += self._write(output_dir, "components/Navbar.tsx", self._navbar_component(modules))
-        created += self._write(output_dir, "components/shared/Modal.tsx", self._modal_component())
-        created += self._write(output_dir, "components/shared/ConfirmDialog.tsx", self._confirm_dialog_component())
-        created += self._write(output_dir, "components/shared/FormField.tsx", self._form_field_component())
+        created += self._write(output_dir, "nginx.conf", self._nginx_conf())
         created += self._write(output_dir, "public/.gitkeep", "")
-        created += self._write(output_dir, "app/globals.css", self._globals_css())
-        created += self._write(output_dir, "app/layout.tsx", self._layout_tsx())
-        created += self._write(output_dir, "app/page.tsx", self._index_page(modules))
-
+        created += self._write(output_dir, "src/main.tsx", self._main_tsx())
+        created += self._write(output_dir, "src/index.css", self._index_css())
+        created += self._write(output_dir, "src/router.tsx", self._router_tsx(modules))
+        created += self._write(output_dir, "src/lib/api-client.ts", self._api_client())
+        created += self._write(output_dir, "src/components/icons.tsx", self._icons_component())
+        created += self._write(output_dir, "src/components/Navbar.tsx", self._navbar_component(modules))
+        created += self._write(output_dir, "src/components/shared/Modal.tsx", self._modal_component())
+        created += self._write(output_dir, "src/components/shared/ConfirmDialog.tsx", self._confirm_dialog_component())
+        created += self._write(output_dir, "src/components/shared/FormField.tsx", self._form_field_component())
+        created += self._write(output_dir, "src/routes/index.tsx", self._index_page(modules))
         for mod in modules:
-            created += self._write(
-                output_dir, f"app/{mod}/page.tsx", self._module_page(mod)
-            )
+            created += self._write(output_dir, f"src/routes/{mod}.tsx", self._module_page(mod))
+        created += self._copiar_libs_offline(output_dir)
 
         result["files_created"] = created
         return result
-
-    def _resolver_paleta(self, project_dir: str, identidade: str, modules: List[str]) -> Dict[str, str]:
-        """Resolve a paleta de marca do projeto (Lei #11): usa
-        `DESIGN-SYSTEM.json` gerado pelo `aidd-planner` (fonte preferida —
-        pode ter sido customizado por humano depois) quando existe na raiz
-        do projeto; caso contrário deriva a MESMA paleta que o planner
-        geraria, direto do nome do projeto (determinístico — nunca uma cor
-        fixa/hardcoded, mesmo quando o projeto não passou pelo planner,
-        lacuna de handoff já documentada no ecossistema)."""
-        design_system_path = os.path.join(project_dir, "DESIGN-SYSTEM.json")
-        if os.path.isfile(design_system_path):
-            try:
-                with open(design_system_path, "r", encoding="utf-8") as f:
-                    dados = json.load(f)
-                paleta = dados.get("paleta")
-                if paleta and "primaria" in paleta:
-                    return paleta
-            except (OSError, json.JSONDecodeError):
-                pass
-        return escolher_paleta(f"{identidade} {' '.join(modules)}")
-
-    # ------------------------------------------------------------------
-    # Descoberta de modulos
-    # ------------------------------------------------------------------
-
-    def _discover_modules(self, project_dir: str) -> List[str]:
-        modules_dir = os.path.join(project_dir, "src", "modules")
-        if not os.path.isdir(modules_dir):
-            return []
-        modules = []
-        for entry in sorted(os.listdir(modules_dir)):
-            entry_path = os.path.join(modules_dir, entry)
-            if not os.path.isdir(entry_path) or entry.startswith(("_", ".")):
-                continue
-            has_routes = os.path.isfile(os.path.join(entry_path, "routes.py"))
-            has_services = os.path.isfile(os.path.join(entry_path, "services.py"))
-            if has_routes or has_services:
-                modules.append(entry)
-        return modules
 
     # ------------------------------------------------------------------
     # Config files
@@ -172,14 +121,14 @@ class NextJSExporter:
             "name": "aidd-frontend",
             "version": "1.0.0",
             "private": True,
+            "type": "module",
             "scripts": {
-                "dev": "next dev",
-                "build": "next build",
-                "start": "next start",
-                "lint": "next lint",
+                "dev": "vite",
+                "build": "tsc --noEmit && vite build",
+                "preview": "vite preview",
             },
             "dependencies": {
-                "next": "^14.2.5",
+                "@tanstack/react-router": "^1.81.0",
                 "react": "^18.3.1",
                 "react-dom": "^18.3.1",
             },
@@ -187,64 +136,64 @@ class NextJSExporter:
                 "@types/node": "^20.11.0",
                 "@types/react": "^18.3.3",
                 "@types/react-dom": "^18.3.0",
-                "typescript": "^5.4.5",
-                "tailwindcss": "^3.4.4",
-                "postcss": "^8.4.38",
+                "@vitejs/plugin-react": "^4.3.3",
                 "autoprefixer": "^10.4.19",
-                "eslint": "^8.57.0",
-                "eslint-config-next": "^14.2.5",
+                "postcss": "^8.4.38",
+                "tailwindcss": "^3.4.4",
+                "typescript": "^5.4.5",
+                "vite": "^5.4.10",
             },
         }
         return json.dumps(package, indent=2, ensure_ascii=False) + "\n"
 
-    def _next_config(self) -> str:
+    def _vite_config(self) -> str:
         return (
-            "/** @type {import('next').NextConfig} */\n"
-            "const nextConfig = {\n"
-            "  reactStrictMode: true,\n"
-            "  output: \"standalone\",\n"
-            "};\n\n"
-            "module.exports = nextConfig;\n"
+            "import { defineConfig } from \"vite\";\n"
+            "import react from \"@vitejs/plugin-react\";\n"
+            "import { fileURLToPath, URL } from \"node:url\";\n\n"
+            "export default defineConfig({\n"
+            "  plugins: [react()],\n"
+            "  resolve: {\n"
+            "    alias: { \"@\": fileURLToPath(new URL(\"./src\", import.meta.url)) },\n"
+            "  },\n"
+            "  server: { port: 3000, host: true },\n"
+            "  build: {\n"
+            "    outDir: \"dist\",\n"
+            "  },\n"
+            "});\n"
         )
 
     def _tsconfig(self) -> str:
         tsconfig = {
             "compilerOptions": {
-                "target": "es5",
-                "lib": ["dom", "dom.iterable", "esnext"],
-                "allowJs": True,
-                "skipLibCheck": True,
+                "target": "ES2020",
+                "lib": ["ES2020", "DOM", "DOM.Iterable"],
+                "module": "ESNext",
+                "moduleResolution": "bundler",
+                "jsx": "react-jsx",
                 "strict": True,
                 "noEmit": True,
+                "skipLibCheck": True,
                 "esModuleInterop": True,
-                "module": "esnext",
-                "moduleResolution": "bundler",
                 "resolveJsonModule": True,
                 "isolatedModules": True,
-                "jsx": "preserve",
-                "incremental": True,
-                "plugins": [{"name": "next"}],
-                "paths": {"@/*": ["./*"]},
+                "types": ["vite/client"],
+                "baseUrl": ".",
+                "paths": {"@/*": ["./src/*"]},
             },
-            "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-            "exclude": ["node_modules"],
+            "include": ["src", "vite.config.ts"],
         }
         return json.dumps(tsconfig, indent=2, ensure_ascii=False) + "\n"
 
     def _tailwind_config(self, paleta: Dict[str, str]) -> str:
-        # Cor de marca (Lei #11): vem do DESIGN-SYSTEM.json do projeto (unico
-        # por projeto, nunca fixo — ver _resolver_paleta). Neutro estrutural
-        # (slate) e semanticas (emerald/amber/rose/blue) sao fixos, iguais em
-        # todo projeto: sao convencao de UX universal, nao identidade visual.
+        # Cor de marca (Lei #11): vem do DESIGN-SYSTEM.json do projeto (unico por
+        # projeto, nunca fixo — ver _resolver_paleta). Neutro estrutural (slate) e
+        # semanticas (emerald/amber/rose/blue) sao convencao de UX, nao identidade.
         return (
             "import type { Config } from \"tailwindcss\";\n\n"
             "const config: Config = {\n"
             "  darkMode: \"class\",\n"
-            "  content: [\n"
-            "    \"./app/**/*.{ts,tsx}\",\n"
-            "    \"./components/**/*.{ts,tsx}\",\n"
-            "    \"./lib/**/*.{ts,tsx}\",\n"
-            "  ],\n"
+            "  content: [\"./index.html\", \"./src/**/*.{ts,tsx}\"],\n"
             "  theme: {\n"
             "    extend: {\n"
             "      colors: {\n"
@@ -263,50 +212,145 @@ class NextJSExporter:
 
     def _postcss_config(self) -> str:
         return (
-            "module.exports = {\n"
+            "export default {\n"
             "  plugins: { tailwindcss: {}, autoprefixer: {} },\n"
             "};\n"
         )
 
-    def _eslintrc(self) -> str:
-        return json.dumps({"extends": "next/core-web-vitals"}, indent=2) + "\n"
-
     def _gitignore(self) -> str:
         return (
-            "/node_modules\n/.pnp\n.pnp.js\n/coverage\n/.next/\n/out/\n/build\n"
-            ".DS_Store\n*.pem\nnpm-debug.log*\nyarn-debug.log*\nyarn-error.log*\n"
-            ".env*.local\n.env\n.vercel\n*.tsbuildinfo\nnext-env.d.ts\n"
+            "/node_modules\n/dist\n/coverage\n.DS_Store\n*.pem\nnpm-debug.log*\n"
+            ".env.local\n.env\n*.tsbuildinfo\n"
         )
 
     def _dockerignore(self) -> str:
-        return "node_modules\n.next\n.git\n.env*\nnpm-debug.log*\n"
+        return "node_modules\ndist\n.git\n.env*\nnpm-debug.log*\n"
 
     def _dockerfile(self) -> str:
         return (
             "# =========================================================================\n"
-            "# AIDD Frontend — Next.js Production Dockerfile (Lei #11)\n"
+            "# AIDD Frontend — TanStack Router (SPA estatica) servido por nginx (Lei #11)\n"
             "# =========================================================================\n\n"
             "FROM node:20-alpine AS builder\n"
             "WORKDIR /app\n"
             "COPY package*.json ./\n"
             "RUN npm install\n"
             "COPY . .\n"
+            "ARG VITE_API_URL=\"\"\n"
+            "ENV VITE_API_URL=$VITE_API_URL\n"
             "RUN npm run build\n\n"
-            "FROM node:20-alpine AS runner\n"
-            "WORKDIR /app\n"
-            "ENV NODE_ENV=production\n"
-            "ENV PORT=3000\n"
-            "ENV HOSTNAME=\"0.0.0.0\"\n\n"
-            "RUN addgroup --system --gid 1001 nodejs && \\\n"
-            "    adduser --system --uid 1001 nextjs\n\n"
-            "COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./\n"
-            "COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static\n"
-            "COPY --from=builder --chown=nextjs:nodejs /app/public ./public\n\n"
-            "USER nextjs\n"
+            "FROM nginx:1.27-alpine AS runner\n"
+            "COPY nginx.conf /etc/nginx/conf.d/default.conf\n"
+            "COPY --from=builder /app/dist /usr/share/nginx/html\n\n"
             "EXPOSE 3000\n\n"
             "HEALTHCHECK --interval=15s --timeout=5s --start-period=10s --retries=3 \\\n"
-            "    CMD [\"node\", \"-e\", \"require('http').get('http://localhost:3000/', r => process.exit(r.statusCode < 500 ? 0 : 1)).on('error', () => process.exit(1))\"]\n\n"
-            "CMD [\"node\", \"server.js\"]\n"
+            "    CMD wget -q -O /dev/null http://127.0.0.1:3000/ || exit 1\n"
+        )
+
+    def _nginx_conf(self) -> str:
+        return (
+            "server {\n"
+            "    listen 3000;\n"
+            "    server_name _;\n"
+            "    root /usr/share/nginx/html;\n"
+            "    index index.html;\n\n"
+            "    location /assets/ {\n"
+            "        expires 1y;\n"
+            "        add_header Cache-Control \"public, immutable\";\n"
+            "    }\n\n"
+            "    location / {\n"
+            "        try_files $uri /index.html;\n"
+            "    }\n"
+            "}\n"
+        )
+
+    def _index_html(self) -> str:
+        # Script anti-flash: aplica a classe "dark" no <html> ANTES de montar o
+        # React (localStorage + matchMedia), evitando o "flash" de tema claro.
+        return (
+            "<!doctype html>\n"
+            "<html lang=\"pt-BR\">\n"
+            "  <head>\n"
+            "    <meta charset=\"UTF-8\" />\n"
+            "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n"
+            "    <title>AIDD</title>\n"
+            "    <script>\n"
+            "      (function () {\n"
+            "        try {\n"
+            "          var stored = localStorage.getItem('theme');\n"
+            "          var dark = stored ? stored === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;\n"
+            "          document.documentElement.classList.toggle('dark', dark);\n"
+            "        } catch (e) {}\n"
+            "      })();\n"
+            "    </script>\n"
+            "  </head>\n"
+            "  <body class=\"bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-primary selection:text-primary-foreground\">\n"
+            "    <div id=\"root\"></div>\n"
+            "    <script type=\"module\" src=\"/src/main.tsx\"></script>\n"
+            "  </body>\n"
+            "</html>\n"
+        )
+
+    def _index_css(self) -> str:
+        # Sem CSS customizado alem das 3 diretivas: todo estilo via classes Tailwind.
+        return "@tailwind base;\n@tailwind components;\n@tailwind utilities;\n"
+
+    def _main_tsx(self) -> str:
+        return (
+            "import React from \"react\";\n"
+            "import ReactDOM from \"react-dom/client\";\n"
+            "import { RouterProvider } from \"@tanstack/react-router\";\n"
+            "import { router } from \"./router\";\n"
+            "import \"./index.css\";\n\n"
+            "ReactDOM.createRoot(document.getElementById(\"root\") as HTMLElement).render(\n"
+            "  <React.StrictMode>\n"
+            "    <RouterProvider router={router} />\n"
+            "  </React.StrictMode>,\n"
+            ");\n"
+        )
+
+    def _router_tsx(self, modules: List[str]) -> str:
+        def ident(mod: str) -> str:
+            return re.sub(r"\W", "_", mod)
+
+        imports = "\n".join(
+            f'import {{ {self._to_pascal_case(mod)}Page }} from "@/routes/{mod}";' for mod in modules
+        )
+        rotas = "\n".join(
+            f"const {ident(mod)}Route = createRoute({{\n"
+            f"  getParentRoute: () => rootRoute,\n"
+            f'  path: "/{mod}",\n'
+            f"  component: {self._to_pascal_case(mod)}Page,\n"
+            f"}});\n"
+            for mod in modules
+        )
+        filhas = ", ".join(["indexRoute"] + [f"{ident(mod)}Route" for mod in modules])
+        return (
+            "import { createRootRoute, createRoute, createRouter, Outlet } from \"@tanstack/react-router\";\n"
+            "import { Navbar } from \"@/components/Navbar\";\n"
+            "import { HomePage } from \"@/routes/index\";\n"
+            f"{imports}\n\n"
+            "const rootRoute = createRootRoute({\n"
+            "  component: () => (\n"
+            "    <>\n"
+            "      <Navbar />\n"
+            "      <Outlet />\n"
+            "    </>\n"
+            "  ),\n"
+            "});\n\n"
+            "const indexRoute = createRoute({\n"
+            "  getParentRoute: () => rootRoute,\n"
+            "  path: \"/\",\n"
+            "  component: HomePage,\n"
+            "});\n\n"
+            f"{rotas}\n"
+            f"const routeTree = rootRoute.addChildren([{filhas}]);\n\n"
+            "export const router = createRouter({ routeTree });\n\n"
+            "declare module \"@tanstack/react-router\" {\n"
+            "  interface Register {\n"
+            "    router: typeof router;\n"
+            "  }\n"
+            "}\n"
         )
 
     # ------------------------------------------------------------------
@@ -316,11 +360,11 @@ class NextJSExporter:
     def _api_client(self) -> str:
         return (
             "// Cliente de API unico do frontend AIDD (Lei #11).\n"
-            "// Fetch direto do browser para o backend Python. NEXT_PUBLIC_API_URL vazia\n"
+            "// Fetch direto do browser para o backend Python. VITE_API_URL vazia\n"
             "// (default) significa mesma origem — funciona atras do Nginx, que roteia\n"
             "// /api, /docs, /webhooks, /mcp, /openapi.json, /health, /metrics para o\n"
             "// backend e o resto para este frontend.\n"
-            "const API_BASE = process.env.NEXT_PUBLIC_API_URL || \"\";\n\n"
+            "const API_BASE: string = import.meta.env.VITE_API_URL || \"\";\n\n"
             "export class ApiError extends Error {\n"
             "  status: number;\n"
             "  constructor(message: string, status: number) {\n"
@@ -346,41 +390,16 @@ class NextJSExporter:
         )
 
     # ------------------------------------------------------------------
-    # Componentes/paginas
+    # Componentes/paginas especificos do roteador
     # ------------------------------------------------------------------
-
-    def _icons_component(self) -> str:
-        # SVGs inline no estilo Lucide/Feather (stroke=currentColor), zero
-        # dependencia externa — mesmo padrao do proj_ctt/components/icons.tsx.
-        def icon(name: str, path: str) -> str:
-            return (
-                f"export function {name}(props: React.SVGProps<SVGSVGElement>) {{\n"
-                "  return (\n"
-                "    <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" strokeWidth={2}\n"
-                "      strokeLinecap=\"round\" strokeLinejoin=\"round\" className=\"w-5 h-5\" {...props}>\n"
-                f"      {path}\n"
-                "    </svg>\n"
-                "  );\n"
-                "}\n"
-            )
-        return (
-            icon("PlusIcon", '<path d="M12 5v14M5 12h14" />') + "\n"
-            + icon("PencilIcon", '<path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />') + "\n"
-            + icon("TrashIcon", '<path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14Z" />') + "\n"
-            + icon("XIcon", '<path d="M18 6 6 18M6 6l12 12" />') + "\n"
-            + icon("SunIcon", '<circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />') + "\n"
-            + icon("MoonIcon", '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />') + "\n"
-        )
 
     def _navbar_component(self, modules: List[str]) -> str:
         module_links = "\n".join(
-            f'        <Link href="/{mod}" className={{navLinkClass(pathname === "/{mod}")}}>{self._label(mod)}</Link>'
+            f'        <Link to="/{mod}" className={{navLinkClass(pathname === "/{mod}")}}>{self._label(mod)}</Link>'
             for mod in modules
         )
         return (
-            '"use client";\n\n'
-            'import Link from "next/link";\n'
-            'import { usePathname } from "next/navigation";\n'
+            'import { Link, useRouterState } from "@tanstack/react-router";\n'
             'import { useEffect, useState } from "react";\n'
             'import { SunIcon, MoonIcon } from "@/components/icons";\n\n'
             "function navLinkClass(active: boolean): string {\n"
@@ -390,9 +409,9 @@ class NextJSExporter:
             "}\n\n"
             "// Links para /docs, /docs/guia, /webhooks, /mcp e /metrics usam <a> (nao\n"
             "// <Link>): sao rotas nativas do backend Python, roteadas pelo Nginx para\n"
-            "// outro servico — nao existem no roteador do Next.js.\n"
+            "// outro servico — nao existem no roteador do frontend.\n"
             "export function Navbar() {\n"
-            "  const pathname = usePathname();\n"
+            "  const pathname = useRouterState({ select: (s) => s.location.pathname });\n"
             "  const [isDark, setIsDark] = useState(false);\n\n"
             "  useEffect(() => {\n"
             "    setIsDark(document.documentElement.classList.contains(\"dark\"));\n"
@@ -406,7 +425,7 @@ class NextJSExporter:
             "  return (\n"
             "    <header className=\"sticky top-0 z-40 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800\">\n"
             "      <nav className=\"max-w-6xl mx-auto flex flex-wrap items-center gap-2 px-6 py-3\">\n"
-            "        <Link href=\"/\" className=\"flex items-center gap-2 mr-4\">\n"
+            "        <Link to=\"/\" className=\"flex items-center gap-2 mr-4\">\n"
             "          <span className=\"w-8 h-8 rounded-md bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm\">A</span>\n"
             "          <span className=\"font-semibold text-slate-900 dark:text-white\">AIDD</span>\n"
             "        </Link>\n"
@@ -431,9 +450,114 @@ class NextJSExporter:
             "}\n"
         )
 
+    def _index_page(self, modules: List[str]) -> str:
+        cards = "\n".join(
+            f'        <Link to="/{mod}" className="group rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm hover:shadow-md transition">\n'
+            f'          <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold mb-3">{self._label(mod)[:1]}</div>\n'
+            f'          <h2 className="text-base font-semibold text-slate-900 dark:text-white group-hover:text-primary">{self._label(mod)}</h2>\n'
+            f'          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Gerenciar registros de {self._label(mod).lower()}</p>\n'
+            f'        </Link>'
+            for mod in modules
+        )
+        return (
+            "import { Link } from \"@tanstack/react-router\";\n\n"
+            "export function HomePage() {\n"
+            "  return (\n"
+            "    <main className=\"max-w-6xl mx-auto px-6 py-10\">\n"
+            "      <h1 className=\"text-2xl font-bold text-slate-900 dark:text-white mb-1\">Dashboard</h1>\n"
+            "      <p className=\"text-sm text-slate-500 dark:text-slate-400 mb-8\">Selecione um módulo para gerenciar seus registros.</p>\n"
+            "      <div className=\"grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4\">\n"
+            f"{cards}\n"
+            "      </div>\n"
+            "    </main>\n"
+            "  );\n"
+            "}\n"
+        )
+
+    def _copiar_libs_offline(self, output_dir: str) -> List[str]:
+        """Copia as libs offline-first do template padrao-ouro para o frontend gerado."""
+        # No repositorio: componentes/compartilhado/templates/frontend-tanstack. Em um projeto
+        # gerado (sem o repositorio): templates/frontend-tanstack ao lado de scripts/.
+        candidatos = [
+            os.path.join(self.repo_root, "componentes", "compartilhado", "templates", "frontend-tanstack"),
+            os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "templates", "frontend-tanstack")),
+        ]
+        base = next((c for c in candidatos if os.path.isdir(c)), None)
+        if base is None:
+            raise FileNotFoundError("Template canonico TanStack nao encontrado em: " + " | ".join(candidatos))
+        criados: List[str] = []
+        for rel in self._LIBS_OFFLINE:
+            origem = os.path.join(base, *rel.split("/"))
+            if not os.path.isfile(origem):
+                raise FileNotFoundError(f"Lib offline ausente no template: {rel}")
+            with open(origem, "r", encoding="utf-8") as f:
+                criados += self._write(output_dir, rel, f.read())
+        return criados
+
+    # ------------------------------------------------------------------
+    # Componentes React neutros (reaproveitados do gerador anterior)
+    # ------------------------------------------------------------------
+
+    def _resolver_paleta(self, project_dir: str, identidade: str, modules: List[str]) -> Dict[str, str]:
+        """Resolve a paleta de marca do projeto (Lei #11): usa
+        `DESIGN-SYSTEM.json` gerado pelo `aidd-planner` (fonte preferida —
+        pode ter sido customizado por humano depois) quando existe na raiz
+        do projeto; caso contrário deriva a MESMA paleta que o planner
+        geraria, direto do nome do projeto (determinístico — nunca uma cor
+        fixa/hardcoded, mesmo quando o projeto não passou pelo planner,
+        lacuna de handoff já documentada no ecossistema)."""
+        design_system_path = os.path.join(project_dir, "DESIGN-SYSTEM.json")
+        if os.path.isfile(design_system_path):
+            try:
+                with open(design_system_path, "r", encoding="utf-8") as f:
+                    dados = json.load(f)
+                paleta = dados.get("paleta")
+                if paleta and "primaria" in paleta:
+                    return paleta
+            except (OSError, json.JSONDecodeError):
+                pass
+        return escolher_paleta(f"{identidade} {' '.join(modules)}")
+
+    def _discover_modules(self, project_dir: str) -> List[str]:
+        modules_dir = os.path.join(project_dir, "src", "modules")
+        if not os.path.isdir(modules_dir):
+            return []
+        modules = []
+        for entry in sorted(os.listdir(modules_dir)):
+            entry_path = os.path.join(modules_dir, entry)
+            if not os.path.isdir(entry_path) or entry.startswith(("_", ".")):
+                continue
+            has_routes = os.path.isfile(os.path.join(entry_path, "routes.py"))
+            has_services = os.path.isfile(os.path.join(entry_path, "services.py"))
+            if has_routes or has_services:
+                modules.append(entry)
+        return modules
+
+    def _icons_component(self) -> str:
+        # SVGs inline no estilo Lucide/Feather (stroke=currentColor), zero
+        # dependencia externa — mesmo padrao do proj_ctt/components/icons.tsx.
+        def icon(name: str, path: str) -> str:
+            return (
+                f"export function {name}(props: React.SVGProps<SVGSVGElement>) {{\n"
+                "  return (\n"
+                "    <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" strokeWidth={2}\n"
+                "      strokeLinecap=\"round\" strokeLinejoin=\"round\" className=\"w-5 h-5\" {...props}>\n"
+                f"      {path}\n"
+                "    </svg>\n"
+                "  );\n"
+                "}\n"
+            )
+        return (
+            icon("PlusIcon", '<path d="M12 5v14M5 12h14" />') + "\n"
+            + icon("PencilIcon", '<path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />') + "\n"
+            + icon("TrashIcon", '<path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14Z" />') + "\n"
+            + icon("XIcon", '<path d="M18 6 6 18M6 6l12 12" />') + "\n"
+            + icon("SunIcon", '<circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />') + "\n"
+            + icon("MoonIcon", '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />') + "\n"
+        )
+
     def _modal_component(self) -> str:
         return (
-            '"use client";\n\n'
             'import { useEffect } from "react";\n'
             'import { XIcon } from "@/components/icons";\n\n'
             "interface ModalProps {\n"
@@ -524,82 +648,10 @@ class NextJSExporter:
             "}\n"
         )
 
-    def _globals_css(self) -> str:
-        # Sem CSS customizado alem das 3 diretivas — igual ao padrao-ouro
-        # (proj_ctt/planos-ctt-app/frontend/app/globals.css): todo estilo via
-        # classes Tailwind inline nos componentes, nao em folha separada.
-        return "@tailwind base;\n@tailwind components;\n@tailwind utilities;\n"
-
-    def _theme_script(self) -> str:
-        # Script anti-flash: aplica a classe "dark" no <html> ANTES da
-        # hidratacao (evita o "flash" de tema claro em quem prefere escuro),
-        # mesmo mecanismo do padrao-ouro proj_ctt (localStorage + matchMedia).
-        return (
-            "export const THEME_INIT_SCRIPT = `\n"
-            "(function() {\n"
-            "  try {\n"
-            "    var stored = localStorage.getItem('theme');\n"
-            "    var dark = stored ? stored === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;\n"
-            "    document.documentElement.classList.toggle('dark', dark);\n"
-            "  } catch (e) {}\n"
-            "})();\n"
-            "`;\n"
-        )
-
-    def _layout_tsx(self) -> str:
-        return (
-            "import type { Metadata } from \"next\";\n"
-            "import \"./globals.css\";\n"
-            "import { Navbar } from \"@/components/Navbar\";\n"
-            "import { THEME_INIT_SCRIPT } from \"@/lib/theme-script\";\n\n"
-            "export const metadata: Metadata = {\n"
-            "  title: \"AIDD\",\n"
-            "  description: \"Gerado pelo Ecossistema AIDD (Lei #11: Next.js + TypeScript + Tailwind)\",\n"
-            "};\n\n"
-            "export default function RootLayout({ children }: { children: React.ReactNode }) {\n"
-            "  return (\n"
-            "    <html lang=\"pt-BR\" suppressHydrationWarning>\n"
-            "      <head>\n"
-            "        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />\n"
-            "      </head>\n"
-            "      <body className=\"bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-primary selection:text-primary-foreground\">\n"
-            "        <Navbar />\n"
-            "        {children}\n"
-            "      </body>\n"
-            "    </html>\n"
-            "  );\n"
-            "}\n"
-        )
-
-    def _index_page(self, modules: List[str]) -> str:
-        cards = "\n".join(
-            f'          <Link href="/{mod}" className="group rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm hover:shadow-md hover:border-primary/40 transition">\n'
-            f'            <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold mb-3">{self._label(mod)[:1]}</div>\n'
-            f'            <h2 className="text-base font-semibold text-slate-900 dark:text-white group-hover:text-primary">{self._label(mod)}</h2>\n'
-            f'            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Gerenciar registros de {self._label(mod).lower()}</p>\n'
-            f'          </Link>'
-            for mod in modules
-        )
-        return (
-            "import Link from \"next/link\";\n\n"
-            "export default function Home() {\n"
-            "  return (\n"
-            "    <main className=\"max-w-6xl mx-auto px-6 py-10\">\n"
-            "      <h1 className=\"text-2xl font-bold text-slate-900 dark:text-white mb-1\">Dashboard</h1>\n"
-            "      <p className=\"text-sm text-slate-500 dark:text-slate-400 mb-8\">Selecione um módulo para gerenciar seus registros.</p>\n"
-            "      <div className=\"grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4\">\n"
-            f"{cards}\n"
-            "      </div>\n"
-            "    </main>\n"
-            "  );\n"
-            "}\n"
-        )
-
     def _module_page(self, module_name: str) -> str:
         label = self._label(module_name)
         pascal = self._to_pascal_case(module_name)
         return (
-            '"use client";\n\n'
             'import { useEffect, useState } from "react";\n'
             'import { apiClient, ApiError } from "@/lib/api-client";\n'
             'import { Modal } from "@/components/shared/Modal";\n'
@@ -622,7 +674,7 @@ class NextJSExporter:
             "function corBadge(status: string): string {\n"
             '  return BADGE_POR_STATUS[status] ?? BADGE_POR_STATUS.inativo;\n'
             "}\n\n"
-            f"export default function {pascal}Page() {{\n"
+            f"export function {pascal}Page() {{\n"
             "  const [items, setItems] = useState<Item[]>([]);\n"
             "  const [loading, setLoading] = useState(true);\n"
             "  const [erro, setErro] = useState<string | null>(null);\n"

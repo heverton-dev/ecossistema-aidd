@@ -14,7 +14,7 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 8 ferramentas compl
 - **AIDD Forge (`tools/aidd-forge`):** Bootstrap de governança, isolamento de fases e purge de contexto (`/forge`).
 - **AIDD Planner (`tools/aidd-planner`):** Planejamento BDD/SDD, compilador topológico DAG VSA e contratos de handoff (`/planner`).
 - **AIDD Generator (`tools/aidd-pure`):** Fábrica autônoma com pipeline de 8 fases, TDD Red-Green e Clean Architecture (`/generate` ou `/pure`).
-- **AIDD Master (`tools/aidd-master`):** Monólito modular VSA com fatias verticais, motor de despacho `dispatch_pipeline.py`, convergência master, Next.js Padrão-Ouro (Lei #11) e OpenAPI (`/master`).
+- **AIDD Master (`tools/aidd-master`):** Monólito modular VSA com fatias verticais, motor de despacho `dispatch_pipeline.py`, convergência master, TanStack Router Padrão-Ouro (Lei #11) e OpenAPI (`/master`).
 - **AIDD Enterprise (`tools/aidd-enterprise`):** Missão crítica com injeção de componentes SHA-256 e Zero-Trust (`/enterprise`).
 - **AIDD Ops (`tools/aidd-ops`):** Meta-Orquestrador de Infraestrutura (IaC, sizing, Docker Swarm, Ansible, deploy VPS, `/ops`).
 - **AIDD Factory (`tools/aidd-open`):** Integração e fatiamento VSA de motores open-source com compose (`/factory` ou `/open` ou `/aidd-open`).
@@ -46,7 +46,7 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 8 ferramentas compl
 8. **Honestidade de Rótulo (Lei #8):** Nenhuma mensagem ou alegação de segurança/certificação além da cobertura real testada. (`G_HONESTIDADE_ROTULO.py`).
 9. **Disciplina de Teste de Ferramentas (Lei #9):** Ciclo de 5 passos obrigatório com atualização contemporânea em `docs/teste-end-to-end/`. (`G_DISCIPLINA_TESTE_FERRAMENTA.py`, `G_ENV_ROT.py`, `G_SKILL_ROT.py`).
 10. **Quarteto Sine Qua Non Dinâmico (Lei #10):** Todo projeto gerado ou evoluído provê dinamicamente OpenAPI/Swagger Studio (`/api`), Webhook Studio (`/webhook`), MCP Studio (`/mcp`) e Central de Documentação / Guia (`/docs`). (`G_QUARTETO_SINE_QUA_NON.py`, `G_CONTRACT_ROT.py`).
-11. **Padrão-Ouro de Stack Tecnológica (Lei #11):** Frontend Next.js + TypeScript + Tailwind CSS; Backend Python + SQLite WAL + OpenAPI 3.1. (`G_STACK_PADRAO_OURO.py`).
+11. **Padrão-Ouro de Stack Tecnológica (Lei #11):** Frontend TanStack Router + Vite + TypeScript + Tailwind CSS; Backend Python + SQLite WAL + OpenAPI 3.1. (`G_STACK_PADRAO_OURO.py`).
 12. **Anti-Docs Rot & Ingestão Canônica (Lei #12):** Proibido ingerir relatórios históricos ou rascunhos. Documentação viva estritamente em `docs/protocolos/` e `AGENTS.md`. (`G_DOCS_ROT.py`).
 13. **Todo Portão Deve Provar que Morde (Lei #13):** Nenhum Quality Gate é aceito sem teste automatizado que force a violação e asserte `exit 1`. (`G_PORTAO_PROVA_QUE_MORDE.py`).
 
@@ -66,7 +66,7 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 8 ferramentas compl
 | **G_HONESTIDADE_ROTULO** | `modulos/04-nucleo-compartilhado/gates/G_HONESTIDADE_ROTULO.py` | Bloqueia alegações de marketing não comprovadas. |
 | **G_DISCIPLINA_TESTE_FERRAMENTA** | `modulos/01-governanca-e-qualidade/gates/G_DISCIPLINA_TESTE_FERRAMENTA.py` | Exige relatório end-to-end atualizado para mudanças em tools/. |
 | **G_QUARTETO_SINE_QUA_NON** | `modulos/03-plataforma-e-entrega/gates/G_QUARTETO_SINE_QUA_NON.py` | Valida `/docs`, `/webhooks`, `/mcp`, `/docs/guia` nos deliverables. |
-| **G_STACK_PADRAO_OURO** | `modulos/02-triade-motores/fluxo-01-pure/gates/G_STACK_PADRAO_OURO.py` | Audita aderência ao padrão Next.js/TS/Tailwind + Py/WAL. |
+| **G_STACK_PADRAO_OURO** | `modulos/02-triade-motores/fluxo-01-pure/gates/G_STACK_PADRAO_OURO.py` | Audita aderência ao padrão TanStack Router/TS/Tailwind + Py/WAL. |
 | **G_PORTAO_PROVA_QUE_MORDE** | `modulos/01-governanca-e-qualidade/gates/G_PORTAO_PROVA_QUE_MORDE.py` | Garante que todo gate possui teste unitário comprovando `exit 1`. |
 | **G_PIPELINE_HANDOFF** | `modulos/04-nucleo-compartilhado/gates/G_PIPELINE_HANDOFF.py` | Validação determinística de manifestos JSON de execução de pipeline. |
 | **G_DISPATCH_PIPELINE_VSA** | `modulos/03-plataforma-e-entrega/gates/G_DISPATCH_PIPELINE_VSA.py` | Validação formal de grafos DAG topológicos e fatias VSA. |

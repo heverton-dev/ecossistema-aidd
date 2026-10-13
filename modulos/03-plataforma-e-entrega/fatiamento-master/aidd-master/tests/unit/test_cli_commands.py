@@ -400,15 +400,16 @@ def test_cmd_export_frontend_sucesso_gera_arquivos_ts(suite_composta):
     arquivos_esperados = [
         "package.json",
         "tsconfig.json",
-        "next.config.js",
+        "vite.config.ts",
         "tailwind.config.ts",
         "postcss.config.js",
-        "types.ts",
-        os.path.join("lib", "api.ts"),
-        os.path.join("app", "globals.css"),
-        os.path.join("app", "layout.tsx"),
-        os.path.join("app", "page.tsx"),
-        os.path.join("app", "produtos", "page.tsx"),
+        "index.html",
+        os.path.join("src", "types.ts"),
+        os.path.join("src", "lib", "api-client.ts"),
+        os.path.join("src", "index.css"),
+        os.path.join("src", "router.tsx"),
+        os.path.join("src", "routes", "index.tsx"),
+        os.path.join("src", "routes", "produtos.tsx"),
     ]
     for rel_path in arquivos_esperados:
         arq = frontend_dir / rel_path
@@ -431,43 +432,43 @@ def test_cmd_export_frontend_validacao_sintatica_estrutural_ts(suite_composta):
     # 1. Validação de formato JSON válido
     pkg = json.loads((frontend_dir / "package.json").read_text(encoding="utf-8"))
     assert pkg["name"] == "aidd-frontend"
-    assert "next" in pkg["dependencies"]
+    assert "@tanstack/react-router" in pkg["dependencies"]
+    assert "next" not in pkg["dependencies"]
 
     tsconfig = json.loads((frontend_dir / "tsconfig.json").read_text(encoding="utf-8"))
     assert "compilerOptions" in tsconfig
 
-    # 2. Tipos exportados em types.ts
-    types_ts = (frontend_dir / "types.ts").read_text(encoding="utf-8")
+    # 2. Tipos exportados em src/types.ts
+    types_ts = (frontend_dir / "src" / "types.ts").read_text(encoding="utf-8")
     assert _validar_balanceamento_delimitadores(types_ts), "types.ts possui delimitadores desbalanceados"
     assert "export interface Produtos" in types_ts
     assert "export interface ProdutosCreatePayload" in types_ts
     assert "id: number;" in types_ts
 
-    # 3. Biblioteca de API em lib/api.ts
-    api_ts = (frontend_dir / "lib" / "api.ts").read_text(encoding="utf-8")
-    assert _validar_balanceamento_delimitadores(api_ts), "lib/api.ts possui delimitadores desbalanceados"
-    assert "export async function apiGet<T>" in api_ts
-    assert "export async function apiPost<T>" in api_ts
+    # 3. Cliente de API único em src/lib/api-client.ts
+    api_ts = (frontend_dir / "src" / "lib" / "api-client.ts").read_text(encoding="utf-8")
+    assert _validar_balanceamento_delimitadores(api_ts), "api-client.ts possui delimitadores desbalanceados"
+    assert "export class ApiError" in api_ts
+    assert "export const apiClient" in api_ts
 
-    # 4. Componentes Next.js / React (layout.tsx, page.tsx, produtos/page.tsx)
-    layout_tsx = (frontend_dir / "app" / "layout.tsx").read_text(encoding="utf-8")
-    assert _validar_balanceamento_delimitadores(layout_tsx), "layout.tsx possui delimitadores desbalanceados"
-    assert "export default function RootLayout" in layout_tsx
-    assert "<html" in layout_tsx and "</html>" in layout_tsx
+    # 4. Rotas TanStack Router (router.tsx, routes/index.tsx, routes/produtos.tsx)
+    router_tsx = (frontend_dir / "src" / "router.tsx").read_text(encoding="utf-8")
+    assert _validar_balanceamento_delimitadores(router_tsx), "router.tsx possui delimitadores desbalanceados"
+    assert "createRouter" in router_tsx and '"/produtos"' in router_tsx
 
-    home_tsx = (frontend_dir / "app" / "page.tsx").read_text(encoding="utf-8")
-    assert _validar_balanceamento_delimitadores(home_tsx), "page.tsx possui delimitadores desbalanceados"
-    assert "export default function Home" in home_tsx
-    assert '"produtos"' in home_tsx
+    home_tsx = (frontend_dir / "src" / "routes" / "index.tsx").read_text(encoding="utf-8")
+    assert _validar_balanceamento_delimitadores(home_tsx), "routes/index.tsx possui delimitadores desbalanceados"
+    assert "export function HomePage" in home_tsx
+    assert '"/produtos"' in home_tsx
 
-    prod_tsx = (frontend_dir / "app" / "produtos" / "page.tsx").read_text(encoding="utf-8")
-    assert _validar_balanceamento_delimitadores(prod_tsx), "produtos/page.tsx possui delimitadores desbalanceados"
-    assert "export default async function ProdutosPage" in prod_tsx
-    assert "apiGet<Produtos[]>" in prod_tsx
+    prod_tsx = (frontend_dir / "src" / "routes" / "produtos.tsx").read_text(encoding="utf-8")
+    assert _validar_balanceamento_delimitadores(prod_tsx), "routes/produtos.tsx possui delimitadores desbalanceados"
+    assert "export function ProdutosPage" in prod_tsx
+    assert 'apiClient.get<Item[]>("/api/produtos")' in prod_tsx
 
 
 def test_cmd_export_frontend_stack_invalida_lanca_erro(suite_composta):
-    """5.2/5.3: Valida rejeição explícita de stack diferente de nextjs."""
+    """5.2/5.3: Valida rejeição explícita de stack diferente de tanstack."""
     from openapi_to_ts import export_frontend
     with pytest.raises(ValueError, match="Stack de frontend não suportado"):
         export_frontend(str(suite_composta), stack="vue")

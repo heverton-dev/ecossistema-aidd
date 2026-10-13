@@ -393,9 +393,9 @@ class TestPipelineE2E:
             static_dir = os.path.join(tmp, "src", "static")
             for studio in ["swagger.html", "webhook_studio.html", "mcp_studio.html", "docs.html"]:
                 assert os.path.isfile(os.path.join(static_dir, studio)), f"Studio {studio} ausente"
-            # Lei Inviolável #11: por padrão (frontend_stack="nextjs"),
+            # Lei Inviolável #11: por padrão (frontend_stack="tanstack"),
             # gerar_aplicacao_vsa NÃO gera mais o Super-App index.html — o
-            # frontend de produto é gerado por outro passo (NextJSExporter,
+            # frontend de produto é gerado por outro passo (TanStackRouterExporter,
             # Fase 3 de pipeline_factory.py), evitando os dois frontends
             # divergentes que existiam antes para o mesmo projeto.
             assert not os.path.isfile(os.path.join(static_dir, "index.html"))
@@ -498,7 +498,7 @@ NPM_DISPONIVEL = shutil.which("npm") is not None
 
 @pytest.mark.skipif(not NPM_DISPONIVEL, reason="npm não disponível neste ambiente")
 def test_frontend_gerado_pelo_factory_compila_de_verdade():
-    """Teste de fogo: o frontend Next.js gerado pela Fase 3 do pipeline
+    """Teste de fogo: o frontend TanStack Router gerado pela Fase 3 do pipeline
     factory precisa REALMENTE compilar (npm install && npm run build), não
     só passar em checagem estática de arquivo."""
     from pipeline_factory import executar_pipeline

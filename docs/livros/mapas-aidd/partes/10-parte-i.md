@@ -31,7 +31,7 @@ Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `c
 ## 1.3 O que falta consertar
 
 - **Média** · 5 guardas declarados em lei que não rodam no commit (`CAT-declarados-fora-do-commit`).
-- **Baixa** · 1 guardas da raiz que nenhuma lei declara (`CAT-guardas-sem-lei`).
+- **Baixa** · 7 guardas da raiz que nenhuma lei declara (`CAT-guardas-sem-lei`).
 
 Já resolvido:
 

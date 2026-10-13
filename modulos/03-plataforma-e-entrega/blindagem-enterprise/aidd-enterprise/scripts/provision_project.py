@@ -86,7 +86,7 @@ def provision(project_desc, base_dir=None):
     # depois do módulo "principal" já criado, `criar_modulo()` (via
     # `add_module.py`) não encontrava o arquivo ainda e pulava o registro do
     # módulo no manifesto — "principal" ficava só como pasta física em disco,
-    # nunca religado a `src/server.py`. O `NextJSExporter` descobre módulos
+    # nunca religado a `src/server.py`. O `TanStackRouterExporter` descobre módulos
     # varrendo `src/modules/` no disco, então gerava página para "principal"
     # chamando uma rota que o backend nunca registrou -> HTTP 404 real.
     plano_path = os.path.join(project_dir, 'PLANO-EXECUCAO-ESTRUTURADO.json')

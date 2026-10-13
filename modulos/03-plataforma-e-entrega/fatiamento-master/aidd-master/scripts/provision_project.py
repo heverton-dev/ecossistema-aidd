@@ -40,6 +40,10 @@ def _renderizar_e_escrever_docs_html(templates_dir, static_dir, suite_name, modu
         f.write(final_docs_html)
 
 def provision(project_desc, base_dir=None, frontend_stack='tanstack'):
+    if frontend_stack not in ("tanstack", "python-html"):
+        raise ValueError(
+            f"frontend_stack inválido: {frontend_stack!r} (use 'tanstack' ou 'python-html'; o Next.js foi abolido)"
+        )
     if os.path.isabs(project_desc) or os.sep in project_desc or (os.altsep and os.altsep in project_desc) or os.path.exists(project_desc):
         project_dir = os.path.abspath(project_desc)
         slug = slugify(os.path.basename(project_dir)) or "projeto-modular"
@@ -124,7 +128,7 @@ def provision(project_desc, base_dir=None, frontend_stack='tanstack'):
     # não encontrava o arquivo ainda e pulava o registro do módulo no
     # manifesto — "principal" ficava só como pasta física em disco, nunca
     # religado a `src/server.py` nem contabilizado no `modulos`. O
-    # `NextJSExporter` descobre módulos varrendo `src/modules/` no disco
+    # `TanStackRouterExporter` descobre módulos varrendo `src/modules/` no disco
     # (independente do manifesto), então gerava uma página para "principal"
     # chamando uma rota que o backend nunca registrou -> HTTP 404 real no
     # frontend. Escrever o plano aqui garante que `criar_modulo()` registre
@@ -165,8 +169,7 @@ def provision(project_desc, base_dir=None, frontend_stack='tanstack'):
     # Lei Inviolável #11 (Padrão-Ouro de Stack, `AGENTS.md`): o frontend
     # default é TanStack Start / Router + TypeScript + Tailwind CSS (`frontend_stack=
     # "tanstack"`). O Super-App em HTML/CSS/JS Python puro só é gerado se
-    # pedido explicitamente (`frontend_stack="python-html"`). Next.js só se
-    # pedido explicitamente (`frontend_stack="nextjs"`).
+    # pedido explicitamente (`frontend_stack="python-html"`).
     try:
         from compose_suite import generate_modular_server_code
         server_code = generate_modular_server_code(slug, ["principal"], db_engine="sqlite", project_dir=project_dir)
@@ -175,19 +178,9 @@ def provision(project_desc, base_dir=None, frontend_stack='tanstack'):
         print("  [+] Servidor dinâmico 'src/server.py' gerado com sucesso!")
 
         if frontend_stack == 'tanstack':
-            frontend_dest = os.path.join(project_dir, 'frontend')
-            frontend_template = os.path.join(repo_root, 'templates', 'v2', 'frontend')
-            if not os.path.isdir(frontend_template):
-                frontend_template = os.path.join(repo_root, 'templates', 'frontend')
-            if os.path.isdir(frontend_template):
-                def _ignorar_build(dir_src, names):
-                    return {'node_modules', 'dist', '.git', '__pycache__'}.intersection(names)
-                shutil.copytree(frontend_template, frontend_dest, dirs_exist_ok=True, ignore=_ignorar_build)
-            print("  [+] Front-end 'frontend/' gerado em TanStack Start / Router + TypeScript + Tailwind (Lei #11)!")
-        elif frontend_stack == 'nextjs':
-            from nextjs_exporter import NextJSExporter
-            NextJSExporter().export_project(project_dir, os.path.join(project_dir, 'frontend'), suite_name=slug)
-            print("  [+] Front-end 'frontend/' gerado em Next.js + TypeScript + Tailwind!")
+            from tanstack_exporter import TanStackRouterExporter
+            TanStackRouterExporter().export_project(project_dir, os.path.join(project_dir, 'frontend'), suite_name=slug)
+            print("  [+] Front-end 'frontend/' gerado em TanStack Router + Vite + TypeScript + Tailwind (Lei #11)!")
         else:
             from compose_suite import generate_superapp_index_html
             index_html = generate_superapp_index_html(slug, ["principal"])
@@ -233,7 +226,7 @@ def provision_backend_only(project_dir, modulo_nome, descricao=""):
     requirements.txt) num projeto ja existente -- NUNCA toca em Dockerfile,
     docker-compose.yml, nginx/ ou frontend/, porque esses arquivos ja
     pertencem a um frontend preservado (ex: saida do aidd-freedom, FLUXO 03)
-    que nao pode ser sobrescrito pelo Super-App/Next.js que `provision()`
+    que nao pode ser sobrescrito pelo Super-App/TanStack Router que `provision()`
     geraria por padrao. Usado por `master attach-vsa`.
 
     O backend nasce isolado em `<project_dir>/backend/` (nao direto na raiz)

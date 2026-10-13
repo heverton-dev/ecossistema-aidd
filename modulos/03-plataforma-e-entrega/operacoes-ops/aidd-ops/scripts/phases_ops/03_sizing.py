@@ -39,7 +39,7 @@ def dimensionar_monolito(ferramentas: List[Dict[str, str]]) -> Result:
     nomeadas. Reaproveita a mesma aritmética/margem/mínimos de `dimensionar()`
     para consistência de saída (mesmo shape do contrato, zero mudança de
     schema), mas troca o lookup por nome de ferramenta por uma heurística de
-    baseline fixo (app + nginx + frontend Next.js, sempre presentes) mais um
+    baseline fixo (app + nginx + frontend estatico TanStack servido por nginx, sempre presentes) mais um
     incremento por módulo.
 
     Args:

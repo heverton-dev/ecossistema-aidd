@@ -34,7 +34,7 @@ partir dessas mesmas chaves (ex.: remoto vira {"type":"http","url":...} em
 
 Uso:
   python scripts/gestor_dependencias.py bootstrap [--tipo skills|mcps|todos] [--dry-run]
-  python scripts/gestor_dependencias.py add-skill --nome <nome> --pacote <pacote> --instalar "<comando>" [--verificar <caminho>] [--sha256 <hash>] [--gitignore "padrao1,padrao2"]
+  python scripts/gestor_dependencias.py add-skill --nome <nome> --pacote <pacote> --instalar "<comando>" [--verificar <caminho>] [--sha256 <hash>] [--versao-esperada <versao>] [--gitignore "padrao1,padrao2"]
   python scripts/gestor_dependencias.py add-mcp --nome <nome> --pacote <pacote> --comando <cmd> --args "a,b,c" [--env VAR1,VAR2] [--harnesses claude-code,opencode]
   python scripts/gestor_dependencias.py add-mcp --nome <nome> --pacote <pacote> --tipo remote --url <url> [--harnesses claude-code,opencode]
   python scripts/gestor_dependencias.py list
@@ -159,8 +159,40 @@ def _checar_hash_skill(cfg):
         return None
     obtido = _calcular_sha256(caminho)
     if obtido != esperado:
-        return f"esperado sha256={esperado} obtido sha256={obtido}"
+        msg = f"esperado sha256={esperado} obtido sha256={obtido}"
+        if _e_deriva_de_versao(cfg):
+            msg += (f"; versao esperada {cfg['versao_esperada']} obtida "
+                    f"{_extrair_versao_frontmatter(caminho)}")
+        return msg
     return None
+
+
+def _extrair_versao_frontmatter(caminho):
+    """Le 'version:' do frontmatter YAML (primeiro bloco ---) de um SKILL.md. None se ausente."""
+    with open(caminho, "r", encoding="utf-8", errors="replace") as f:
+        linhas = f.read().splitlines()
+    if not linhas or linhas[0].strip() != "---":
+        return None
+    for linha in linhas[1:]:
+        if linha.strip() == "---":
+            break
+        if linha.startswith("version:"):
+            return linha.split(":", 1)[1].strip().strip("\"'")
+    return None
+
+
+def _e_deriva_de_versao(cfg):
+    """True quando o manifesto declara 'versao_esperada' e o artefato instalado traz outra
+    'version:' — o upstream evoluiu (instaladores remotos ignoram pin), nao ha indicio de
+    adulteracao. Sem 'versao_esperada' ou sem arquivo, False (trata como adulteracao)."""
+    esperada = cfg.get("versao_esperada")
+    if not esperada:
+        return False
+    caminho = os.path.join(ROOT_DIR, cfg["verificar"])
+    if not os.path.isfile(caminho):
+        return False
+    obtida = _extrair_versao_frontmatter(caminho)
+    return obtida is not None and obtida != esperada
 
 
 def bootstrap_skills(apenas=None, dry_run=False):
@@ -440,7 +472,7 @@ def _adicionar_padroes_gitignore(padroes):
     return novos
 
 
-def adicionar_skill(nome, pacote, instalar, verificar, gitignore_patterns, sha256=None, dry_run=False):
+def adicionar_skill(nome, pacote, instalar, verificar, gitignore_patterns, sha256=None, dry_run=False, versao_esperada=None):
     manifesto = carregar_manifesto()
     manifesto.setdefault("skills", {})
     ja_existia = nome in manifesto["skills"]
@@ -451,6 +483,8 @@ def adicionar_skill(nome, pacote, instalar, verificar, gitignore_patterns, sha25
         "sha256": sha256,
         "gitignore": gitignore_patterns,
     }
+    if versao_esperada:
+        manifesto["skills"][nome]["versao_esperada"] = versao_esperada
     if not dry_run:
         _salvar_manifesto(manifesto)
         novos_ignore = _adicionar_padroes_gitignore(gitignore_patterns)
@@ -521,7 +555,10 @@ def verificar():
             continue
         divergencia = _checar_hash_skill(cfg)
         if divergencia:
-            problemas.append(f"[skill/{nome}] hash SHA-256 divergente ({divergencia}) — artefato pode ter sido adulterado")
+            if _e_deriva_de_versao(cfg):
+                problemas.append(f"[skill/{nome}] hash SHA-256 divergente por nova versao do upstream ({divergencia}) — atualize 'sha256' e 'versao_esperada' no manifesto apos revisar o conteudo")
+            else:
+                problemas.append(f"[skill/{nome}] hash SHA-256 divergente ({divergencia}) — artefato pode ter sido adulterado")
 
     for nome, cfg in manifesto.get("mcps", {}).items():
         for harness in cfg.get("harnesses_alvo", []):
@@ -584,7 +621,7 @@ def _cmd_add_skill(args_ns):
     gitignore_patterns = [p.strip() for p in (args_ns.gitignore or "").split(",") if p.strip()]
     resultado = adicionar_skill(
         args_ns.nome, args_ns.pacote, args_ns.instalar, args_ns.verificar, gitignore_patterns,
-        sha256=args_ns.sha256,
+        sha256=args_ns.sha256, versao_esperada=args_ns.versao_esperada,
     )
     if resultado["ja_existia_no_manifesto"]:
         print(f"[ATUALIZADA] '{args_ns.nome}' ja existia no manifesto, entrada sobrescrita.")
@@ -665,6 +702,10 @@ def main(argv=None):
     p_add_skill.add_argument(
         "--sha256", default=None,
         help="Hash SHA-256 esperado do arquivo em --verificar (so faz sentido quando --verificar aponta pra um arquivo, nao diretorio).",
+    )
+    p_add_skill.add_argument(
+        "--versao-esperada", dest="versao_esperada", default=None,
+        help="'version:' esperada no frontmatter de --verificar; permite ao verify distinguir deriva de versao do upstream de adulteracao.",
     )
     p_add_skill.add_argument("--gitignore", default="")
     p_add_skill.set_defaults(func=_cmd_add_skill)

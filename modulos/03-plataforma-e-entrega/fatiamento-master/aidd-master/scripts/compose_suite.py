@@ -79,9 +79,9 @@ try:
 except ImportError:
     pass
 
-# Gerador de frontend Next.js (Lei Inviolável #11 — Padrão-Ouro de Stack).
+# Gerador de frontend TanStack Router (Lei Inviolável #11 — Padrão-Ouro de Stack).
 try:
-    from nextjs_exporter import NextJSExporter
+    from tanstack_exporter import TanStackRouterExporter
 except ImportError:
     _njs_dir = os.path.join(
         _achar_raiz_repo(os.path.dirname(__file__)), "componentes", "compartilhado", "src-core"
@@ -89,15 +89,15 @@ except ImportError:
     if os.path.isdir(_njs_dir) and _njs_dir not in sys.path:
         sys.path.insert(0, _njs_dir)
     try:
-        from nextjs_exporter import NextJSExporter
+        from tanstack_exporter import TanStackRouterExporter
     except ImportError:
-        class NextJSExporter:
+        class TanStackRouterExporter:
             def export_project(self, *args, **kwargs):
                 pass
 
 # Catálogo determinístico de paletas (Lei #11 — identidade visual única por
 # projeto), reusado aqui para injetar a MESMA cor primária do frontend
-# Next.js nos Estúdios nativos (Swagger/Webhooks/MCP) — achado real do
+# TanStack Router nos Estúdios nativos (Swagger/Webhooks/MCP) — achado real do
 # usuário (18/09/2026): os Estúdios nativos ficavam com azul/violeta fixos,
 # destoando do resto do app.
 try:
@@ -162,14 +162,14 @@ def generate_modular_server_code(suite_name: str, module_slugs: list, db_engine:
     """Gera o código-fonte do servidor dinâmico server.py que carrega todos os módulos.
 
     `project_dir` (opcional): raiz do projeto, usada para resolver a mesma
-    paleta única do `DESIGN-SYSTEM.json` (Lei #11) que o `NextJSExporter` já
+    paleta única do `DESIGN-SYSTEM.json` (Lei #11) que o `TanStackRouterExporter` já
     aplica no frontend — sem ele, cai no fallback determinístico por hash do
     `suite_name` (nunca uma cor fixa).
 
     Importante: o texto de identidade usado no hash de fallback ("{suite_name}
-    {modulos}") tem que ser IDÊNTICO ao que `NextJSExporter._resolver_paleta`
+    {modulos}") tem que ser IDÊNTICO ao que `TanStackRouterExporter._resolver_paleta`
     usa — achado real (18/09/2026): usar só `suite_name` aqui fazia o
-    servidor nativo cair num índice de hash diferente do frontend Next.js
+    servidor nativo cair num índice de hash diferente do frontend TanStack Router
     para o MESMO projeto sem `DESIGN-SYSTEM.json`, gerando duas cores
     "dinâmicas" diferentes (frontend fúcsia, Studios nativos laranja) —
     exatamente a inconsistência visual que a paleta única deveria evitar."""
@@ -658,12 +658,12 @@ def _generate_modules(modules: list, target_dir: str) -> list[str]:
 def _generate_server_and_ui(
     suite_name: str, clean_modules: list[str], db_engine: str,
     src_dir: str, static_dir: str, templates_v2: str,
-    target_dir: str = None, frontend_stack: str = "nextjs",
+    target_dir: str = None, frontend_stack: str = "tanstack",
 ) -> None:
     """Gerar Servidor Monolítico Modular src/server.py e Front-ends.
 
     Lei Inviolável #11 (Padrão-Ouro de Stack, `AGENTS.md`): o frontend
-    default é Next.js + TypeScript + Tailwind CSS (`frontend_stack="nextjs"`).
+    default é TanStack Router + Vite + TypeScript + Tailwind CSS (`frontend_stack="tanstack"`).
     O Super-App em HTML/CSS/JS Python puro só é gerado se pedido
     explicitamente (`frontend_stack="python-html"`) — silêncio nunca é
     licença para gerar outra coisa.
@@ -673,10 +673,10 @@ def _generate_server_and_ui(
     escrever_atomico(os.path.join(src_dir, "server.py"), server_code)
     print("  [+] Servidor dinâmico 'src/server.py' gerado com sucesso!")
 
-    if frontend_stack == "nextjs":
+    if frontend_stack == "tanstack":
         frontend_dir = os.path.join(project_dir, "frontend")
-        NextJSExporter().export_project(project_dir, frontend_dir, suite_name=suite_name)
-        print("  [+] Front-end 'frontend/' gerado em Next.js + TypeScript + Tailwind (Lei #11)!")
+        TanStackRouterExporter().export_project(project_dir, frontend_dir, suite_name=suite_name)
+        print("  [+] Front-end 'frontend/' gerado em TanStack Router + TypeScript + Tailwind (Lei #11)!")
     else:
         index_html = generate_superapp_index_html(suite_name, clean_modules)
         escrever_atomico(os.path.join(static_dir, "index.html"), index_html)
@@ -747,13 +747,23 @@ def _copy_gates_and_automation(
         shutil.copyfile(dc_src, os.path.join(target_scripts_dir, "design_catalog.py"))
         print(f"  [+] Script: design_catalog.py")
 
-    # Copiar nextjs_exporter.py (dependência de compose_suite) para scripts/
-    njs_src = os.path.join(_comp_dir, "nextjs_exporter.py")
+    # Copiar tanstack_exporter.py (dependência de compose_suite) para scripts/
+    njs_src = os.path.join(_comp_dir, "tanstack_exporter.py")
     if not os.path.isfile(njs_src):
-        njs_src = os.path.join(scripts_dir, "nextjs_exporter.py")
+        njs_src = os.path.join(scripts_dir, "tanstack_exporter.py")
     if os.path.isfile(njs_src):
-        shutil.copyfile(njs_src, os.path.join(target_scripts_dir, "nextjs_exporter.py"))
-        print(f"  [+] Script: nextjs_exporter.py")
+        shutil.copyfile(njs_src, os.path.join(target_scripts_dir, "tanstack_exporter.py"))
+        print(f"  [+] Script: tanstack_exporter.py")
+
+    # Template padrão-ouro (libs offline-first) que o tanstack_exporter copia para o frontend:
+    # dentro do projeto gerado não existe o repositório, então ele vai junto.
+    tpl_src = os.path.join(_achar_raiz_repo(scripts_dir), "componentes", "compartilhado", "templates", "frontend-tanstack")
+    if os.path.isdir(tpl_src):
+        shutil.copytree(
+            tpl_src, os.path.join(target_dir, "templates", "frontend-tanstack"),
+            dirs_exist_ok=True, ignore=shutil.ignore_patterns("node_modules", "dist", "__pycache__"),
+        )
+        print("  [+] Template: frontend-tanstack (libs offline-first)")
 
     cookiecutter_templates_src = os.path.join(skill_root, "templates", "cookiecutter-scaffold")
     cookiecutter_templates_dst = os.path.join(target_dir, "templates", "cookiecutter-scaffold")
@@ -821,8 +831,12 @@ def _copy_governance_and_rules(
     print("  [+] Grafo de Memória 'CONTEXTO-PROJETO.md' gerado!")
 
 
-def compose_suite(target_dir: str, suite_name: str, modules: list, db_engine: str = "sqlite", frontend_stack: str = "nextjs"):
+def compose_suite(target_dir: str, suite_name: str, modules: list, db_engine: str = "sqlite", frontend_stack: str = "tanstack"):
     """Motor principal de composição cross-project."""
+    if frontend_stack not in ("tanstack", "python-html"):
+        raise ValueError(
+            f"frontend_stack inválido: {frontend_stack!r} (use 'tanstack' ou 'python-html'; o Next.js foi abolido)"
+        )
     target_dir = os.path.abspath(target_dir)
     db_engine = (db_engine or "sqlite").lower()
     print("=" * 80)

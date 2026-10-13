@@ -31,7 +31,7 @@ def test_frontmatter_valido():
 
 
 def test_conteudo_conciso_ingles_e_regras():
-    """Valida concisão (< 150 linhas) e tecnologias cobertas (Next.js, Zod, React Hook Form)."""
+    """Valida concisão (< 150 linhas) e tecnologias cobertas (TanStack Router, Zod, React Hook Form)."""
     assert SKILL_PATH.is_file(), f"Skill ausente: {SKILL_PATH}"
     linhas = SKILL_PATH.read_text(encoding="utf-8").splitlines()
     assert len(linhas) < 150, f"Skill muito longa ({len(linhas)} linhas, máx 150)"
@@ -39,4 +39,4 @@ def test_conteudo_conciso_ingles_e_regras():
     conteudo = "\n".join(linhas)
     assert "zod" in conteudo.lower(), "Referência a Zod ausente"
     assert "react-hook-form" in conteudo.lower() or "hook form" in conteudo.lower(), "Referência a React Hook Form ausente"
-    assert "next" in conteudo.lower(), "Referência a Next.js ausente"
+    assert "tanstack" in conteudo.lower(), "Referência a TanStack Router ausente"
