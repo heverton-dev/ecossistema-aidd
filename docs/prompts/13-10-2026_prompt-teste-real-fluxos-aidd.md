@@ -73,7 +73,11 @@ Estado do ticket: ABERTO, RESOLVIDO ou ABERTO-NÃO EXECUTADO.
 - Exit code real: redirecione a saída para arquivo e capture $? na mesma linha. Nunca use pipe, pois "cmd | tail" devolve o código do tail. Em tarefas em segundo plano, o "exit 0" da notificação é do último comando do script (por exemplo, um cat); leia o exit code gravado em arquivo.
 - Se simular uma falha para provar uma mensagem, restaure o estado e comprove com cmp ou diff que ficou idêntico.
 
-3.3 Refazer a etapa
+3.3 Resolver no ato
+- Todos os tickets abertos de uma etapa são resolvidos na própria etapa, antes de seguir para a próxima. Nada é adiado. Isso vale também para tickets novos que surgirem durante a correção.
+- Testes novos devem exercitar o mecanismo real (comando por subprocess) sempre que possível. Um teste que importa peças do código pode alterar o catálogo factual (docs/auditoria/mapa-pecas) e derrubar os gates G_mapa_pecas, G_aidd_visual_maps e G_PORTAO_PROVA_QUE_MORDE. Resolver isso com "visual-maps gerar" é pesado (compila o livro); prefira reescrever o teste.
+
+3.4 Refazer a etapa
 - Depois de corrigir, refaça a etapa inteira com o mecanismo real e gere a nova versão do relatório (_v2, _v3...).
 
 ### 4. Padrão de Branches e Merge para o Motor Original
@@ -117,4 +121,5 @@ Se todas as instruções, restrições, a criação de arquivos modulares, o for
 |---|---|---|
 | 13-10-2026 | Versão inicial: ritmo, diretórios, log por etapa, TICKETS, protocolo de correção, branches e merge, arquivos locais, formato de resposta. | Fluxo PURE, ETAPAs 01-02 (Tickets 1 e 2: hash do impeccable). |
 | 13-10-2026 | Seção 4.2: baseline que o ticket obrigue a atualizar entra na branch (.secrets.baseline); investigar a causa antes de mexer em baseline. | O hash novo do manifesto reprovou o G_SEGREDOS no audit completo. |
+| 13-10-2026 | Seção 3.3 nova: tickets resolvidos no ato, sem adiar; teste novo deve exercitar o mecanismo real por subprocess, para não alterar o catálogo factual. | Decisão do usuário na ETAPA_03; teste que importava o orquestrador derrubou 3 gates de mapa (audit exit 1, duas vezes). |
 | 13-10-2026 | Seção 3.2: exit 0 de notificação de tarefa em segundo plano não é o do comando principal; ler o exit code gravado em arquivo. | O audit reprovou com exit 1 enquanto a notificação dizia exit 0. |
