@@ -35,7 +35,7 @@ Pipeline: `[FORGE -> PLANNER -> MASTER -> DISPATCH] -> {ENGINE nas Worktrees} ->
    python ecossistema.py run-fluxo --fluxo pure --nome "My Project" --slug my-project --dominio gestao --pasta ./projetos/my-project
    ```
    Positional form: `<name> [domain]`. Done when the command exits 0.
-4. Confirm the delivery honors the Quarteto Sine Qua Non defined in `AGENTS.md` section 3 and a Next.js frontend.
+4. Confirm the delivery honors the Quarteto Sine Qua Non defined in `AGENTS.md` section 3 and a TanStack Router + Vite frontend.
 
 ## Engine invariants (`run-fluxo`)
 
@@ -75,6 +75,6 @@ Done when: the command exits 0 and the phase 8 tests pass.
 
 - [ ] `python ecossistema.py pure --nome "<Name>" --slug <slug> --dominio <domain> --pasta <dest> > pure.log 2>&1; echo $? > pure.rc` and `pure.rc` holds `0`.
 - [ ] `<dest>/ORQUESTRACAO_EXECUCAO.json` exists and `contratos_lidos` lists C1-C5 with sha256.
-- [ ] `python modulos/03-plataforma-e-entrega/gates/G_QUARTETO_SINE_QUA_NON.py --target <dest> > q-pure.log 2>&1; echo $? > q-pure.rc` holds `0` and `<dest>` has the Next.js frontend from step 4.
+- [ ] `python modulos/03-plataforma-e-entrega/gates/G_QUARTETO_SINE_QUA_NON.py --target <dest> > q-pure.log 2>&1; echo $? > q-pure.rc` holds `0` and `<dest>` has the TanStack Router frontend from step 4.
 - [ ] `python -m pytest <dest> > t.log 2>&1; echo $? > t.rc` holds `0`, and a red run of the same test was observed before the green one.
 - [ ] No API key was added to `.env`, the shell or any config during the run.

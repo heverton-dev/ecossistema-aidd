@@ -1,13 +1,13 @@
 ---
 name: aidd-frontend-forms
-description: 'Use when creating, reviewing, or refactoring typed frontend forms in Next.js using Zod validation schemas and React Hook Form.'
+description: 'Use when creating, reviewing, or refactoring typed frontend forms in TanStack Router (React) apps using Zod validation schemas and React Hook Form.'
 ---
 
-# Frontend Forms & Validation (Next.js + Zod)
+# Frontend Forms & Validation (TanStack Router + Zod)
 
 ## Overview
 
-Build robust, type-safe frontend forms in Next.js applications aligning with Ecosystem Law #11 (Next.js + TypeScript + Tailwind CSS). Enforce schema-first validation using Zod and binding with React Hook Form.
+Build robust, type-safe frontend forms in TanStack Router (React) applications aligning with Ecosystem Law #11 (TanStack Router + Vite + TypeScript + Tailwind CSS). Enforce schema-first validation using Zod and binding with React Hook Form.
 
 ## Core Rules
 

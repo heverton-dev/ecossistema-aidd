@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Gera o DESIGN-SYSTEM.json de um projeto — a identidade visual única e dual mode
-que os fluxos AIDD usam ao gerar o frontend Next.js (Leis Invioláveis #10 e #11).
+que os fluxos AIDD usam ao gerar o frontend TanStack Router (Leis Invioláveis #10 e #11).
 
 Integra o motor topológico de arquétipos do Mobbin (Web/Desktop vs Mobile/PWA),
 garante suporte nativo dual mode WCAG 2.1 e mantém retrocompatibilidade determinística.

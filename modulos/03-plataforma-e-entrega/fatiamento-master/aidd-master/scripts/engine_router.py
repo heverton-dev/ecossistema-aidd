@@ -16,7 +16,7 @@ Invariantes e Leis Auditadas:
   3. Zero Stubs (Lei #5): Arquivos gerados com schemas tipados e testes reais.
   4. Quarteto Sine Qua Non (Lei #10): Injeção automática e autônoma dos 4 pilares
      em 100% das fatias verticais.
-  5. Padrão-Ouro de Stack (Lei #11): Monólito Modular VSA + Next.js/Tailwind + OpenAPI 3.1.
+  5. Padrão-Ouro de Stack (Lei #11): Monólito Modular VSA + TanStack Router/Tailwind + OpenAPI 3.1.
 
 Uso programático:
   from engine_router import despachar_fatia

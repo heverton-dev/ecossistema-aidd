@@ -85,7 +85,7 @@ Toda aplicação robusta no ecossistema nasce da fundação **`aidd-forge`** e d
 | **Fluxo 02** | **`aidd-open`** | `aidd-open` | **`/open`** | `python ecossistema.py run-fluxo --fluxo open` | **Motores Open-Source:** Curadoria, integração e fatiamento VSA de bases OSS consolidadas com Compose. |
 | **Fluxo 03** | **`aidd-freedom`** | `aidd-freedom` | **`/freedom`** | `python ecossistema.py run-fluxo --fluxo freedom` | **Desacoplamento Low-Code:** Desmonte de vendor lock-in (Lovable/v0/Bolt), migração para Postgres e preservação pixel-perfect da UI. |
 
-> **Universal Convergence Funnel:** Qualquer que seja o fluxo, a entrega final entrega nativamente o **Quarteto *Sine Qua Non*** (`/swagger`, `/webhooks`, `/mcp`, `/docs`) e o Frontend no **Padrão-Ouro Next.js + TypeScript + Tailwind CSS** (Lei Inviolável #11).
+> **Universal Convergence Funnel:** Qualquer que seja o fluxo, a entrega final entrega nativamente o **Quarteto *Sine Qua Non*** (`/swagger`, `/webhooks`, `/mcp`, `/docs`) e o Frontend no **Padrão-Ouro TanStack Router + Vite + TypeScript + Tailwind CSS** (Lei Inviolável #11).
 
 ---
 
@@ -96,10 +96,10 @@ Toda aplicação robusta no ecossistema nasce da fundação **`aidd-forge`** e d
 | **AIDD Forge** | **A Fundação e o Chassi:** Prepara o terreno, coloca cercas de proteção e impede que a IA faça bagunça. | Bootstrap determinístico, fatiamento em micro-ambientes efêmeros (`.aidd/pipeline/`), context-purge estrito e 15 Quality Gates locais. | `/forge [pasta]` | `python ecossistema.py forge init [pasta]` |
 | **AIDD Planner** | **A Planta Baixa e o Contrato:** Escreve as regras de negócio em BDD/SDD e garante os requisitos do Quarteto. | Intake BDD/SDD, modelagem de entidades e contratos formais JSON Schema de handoff com as Engines. | `/planner [args]` | `python ecossistema.py planner init [args]` |
 | **AIDD Generator** | **A Linha de Montagem Autônoma:** Você fala o que quer e a fábrica entrega o software pronto com testes. | Pipeline autônomo de 8 fases com TDD Red-Green, consumo nativo de `PLANNER.json` e auto-crítica com métricas de qualidade. | `/generate <ideia>` | `python ecossistema.py generate "<ideia>"` |
-| **AIDD Master** | **Os Blocos de Encaixe Perfeito (Lego):** Permite adicionar novas funções ao sistema sem quebrar nada do que já existia. | Clean Architecture em Fatias Verticais (`Vertical Slices`), Frontend Next.js 14 App Router nativo (Lei #11), SQLite WAL concorrente e OpenAPI. | `/master <modulo>` | `python ecossistema.py master add-module <modulo>` |
+| **AIDD Master** | **Os Blocos de Encaixe Perfeito (Lego):** Permite adicionar novas funções ao sistema sem quebrar nada do que já existia. | Clean Architecture em Fatias Verticais (`Vertical Slices`), Frontend TanStack Router 14 App Router nativo (Lei #11), SQLite WAL concorrente e OpenAPI. | `/master <modulo>` | `python ecossistema.py master add-module <modulo>` |
 | **AIDD Enterprise** | **A Blindagem e Selo de Qualidade:** Verifica a autenticidade de cada componente com selo de segurança nível bancário. | Plataforma de Missão Crítica com injeção criptográfica SHA-256 de componentes, detecção de drift e conformidade Zero-Trust. | `/enterprise <tipo> <nome>` | `python ecossistema.py enterprise inject <tipo> <nome>` |
 | **AIDD Ops** | **A Pista de Corrida e Abastecimento:** Prepara os servidores na nuvem, ajusta tráfego, sizing e deploy em produção. | Meta-Orquestrador de Infraestrutura: Sizing de VPS, Hardening SSH/Ansible, Traefik, Docker Swarm, Uptime Kuma e Preflight HTTP E2E. | `/ops plan <nicho>` | `python ecossistema.py ops plan "<nicho>"` |
-| **AIDD Factory** | **A Central de Montagem & Fiação:** Cria o Gateway/BFF unificado, frontend e conecta todos os serviços entre si. | Gerador de aplicação e integração multi-serviço: Gateway FastAPI, Next.js, webhooks, compose unificado, .env e banco sob plano Ops. | `/factory --plano <arq> --pasta <dest>` | `python ecossistema.py factory --plano <arq> --pasta <dest>` |
+| **AIDD Factory** | **A Central de Montagem & Fiação:** Cria o Gateway/BFF unificado, frontend e conecta todos os serviços entre si. | Gerador de aplicação e integração multi-serviço: Gateway FastAPI, TanStack Router, webhooks, compose unificado, .env e banco sob plano Ops. | `/factory --plano <arq> --pasta <dest>` | `python ecossistema.py factory --plano <arq> --pasta <dest>` |
 | **AIDD Bridge** | **O Tradutor e Libertador de Código:** Pega apps de plataformas no-code/low-code e coloca para rodar em servidor próprio sem mensalidades extras. | Extrator, unificador e empacotador de projetos Lovable/Supabase para VPS própria: migração SQL para Postgres nativo/PostgREST e preservação visual. | `/bridge [comando]` | `python ecossistema.py bridge [scan\|convert-db\|merge\|pack]` |
 
 ---
@@ -231,7 +231,7 @@ ecossistema-aidd/
 │   ├── aidd-forge/                         ──► Bootstrap e blindagem de governança
 │   ├── aidd-planner/                       ──► Planejamento BDD/SDD e contratos formais de handoff
 │   ├── aidd-pure/                     ──► Fábrica autônoma de software (8 fases, TDD Red-Green)
-│   ├── aidd-master/                        ──► Monólito modular VSA e Frontend Next.js Padrão-Ouro
+│   ├── aidd-master/                        ──► Monólito modular VSA e Frontend TanStack Router Padrão-Ouro
 │   ├── aidd-enterprise/                    ──► Missão crítica e validação criptográfica SHA-256
 │   ├── aidd-ops/                           ──► Meta-orquestrador de infraestrutura, Docker e deploy VPS
 │   ├── aidd-open/                       ──► Gerador de aplicação, BFF e integração multi-serviço

@@ -52,7 +52,7 @@
       "properties": {
         "padrao_frontend": {
           "type": "string",
-          "enum": ["nextjs_typescript_tailwind", "tanstack_router_typescript_tailwind"]
+          "enum": ["tanstack_router_typescript_tailwind"]
         },
         "padrao_backend": {
           "type": "string",

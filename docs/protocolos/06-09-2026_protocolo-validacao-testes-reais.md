@@ -70,6 +70,6 @@ Cada relatório conterá o boletim com justificativas transparentes:
 ## 4. Regra de Execução de Frontend
 
 Sempre que um teste envolver telas ou APIs interativas:
-- O agente **DEVE iniciar o servidor local** (FastAPI, Vite, Next.js, HTML/HTTP estático).
+- O agente **DEVE iniciar o servidor local** (FastAPI, Vite, TanStack Router, HTML/HTTP estático).
 - O agente **DEVE fornecer o link direto clicável** (ex: [http://localhost:8000/docs](http://localhost:8000/docs)).
 - O agente **NÃO PODE considerar a etapa concluída** antes de o desenvolvedor confirmar que abriu, mexeu e aprovou o funcionamento visual.

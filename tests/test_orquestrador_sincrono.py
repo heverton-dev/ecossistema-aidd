@@ -127,7 +127,7 @@ def test_orquestrador_valida_schema_handoff(tmp_path):
                 "documentacao": True
             },
             "arquitetura_alvo": {
-                "padrao_frontend": "nextjs_typescript_tailwind",
+                "padrao_frontend": "tanstack_router_typescript_tailwind",
                 "padrao_backend": "fastapi_modular_vsa",
                 "persistencia": "sqlite_wal"
             },

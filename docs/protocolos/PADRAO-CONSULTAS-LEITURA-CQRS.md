@@ -127,9 +127,9 @@ def executar_consulta_resumo_vendas(
 
 ---
 
-## 4. Contratos de Projeção no Frontend (TypeScript + Next.js)
+## 4. Contratos de Projeção no Frontend (TypeScript + TanStack Router)
 
-Na camada frontend (Next.js), o contrato da projeção é consumido diretamente em componentes React com tipagem estrita:
+Na camada frontend (TanStack Router), o contrato da projeção é consumido diretamente em componentes React com tipagem estrita:
 
 ```typescript
 // types/resumo-vendas.dto.ts

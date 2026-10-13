@@ -193,28 +193,28 @@ def _validar_vsa(diretorio: str) -> list:
             if not os.path.isfile(os.path.join(static_dir, arq)):
                 problemas.append(f"Quarteto Sine Qua Non ausente: {desc} ({arq})")
 
-    # 4. Frontend de produto: TanStack Start / Router (Padrão-Ouro, Lei Inviolavel #11),
-    # Next.js legado ou Super-App em src/static/index.html.
+    # 4. Frontend de produto: TanStack Router + Vite (Padrão-Ouro, Lei Inviolavel #11) ou
+    # Super-App em src/static/index.html. O Next.js foi abolido.
     frontend_pkg = os.path.join(diretorio, "frontend", "package.json")
-    usa_nextjs = False
+    tem_dep_next = False
     usa_tanstack = False
     if os.path.isfile(frontend_pkg):
         try:
             with open(frontend_pkg, "r", encoding="utf-8") as f:
                 deps = json.load(f).get("dependencies", {})
-                usa_nextjs = "next" in deps
+                tem_dep_next = "next" in deps
                 usa_tanstack = "@tanstack/react-router" in deps or "@tanstack/start" in deps
         except (OSError, json.JSONDecodeError):
             pass
 
-    if usa_tanstack:
-        pass
-    elif usa_nextjs:
-        for req in ["tsconfig.json", "tailwind.config.ts", os.path.join("app", "layout.tsx"), os.path.join("app", "page.tsx")]:
+    if tem_dep_next:
+        problemas.append("Front-end Next.js em frontend/: o Next.js foi abolido (Lei #11); use TanStack Router + Vite.")
+    elif usa_tanstack:
+        for req in ["vite.config.ts", "tsconfig.json", "index.html", os.path.join("src", "main.tsx"), os.path.join("src", "router.tsx")]:
             if not os.path.isfile(os.path.join(diretorio, "frontend", req)):
-                problemas.append(f"Front-end Next.js incompleto: frontend/{req} ausente (Lei #11).")
+                problemas.append(f"Front-end TanStack incompleto: frontend/{req} ausente (Lei #11).")
     elif os.path.isdir(static_dir) and not os.path.isfile(os.path.join(static_dir, "index.html")):
-        problemas.append("Frontend de produto ausente: nem frontend/ (TanStack/Next.js) nem src/static/index.html")
+        problemas.append("Frontend de produto ausente: nem frontend/ (TanStack) nem src/static/index.html")
 
     return problemas
 

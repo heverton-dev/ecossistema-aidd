@@ -4,6 +4,9 @@ node_modules/
 # Environments & Python
 .venv/
 venv/
+.env
+.env.*
+!.env.example
 __pycache__/
 *.pyc
 .pytest_cache/
@@ -36,7 +39,6 @@ keys/
 */skills/cloudflare-one-migrations/
 */skills/durable-objects/
 */skills/impeccable/
-*/skills/nextjs-on-cloudflare/
 */skills/sandbox-migrate-to-next/
 */skills/sandbox-next/
 */skills/sandbox-stable/

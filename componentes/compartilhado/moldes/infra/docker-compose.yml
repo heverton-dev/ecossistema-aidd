@@ -21,18 +21,18 @@ services:
       retries: 3
       start_period: 5s
 
-  # 2. Front-end Next.js (Lei Inviolavel #11: Padrao-Ouro de Stack)
+  # 2. Front-end TanStack Router + Vite — SPA estatica servida por nginx (Lei Inviolavel #11)
   web:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ""
     restart: always
-    environment:
-      - NEXT_PUBLIC_API_URL=
     networks:
       - aidd_network
     healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/', r => process.exit(r.statusCode < 500 ? 0 : 1)).on('error', () => process.exit(1))"]
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:3000/"]
       interval: 10s
       timeout: 5s
       retries: 3

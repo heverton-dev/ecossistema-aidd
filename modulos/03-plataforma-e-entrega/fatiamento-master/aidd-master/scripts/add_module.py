@@ -202,7 +202,7 @@ def criar_modulo(nome_modulo: str, descricao: str = "", target_dir: str = "."):
                     print(f"  [+] 'src/server.py' regenerado e religado com o módulo '{slug}'!")
 
                     # Regenerar também a página do novo módulo no frontend
-                    # Next.js (Lei #11), quando o projeto já usa essa stack —
+                    # TanStack Router (Lei #11), quando o projeto já usa essa stack —
                     # achado real: `add-module` religava só server.py, o
                     # frontend nunca ganhava a página do módulo novo.
                     frontend_pkg = os.path.join(target_dir, "frontend", "package.json")
@@ -210,12 +210,12 @@ def criar_modulo(nome_modulo: str, descricao: str = "", target_dir: str = "."):
                         try:
                             with open(frontend_pkg, "r", encoding="utf-8") as f:
                                 pkg_data = json.load(f)
-                            if "next" in pkg_data.get("dependencies", {}):
-                                from nextjs_exporter import NextJSExporter
-                                NextJSExporter().export_project(
+                            if "@tanstack/react-router" in pkg_data.get("dependencies", {}):
+                                from tanstack_exporter import TanStackRouterExporter
+                                TanStackRouterExporter().export_project(
                                     target_dir, os.path.join(target_dir, "frontend"), suite_name=suite_name
                                 )
-                                print(f"  [+] Front-end 'frontend/' religado com o módulo '{slug}' (Next.js)!")
+                                print(f"  [+] Front-end 'frontend/' religado com o módulo '{slug}' (TanStack Router)!")
                             else:
                                 print(f"  [+] Front-end 'frontend/' mantido em TanStack Start / Router (Lei #11) para o módulo '{slug}'!")
                         except Exception as e:

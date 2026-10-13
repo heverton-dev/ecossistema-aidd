@@ -48,7 +48,7 @@ Namespace note: Antigravity CLI (`agy`) reserves `/open` to open files. There, u
 
 ## Engine only (`open-motor`)
 
-Generates the multi-service stack (FastAPI gateway, Next.js whitelabel frontend, unified docker-compose, `init-multiple-databases.sh`, `.env` per service, webhooks, Swagger/OpenAPI, cross-service validation) from a `PLANO-INFRAESTRUTURA.json` produced by `aidd-ops`.
+Generates the multi-service stack (FastAPI gateway, TanStack Router + Vite frontend, unified docker-compose, `init-multiple-databases.sh`, `.env` per service, webhooks, Swagger/OpenAPI, cross-service validation) from a `PLANO-INFRAESTRUTURA.json` produced by `aidd-ops`.
 
 ```bash
 python ecossistema.py open-motor --plano <PLANO-INFRAESTRUTURA.json> --pasta <destination> [--sem-llm]

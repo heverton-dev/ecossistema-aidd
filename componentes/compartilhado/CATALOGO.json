@@ -75,7 +75,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-forge",
       "versao": "1.0.0",
-      "sha256": "sha256-64ca771de67a8304b1a3b794d6380371bc5a741874d8be124a7d1086d22d5ca2",
+      "sha256": "sha256-6b4f48a705a8a38fb1971b3b2fbd9697bd5cda00d0b63da3a65b1e920e1ac6e2",
       "consumidores": [
         "aidd-enterprise",
         "aidd-master"
@@ -977,7 +977,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-ops",
       "versao": "1.0.0",
-      "sha256": "sha256-590fc5ee0296f17450b1bf11b9823b3cfc18b4a3cb3fef95bad22f889f145ecc",
+      "sha256": "sha256-d6c0001ea8c8ad8f11e03b803ff9e1fa85e3acd8c834cce81bf3bdac322e7d5b",
       "consumidores": [
         "aidd-enterprise",
         "aidd-master",
@@ -994,7 +994,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-ops",
       "versao": "1.0.0",
-      "sha256": "sha256-cd0295866a0665f8e71aea63da376471aaeb4f7fbdabb60c6e5783cfc2b1c0c7",
+      "sha256": "sha256-3169f42e24378b28544a019d646f651c3ba02283fedce1aba2933292975861dc",
       "consumidores": [
         "aidd-enterprise",
         "aidd-master",
@@ -1385,7 +1385,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-master",
       "versao": "1.0.0",
-      "sha256": "sha256-05f69ab39c8f4f4ec3f6ab69acf4010d4672e2729819e72cf8e999fb8fa2020a",
+      "sha256": "sha256-4d031e401ed18ab327b8ea5ab99b40852cf1208d8127abe0566fb199268cf1ac",
       "consumidores": [
         "aidd-master",
         "ecossistema-raiz"
@@ -1475,7 +1475,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-planner",
       "versao": "1.0.0",
-      "sha256": "sha256-172239de30e191cc4363f2f774b0ddbc1b8594a70361b172db77e2399ddb1532",
+      "sha256": "sha256-77e7dfe219b3a0f0a04a17f7585283a2e88908ffedd34f4ac0ea7d0d7c37cbe6",
       "consumidores": [
         "aidd-planner",
         "ecossistema-raiz"
@@ -1523,7 +1523,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-master",
       "versao": "1.0.0",
-      "sha256": "sha256-3627dfa8b807f3984c2164b58d5f80944bac2687ee50842595f1628e84b2b2ce",
+      "sha256": "sha256-e98b4723d5c03199dbda8571f90e726885a552b4998ccc5e8f591cbe936ee4a5",
       "consumidores": [
         "aidd-enterprise",
         "aidd-master"
@@ -1664,7 +1664,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-master",
       "versao": "1.0.0",
-      "sha256": "sha256-2c2d89b23e110a4af847368435251cd56a41a13cdd430959a94b0eb703a3bb5c",
+      "sha256": "sha256-4875fc3e3d93aedc3178c1ef17ebcb53da6fcdbbf13f04636b6b27f8427f7134",
       "consumidores": [
         "aidd-enterprise",
         "aidd-master"
@@ -1939,21 +1939,21 @@
       ]
     },
     {
-      "nome": "src-core/nextjs_exporter.py",
-      "caminho": "componentes/compartilhado/src-core/nextjs_exporter.py",
+      "nome": "src-core/tanstack_exporter.py",
+      "caminho": "componentes/compartilhado/src-core/tanstack_exporter.py",
       "categoria": "núcleo src-core",
-      "familia": "nextjs_exporter.py",
+      "familia": "tanstack_exporter.py",
       "papel": "principal",
       "dono_do_conteudo": "aidd-master",
       "versao": "1.0.0",
-      "sha256": "sha256-45e8dd5f6c747344054044bbfffbe929dcdf7f6bd6ffe53e1d9f7db404efb39e",
+      "sha256": "sha256-eea9383f36eee85e88ded7deacc4a3f71c52b7c801585abba25150518d46a004",
       "consumidores": [
         "aidd-enterprise",
         "aidd-master"
       ],
       "copias": [
-        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/nextjs_exporter.py",
-        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/nextjs_exporter.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/tanstack_exporter.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/tanstack_exporter.py"
       ]
     },
     {

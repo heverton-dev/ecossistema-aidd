@@ -76,32 +76,32 @@ def _validar_integracao(diretorio: str) -> list:
         # nativos do backend (src/static/*.html), independente da stack de
         # frontend. O 5o item (dashboard de produto) e "index.html" (Super-App
         # Python puro) so quando pedido explicitamente; por padrao (Lei
-        # Inviolavel #11) e o frontend/ em Next.js.
+        # Inviolavel #11) e o frontend/ em TanStack Router + Vite.
         static_dir = os.path.join(diretorio, "src", "static")
         for st in ["swagger.html", "webhook_studio.html", "mcp_studio.html", "docs.html"]:
             if not os.path.isfile(os.path.join(static_dir, st)):
                 problemas.append(f"Quarteto Sine Qua Non ausente: {st}")
 
         frontend_pkg = os.path.join(diretorio, "frontend", "package.json")
-        usa_nextjs = False
+        tem_dep_next = False
         usa_tanstack = False
         if os.path.isfile(frontend_pkg):
             try:
                 with open(frontend_pkg, "r", encoding="utf-8") as f:
                     deps = json.load(f).get("dependencies", {})
-                    usa_nextjs = "next" in deps
+                    tem_dep_next = "next" in deps
                     usa_tanstack = "@tanstack/react-router" in deps or "@tanstack/start" in deps
             except (OSError, json.JSONDecodeError):
                 pass
 
-        if usa_tanstack:
-            pass
-        elif usa_nextjs:
-            for req in ["tsconfig.json", "tailwind.config.ts", os.path.join("app", "layout.tsx"), os.path.join("app", "page.tsx")]:
+        if tem_dep_next:
+            problemas.append("Front-end Next.js em frontend/: o Next.js foi abolido (Lei #11); use TanStack Router + Vite.")
+        elif usa_tanstack:
+            for req in ["vite.config.ts", "tsconfig.json", "index.html", os.path.join("src", "main.tsx"), os.path.join("src", "router.tsx")]:
                 if not os.path.isfile(os.path.join(diretorio, "frontend", req)):
-                    problemas.append(f"Front-end Next.js incompleto: frontend/{req} ausente (Lei #11).")
+                    problemas.append(f"Front-end TanStack incompleto: frontend/{req} ausente (Lei #11).")
         elif not os.path.isfile(os.path.join(static_dir, "index.html")):
-            problemas.append("Quarteto Sine Qua Non ausente: index.html (nem frontend/ TanStack/Next.js encontrado)")
+            problemas.append("Quarteto Sine Qua Non ausente: index.html (nem frontend/ TanStack encontrado)")
 
     return problemas
 

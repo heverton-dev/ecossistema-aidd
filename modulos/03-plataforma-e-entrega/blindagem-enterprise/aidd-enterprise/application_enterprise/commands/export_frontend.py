@@ -7,6 +7,6 @@ from application_enterprise.commands.delegacao import delegar_ou_sair
 def cmd_export_frontend(args):
     delegar_ou_sair([
         "export-frontend",
-        "--stack", getattr(args, "stack", None) or "nextjs",
+        "--stack", getattr(args, "stack", None) or "tanstack",
         "--dir", getattr(args, "dir", ".") or ".",
     ])

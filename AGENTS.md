@@ -128,7 +128,7 @@
 Every robust application in the ecosystem originates from **`aidd-forge`** (supreme governance and rule dictatorship) and an interactive **`PRÉ-PLANO`** intake (`aidd-planner`), allowing the developer or user to derive 3 distinct specialized paths with zero friction (CLI or Slash Commands):
 
 - **FLUXO 01 — `aidd-pure` (Do Zero Puro | Slash: `/pure`):** `[FORGE -> PLANNER] -> MASTER -> [DISPATCH + GENERATOR] -> [ENTERPRISE -> OPS]`
-  - Engine: `aidd-pure` (8-phase pipeline, TDD Red-Green, Monólito Modular VSA + Next.js).
+  - Engine: `aidd-pure` (8-phase pipeline, TDD Red-Green, Monólito Modular VSA + TanStack Router).
   - CLI: `python ecossistema.py pure` ou `python ecossistema.py run-fluxo --fluxo pure`
   - Skill: `aidd-pure`
 - **FLUXO 02 — `aidd-open` (Motores Open-Source | Slash: `/aidd-open` ou `/open` ou `/factory`):** `[FORGE -> PLANNER] -> MASTER -> [DISPATCH + FACTORY] -> [ENTERPRISE -> OPS]`

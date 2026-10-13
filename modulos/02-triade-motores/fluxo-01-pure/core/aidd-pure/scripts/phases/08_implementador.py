@@ -611,7 +611,7 @@ BLOCO_REGRA_JSON_ROUNDTRIP = """- JSON round-trip: if test saves and re-reads JS
 BLOCO_REGRA_CRUD = """- FULL CRUD: if script handles entity repository or API endpoints, MUST implement complete CRUD: Create (POST), Read/List (GET), Update/Edit (PUT/PATCH) and Delete (DELETE). NEVER omit edit/update.
 """
 
-BLOCO_REGRA_UI = """- GOLD STANDARD STACK: web UI must default to Next.js with TypeScript and Tailwind CSS, never plain HTML unless the user explicitly asks for another stack here.
+BLOCO_REGRA_UI = """- GOLD STANDARD STACK: web UI must default to TanStack Router + Vite (React) with TypeScript and Tailwind CSS, never plain HTML unless the user explicitly asks for another stack here.
 - IMPECCABLE DESIGN: zero AI slop, deep neutral Zinc palette (#09090b, #18181b, #27272a), tabular numbers, 150ms transitions. FORBIDDEN to use browser alert()/confirm()/prompt() — use custom modal/toast components.
 """
 

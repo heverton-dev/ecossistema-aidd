@@ -69,6 +69,6 @@ Em conformidade com a **ISSUE-0010** e a **Lei #8 (Honestidade de Rótulo)**, ne
 - **Limite Metrológico (Lei #8 / ISSUE-0024):** O gate valida estaticamente e contratualmente as rotas e manipuladores dos 4 pilares (/docs, /webhooks, /mcp, /docs/guia). A conformidade operacional em runtime vivo de cada serviço é validada pelo G_CONTRACT_ROT sob servidor ativo. Concluído na Sessão 23.
 
 ### 2.7 Lei #11 — Padrão-Ouro de Stack Tecnológica (ISSUE-0025)
-- **Exigência:** Todo fluxo deve gerar Frontend em Next.js + TypeScript + Tailwind CSS (Backend Python + SQLite WAL, API OpenAPI 3.1), salvo override explícito registrado.
-- **Cobertura Implementada (Sessão 24):** `modulos/02-triade-motores/fluxo-01-pure/gates/G_STACK_PADRAO_OURO.py` audita deterministicamente dependências de frontend (`package.json` para Next.js, React, TypeScript e Tailwind CSS) e configurações de backend (SQLite `journal_mode=WAL` e OpenAPI `3.1.x`).
+- **Exigência:** Todo fluxo deve gerar Frontend em TanStack Router + Vite + TypeScript + Tailwind CSS (Backend Python + SQLite WAL, API OpenAPI 3.1), salvo override explícito registrado.
+- **Cobertura Implementada (Sessão 24):** `modulos/02-triade-motores/fluxo-01-pure/gates/G_STACK_PADRAO_OURO.py` audita deterministicamente dependências de frontend (`package.json` para TanStack Router, React, TypeScript e Tailwind CSS) e configurações de backend (SQLite `journal_mode=WAL` e OpenAPI `3.1.x`).
 - **Limite Metrológico (Lei #8 / ISSUE-0025):** O portão valida estaticamente dependências declaradas e configurações em código; decisões de override explícito documentadas no plano para qualquer camada são rigorosamente respeitadas para evitar falso-positivo em projetos sob demanda de nicho. Concluído na Sessão 24.

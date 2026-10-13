@@ -10,7 +10,7 @@ definidas no documento canônico:
 
 Audita se um projeto ou template implementa a disciplina do estado da arte:
   1. Visual Shell: Tokens OKLCH & Tailwind CSS.
-  2. Roteamento & Shells: TanStack Start/Router ou Next.js + Casca Dupla.
+  2. Roteamento & Shells: TanStack Router + Vite + Casca Dupla.
   3. PWA Engine: Service Worker & Web App Manifest.
   4. Offline-First: Fila persistente com assinatura HMAC SHA-256.
   5. State & Schemas: TanStack Query & Validação Zod/Valibot.
@@ -111,7 +111,7 @@ def auditar_nove_camadas(projeto_dir: str) -> Tuple[bool, List[str], Dict[int, s
     else:
         status_camadas[2] = "FALHA"
         if not tem_router:
-            erros.append("Camada 2: Router tipado padrão-ouro (TanStack Router ou Next.js) ausente.")
+            erros.append("Camada 2: Router tipado padrão-ouro (TanStack Router) ausente.")
         if not tem_shells:
             erros.append("Camada 2: Componentes de casca adaptativa (AdminShell/MobileShell/Layout) ausentes.")
 

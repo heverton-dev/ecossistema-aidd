@@ -1279,25 +1279,30 @@ def _gerar_docs_html(pasta_saida: str, suite_name: str, servicos: List[Dict[str,
     return docs_path
 
 
-def gerar_aplicacao_vsa(analysis: Dict[str, Any], pasta_saida: str, frontend_stack: str = "nextjs") -> Result:
+def gerar_aplicacao_vsa(analysis: Dict[str, Any], pasta_saida: str, frontend_stack: str = "tanstack") -> Result:
     """Orquestra a geracao completa da aplicacao monolitica modular VSA com o Quarteto Sine Qua Non.
 
     Args:
         analysis: Dicionario do factory_analysis.json.
         pasta_saida: Diretorio raiz de saida da aplicacao.
-        frontend_stack: "nextjs" (default, Lei Inviolavel #11) ou "python-html"
+        frontend_stack: "tanstack" (default, Lei Inviolavel #11) ou "python-html"
             (Super-App em HTML/CSS/JS puro, so quando pedido explicitamente).
-            Com "nextjs", o Super-App em src/static/index.html NAO e gerado
+            Com "tanstack", o Super-App em src/static/index.html NAO e gerado
             aqui — o frontend real e gerado por `pipeline_factory.py` (Fase 3)
-            via NextJSExporter (fonte unica compartilhada), evitando o
+            via TanStackRouterExporter (fonte unica compartilhada), evitando o
             frontend duplicado/divergente que existia antes (achado real:
             este modulo gerava um Super-App em src/static/index.html E
-            frontend_generator.py gerava um Next.js separado e incompativel
+            um gerador de frontend separado e incompativel (removido)
             para o mesmo projeto — validacao E2E do Fluxo 01, 18/09/2026).
 
     Returns:
         Result.ok(lista_de_arquivos_gerados) ou Result.fail.
     """
+    if frontend_stack not in ("tanstack", "python-html"):
+        return Result.fail(
+            f"frontend_stack inválido: {frontend_stack!r} (use 'tanstack' ou 'python-html'; o Next.js foi abolido)",
+            codigo="FRONTEND_STACK_INVALIDA",
+        )
     try:
         suite_name = analysis.get("nicho_nome_exibicao", "AIDD Application Suite")
         nicho_slug = analysis.get("nicho_slug", "suite")
@@ -1331,9 +1336,9 @@ def gerar_aplicacao_vsa(analysis: Dict[str, Any], pasta_saida: str, frontend_sta
         arquivos_gerados.append(docs_file)
 
         # 5. Super-App em HTML/CSS/JS Python puro so quando pedido
-        # explicitamente (Lei Inviolavel #11). Com o default "nextjs", o
+        # explicitamente (Lei Inviolavel #11). Com o default "tanstack", o
         # frontend de produto e gerado pela Fase 3 do pipeline_factory.py
-        # (NextJSExporter compartilhado), nao aqui.
+        # (TanStackRouterExporter compartilhado), nao aqui.
         if frontend_stack == "python-html":
             index_file = _gerar_superapp_ui(pasta_saida, suite_name, servicos)
             arquivos_gerados.append(index_file)
@@ -1467,7 +1472,7 @@ def emitir_handoff_engine_master(
         "projeto_slug": slug_projeto,
         "slices_geradas": slices_payload,
         "artefatos_frontend": {
-            "tecnologia": tecnologia_frontend if tecnologia_frontend in ("nextjs_app_router", "tanstack_router") else "tanstack_router",
+            "tecnologia": "tanstack_router",
             "paginas_geradas": [f"/{s['slice_nome']}" for s in slices_info] or ["/dashboard"],
             "origem_design": "tailwind_standard",
         },
