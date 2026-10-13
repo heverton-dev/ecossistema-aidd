@@ -159,8 +159,40 @@ def _checar_hash_skill(cfg):
         return None
     obtido = _calcular_sha256(caminho)
     if obtido != esperado:
-        return f"esperado sha256={esperado} obtido sha256={obtido}"
+        msg = f"esperado sha256={esperado} obtido sha256={obtido}"
+        if _e_deriva_de_versao(cfg):
+            msg += (f"; versao esperada {cfg['versao_esperada']} obtida "
+                    f"{_extrair_versao_frontmatter(caminho)}")
+        return msg
     return None
+
+
+def _extrair_versao_frontmatter(caminho):
+    """Le 'version:' do frontmatter YAML (primeiro bloco ---) de um SKILL.md. None se ausente."""
+    with open(caminho, "r", encoding="utf-8", errors="replace") as f:
+        linhas = f.read().splitlines()
+    if not linhas or linhas[0].strip() != "---":
+        return None
+    for linha in linhas[1:]:
+        if linha.strip() == "---":
+            break
+        if linha.startswith("version:"):
+            return linha.split(":", 1)[1].strip().strip("\"'")
+    return None
+
+
+def _e_deriva_de_versao(cfg):
+    """True quando o manifesto declara 'versao_esperada' e o artefato instalado traz outra
+    'version:' — o upstream evoluiu (instaladores remotos ignoram pin), nao ha indicio de
+    adulteracao. Sem 'versao_esperada' ou sem arquivo, False (trata como adulteracao)."""
+    esperada = cfg.get("versao_esperada")
+    if not esperada:
+        return False
+    caminho = os.path.join(ROOT_DIR, cfg["verificar"])
+    if not os.path.isfile(caminho):
+        return False
+    obtida = _extrair_versao_frontmatter(caminho)
+    return obtida is not None and obtida != esperada
 
 
 def bootstrap_skills(apenas=None, dry_run=False):
@@ -521,7 +553,10 @@ def verificar():
             continue
         divergencia = _checar_hash_skill(cfg)
         if divergencia:
-            problemas.append(f"[skill/{nome}] hash SHA-256 divergente ({divergencia}) — artefato pode ter sido adulterado")
+            if _e_deriva_de_versao(cfg):
+                problemas.append(f"[skill/{nome}] hash SHA-256 divergente por nova versao do upstream ({divergencia}) — atualize 'sha256' e 'versao_esperada' no manifesto apos revisar o conteudo")
+            else:
+                problemas.append(f"[skill/{nome}] hash SHA-256 divergente ({divergencia}) — artefato pode ter sido adulterado")
 
     for nome, cfg in manifesto.get("mcps", {}).items():
         for harness in cfg.get("harnesses_alvo", []):
