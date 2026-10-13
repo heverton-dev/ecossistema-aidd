@@ -1795,4 +1795,7 @@
   - `G_DRIFT_NUCLEO_COMPARTILHADO`: **PASS (Exit 0)**; `dependencia verify`: **exit 0** (65 dependências).
   - Não verificado: compose completo (backend Python + nginx de borda + frontend) e `nginx -t` isolado.
 - **Pendências registradas:** tickets abertos nos relatórios `AUDITORIA-FLUXO-PURE/ETAPA_05` a `ETAPA_07` (planner sem entrevista e com Mobbin subaproveitado, defeitos do extrator de tokens, isolamento de teste do master, baseline de RAM do dimensionamento, `components verify` no clone, nomes de teste repetidos).
-- **Status:** **RESOLVIDO NO CLONE; AUDITORIA COMPLETA NO MOTOR ORIGINAL EM ANDAMENTO.**
+- **Resultados Medidos (13/10/2026, no motor original):**
+  - `python -X utf8 ecossistema.py audit`: **62 aprovados, 3 reprovados** (exit 1). Os 3 (`G_HARNESS_COMPAT`, `G_COMPONENTE_AGNOSTICO`, `G_PORTAO_PROVA_QUE_MORDE`) tinham a mesma causa: os espelhos locais `.codebuddy/skills/` (ignorados pelo git) das skills `aidd-frontend-forms`, `aidd-open` e `aidd-pure` estavam com a versão antiga. Após copiar a fonte nova (espelhos eram idênticos à fonte antiga), os 3 gates passaram isolados (exit 0).
+  - Commit `2241f2c8` com hooks ligados (todos os gates do pre-commit, exit 0) e push da branch com `pre-push` (exit 0).
+- **Status:** **RESOLVIDO** (clone e motor original; merge na `main` pendente, a fazer por último entre as branches do fluxo PURE).
