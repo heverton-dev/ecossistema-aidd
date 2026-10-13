@@ -292,3 +292,42 @@ class WebhookDispatcher:
         _html = _html.replace("__PRIMARY__", str(primary))
         _html = _html.replace("__PRIMARY_HOVER__", str(primary_hover))
         return _html
+
+    def init_schema(self, conn, demo_url: str = "https://webhook.site/demo-aidd-master"):
+        """Inicializa tabelas de webhooks e logs na infraestrutura do núcleo."""
+        conn.executescript('''
+            CREATE TABLE IF NOT EXISTS webhooks (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                url TEXT NOT NULL,
+                secret TEXT NOT NULL,
+                eventos TEXT NOT NULL,
+                ativo INTEGER DEFAULT 1,
+                criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+            CREATE TABLE IF NOT EXISTS webhook_logs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                webhook_id INTEGER,
+                evento TEXT NOT NULL,
+                url TEXT NOT NULL,
+                payload_json TEXT NOT NULL,
+                status_code INTEGER,
+                resposta TEXT,
+                sucesso INTEGER,
+                criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (webhook_id) REFERENCES webhooks(id)
+            );
+        ''')
+        try:
+            cursor = conn.cursor()
+            cursor.execute("SELECT count(*) as c FROM webhooks")
+            row = cursor.fetchone()
+            count = row[0] if row else 0
+            if count == 0:
+                cursor.execute(
+                    "INSERT INTO webhooks (url, secret, eventos, ativo) VALUES (?, ?, ?, 1)",
+                    (demo_url, "whsec_demo_secret_master_12345", "*")
+                )
+                conn.commit()
+        except Exception:
+            pass
+
