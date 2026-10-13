@@ -1769,3 +1769,20 @@
 - **Status:** **RESOLVIDO & 100% CONFORME**.
 
 
+## 17. Fluxo Canônico PURE — bloco Ambiente do planner (`aidd-planner`, orquestrador `/pure`)
+
+- **Data da Auditoria e Validação:** 13/10/2026
+- **Ambiente:** clone `C:\Users\trcnologia\Desktop\TESTE-ecossistema-aidd_04102026\FLUXO-PURE` e motor original (branch `fix/pure-etapa-08-planner-ambiente`, a partir da `main`)
+- **Ferramentas Tocadas:** `aidd-planner` (`src/core_planner/ambiente.py` novo, `aidd_planner/core/ambiente.py`, `src/cli.py`, testes) e `scripts/orquestrador_sincrono.py` (`--mobbin`).
+- **Achados do teste real:**
+  1. O `planner init` não verificava o ambiente: faltar o Mobbin caía no catálogo em silêncio e variáveis de deploy ausentes só apareciam no fim do fluxo.
+  2. O menu de referências de UI só existia em terminal interativo, o que não funciona dentro de um harness.
+- **O que executou:**
+  1. Novo comando `planner ambiente --pasta P --mobbin 1|2|3` (1 = MCP oficial pelo harness, 2 = chave `MOBBIN_API_KEY` no `.env`, 3 = nenhum) que grava `.aidd/ambiente.json` sem segredos e imprime o passo a passo do harness detectado.
+  2. O `planner init` e a etapa 2 do `/pure` só abrem com o ambiente registrado e as variáveis de deploy completas (`VPS_HOST`, `VPS_USER`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ZONE_ID`, `DEFAULT_ROOT_DOMAIN` e `SSH_KEY_PATH` ou `VPS_PASSWORD`). O Mobbin nunca bloqueia.
+  3. O orquestrador ganhou `--mobbin`; sem ambiente registrado e sem a flag, para e lista os 3 caminhos.
+- **Resultados Medidos (13/10/2026):**
+  - `aidd-planner`: **70 passed** (22 testes novos do ambiente); orquestrador (`test_orquestrador_contratos_reais`, `test_orquestrador_sincrono`, `test_orquestrador_ambiente`): **32 passed**.
+  - Prova real no clone: `--mobbin 1`, `2` (chave aceita pelo Mobbin em chamada real) e `3` com exit 0; sem escolha exit 1 listando os caminhos; nenhum segredo nas saídas.
+- **Pendências registradas:** `AUDITORIA-FLUXO-PURE/ETAPA_08` (Coolify abolido e deploy real do `compose-nativo`, documentação do bloco Ambiente, passo a passo dos harnesses OpenCode, MiMoCode e Antigravity não verificado).
+- **Status:** **RESOLVIDO NO CLONE; ESPELHO NO MOTOR ORIGINAL EM ANDAMENTO.**
