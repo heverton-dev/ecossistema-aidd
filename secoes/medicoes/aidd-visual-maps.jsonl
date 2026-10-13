@@ -1547,3 +1547,8 @@
 {"estagio": "mapa", "tipo": "guardas", "duracao_ms": 9.1, "arquivos_gravados": 2, "hash_catalogo": "6f574087ec82fedfe109fd2119e04bd6e3d8376d4a4870f5a4e31f0d77a1a3b4", "exit_code": 0, "llm_tokens": 0}
 {"estagio": "nao-tecnico", "tipo": "todos", "duracao_ms": 19185.2, "arquivos_gravados": 16, "hash_catalogo": "6f574087ec82fedfe109fd2119e04bd6e3d8376d4a4870f5a4e31f0d77a1a3b4", "exit_code": 0, "llm_tokens": 0}
 {"estagio": "mapa", "tipo": "indice", "duracao_ms": 11956.7, "arquivos_gravados": 2, "hash_catalogo": "6f574087ec82fedfe109fd2119e04bd6e3d8376d4a4870f5a4e31f0d77a1a3b4", "exit_code": 0, "llm_tokens": 0}
+{"estagio": "catalogo", "tipo": "catalogo", "duracao_ms": 9119.6, "arquivos_gravados": 1, "hash_catalogo": "3bbb3e583c683287296a92d61ab4e35f47c9d9d09080dc3d289430e1f6434cd3", "exit_code": 0, "llm_tokens": 0}
+{"estagio": "mapa", "tipo": "indice", "duracao_ms": 9775.8, "arquivos_gravados": 2, "hash_catalogo": "3bbb3e583c683287296a92d61ab4e35f47c9d9d09080dc3d289430e1f6434cd3", "exit_code": 0, "llm_tokens": 0}
+{"estagio": "nao-tecnico", "tipo": "todos", "duracao_ms": 9435.8, "arquivos_gravados": 16, "hash_catalogo": "3bbb3e583c683287296a92d61ab4e35f47c9d9d09080dc3d289430e1f6434cd3", "exit_code": 0, "llm_tokens": 0}
+{"estagio": "mapa", "tipo": "oficina", "duracao_ms": 6.7, "arquivos_gravados": 2, "hash_catalogo": "3bbb3e583c683287296a92d61ab4e35f47c9d9d09080dc3d289430e1f6434cd3", "exit_code": 0, "llm_tokens": 0}
+{"estagio": "mapa", "tipo": "indice", "duracao_ms": 9328.6, "arquivos_gravados": 2, "hash_catalogo": "3bbb3e583c683287296a92d61ab4e35f47c9d9d09080dc3d289430e1f6434cd3", "exit_code": 0, "llm_tokens": 0}

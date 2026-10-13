@@ -87,7 +87,7 @@ def _arquivos_existentes(brutos, usa_backslash):
     vistos = set()
     for bruto in brutos:
         caminho = _normalizar(str(bruto).strip(), usa_backslash)
-        if not caminho or caminho == ARQUIVO_BASELINE or caminho in vistos:
+        if not caminho or _Path(caminho).name == ARQUIVO_BASELINE or caminho in vistos:
             continue
         vistos.add(caminho)
         if os.path.isfile(os.path.join(ROOT_DIR, caminho)):

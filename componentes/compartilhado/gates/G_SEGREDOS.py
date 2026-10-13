@@ -55,7 +55,7 @@ def _arquivos_rastreados():
     arquivos = []
     for raw in resultado.stdout.splitlines():
         f = raw.strip()
-        if not f or f == ".secrets.baseline":
+        if not f or os.path.basename(f) == ".secrets.baseline":
             continue
         if usa_backslash:
             f = os.path.normpath(f)
