@@ -195,6 +195,17 @@ class FerramentasDeTeste:
         return -1
 
 
+@pytest.fixture(autouse=True)
+def _variaveis_de_deploy(monkeypatch):
+    """O bloco Ambiente do planner bloqueia sem as variáveis de deploy; o teste não depende do .env do dev."""
+    for nome, valor in {
+        "VPS_HOST": "203.0.113.10", "VPS_USER": "root", "SSH_KEY_PATH": "/chaves/id_ed25519",
+        "CLOUDFLARE_API_TOKEN": "token-de-teste", "CLOUDFLARE_ZONE_ID": "a" * 32,
+        "DEFAULT_ROOT_DOMAIN": "exemplo.com.br",
+    }.items():
+        monkeypatch.setenv(nome, valor)
+
+
 def _orquestrador(tmp_path: Path, fluxo: int) -> OrquestradorSincrono:
     pasta = tmp_path / f"projeto-fluxo-{fluxo}"
     origem = tmp_path / "export-lowcode"
@@ -207,6 +218,7 @@ def _orquestrador(tmp_path: Path, fluxo: int) -> OrquestradorSincrono:
         dominio="clinicas",
         pasta=str(pasta),
         origem_export=str(origem) if fluxo == 3 else None,
+        mobbin="3",  # Ambiente do planner: Mobbin "nenhum" (o planner abre com o ambiente registrado)
     )
 
 
@@ -403,6 +415,12 @@ def test_etapa_7_reprova_quando_forge_audit_reprova(tmp_path):
 
 def test_factory_aceita_c2_real_do_planner(tmp_path):
     pasta = tmp_path / "planta-fluxo-2"
+    registro = subprocess.run(
+        [sys.executable, str(ROOT_DIR / "ecossistema.py"), "planner", "ambiente",
+         "--pasta", str(pasta), "--mobbin", "3"],
+        cwd=str(ROOT_DIR), capture_output=True, text=True, encoding="utf-8", errors="replace",
+    )
+    assert registro.returncode == 0, registro.stdout + registro.stderr
     proc = subprocess.run(
         [sys.executable, str(ROOT_DIR / "ecossistema.py"), "planner", "init",
          "--fluxo", "2", "--nome", "Hub Clinicas", "--slug", "hub-clinicas",

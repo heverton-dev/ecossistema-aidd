@@ -30,6 +30,7 @@ try:
         gravar_planta,
         pecas_disponiveis,
     )
+    from .core import ambiente
 except ImportError:
     from src.core_planner.planner_engine import (
         PlannerValidationError,
@@ -46,6 +47,7 @@ except ImportError:
         gravar_planta,
         pecas_disponiveis,
     )
+    from src.core_planner import ambiente
 
 MAPA_FLUXOS = {
     "1": "fluxo_01_generator",
@@ -76,6 +78,14 @@ def cmd_init(args: argparse.Namespace) -> int:
 
     os.makedirs(pasta_destino, exist_ok=True)
     arquivo_saida = os.path.join(pasta_destino, "PLANNER.json")
+
+    # Bloco Ambiente: o planner abre verificando o ambiente (Mobbin escolhido, deploy completo).
+    erros_ambiente = ambiente.verificar(pasta_destino, ambiente.carregar_env())
+    if erros_ambiente:
+        print("[ERRO] Ambiente incompleto; o planner não abre sem ele:", file=sys.stderr)
+        for linha in erros_ambiente:
+            print(linha, file=sys.stderr)
+        return 1
 
     if os.path.exists(arquivo_saida) and not args.force:
         print(f"[ERRO] O arquivo '{arquivo_saida}' já existe. Use --force para sobrescrever.", file=sys.stderr)
@@ -361,6 +371,13 @@ def main(argv: Optional[List[str]] = None) -> int:
     p_init.add_argument("--pasta", "-p", default=".", help="Pasta de destino onde salvar PLANNER.json")
     p_init.add_argument("--force", action="store_true", help="Sobrescreve PLANNER.json se já existir")
     p_init.set_defaults(func=cmd_init)
+
+    # Subcomando ambiente
+    p_amb = subparsers.add_parser("ambiente", help="Bloco Ambiente: escolhe o caminho do Mobbin e confere as variáveis de deploy")
+    p_amb.add_argument("--pasta", "-p", default=".", help="Pasta do projeto onde gravar .aidd/ambiente.json")
+    p_amb.add_argument("--mobbin", choices=["1", "2", "3"], default=None,
+                       help="Caminho do Mobbin: 1 = MCP oficial (harness), 2 = chave no .env, 3 = nenhum")
+    p_amb.set_defaults(func=ambiente.cmd_ambiente)
 
     # Subcomando validate
     p_val = subparsers.add_parser("validate", help="Valida conformidade de um PLANNER.json")

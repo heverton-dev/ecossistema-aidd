@@ -85,7 +85,8 @@ class OrquestradorSincrono:
         dominio: str,
         pasta: str,
         origem_export: Optional[str] = None,
-        dry_run: bool = False
+        dry_run: bool = False,
+        mobbin: Optional[str] = None
     ):
         chave = str(fluxo).lower().strip() if not isinstance(fluxo, int) else fluxo
         fluxo_normalizado = MAPA_FLUXOS.get(chave)
@@ -99,6 +100,7 @@ class OrquestradorSincrono:
         self.pasta = Path(pasta).resolve()
         self.origem_export = Path(origem_export).resolve() if origem_export else None
         self.dry_run = dry_run
+        self.mobbin = mobbin
         self.log_execucao: List[Dict[str, Any]] = []
         self.contratos: Dict[str, Dict[str, Any]] = {}
         self.contratos_lidos: List[Dict[str, str]] = []
@@ -255,6 +257,23 @@ class OrquestradorSincrono:
     def etapa_02_planner(self) -> bool:
         """Etapa 2: Planejamento BDD/SDD, contratos e Quarteto Sine Qua Non."""
         self.log("INICIANDO ETAPA 2: aidd-planner (Planejamento BDD/SDD)", "ETAPA")
+
+        # Bloco Ambiente: o planner só abre com o Mobbin escolhido (1 MCP, 2 chave, 3 nenhum) e o
+        # deploy completo. Sem escolha registrada, para aqui e lista os caminhos (nunca segue em silêncio).
+        ambiente_json = self.pasta / ".aidd" / "ambiente.json"
+        if self.mobbin:
+            rc = self._executar_comando([
+                sys.executable, "ecossistema.py", "planner", "ambiente",
+                "--pasta", str(self.pasta), "--mobbin", str(self.mobbin),
+            ])
+            if rc != 0:
+                self.log("Ambiente do planner incompleto (veja as variáveis de deploy acima)", "ERRO")
+                return False
+        elif not self.dry_run and not ambiente_json.is_file():
+            self.log("Ambiente do planner não registrado. Escolha como o Mobbin entra, nesta ordem:", "ERRO")
+            self.log("  1. MCP oficial do Mobbin, pelo harness; 2. chave MOBBIN_API_KEY no .env; 3. nenhum.", "ERRO")
+            self.log("Rode de novo com --mobbin <1|2|3> (ou: python ecossistema.py planner ambiente --pasta <pasta> --mobbin <1|2|3>).", "ERRO")
+            return False
 
         cmd = [
             sys.executable, "ecossistema.py", "planner", "init",
@@ -691,6 +710,8 @@ def main():
     parser.add_argument("--pasta", type=str, default=None, help="Caminho do diretório destino do projeto")
     parser.add_argument("--origem", type=str, default=None, help="Caminho do export original (somente Fluxo 3)")
     parser.add_argument("--dry-run", action="store_true", help="Simula execução sem disparar comandos no disco")
+    parser.add_argument("--mobbin", choices=["1", "2", "3"], default=None,
+                        help="Ambiente do planner: Mobbin por 1 = MCP oficial (harness), 2 = chave no .env, 3 = nenhum")
     parser.add_argument("posicionais", nargs="*", help="Argumentos posicionais para ergonomia simplificada")
 
     args = parser.parse_args()
@@ -757,7 +778,8 @@ def main():
         dominio=dominio,
         pasta=pasta,
         origem_export=origem,
-        dry_run=args.dry_run
+        dry_run=args.dry_run,
+        mobbin=args.mobbin
     )
 
     sucesso = orquestrador.executar_fluxo_completo()
