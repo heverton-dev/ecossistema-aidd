@@ -115,7 +115,7 @@ Onde mora: `scripts/orquestrador_sincrono.py` e `componentes/compartilhado/specs
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | etapas na receita | 7 |
-| chamadas conferidas | 13 |
+| chamadas conferidas | 14 |
 | chamadas que quebram | 0 |
 | etapas sem ferramenta | 0 |
 | contratos | 9 |

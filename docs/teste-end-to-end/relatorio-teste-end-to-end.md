@@ -1743,6 +1743,28 @@
   - `G_DISPATCH_PIPELINE_VSA`: **PASS (Exit 0)**.
   - `G_ECOSSISTEMA_INTEGRIDADE`: **PASS (Exit 0)**.
   - `G_HARNESS_COMPAT`: **PASS (Exit 0)**.
-  - `G_ENV_ROT`: **PASS (Exit 0)**.
+---
+
+## 15. Resolução E2E e Hardening do Fluxo Canônico Freedom (`aidd-freedom`, `aidd-enterprise`, `aidd-ops`)
+
+- **Data da Auditoria e Validação:** 12/10/2026
+- **Ambiente:** `C:\Users\trcnologia\Desktop\TESTE-ecossistema-aidd_04102026\fluxo-03-freedom`
+- **Ferramentas Tocadas:**
+  `aidd-freedom` (`pipeline_bridge.py`, `G_MIGRATION_ROT.py`), `aidd-enterprise` (`verificar_drift.py`), `aidd-ops` (`moldes/infra/Dockerfile`, `CATALOGO.json`), `scripts/orquestrador_sincrono.py`.
+- **O que executou:**
+  1. `TCK-FREEDOM-001`: Implementação da persistência física do contrato C5 (`HANDOFF_ENTERPRISE_OPS.json`) em `verificar_drift.py` do `aidd-enterprise`, com integridade SHA-256 e validação contra `handoff-enterprise-to-ops.schema.json`.
+  2. `TCK-FREEDOM-002`: Adição de `os.makedirs(self.output_dir, exist_ok=True)` no `BridgePipeline.run()` do `aidd-freedom`, eliminando `FileNotFoundError` ao desempacotar em diretórios novos.
+  3. `TCK-FREEDOM-003`: Atualização do molde Dockerfile do `aidd-ops` para build multi-stage (`FROM ... AS builder`) e usuário não-root (`USER 10001:10001`), atendendo aos requisitos de segurança do `G_BRIDGE_DOCKER_OCI`.
+  4. `TCK-FREEDOM-004`: Adaptação do `G_MIGRATION_ROT` para reconhecer e auditar esquemas declarativos PostgreSQL corporativos (`init-db.sql`) e execução integrada de `convert-db` no `orquestrador_sincrono.py`.
+- **Resultados Medidos (12/10/2026):**
+  - `G_DISCIPLINA_TESTE_FERRAMENTA`: **PASS (Exit 0)**.
+  - `G_BRIDGE_VENDOR_LOCKIN`: **PASS (Exit 0)** (Zero vendor lock-in em 56 arquivos).
+  - `G_BRIDGE_DOCKER_OCI`: **PASS (Exit 0)** (Multi-stage e non-root).
+  - `G_BRIDGE_POSTGRESQL`: **PASS (Exit 0)** (init-db.sql válido).
+  - `G_MIGRATION_ROT`: **PASS (Exit 0)** (100% dos alvos aprovados).
+  - `G_ANT_LOCKIN_LEGADO`: **PASS (Exit 0)**.
+  - `forge audit`: **PASS (15/15 itens, 100% conformidade)**.
+  - Execução E2E síncrona contínua: **18.58s com Exit Code 0**.
 - **Status:** **RESOLVIDO & 100% CONFORME**.
+
 

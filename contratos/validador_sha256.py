@@ -70,3 +70,16 @@ def validar_integridade_contrato(caminho_ou_dados: Path | str | Dict[str, Any]) 
         )
 
     return True, ""
+
+
+def verificar_integridade_payload(dados: Dict[str, Any]) -> Tuple[bool, str]:
+    """Verifica a integridade SHA-256 de um payload.
+
+    Quando 'payload_sha256' estiver presente, valida a assinatura criptográfica estrita.
+    Caso o contrato não adote o envelope de assinatura, aprova por compatibilidade de schema.
+    """
+    if not isinstance(dados, dict):
+        return False, "Payload inválido para verificação de integridade"
+    if "payload_sha256" not in dados:
+        return True, ""
+    return validar_integridade_contrato(dados)

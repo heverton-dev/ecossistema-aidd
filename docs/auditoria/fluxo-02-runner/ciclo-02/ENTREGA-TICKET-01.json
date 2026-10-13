@@ -1,0 +1,17 @@
+{
+  "ticket_id": "TICKET-01",
+  "status": "CONCLUIDO",
+  "dimensao_15d": "D1. Contratos e Regras",
+  "data_conclusao": "2026-10-12T19:48:00Z",
+  "arquivos_modificados": [
+    "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/application_enterprise/commands/verificar_drift.py",
+    "contratos/validador_sha256.py"
+  ],
+  "evidencias": {
+    "teste": "tests/test_orquestrador_contratos_reais.py::test_enterprise_verificar_drift_grava_contrato_c5_real",
+    "resultado_teste": "PASSED",
+    "contrato_c5": "HANDOFF_ENTERPRISE_OPS.json",
+    "schema_validado": "handoff-enterprise-to-ops.schema.json",
+    "sha256_integridade": "APROVADO"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "pipeline_id": "evolucao-fluxo-02-runner-ciclo-02",
+  "target_tool": "fluxo-02-runner",
+  "descricao": "Plano de Evolução Tática montado a partir dos 4 tickets de PLANO-EVOLUCAO.md",
+  "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
+  "definition_of_done": "docs/auditoria/fluxo-02-runner/ciclo-02/DOD.md",
+  "gate_final": "python ecossistema.py audit",
+  "fases": [
+    {
+      "ticket_id": "TICKET-01",
+      "nome": "Fase_1_Ticket_1_Implement_C5_Contract_Handoff_in_aidd_enterprise_and_SHA_256_Validator_Alias",
+      "dimensao_15d": "D1. Contratos e Regras",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/fluxo-02-runner/ciclo-02/prompts_tickets/PROMPT-TICKET-01.txt",
+      "output_handoff": "docs/auditoria/fluxo-02-runner/ciclo-02/ENTREGA-TICKET-01.json",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests/test_orquestrador_contratos_reais.py"
+    },
+    {
+      "ticket_id": "TICKET-02",
+      "nome": "Fase_2_Ticket_2_Align_Real_Contract_Execution_in_Orchestrator_Tests",
+      "dimensao_15d": "D13. Rótulo Honesto e Quality Gates",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/fluxo-02-runner/ciclo-02/prompts_tickets/PROMPT-TICKET-02.txt",
+      "output_handoff": "docs/auditoria/fluxo-02-runner/ciclo-02/ENTREGA-TICKET-02.json",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests/test_orquestrador_contratos_reais.py"
+    },
+    {
+      "ticket_id": "TICKET-03",
+      "nome": "Fase_3_Ticket_3_Integrate_Curated_Open_Source_Services_into_Ops_Compose_Rendering",
+      "dimensao_15d": "D4. Componentes e Fractalidade",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/fluxo-02-runner/ciclo-02/prompts_tickets/PROMPT-TICKET-03.txt",
+      "output_handoff": "docs/auditoria/fluxo-02-runner/ciclo-02/ENTREGA-TICKET-03.json",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/tests"
+    },
+    {
+      "ticket_id": "TICKET-04",
+      "nome": "Fase_4_Ticket_4_Fortify_Frontend_Templates_in_aidd_master_and_aidd_enterprise",
+      "dimensao_15d": "D11. Padrão-Ouro de Stack e UI",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/fluxo-02-runner/ciclo-02/prompts_tickets/PROMPT-TICKET-04.txt",
+      "output_handoff": "docs/auditoria/fluxo-02-runner/ciclo-02/ENTREGA-TICKET-04.json",
+      "gate_fase": "python modulos/04-nucleo-compartilhado/gates/G_DRIFT_NUCLEO_COMPARTILHADO.py"
+    }
+  ]
+}

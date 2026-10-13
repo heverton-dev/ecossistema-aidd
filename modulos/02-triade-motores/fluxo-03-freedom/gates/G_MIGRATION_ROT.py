@@ -282,6 +282,20 @@ def auditar_migracoes_target(target_dir: str) -> Tuple[bool, List[str]]:
     models_path = os.path.join(target_dir, "alembic_models.py")
 
     if not os.path.isfile(ini_path):
+        init_sql_path = os.path.join(target_dir, "init-db.sql")
+        if os.path.isfile(init_sql_path):
+            try:
+                gates_dir = os.path.join(ROOT_DIR, "modulos", "02-triade-motores", "fluxo-03-freedom", "core", "aidd-freedom", "gates")
+                if gates_dir not in sys.path:
+                    sys.path.insert(0, gates_dir)
+                import G_BRIDGE_POSTGRESQL
+                code_sql = G_BRIDGE_POSTGRESQL.audit_postgresql_script(target_dir)
+                if code_sql == 0:
+                    return True, []
+                return False, ["init-db.sql reprovado pelo G_BRIDGE_POSTGRESQL"]
+            except Exception as ex:
+                return False, [f"Erro ao auditar init-db.sql declarativo: {ex}"]
+
         return False, [f"alembic.ini ausente em {target_dir}"]
 
     # 1. Auditoria Estática AST (Rollback ausente ou vazio)

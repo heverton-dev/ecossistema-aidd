@@ -58,6 +58,7 @@ class BridgePipeline:
 
         # Fase 1: Scanner
         print("[1/6] Escaneando arquitetura do projeto low-code...")
+        os.makedirs(self.output_dir, exist_ok=True)
         scanner = LovableScanner(self.project_dir)
         manifest = scanner.scan()
         manifest_path = os.path.join(self.output_dir, "bridge-manifest.json")

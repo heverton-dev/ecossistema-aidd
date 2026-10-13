@@ -89,7 +89,7 @@ Onde mora: `docs/auditoria/TEMPLATE-AUDITORIA-FERRAMENTA.md`. Quem confere: o In
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | dimensões | 15 |
-| laudos lidos | 46 |
+| laudos lidos | 47 |
 | marcações de falha | 8 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_lente_15d`), os mesmos do mapa `mapa-12-lente15d.html`.

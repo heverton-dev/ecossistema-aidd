@@ -166,7 +166,7 @@ Onde mora: `scripts/orquestrador_sincrono.py` e `componentes/compartilhado/specs
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | etapas na receita | 7 |
-| chamadas conferidas | 13 |
+| chamadas conferidas | 14 |
 | chamadas que quebram | 0 |
 | etapas sem ferramenta | 0 |
 | contratos | 9 |
@@ -447,7 +447,7 @@ Onde mora: `tools/<f>/templates/`. Quem confere: os guardas de entrega gerados p
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | moldes | 21 |
-| arquivos de molde | 335 |
+| arquivos de molde | 339 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_moldes_entrega`), os mesmos do mapa `mapa-09-moldes.html`.
 
@@ -602,7 +602,7 @@ Onde mora: `docs/auditoria/TEMPLATE-AUDITORIA-FERRAMENTA.md`. Quem confere: o In
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | dimensões | 15 |
-| laudos lidos | 46 |
+| laudos lidos | 47 |
 | marcações de falha | 8 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_lente_15d`), os mesmos do mapa `mapa-12-lente15d.html`.

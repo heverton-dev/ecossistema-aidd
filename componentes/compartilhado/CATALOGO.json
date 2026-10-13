@@ -941,7 +941,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-ops",
       "versao": "1.0.0",
-      "sha256": "sha256-2b19460ded71a1bd155b115374ea3f234fbe9146f05c830dc39d5be49baaf413",
+      "sha256": "sha256-77085966e298ae91b084f86ae28bbb059f65494b7fdb6cdbb0090e6f0fee0729",
       "consumidores": [
         "aidd-enterprise",
         "aidd-master",
@@ -1230,7 +1230,7 @@
       "papel": "variante",
       "dono_do_conteudo": "aidd-master",
       "versao": "1.0.0",
-      "sha256": "sha256-57033188999095b69e4e57379b031d59dcab2588903cc0ff1dddef5eccc0c7a4",
+      "sha256": "sha256-5dbbd6f40d3b07eccb25411f4ce9d25f96e11a0612bc6b9853854ccb14458b46",
       "consumidores": [
         "aidd-open"
       ],
@@ -1338,7 +1338,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-master",
       "versao": "1.0.0",
-      "sha256": "sha256-f08db06b85fc42c08bbb83a68fd6ce8dc84cb717c844cad49310ffa203f5c031",
+      "sha256": "sha256-c932f8833ca89ae6acaab98827f373d8fa4419fb4adcecf10e34dfcdf81f30f9",
       "consumidores": [
         "aidd-enterprise",
         "aidd-master",

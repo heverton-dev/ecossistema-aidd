@@ -1,0 +1,16 @@
+{
+  "ticket_id": "TICKET-02",
+  "status": "CONCLUIDO",
+  "dimensao_15d": "D13. Rótulo Honesto e Quality Gates",
+  "data_conclusao": "2026-10-12T19:48:15Z",
+  "arquivos_modificados": [
+    "tests/test_orquestrador_contratos_reais.py"
+  ],
+  "evidencias": {
+    "total_testes": 18,
+    "passaram": 18,
+    "falharam": 0,
+    "contratos_reais_testados": ["C1", "C2", "C3", "C4", "C5"],
+    "zero_mocks_reais": true
+  }
+}

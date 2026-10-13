@@ -1,0 +1,15 @@
+{
+  "ticket_id": "TICKET-03",
+  "status": "CONCLUIDO",
+  "dimensao_15d": "D4. Componentes e Fractalidade",
+  "data_conclusao": "2026-10-12T19:51:40Z",
+  "arquivos_modificados": [
+    "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/scripts/infra_perfil.py",
+    "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/tests/test_fronteira_ops_infra_generica.py"
+  ],
+  "evidencias": {
+    "teste": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/tests/test_fronteira_ops_infra_generica.py::test_compose_injeta_ferramentas_opensource_do_planner",
+    "resultado_teste": "PASSED",
+    "docker_compose_render": "Injeção automática de serviços open-source declarados no PLANNER.json com portas e redes associadas"
+  }
+}

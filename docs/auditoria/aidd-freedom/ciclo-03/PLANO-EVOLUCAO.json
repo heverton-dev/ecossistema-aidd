@@ -1,0 +1,54 @@
+{
+  "pipeline_id": "evolucao-aidd-freedom-ciclo-03",
+  "target_tool": "aidd-freedom",
+  "descricao": "Plano de Evolução Tática montado a partir dos 4 tickets de PLANO-EVOLUCAO.md",
+  "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
+  "definition_of_done": "docs/auditoria/aidd-freedom/ciclo-03/DOD.md",
+  "gate_final": "python ecossistema.py audit",
+  "fases": [
+    {
+      "ticket_id": "TICKET-01",
+      "nome": "Fase_1_Ticket_1_Persist_ncia_do_Contrato_C5_no_aidd_enterprise",
+      "dimensao_15d": "D15. Output Consolidado e Handoff",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/aidd-freedom/ciclo-03/prompts_tickets/PROMPT-TICKET-01.txt",
+      "output_handoff": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/application_enterprise/commands/verificar_drift.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-02",
+      "nome": "Fase_2_Ticket_2_Cria__o_de_Diret_rio_Destino_no_BridgePipeline",
+      "dimensao_15d": "D11. Tratamento de Exceções e Fallback",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/aidd-freedom/ciclo-03/prompts_tickets/PROMPT-TICKET-02.txt",
+      "output_handoff": "modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom/aidd_freedom/pipeline_bridge.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-03",
+      "nome": "Fase_3_Ticket_3_Multi_Stage_Build_no_Template_de_Dockerfile_do_aidd_ops",
+      "dimensao_15d": "D13. Quality Gates (Portões)",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/aidd-freedom/ciclo-03/prompts_tickets/PROMPT-TICKET-03.txt",
+      "output_handoff": "componentes/compartilhado/moldes/infra/Dockerfile",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-04",
+      "nome": "Fase_4_Ticket_4_Reconhecimento_de_Migra__es_PostgreSQL_no_G_MIGRATION_ROT",
+      "dimensao_15d": "D13. Quality Gates (Portões)",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/aidd-freedom/ciclo-03/prompts_tickets/PROMPT-TICKET-04.txt",
+      "output_handoff": "modulos/02-triade-motores/fluxo-03-freedom/gates/G_MIGRATION_ROT.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    }
+  ]
+}
