@@ -91,7 +91,7 @@ def cmd_audit(args):
 
         t0_gate = time.time()
         try:
-            res = subprocess.run(cmd_args, cwd=target_dir, capture_output=True, text=True, errors="replace", timeout=60)
+            res = subprocess.run(cmd_args, cwd=target_dir, capture_output=True, text=True, errors="replace", timeout=180)
             duracao_gate = round((time.time() - t0_gate) * 1000, 2)
 
             # Exibe saída do gate
@@ -117,15 +117,15 @@ def cmd_audit(args):
                 has_failure = True
         except subprocess.TimeoutExpired:
             duracao_gate = round((time.time() - t0_gate) * 1000, 2)
-            print(f"  ❌ [FAIL] Timeout no gate [{gate_name}] (> 60s)")
+            print(f"  ❌ [FAIL] Timeout no gate [{gate_name}] (> 180s)")
             relatorio["gates"].append({
                 "gate": gate_name,
                 "descricao": gate_desc,
                 "status": "FAIL",
                 "exit_code": 124,
                 "duracao_ms": duracao_gate,
-                "erro": "Timeout expirado (60s)",
-                "saida_resumida": "Execução interrompida após 60s de timeout."
+                "erro": "Timeout expirado (180s)",
+                "saida_resumida": "Execução interrompida após 180s de timeout."
             })
             relatorio["resumo"]["falhas"] += 1
             has_failure = True

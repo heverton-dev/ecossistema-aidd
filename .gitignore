@@ -52,11 +52,11 @@ skills-lock.json
 # Artefatos e caches locais de desenvolvimento
 **/.orca/
 .orca/
-orca/
-governance/
-gates/
-testes/
-tools/
+/orca/
+/governance/
+/gates/
+/testes/
+/tools/
 RELATORIO-EXECUCAO-E2E.md
 .cursorrules
 .cursor/mcp.json
@@ -70,3 +70,4 @@ RELATORIO-EXECUCAO-E2E.md
 .codebuddy/
 opencode.jsonc
 projetos/
+secoes/medicoes/

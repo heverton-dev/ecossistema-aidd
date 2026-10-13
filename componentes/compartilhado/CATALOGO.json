@@ -188,7 +188,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-forge",
       "versao": "1.0.0",
-      "sha256": "sha256-7d9efdc052ce384f5fa3551105017b409b80c13c40f3c6ee1b5eb805991e0b4a",
+      "sha256": "sha256-d6a30184ee32f0b7b9a13d01afbe8318eee79ce43c4f951e341bd567ea248417",
       "consumidores": [
         "aidd-enterprise",
         "aidd-master"
