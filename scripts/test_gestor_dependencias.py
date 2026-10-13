@@ -344,3 +344,56 @@ class TestCliRaizAddSkill:
         )
         assert proc.returncode == 0
         assert "--sha256" in proc.stdout
+
+
+class TestDerivaDeVersaoVsAdulteracao:
+    """Ticket 2 (ETAPA_02): hash divergente com 'version:' diferente da esperada e
+    deriva de versao do upstream, nao adulteracao."""
+
+    def _skill(self, tmp_path, versao, corpo="x"):
+        arquivo = tmp_path / "SKILL.md"
+        arquivo.write_bytes(f"---\nname: s\nversion: {versao}\n---\n{corpo}\n".encode())
+        return arquivo
+
+    def test_extrair_versao_frontmatter(self, tmp_path):
+        arquivo = self._skill(tmp_path, "4.5.2")
+        assert gestor_dependencias._extrair_versao_frontmatter(str(arquivo)) == "4.5.2"
+
+    def test_extrair_versao_ausente_retorna_none(self, tmp_path):
+        arquivo = tmp_path / "SKILL.md"
+        arquivo.write_bytes(b"sem frontmatter")
+        assert gestor_dependencias._extrair_versao_frontmatter(str(arquivo)) is None
+
+    def test_divergencia_com_versao_diferente_e_deriva(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(gestor_dependencias, "ROOT_DIR", str(tmp_path))
+        self._skill(tmp_path, "4.5.2")
+        cfg = {"verificar": "SKILL.md", "sha256": "0" * 64, "versao_esperada": "4.3.1"}
+        divergencia = gestor_dependencias._checar_hash_skill(cfg)
+        assert divergencia is not None
+        assert "esperada 4.3.1" in divergencia and "obtida 4.5.2" in divergencia
+        assert gestor_dependencias._e_deriva_de_versao(cfg) is True
+
+    def test_divergencia_com_mesma_versao_e_adulteracao(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(gestor_dependencias, "ROOT_DIR", str(tmp_path))
+        self._skill(tmp_path, "4.5.2")
+        cfg = {"verificar": "SKILL.md", "sha256": "0" * 64, "versao_esperada": "4.5.2"}
+        assert gestor_dependencias._checar_hash_skill(cfg) is not None
+        assert gestor_dependencias._e_deriva_de_versao(cfg) is False
+
+    def test_sem_versao_esperada_mantem_comportamento_antigo(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(gestor_dependencias, "ROOT_DIR", str(tmp_path))
+        self._skill(tmp_path, "4.5.2")
+        cfg = {"verificar": "SKILL.md", "sha256": "0" * 64}
+        assert gestor_dependencias._checar_hash_skill(cfg) is not None
+        assert gestor_dependencias._e_deriva_de_versao(cfg) is False
+
+    def test_verify_usa_mensagem_de_deriva_nao_de_adulteracao(self, tmp_path, monkeypatch, capsys):
+        monkeypatch.setattr(gestor_dependencias, "ROOT_DIR", str(tmp_path))
+        self._skill(tmp_path, "4.5.2")
+        manifesto_fake = {"skills": {"s": {"verificar": "SKILL.md", "sha256": "0" * 64,
+                                           "versao_esperada": "4.3.1"}}, "mcps": {}}
+        monkeypatch.setattr(gestor_dependencias, "carregar_manifesto", lambda: manifesto_fake)
+        _total, problemas = gestor_dependencias.verificar()
+        texto = " ".join(problemas)
+        assert "adulterado" not in texto
+        assert "versao" in texto

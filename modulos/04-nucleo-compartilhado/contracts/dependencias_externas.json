@@ -6,7 +6,8 @@
       "pacote": "impeccable",
       "instalar": "npx impeccable install --providers=claude,cursor,gemini,agents,agent,github,opencode --scope=project -y",
       "verificar": ".claude/skills/impeccable/SKILL.md",
-      "sha256": "3895765e9434400dfc1b30e364be002cf499c1718fb2431e65b907c14ae2cb27",
+      "sha256": "35c883046117a416ca008ad7cbcda912c728a01f99b9a88130c2f0ab4c8d234c",
+      "versao_esperada": "4.5.2",
       "gitignore": [
         "*/skills/impeccable/",
         "*/agents/impeccable-*.md",
