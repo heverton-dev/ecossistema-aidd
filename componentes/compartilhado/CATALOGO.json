@@ -1230,7 +1230,7 @@
       "papel": "variante",
       "dono_do_conteudo": "aidd-master",
       "versao": "1.0.0",
-      "sha256": "sha256-1baa510a58f1f48f8d704962785585ba59a9fd329f2d26156e561a625a841a80",
+      "sha256": "sha256-5dbbd6f40d3b07eccb25411f4ce9d25f96e11a0612bc6b9853854ccb14458b46",
       "consumidores": [
         "aidd-open"
       ],
