@@ -397,3 +397,36 @@ class TestDerivaDeVersaoVsAdulteracao:
         texto = " ".join(problemas)
         assert "adulterado" not in texto
         assert "versao" in texto
+
+
+class TestAddSkillVersaoEsperada:
+    """Ticket 3 (ETAPA_02): add-skill deve gravar versao_esperada quando informada."""
+
+    def _preparar(self, monkeypatch):
+        manifesto = {"skills": {}, "mcps": {}}
+        monkeypatch.setattr(gestor_dependencias, "carregar_manifesto", lambda: manifesto)
+        monkeypatch.setattr(gestor_dependencias, "_salvar_manifesto", lambda m: None)
+        monkeypatch.setattr(gestor_dependencias, "_adicionar_padroes_gitignore", lambda p: [])
+        monkeypatch.setattr(gestor_dependencias, "bootstrap_skills", lambda apenas=None, dry_run=False: {"ja_instaladas": [], "instaladas": [], "falhas": []})
+        return manifesto
+
+    def test_grava_versao_esperada_quando_informada(self, monkeypatch):
+        manifesto = self._preparar(monkeypatch)
+        gestor_dependencias.adicionar_skill(
+            "s", "pkg", "npx pkg install", "SKILL.md", [], sha256="a" * 64, versao_esperada="4.5.2"
+        )
+        assert manifesto["skills"]["s"]["versao_esperada"] == "4.5.2"
+
+    def test_omite_campo_quando_nao_informada(self, monkeypatch):
+        manifesto = self._preparar(monkeypatch)
+        gestor_dependencias.adicionar_skill("s", "pkg", "npx pkg install", "SKILL.md", [])
+        assert "versao_esperada" not in manifesto["skills"]["s"]
+
+    def test_flag_cli_versao_esperada_chega_ao_manifesto(self, monkeypatch):
+        manifesto = self._preparar(monkeypatch)
+        rc = gestor_dependencias.main([
+            "add-skill", "--nome", "s", "--pacote", "pkg", "--instalar", "npx pkg install",
+            "--verificar", "SKILL.md", "--sha256", "a" * 64, "--versao-esperada", "4.5.2",
+        ])
+        assert rc == 0
+        assert manifesto["skills"]["s"]["versao_esperada"] == "4.5.2"

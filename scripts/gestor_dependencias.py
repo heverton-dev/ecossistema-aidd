@@ -34,7 +34,7 @@ partir dessas mesmas chaves (ex.: remoto vira {"type":"http","url":...} em
 
 Uso:
   python scripts/gestor_dependencias.py bootstrap [--tipo skills|mcps|todos] [--dry-run]
-  python scripts/gestor_dependencias.py add-skill --nome <nome> --pacote <pacote> --instalar "<comando>" [--verificar <caminho>] [--sha256 <hash>] [--gitignore "padrao1,padrao2"]
+  python scripts/gestor_dependencias.py add-skill --nome <nome> --pacote <pacote> --instalar "<comando>" [--verificar <caminho>] [--sha256 <hash>] [--versao-esperada <versao>] [--gitignore "padrao1,padrao2"]
   python scripts/gestor_dependencias.py add-mcp --nome <nome> --pacote <pacote> --comando <cmd> --args "a,b,c" [--env VAR1,VAR2] [--harnesses claude-code,opencode]
   python scripts/gestor_dependencias.py add-mcp --nome <nome> --pacote <pacote> --tipo remote --url <url> [--harnesses claude-code,opencode]
   python scripts/gestor_dependencias.py list
@@ -472,7 +472,7 @@ def _adicionar_padroes_gitignore(padroes):
     return novos
 
 
-def adicionar_skill(nome, pacote, instalar, verificar, gitignore_patterns, sha256=None, dry_run=False):
+def adicionar_skill(nome, pacote, instalar, verificar, gitignore_patterns, sha256=None, dry_run=False, versao_esperada=None):
     manifesto = carregar_manifesto()
     manifesto.setdefault("skills", {})
     ja_existia = nome in manifesto["skills"]
@@ -483,6 +483,8 @@ def adicionar_skill(nome, pacote, instalar, verificar, gitignore_patterns, sha25
         "sha256": sha256,
         "gitignore": gitignore_patterns,
     }
+    if versao_esperada:
+        manifesto["skills"][nome]["versao_esperada"] = versao_esperada
     if not dry_run:
         _salvar_manifesto(manifesto)
         novos_ignore = _adicionar_padroes_gitignore(gitignore_patterns)
@@ -619,7 +621,7 @@ def _cmd_add_skill(args_ns):
     gitignore_patterns = [p.strip() for p in (args_ns.gitignore or "").split(",") if p.strip()]
     resultado = adicionar_skill(
         args_ns.nome, args_ns.pacote, args_ns.instalar, args_ns.verificar, gitignore_patterns,
-        sha256=args_ns.sha256,
+        sha256=args_ns.sha256, versao_esperada=args_ns.versao_esperada,
     )
     if resultado["ja_existia_no_manifesto"]:
         print(f"[ATUALIZADA] '{args_ns.nome}' ja existia no manifesto, entrada sobrescrita.")
@@ -700,6 +702,10 @@ def main(argv=None):
     p_add_skill.add_argument(
         "--sha256", default=None,
         help="Hash SHA-256 esperado do arquivo em --verificar (so faz sentido quando --verificar aponta pra um arquivo, nao diretorio).",
+    )
+    p_add_skill.add_argument(
+        "--versao-esperada", dest="versao_esperada", default=None,
+        help="'version:' esperada no frontmatter de --verificar; permite ao verify distinguir deriva de versao do upstream de adulteracao.",
     )
     p_add_skill.add_argument("--gitignore", default="")
     p_add_skill.set_defaults(func=_cmd_add_skill)
