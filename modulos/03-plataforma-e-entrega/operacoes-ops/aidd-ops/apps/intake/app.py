@@ -8,7 +8,7 @@ Reusa 100% a lógica das fases do CLI através do intake_core — nenhuma
 lógica duplicada, nenhum LLM: o JSON baixado é idêntico ao
 PLANO-INFRAESTRUTURA.json gerado por `pipeline_ops.py plan`.
 
-Abre em http://localhost:8501 (ou no domínio configurado no Coolify).
+Abre em http://localhost:8501 (ou no domínio configurado no DNS da VPS).
 
 Fluxo:
   1. Usuário descreve o negócio em texto livre OU escolhe um nicho pronto.

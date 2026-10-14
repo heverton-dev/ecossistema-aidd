@@ -74,7 +74,7 @@ DATA = {
         ["06/09/2026", "Testes completos do ecossistema (6 baterias reais)", "Todas aprovadas — 2 delas “com ressalvas”."],
         ["06/09/2026", "Validação Humana em sessões isoladas", "Integrado E2E 9,56/10 (Sistema D)."],
         ["06–07/09/2026", "Integração AIDD-Ops (9 pacotes)", "AIDD-Ops vira a 5ª ferramenta oficial do ecossistema."],
-        ["06–09/09/2026", "Direcionamento Estratégico Anti-NIH", "Código reinventado trocado por OSS maduro (Cookiecutter, <span class=\"mono\">returns</span>, SQLAlchemy, Coolify)."],
+        ["06–09/09/2026", "Direcionamento Estratégico Anti-NIH", "Código reinventado trocado por OSS maduro (Cookiecutter, <span class=\"mono\">returns</span>, SQLAlchemy; o Coolify foi depois abolido)."],
         ["08/09/2026", "Reauditoria “Fase 3” (Sistema B, harness Antigravity)", "1.627 testes / 0 falhas (partindo de 1.427 / 13 falhas); heatmap por ferramenta."],
         ["08–09/09/2026", "Correção de Código Limpo + Correção de Arquitetura Limpa", "13 achados fechados."],
         ["09/09/2026", "5 auditorias-baseline formalizadas", "Viraram os planos de <span class=\"mono\">a-fazer/</span> — 45 itens de débito técnico, 0 iniciados."],

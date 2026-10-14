@@ -96,6 +96,9 @@ def cmd_init(args: argparse.Namespace) -> int:
             print("  - " + linha, file=sys.stderr)
         return 1
     direcao_visual = intake.ler_direcao_visual(pasta_destino)
+    if not args.descricao:
+        # sem --descricao, o motor recebe o contexto da spec (e não o texto de template)
+        descricao = intake.descricao_da_spec(pasta_destino) or descricao
 
     if os.path.exists(arquivo_saida) and not args.force:
         print(f"[ERRO] O arquivo '{arquivo_saida}' já existe. Use --force para sobrescrever.", file=sys.stderr)

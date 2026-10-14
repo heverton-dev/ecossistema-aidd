@@ -151,3 +151,24 @@ def cmd_intake(args) -> int:
     arq["registro"].write_text(json.dumps(registro, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
     print(f"[aidd-planner] Intake válido (modo {modo}); registro em {arq['registro']}.")
     return 0
+
+
+def descricao_da_spec(pasta: str, limite: int = 480) -> Optional[str]:
+    """Contexto da spec (seção 1, sem o bloco Visual Direction) como descrição do projeto.
+
+    O motor monta o prompt das fases com a descrição do PLANNER.json: sem isto ela era o texto de template
+    e a spec do intake nunca chegava ao motor.
+    """
+    arquivo = caminhos(pasta)["spec"]
+    if not arquivo.is_file():
+        return None
+    texto = arquivo.read_text(encoding="utf-8")
+    achou = re.search(r"^##\s*(?:1\.?\s*)?(?:Context|Contexto)[^\n]*\n", texto, re.IGNORECASE | re.MULTILINE)
+    if not achou:
+        return None
+    resto = texto[achou.end():]
+    fim = re.search(r"^#{1,4}\s", resto, re.MULTILINE)
+    corpo = resto[: fim.start()] if fim else resto
+    linhas = [linha.strip() for linha in corpo.splitlines() if linha.strip()]
+    descricao = " ".join(linhas)
+    return descricao[:limite].rstrip() if len(descricao) >= 10 else None

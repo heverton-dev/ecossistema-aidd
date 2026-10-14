@@ -6,7 +6,7 @@ AIDD-Ops — Testes do Intake Web (Streamlit) e artefatos de deploy (Anti-NIH #1
 Valida que o intake web produz o MESMO plano determinístico do CLI (zero
 duplicação de lógica), que os fluxos de erro (ambíguo / não reconhecido)
 são estruturados e recuperáveis, e que os artefatos de deploy (Dockerfile,
-compose, env) seguem o contrato exigido pelo Coolify e pelos gates.
+compose, env) seguem o contrato exigido pelo deploy compose-nativo e pelos gates.
 """
 
 import importlib
@@ -127,7 +127,7 @@ def test_plano_para_json_round_trip():
     assert _sem_temporais(lido) == _sem_temporais(plano)
 
 
-# ── Artefatos de deploy (contrato Coolify + gates) ──
+# ── Artefatos de deploy (contrato compose-nativo + gates) ──
 
 def test_dockerfile_intake_na_raiz_do_contexto():
     caminho = os.path.join(TOOL_ROOT, "Dockerfile.intake")

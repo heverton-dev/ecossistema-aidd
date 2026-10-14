@@ -120,7 +120,7 @@ Onde mora: `tools/`. Quem confere: o `G_TESTES_REAIS` (pytest de cada ferramenta
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | ferramentas | 8 |
-| comandos de CLI | 77 |
+| comandos de CLI | 73 |
 | verbos em mais de uma ferramenta | 0 |
 | tarefas com várias donas | 0 |
 

@@ -3,7 +3,7 @@
   "gerado_por": "scripts/catalogo_pecas.py",
   "totais": {
     "ferramentas": 8,
-    "comandos_cli": 77,
+    "comandos_cli": 73,
     "skills": 45,
     "leis": 14,
     "lente_15d": 15,
@@ -170,17 +170,13 @@
       "comandos": [
         "bootstrap",
         "check",
-        "create",
         "decrypt",
         "deploy",
         "encrypt",
         "export",
-        "health",
         "init",
         "plan",
         "preflight",
-        "setenv",
-        "status",
         "up"
       ],
       "gates_proprios": [
@@ -191,7 +187,7 @@
         "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/mcps/cloudflare-mcp/server.py",
         "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/mcps/docker-mcp/server.py"
       ],
-      "arquivos_py": 26
+      "arquivos_py": 27
     },
     {
       "id": "aidd-planner",
@@ -6503,7 +6499,7 @@
             "aidd-ops"
           ],
           "guardas": 2,
-          "arquivos_py": 28
+          "arquivos_py": 29
         }
       ]
     },

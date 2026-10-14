@@ -219,3 +219,27 @@ def test_init_com_chave_consulta_o_mobbin_por_tela_e_usa_o_cache_na_segunda_vez(
     ds = json.loads((tmp_path / "DESIGN-SYSTEM.json").read_text(encoding="utf-8"))
     assert ds["paleta"]["primaria"] == "#0F766E"  # a cor decidida na spec vence a extraída
     assert ds["referencias_ui"]["origem"] == "mobbin_api"
+
+
+# --- a spec chega ao motor (achado do /pure real, 13/10/2026) --------------------------------------------------
+
+def test_sem_descricao_o_planner_usa_o_contexto_da_spec(pasta):
+    """O motor monta o prompt da fase 2 com a descrição do PLANNER.json; sem --descricao ela era o texto de
+    template ("Projeto de alta robustez..."), e a spec do intake nunca chegava ao motor."""
+    _copiar(pasta)
+    argv = ["init", "--fluxo", "1", "--nome", "Controle de Pedidos", "--slug", "controle-pedidos",
+            "--dominio", "comercio", "--pasta", str(pasta)]
+    assert cli_main(argv) == 0
+    bruto = (pasta / "PLANNER.json").read_text(encoding="utf-8")
+    assert "pequenos comércios lançarem" in bruto
+    assert "Projeto de alta robustez" not in bruto
+    assert "Visual Direction" not in bruto and "#0F766E" not in bruto  # só o contexto, não o bloco visual
+
+
+def test_descricao_explicita_continua_valendo_sobre_a_spec(pasta):
+    _copiar(pasta)
+    argv = ["init", "--fluxo", "1", "--nome", "App", "--slug", "app", "--dominio", "comercio",
+            "--descricao", "Descricao explicita do usuario com tamanho suficiente", "--pasta", str(pasta)]
+    assert cli_main(argv) == 0
+    bruto = (pasta / "PLANNER.json").read_text(encoding="utf-8")
+    assert "Descricao explicita do usuario" in bruto and "pequenos comércios lançarem" not in bruto

@@ -2,7 +2,7 @@
 # =============================================================================
 # AIDD-Ops — Intake Web (Streamlit) Dockerfile
 # =============================================================================
-# Build context convencional p/ Coolify:
+# Build context convencional:
 #   - Base Directory:  modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops
 #   - Dockerfile Location: Dockerfile.intake
 #   - Porta exposta: 8501  (apps/intake/.streamlit/config.toml)
@@ -30,7 +30,7 @@ COPY schemas/ schemas/
 
 EXPOSE 8501
 
-# Healthcheck real usado pelo Coolify/Traefik (endpoint nativo do Streamlit)
+# Healthcheck real (endpoint nativo do Streamlit)
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
     CMD ["python", "-c", "import urllib.request, sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8501/_stcore/health', timeout=3).status == 200 else 1)"]
 
