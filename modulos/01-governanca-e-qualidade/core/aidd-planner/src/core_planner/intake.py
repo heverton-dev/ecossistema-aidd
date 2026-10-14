@@ -39,6 +39,8 @@ _TEMAS_VISUAIS = {
 }
 _RE_HEX = re.compile(r"^#[0-9a-fA-F]{6}$")
 _CAMPOS_VISUAIS = ("tom", "cor_primaria", "referencias", "publico")
+_CAMPOS_OPCIONAIS = ("fonte", "raio", "densidade")  # tipografia, raios e espaçamentos (Ticket 9-A)
+_RE_FONTE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9 \-]{0,38}$")
 
 
 def _raiz_ecossistema() -> Path:
@@ -94,7 +96,22 @@ def ler_direcao_visual(pasta: str) -> Optional[Dict[str, Any]]:
         "cor_primaria": campos["cor_primaria"],
         "referencias": [r.strip() for r in campos["referencias"].split(",") if r.strip()],
         "publico": campos["publico"],
+        **{c: campos[c] for c in _CAMPOS_OPCIONAIS if campos.get(c)},
     }
+
+
+def erros_do_bloco_visual(texto_spec: str) -> List[str]:
+    """Valida os itens opcionais da Visual Direction (valor fora do conjunto aceito reprova)."""
+    from .design_system import DENSIDADES_VALIDAS, RAIOS_VALIDOS
+    campos = _extrair_bloco_visual(texto_spec)
+    erros: List[str] = []
+    if campos.get("raio") and campos["raio"] not in RAIOS_VALIDOS:
+        erros.append(f"raio '{campos['raio']}' inválido; use um de: {', '.join(RAIOS_VALIDOS)}.")
+    if campos.get("densidade") and campos["densidade"] not in DENSIDADES_VALIDAS:
+        erros.append(f"densidade '{campos['densidade']}' inválida; use uma de: {', '.join(DENSIDADES_VALIDAS)}.")
+    if campos.get("fonte") and not _RE_FONTE.match(campos["fonte"]):
+        erros.append(f"fonte '{campos['fonte']}' inválida; use só o nome da família (letras, números, espaço e hífen).")
+    return erros
 
 
 def verificar(pasta: str) -> List[str]:
@@ -128,6 +145,7 @@ def verificar(pasta: str) -> List[str]:
                 erros.append(f"{rel_spec}: o bloco 'Visual Direction' não tem o item '{campo}'.")
         if campos.get("cor_primaria") and not _RE_HEX.match(campos["cor_primaria"]):
             erros.append(f"{rel_spec}: cor_primaria precisa ser hexadecimal (#RRGGBB), veio '{campos['cor_primaria']}'.")
+        erros.extend(f"{rel_spec}: {e}" for e in erros_do_bloco_visual(arq["spec"].read_text(encoding="utf-8")))
     return erros
 
 

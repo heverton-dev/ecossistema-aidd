@@ -47,6 +47,39 @@ def _escurecer(cor_hex: str, fator: float = 0.85) -> str:
     return "#{:02X}{:02X}{:02X}".format(int(r * fator), int(g * fator), int(b * fator))
 
 
+_RAIOS = {"reto": ("2px", "4px"), "suave": ("6px", "8px"), "arredondado": ("12px", "16px")}
+_DENSIDADES = {
+    "compacta": ("16px", "24px", "8px"),
+    "confortavel": ("24px", "32px", "16px"),
+    "ampla": ("32px", "48px", "24px"),
+}
+RAIOS_VALIDOS = tuple(_RAIOS)
+DENSIDADES_VALIDAS = tuple(_DENSIDADES)
+
+
+def tokens_da_direcao(direcao_visual: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    """Tipografia, raios e espaçamentos que a spec declarou (a imagem do Mobbin não informa nenhum deles).
+
+    O que a spec não declarar não é inventado: fica listado em `convencao` e segue o padrão do ecossistema.
+    """
+    direcao = direcao_visual or {}
+    resultado: Dict[str, Any] = {"declarado_na_spec": []}
+    if direcao.get("fonte"):
+        resultado["tipografia"] = {"font_sans": f'"{direcao["fonte"]}", system-ui, sans-serif'}
+        resultado["declarado_na_spec"].append("fonte")
+    if direcao.get("raio") in _RAIOS:
+        btn, card = _RAIOS[direcao["raio"]]
+        resultado["raios_borda"] = {"btn": btn, "card": card, "pill": "9999px"}
+        resultado["declarado_na_spec"].append("raio")
+    if direcao.get("densidade") in _DENSIDADES:
+        padding, secoes, elementos = _DENSIDADES[direcao["densidade"]]
+        resultado["espacamentos"] = {"grid_base": "4px", "padding_container": padding,
+                                     "gap_secoes": secoes, "gap_elementos": elementos}
+        resultado["declarado_na_spec"].append("densidade")
+    resultado["convencao"] = [c for c in ("fonte", "raio", "densidade") if c not in resultado["declarado_na_spec"]]
+    return resultado
+
+
 def gerar_design_system(
     projeto_nome: str,
     slug: str,
@@ -124,5 +157,6 @@ def gerar_design_system(
         resultado["arquetipo_topologico"] = arquetipo_info
     if direcao_visual:
         resultado["direcao_visual"] = direcao_visual
+        resultado["tokens_da_direcao"] = tokens_da_direcao(direcao_visual)
 
     return resultado
