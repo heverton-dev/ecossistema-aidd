@@ -1826,4 +1826,25 @@
   - `/pure` completo no clone: etapas 1 a 7 OK em 226,6 s (exit 0).
   - **Não verificado:** o transporte SSH real (paramiko) e a API real da Cloudflare contra uma VPS e uma zona de verdade; o encadeamento foi provado com SSH e HTTP injetados.
 - **Pendências registradas:** `AUDITORIA-FLUXO-PURE/ETAPA_10` e `ETAPA_11` (esqueleto de scripts do motor não deriva da spec; timeout delegado de 30 s; deploy real contra VPS descartável; `.env` do projeto não sobe).
-- **Status:** **RESOLVIDO NO CLONE; ESPELHO NO MOTOR ORIGINAL EM ANDAMENTO.**
+- **Status:** **RESOLVIDO NO CLONE E NO MOTOR ORIGINAL (commits `939d357c` e `636f472c`, no GitHub).**
+
+## 20. Fluxo Canônico PURE — fechamento dos abertos da etapa 09 (`aidd-planner`: tokens da spec e passo a passo por harness)
+
+- **Data da Auditoria e Validação:** 14/10/2026 (executado em **modo autônomo**, `/goal`; o escopo do 9-B foi ajustado pelo usuário durante a execução: mimo, agy, opencode, claude e omp)
+- **Ambiente:** motor original, branch `fix/pure-etapa-12-abertos-da-09` (sobre a da etapa 10)
+- **Ferramentas Tocadas:** `aidd-planner` (`ambiente.py`, `design_system.py`, `intake.py`), skill `aidd-planner` (fonte e 6 espelhos), `.env.example`.
+- **Achados do teste real:**
+  1. **9-A:** a imagem do Mobbin não informa tipografia, raios nem espaçamentos; eles vinham de uma tabela por app, sem relação com a spec.
+  2. **9-B:** o passo a passo do Mobbin por harness estava marcado "não verificado" e cobria 5 harnesses sem o omp. Verificação feita nesta máquina: `claude mcp add --transport http` + `get` + `remove` executados, e busca real pelo MCP (2 telas); `agy mcp add/list/remove` executados (o tipo http é detectado pela URL); `mimo mcp add/auth/list` existem no `--help` (o `add` é interativo); o `opencode` **não tem** `opencode mcp add` (o servidor entra no `opencode.json`) e a instalação local está quebrada (postinstall não rodou); o `omp` **não tem** subcomando `mcp` (os comandos são de barra: `/mcp add … --url … --transport http`, `/mcp reauth`), lidos no binário; o Gemini CLI foi substituído pelo Antigravity CLI em 18/06/2026 (documentação).
+  3. **9-C:** `.codebuddy/` local desatualizado (não versionado).
+- **O que executou:**
+  1. A Visual Direction aceita `fonte`, `raio` (reto, suave, arredondado) e `densidade` (compacta, confortavel, ampla), opcionais e validados; viram `tokens_da_direcao` no `DESIGN-SYSTEM.json`, e o que a spec não declara fica em `convencao` (nada é inventado).
+  2. Cada passo a passo carrega o nível de verificação (`executado`, `help`, `binario`, `documentacao`); o omp e o agy passam a ser detectados (o omp só por variáveis exatas, porque `OMP_NUM_THREADS` é do OpenMP); três testes reais (claude, agy, mimo) rodam só com `AIDD_TESTE_HARNESS_REAL=1`, com nome descartável e desfazendo a configuração.
+  3. `.codebuddy/` copiado da fonte da branch.
+- **Resultados Medidos (14/10/2026):**
+  - `aidd-planner`: **135 passed, 3 skipped** (os 3 são os testes reais, que passaram com a variável ligada: 17 passed no arquivo dos harnesses).
+  - Red do 9-A: erro de coleta (`tokens_da_direcao` inexistente); Green: 14 passed.
+  - Pre-commit: a 1ª tentativa reprovou em 3 gates (variável `AIDD_TESTE_HARNESS_REAL` sem documentação no `.env.example`, o teste do `G_ENV_ROT` que depende dela e a Lei #9 por falta desta seção); corrigido.
+  - **Não verificado:** a autorização OAuth em nenhum harness (só o registro do servidor); o opencode e o omp não foram executados.
+- **Pendências registradas:** `AUDITORIA-FLUXO-PURE/ETAPA_12` (OAuth real por harness; opencode com instalação quebrada).
+- **Status:** **RESOLVIDO NO CLONE E NO MOTOR ORIGINAL (9-A, 9-B, 9-C); OAUTH POR HARNESS E OPENCODE FICAM COMO LIMITE DECLARADO.**

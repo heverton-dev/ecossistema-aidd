@@ -423,7 +423,7 @@
     {
       "id": "aidd-planner",
       "descricao": "Generates and validates the canonical SDD/BDD app blueprint (PLANNER.json) that fuels the Triad flows (Generator, Factory, Bridge). Use when the user wants architecture intake, a project blueprint or a spec for a new app, or says \"planner\", \"pré-plano\", \"intake\", \"blueprint\", \"SDD\", \"BDD\". Not for ecosystem improvement plans in docs/planos/ (that is aidd-plan).",
-      "linhas": 91,
+      "linhas": 99,
       "terceiro": false
     },
     {

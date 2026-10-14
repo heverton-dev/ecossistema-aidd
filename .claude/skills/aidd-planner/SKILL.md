@@ -20,6 +20,8 @@ python ecossistema.py planner ambiente --pasta <destination> --mobbin <1|2|3>
 #    <destination>/.aidd/intake/grill.md  (/aidd-grill: must ask tone, color, references, audience)
 #    <destination>/.aidd/intake/spec.md   (/aidd-spec: needs a "### Visual Direction" block with
 #                                          tom, cor_primaria (#RRGGBB), referencias, publico)
+#                                          optional: fonte (family name), raio (reto|suave|arredondado),
+#                                          densidade (compacta|confortavel|ampla) -> typography, radii, spacing)
 python ecossistema.py planner entrevista --pasta <destination> --modo <interativo|autonomo>
 
 # 2. New PLANNER.json for Flow 1 (Generator), 2 (Factory) or 3 (Bridge)
@@ -45,6 +47,12 @@ Done when: `planner validate` exits 0.
 - **Path 1 (MCP):** the harness runs the official Mobbin MCP (OAuth in the browser, per client) and writes
   `.aidd/intake/referencias-mcp.json` (screens and flows). **Path 2 (key):** the planner queries the REST API once
   per screen type from the spec (mode `standard`, cached under `.aidd/cache/mobbin/`). **Path 3:** the spec only.
+- **Path 1 by harness** (`planner ambiente` prints the one for the detected harness; each is tagged with how it was verified):
+  `claude mcp add --transport http mobbin https://api.mobbin.com/mcp` then `/mcp` (executed); `agy mcp add mobbin <url>` (executed);
+  `mimo mcp add` then `mimo mcp auth mobbin` (help); OpenCode: `mcp.mobbin = {type: remote, url}` in `opencode.json` then
+  `opencode mcp auth mobbin` (docs); omp: `/mcp add mobbin --scope user --url <url> --transport http` then `/mcp reauth mobbin` (binary).
+- The Mobbin image gives colors only; typography, radii and spacing come from the optional `fonte`, `raio` and `densidade` items
+  of the Visual Direction (anything missing is listed under `tokens_da_direcao.convencao` in `DESIGN-SYSTEM.json`).
 - `planner init` writes `referencias-ui.json` (derived tokens and links only, never images) and a `DESIGN-SYSTEM.json`
   whose primary color is the `cor_primaria` of the spec. If Mobbin fails it falls back to the spec with a warning.
 - `--modo autonomo` records that the interview ran without the user in the chat: say so in the stage report.

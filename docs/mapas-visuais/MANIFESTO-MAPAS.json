@@ -1,7 +1,7 @@
 {
   "ferramenta": "aidd-visual-maps",
   "catalogo": "docs/auditoria/mapa-pecas/catalogo-pecas.json",
-  "hash_catalogo": "06d1d7ef29745ba2a37981b41a0eb5eb823991733dd3da9bb959262f4d000be7",
+  "hash_catalogo": "85442b29fe712e6906d3b7f6809a8e2c54afc9903ddff8b88a926cc0d484efca",
   "mapas": [
     {
       "tipo": "leis",
@@ -63,14 +63,14 @@
       "tipo": "skills",
       "arquivo": "docs/mapas-visuais/mapa-05-skills.html",
       "versao": "tecnica",
-      "sha256": "29f5d6821a345e3c3abd3143a1b82b9e210fa60c48b24d6ce47ceaca8d1cf289",
+      "sha256": "73404b685c1440bca076eb4fe4d922453c7423a63b84706d0ca3c5b5104cf24c",
       "status": "concluido"
     },
     {
       "tipo": "skills",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-05-skills.html",
       "versao": "nao-tecnica",
-      "sha256": "085df34846b8fb37d36bf24e7c9cdce178382528cc745db607d832394c96c9c9",
+      "sha256": "59b22189d9d05a400808952a1fb8c99b06a9a2e0768e0b20e11023fbaf3676bc",
       "status": "concluido"
     },
     {
@@ -269,7 +269,7 @@
       "comando": "python componentes/compartilhado/skills/aidd-textbook/scripts/livro.py build docs/livros/mapas-aidd",
       "exit_code": 0,
       "pdf": "docs/livros/mapas-aidd/26-09-2026_LIVRO-MAPAS-AIDD.pdf",
-      "sha256": "91d2b660e542d7c3628b1e510587f32f3d72fc197fad97bdf8f6d140d2cdc874"
+      "sha256": "1fab8d637f41334835c519ee7657701a6a65a4eb0ed227b2857f41c94bc4e8ff"
     }
   }
 }
