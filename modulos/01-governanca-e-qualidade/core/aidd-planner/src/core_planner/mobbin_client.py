@@ -8,6 +8,11 @@ Permite busca determinística de telas do Mobbin via API REST oficial
 (Claude, OpenCode, MiMo, Goose, Copilot, etc.) ou esteira de planejamento.
 
 Consome MOBBIN_API_KEY e MOBBIN_API_URL centralizados no .env raiz.
+
+Regras (testadas em 13/10/2026, ver ETAPA_05 da auditoria do fluxo PURE):
+  - o modo da busca é `standard` (1,5-4 s) ou `deep` (12-30 s); `fast` é alias deprecado e não é aceito;
+  - erros viram `MobbinError` (biblioteca nunca chama `sys.exit`); só a CLI decide o exit code;
+  - nenhuma saída imprime qualquer caractere da chave.
 """
 
 import argparse
@@ -15,7 +20,7 @@ import json
 import os
 import sys
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 try:
     from dotenv import load_dotenv
@@ -30,6 +35,12 @@ try:
     import requests
 except ImportError:
     requests = None
+
+MODOS_VALIDOS = ("standard", "deep")
+
+
+class MobbinError(RuntimeError):
+    """Falha ao falar com o Mobbin (chave ausente/recusada, rede, resposta inválida)."""
 
 
 def obter_config() -> tuple[str, str]:
@@ -46,13 +57,15 @@ def executar_busca(
     limit: int = 10,
     image_quality: str = "optimized"
 ) -> Dict[str, Any]:
-    """Executa POST /v1/screens/search com a chave Enterprise."""
+    """Executa POST /v1/screens/search com a chave Enterprise. Levanta MobbinError em qualquer falha."""
+    if mode not in MODOS_VALIDOS:
+        raise ValueError(f"Modo de busca inválido: '{mode}'. Use 'standard' ou 'deep' ('fast' foi descontinuado).")
     if not requests:
-        raise RuntimeError("Biblioteca 'requests' não encontrada no ambiente Python.")
+        raise MobbinError("Biblioteca 'requests' não encontrada no ambiente Python.")
 
     api_key, api_url = obter_config()
     if not api_key:
-        raise ValueError("MOBBIN_API_KEY não configurada no arquivo .env.")
+        raise MobbinError("MOBBIN_API_KEY não configurada no arquivo .env.")
 
     url = f"{api_url}/v1/screens/search"
     headers = {
@@ -71,33 +84,31 @@ def executar_busca(
 
     try:
         response = requests.post(url, headers=headers, json=payload, timeout=30)
-        if response.status_code == 401:
-            print("[ERRO] Chave de API do Mobbin inválida ou não autorizada (401).", file=sys.stderr)
-            sys.exit(1)
-        if response.status_code == 403:
-            print("[ERRO] Acesso negado pelo Mobbin (403). Verifique o plano Enterprise.", file=sys.stderr)
-            sys.exit(1)
+    except requests.RequestException as erro:
+        raise MobbinError(f"Falha na comunicação com o Mobbin ({type(erro).__name__}).") from erro
+    if response.status_code == 401:
+        raise MobbinError("Chave de API do Mobbin inválida ou não autorizada (401).")
+    if response.status_code == 403:
+        raise MobbinError("Acesso negado pelo Mobbin (403). Verifique o plano Enterprise.")
+    try:
         response.raise_for_status()
         return response.json()
-    except requests.RequestException as e:
-        print(f"[ERRO] Falha na comunicação com Mobbin ({url}): {e}", file=sys.stderr)
-        sys.exit(1)
+    except (requests.RequestException, ValueError) as erro:
+        raise MobbinError(f"Resposta inválida do Mobbin ({response.status_code}).") from erro
 
 
 def cmd_status() -> int:
-    """Verifica se a chave e o endpoint estão declarados e prontos."""
+    """Verifica se a chave e o endpoint estão declarados e prontos (nunca imprime a chave)."""
     api_key, api_url = obter_config()
     print("=" * 60)
     print(" ECOSSISTEMA AIDD — STATUS DO CLIENTE MOBBIN (PLANNER)")
     print("=" * 60)
     print(f" URL Base: {api_url}")
-    print(f" Chave Configurada: {'[SIM]' if api_key else '[NÃO - DEFINA NO .env]'}")
+    print(f" Chave configurada: {'[SIM]' if api_key else '[NÃO - DEFINA MOBBIN_API_KEY NO .env]'}")
     if not api_key:
         print("\nPara ativar, preencha MOBBIN_API_KEY no arquivo .env.")
         return 1
 
-    mascarada = api_key[:4] + "..." + api_key[-4:] if len(api_key) > 8 else "***"
-    print(f" Chave Ativa: {mascarada}")
     print(" Endpoint REST: POST /v1/screens/search")
     print(" Conexão pronta para qualquer harness.")
     print("-" * 60)
@@ -117,7 +128,7 @@ def cmd_search(args) -> int:
             mode=modo,
             limit=limite
         )
-    except Exception as exc:
+    except (MobbinError, ValueError) as exc:
         print(f"[ERRO] {exc}", file=sys.stderr)
         return 1
 
@@ -130,7 +141,8 @@ def cmd_search(args) -> int:
             app_name = screen.get("app_name", "Desconhecido")
             screen_name = screen.get("name", "Sem nome")
             screen_url = screen.get("mobbin_url") or screen.get("url", "")
-            img_url = screen.get("image_url", "")
+            imagem = screen.get("image")
+            img_url = (imagem.get("url") if isinstance(imagem, dict) else None) or screen.get("image_url", "")
             print(f" [{idx}] App: {app_name} | Tela: {screen_name}")
             if screen_url:
                 print(f"     Mobbin: {screen_url}")
@@ -154,7 +166,7 @@ def main(argv=None):
     search_parser = subparsers.add_parser("search", help="Busca telas de UI por linguagem natural")
     search_parser.add_argument("query", help="Termo de pesquisa (ex: 'saas dashboard', 'checkout with stripe')")
     search_parser.add_argument("--plataforma", choices=["web", "ios"], default="web", help="Plataforma alvo (padrão: web)")
-    search_parser.add_argument("--modo", choices=["fast", "standard", "deep"], default="standard", help="Modo de busca")
+    search_parser.add_argument("--modo", choices=list(MODOS_VALIDOS), default="standard", help="Modo de busca")
     search_parser.add_argument("--limite", type=int, default=10, help="Quantidade máxima de telas (1-100)")
     search_parser.add_argument("--json", action="store_true", help="Saída em JSON puro para pipelines")
 

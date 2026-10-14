@@ -44,6 +44,7 @@ _MARCADORES_HARNESS = (
     ("OPENCODE", "opencode"),
     ("MIMO", "mimocode"),
     ("ANTIGRAVITY", "antigravity"),
+    ("GEMINI", "gemini-cli"),
 )
 
 # Passo a passo oficial do Mobbin (docs.mobbin.com). Só o Claude Code foi exercitado nesta
@@ -60,6 +61,10 @@ _PASSOS_MCP = {
     "mimocode": [
         f"Adicione o MCP remoto 'mobbin' ({URL_MCP_MOBBIN}) na configuração do MiMoCode.",
         "mimo mcp auth mobbin   (autoriza no navegador) [não verificado nesta máquina]",
+    ],
+    "gemini-cli": [
+        f"gemini mcp add --transport http mobbin {URL_MCP_MOBBIN}   [não verificado nesta máquina]",
+        "Dentro do Gemini CLI, rode /mcp auth mobbin e autorize no navegador. [não verificado nesta máquina]",
     ],
     "antigravity": [
         f"Adicione o MCP remoto 'mobbin' ({URL_MCP_MOBBIN}) nos servidores MCP do Antigravity CLI.",

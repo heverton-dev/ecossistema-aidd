@@ -206,10 +206,23 @@ def _variaveis_de_deploy(monkeypatch):
         monkeypatch.setenv(nome, valor)
 
 
+FIXTURES_INTAKE = (ROOT_DIR / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-planner"
+                   / "tests" / "fixtures" / "intake")
+
+
+def _gravar_intake(pasta: Path) -> None:
+    """O harness conduz grill e spec; o teste parte das fixtures válidas (o planner só abre com elas)."""
+    destino = pasta / ".aidd" / "intake"
+    destino.mkdir(parents=True, exist_ok=True)
+    for nome in ("grill.md", "spec.md"):
+        (destino / nome).write_bytes((FIXTURES_INTAKE / nome).read_bytes())
+
+
 def _orquestrador(tmp_path: Path, fluxo: int) -> OrquestradorSincrono:
     pasta = tmp_path / f"projeto-fluxo-{fluxo}"
     origem = tmp_path / "export-lowcode"
     origem.mkdir(exist_ok=True)
+    _gravar_intake(pasta)
     (origem / "package.json").write_text('{"name": "app"}\n', encoding="utf-8")
     return OrquestradorSincrono(
         fluxo=fluxo,
@@ -415,6 +428,7 @@ def test_etapa_7_reprova_quando_forge_audit_reprova(tmp_path):
 
 def test_factory_aceita_c2_real_do_planner(tmp_path):
     pasta = tmp_path / "planta-fluxo-2"
+    _gravar_intake(pasta)
     registro = subprocess.run(
         [sys.executable, str(ROOT_DIR / "ecossistema.py"), "planner", "ambiente",
          "--pasta", str(pasta), "--mobbin", "3"],

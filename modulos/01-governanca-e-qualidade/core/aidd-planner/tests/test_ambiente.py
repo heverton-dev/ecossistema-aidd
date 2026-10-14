@@ -10,6 +10,7 @@ Regras decididas com o usuário:
 """
 import json
 import os
+import shutil
 import sys
 
 import pytest
@@ -53,6 +54,7 @@ def _argv_init(pasta):
     ({"OPENCODE_SESSION": "x"}, "opencode"),
     ({"MIMO_HOME": "x"}, "mimocode"),
     ({"ANTIGRAVITY_SESSION": "x"}, "antigravity"),
+    ({"GEMINI_CLI": "1"}, "gemini-cli"),
     ({}, "desconhecido"),
 ])
 def test_detecta_harness_pelo_ambiente(env, esperado):
@@ -126,6 +128,10 @@ def test_comando_ambiente_grava_escolha_sem_segredos(tmp_path, env_do_teste):
 def test_init_passa_depois_de_registrar_o_ambiente(tmp_path, env_do_teste):
     env_do_teste.update(DEPLOY_OK)
     assert cli_main(["ambiente", "--pasta", str(tmp_path), "--mobbin", "3"]) == 0
+    destino = tmp_path / ".aidd" / "intake"
+    destino.mkdir(parents=True)
+    for nome in ("grill.md", "spec.md"):
+        shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)), "fixtures", "intake", nome), destino / nome)
     assert cli_main(_argv_init(tmp_path)) == 0
     assert (tmp_path / "PLANNER.json").is_file()
 
