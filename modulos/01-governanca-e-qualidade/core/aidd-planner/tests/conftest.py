@@ -20,5 +20,7 @@ def _ambiente_ja_registrado(request, monkeypatch):
     é provado em test_ambiente.py, que não usa esta fixture."""
     if request.module.__name__.endswith("test_ambiente"):
         return
-    from src.core_planner import ambiente
+    from src.core_planner import ambiente, intake
     monkeypatch.setattr(ambiente, "verificar", lambda pasta, env: [])
+    if not request.module.__name__.endswith("test_intake"):
+        monkeypatch.setattr(intake, "verificar", lambda pasta: [])

@@ -69,12 +69,12 @@ except ImportError:  # pragma: no cover — execução direta (python scripts/ph
 # relativo com fallback bare dos utils acima.
 try:
     from .sandbox_nivel_1 import (
-        SandboxNivel1,
+        SandboxNivel1, pythonpath_do_projeto,
         auditar_subprocess_env_ast, formatar_violacoes_auditoria,
     )
 except ImportError:  # pragma: no cover — execução direta da fase
     from sandbox_nivel_1 import (
-        SandboxNivel1,
+        SandboxNivel1, pythonpath_do_projeto,
         auditar_subprocess_env_ast, formatar_violacoes_auditoria,
     )
 
@@ -556,9 +556,10 @@ IMPLEMENTED SCRIPTS:
 Rules:
 - Test MUST integrate and chain generated scripts/modules, using output of one function as input of another (e.g.: create record -> use returned id -> execute dependent action -> query/validate final state in DB or service).
 - Do NOT write isolated tests or mock internal functions; exercise the real flow a user or CLI would follow.
-- Direct imports (e.g.: from modulo import ...). src/ is already in PYTHONPATH.
+- Direct imports (e.g.: from modulo import ...). src/ and every src/<layer>/ folder (infrastructure, domain, application...) are already in PYTHONPATH.
 - SQLite/DB: use in-memory ':memory:' or tmp_path. Initialize tables in test fixture before operations and enable PRAGMA foreign_keys = ON.
 - NEVER use subprocess.run in tests (call Python functions and classes directly).
+- If the flow goes through an ASGI/HTTP test client (e.g. FastAPI TestClient), the app runs in another thread: open the SQLite connection with sqlite3.connect(':memory:', check_same_thread=False) (and conn.row_factory = sqlite3.Row when the code uses dict(row)).
 - CONTRACT: only call functions/classes that scripts actually define.
 - If test saves and re-reads JSON, normalize types before comparing (tuple->list, None preserved).
 
@@ -580,7 +581,7 @@ RESPONSIBILITY: {responsabilidade}
 PSEUDOCODE: {pseudocodigo}
 
 Rules:
-- Code: testable functions/classes. Test: pytest suite (test_*), direct import (from {modulo} import). src/ already in PYTHONPATH.
+- Code: testable functions/classes. Test: pytest suite (test_*), direct import (from {modulo} import). src/ and every src/<layer>/ folder are already in PYTHONPATH.
 - CONTRACT: test can only call functions that code actually defines or imports. NEVER assume auxiliary functions (e.g.: criar_autor, criar_item) without defining them in code.
 - No subprocess.run in tests. UTF-8 on console (sys.stdout.reconfigure if win32).
 {blocos_condicionais}
@@ -818,7 +819,7 @@ class ValidadorGatesPhase8:
                        'Sem main.py — gate não aplicável, não bloqueia')
         try:
             pasta_projeto_absoluta = pasta_projeto.resolve()
-            with SandboxNivel1(pythonpath=pasta_projeto_absoluta / 'src') as sandbox:
+            with SandboxNivel1(pythonpath=pythonpath_do_projeto(pasta_projeto_absoluta / 'src')) as sandbox:
                 resultado = subprocess.run(
                     [sys.executable, str(pasta_projeto_absoluta / 'main.py'), '--help'],
                     cwd=str(sandbox.cwd), capture_output=True, timeout=10, env=sandbox.env
@@ -2125,7 +2126,7 @@ Rules:
 
         try:
             pasta_projeto_absoluta = self.pasta_projeto.resolve()
-            with SandboxNivel1(pythonpath=pasta_projeto_absoluta / 'src') as sandbox:
+            with SandboxNivel1(pythonpath=pythonpath_do_projeto(pasta_projeto_absoluta / 'src')) as sandbox:
                 resultado = subprocess.run(
                     [sys.executable, '-m', 'pytest', str(pasta_projeto_absoluta / alvo), '-v',
                      f'--rootdir={pasta_projeto_absoluta}'],

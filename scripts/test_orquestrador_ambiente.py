@@ -17,19 +17,19 @@ sys.path.insert(0, "scripts")
 from pathlib import Path
 import orquestrador_sincrono as o
 
-pasta, mobbin = sys.argv[1], (sys.argv[2] or None)
+pasta, mobbin, falhar_intake = sys.argv[1], (sys.argv[2] or None), sys.argv[3] == "1"
 orq = o.OrquestradorSincrono("pure", "App Amb", "app-amb", "fintech", pasta, mobbin=mobbin)
 chamadas = []
-orq._executar_comando = lambda cmd, cwd=None, env_extra=None: (chamadas.append([str(c) for c in cmd]) or 0)
+orq._executar_comando = lambda cmd, cwd=None, env_extra=None: (chamadas.append([str(c) for c in cmd]) or (1 if falhar_intake and "entrevista" in cmd else 0))
 orq._ler_contrato = lambda *a, **k: True
 ok = orq.etapa_02_planner()
 print("RESULTADO=" + json.dumps({"ok": ok, "chamadas": chamadas}))
 """
 
 
-def _rodar(pasta, mobbin=""):
+def _rodar(pasta, mobbin="", falhar_intake=False):
     res = subprocess.run(
-        [sys.executable, "-B", "-c", SONDA, str(pasta), mobbin],
+        [sys.executable, "-B", "-c", SONDA, str(pasta), mobbin, "1" if falhar_intake else "0"],
         cwd=RAIZ, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=120,
     )
     linhas = [l for l in res.stdout.splitlines() if l.startswith("RESULTADO=")]
@@ -38,7 +38,7 @@ def _rodar(pasta, mobbin=""):
 
 
 def _sub(chamada):
-    return [c for c in chamada if c in ("ambiente", "init", "export-dispatch")]
+    return [c for c in chamada if c in ("ambiente", "entrevista", "init", "export-dispatch")]
 
 
 def test_sem_ambiente_registrado_a_etapa_2_para_e_lista_os_tres_caminhos(tmp_path):
@@ -52,7 +52,7 @@ def test_com_mobbin_escolhido_registra_o_ambiente_antes_do_init(tmp_path):
     resultado, _ = _rodar(tmp_path / "p", mobbin="3")
     assert resultado["ok"] is True
     ordem = [_sub(c)[0] for c in resultado["chamadas"] if _sub(c)]
-    assert ordem[:2] == ["ambiente", "init"]
+    assert ordem[:3] == ["ambiente", "entrevista", "init"]
     chamada_ambiente = next(c for c in resultado["chamadas"] if "ambiente" in c)
     assert "--mobbin" in chamada_ambiente and chamada_ambiente[chamada_ambiente.index("--mobbin") + 1] == "3"
 
@@ -65,3 +65,23 @@ def test_ambiente_ja_registrado_dispensa_a_escolha(tmp_path):
     assert resultado["ok"] is True
     assert not any("ambiente" in c for c in resultado["chamadas"])
     assert any("init" in c for c in resultado["chamadas"])
+
+
+def test_intake_incompleto_para_antes_do_init_e_manda_rodar_grill_e_spec(tmp_path):
+    pasta = tmp_path / "p"
+    (pasta / ".aidd").mkdir(parents=True)
+    (pasta / ".aidd" / "ambiente.json").write_text('{"mobbin": {"caminho": "nenhum"}}', encoding="utf-8")
+    resultado, saida = _rodar(pasta, falhar_intake=True)
+    assert resultado["ok"] is False
+    assert any("entrevista" in c for c in resultado["chamadas"])
+    assert not any("init" in c for c in resultado["chamadas"])
+    assert "/aidd-grill" in saida and "/aidd-spec" in saida
+
+
+def test_modo_do_intake_e_repassado_ao_planner(tmp_path):
+    pasta = tmp_path / "p"
+    (pasta / ".aidd").mkdir(parents=True)
+    (pasta / ".aidd" / "ambiente.json").write_text('{"mobbin": {"caminho": "nenhum"}}', encoding="utf-8")
+    resultado, _ = _rodar(pasta)
+    chamada = next(c for c in resultado["chamadas"] if "entrevista" in c)
+    assert chamada[chamada.index("--modo") + 1] == "interativo"

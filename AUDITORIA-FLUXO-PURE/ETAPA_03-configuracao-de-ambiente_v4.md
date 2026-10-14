@@ -92,3 +92,13 @@
 - **Construtor Prompt (EN):**
   - Guard the `mkdir` in `etapa_01_forge` with `if not self.dry_run`.
   - Test it by running the real `pure ... --dry-run` command via subprocess, never by importing the orchestrator, then run `python -m pytest scripts/test_orquestrador_sincrono_dryrun.py -q` asserting exit 0.
+
+---
+
+## EMENDA (13/10/2026, ETAPA_09, Ticket 7 da ETAPA_05; executada em modo autônomo)
+
+**Correção de diagnóstico:** o Ticket 2 deste relatório ("Variáveis exigidas pelo PURE — RESOLVIDO (sem mudança de código)") afirmou, com base no dry-run e numa varredura de `os.environ`, que o PURE não lia variável do `.env`. Isso estava **errado**: o `aidd-planner` lê `MOBBIN_API_KEY` e `MOBBIN_API_URL` (`mobbin_client.py`) e, desde a ETAPA_08, também as variáveis de deploy (`VPS_HOST`, `VPS_USER`, `SSH_KEY_PATH` ou `VPS_PASSWORD`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ZONE_ID`, `DEFAULT_ROOT_DOMAIN`). A varredura não incluiu o diretório do planner e o `--dry-run` não executa o planner, por isso não mostrou nada.
+
+**Causa:** varredura incompleta (o planner ficou fora) e prova insuficiente (o dry-run não exercita a etapa 2).
+**Regra daqui em diante:** a varredura de `os.environ`/`getenv` cobre todos os módulos `modulos/**` e o `.env.example` deve listar tudo o que ela achar; o dry-run não vale como prova de que uma variável não é lida.
+**Estado atual:** o planner bloqueia por variável de deploy ausente (ETAPA_08) e o `.env.example` avisa disso (ETAPA_09).

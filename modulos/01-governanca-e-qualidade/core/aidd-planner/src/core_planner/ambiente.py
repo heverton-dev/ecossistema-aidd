@@ -44,27 +44,44 @@ _MARCADORES_HARNESS = (
     ("OPENCODE", "opencode"),
     ("MIMO", "mimocode"),
     ("ANTIGRAVITY", "antigravity"),
+    ("AGY_", "antigravity"),
+    ("GEMINI", "gemini-cli"),
 )
+# O omp não tem prefixo próprio livre (OMP_NUM_THREADS é do OpenMP): só as variáveis exatas dele.
+_VARIAVEIS_OMP = ("OMP_PLUGIN_ROOT", "OMP_PROFILE", "OMP_AUTH_BROKER_URL", "OMP_MCP_TIMEOUT_MS")
 
-# Passo a passo oficial do Mobbin (docs.mobbin.com). Só o Claude Code foi exercitado nesta
-# máquina; os demais seguem a documentação de cada harness e estão marcados como não verificados.
+# Quanto cada passo a passo do Mobbin foi verificado (Ticket 9-B), do mais forte ao mais fraco:
+#   executado    comando rodado nesta máquina (add, list e remove de verdade, e chamada real ao MCP)
+#   help         existência e flags conferidas no `--help` do binário instalado
+#   binario      texto de uso lido de dentro do binário instalado (a interface é interativa, não foi executada)
+#   documentacao só a documentação oficial; o harness não está instalado ou não roda aqui
+NIVEIS_VERIFICACAO = ("executado", "help", "binario", "documentacao")
+
 _PASSOS_MCP = {
-    "claude-code": [
+    "claude-code": ("executado", [
         f"claude mcp add --transport http mobbin {URL_MCP_MOBBIN}",
-        "Dentro do Claude Code, abra /mcp, escolha 'mobbin' e autorize no navegador.",
-    ],
-    "opencode": [
-        f"Adicione o MCP remoto 'mobbin' ({URL_MCP_MOBBIN}) na configuração do OpenCode.",
-        "opencode mcp auth mobbin   (autoriza no navegador) [não verificado nesta máquina]",
-    ],
-    "mimocode": [
-        f"Adicione o MCP remoto 'mobbin' ({URL_MCP_MOBBIN}) na configuração do MiMoCode.",
-        "mimo mcp auth mobbin   (autoriza no navegador) [não verificado nesta máquina]",
-    ],
-    "antigravity": [
-        f"Adicione o MCP remoto 'mobbin' ({URL_MCP_MOBBIN}) nos servidores MCP do Antigravity CLI.",
-        "Autorize no navegador quando o harness pedir. [não verificado nesta máquina]",
-    ],
+        "Dentro do Claude Code, abra /mcp, escolha 'mobbin' e autorize no navegador (antes disso o status é 'Needs authentication').",
+    ]),
+    "antigravity": ("executado", [
+        f"agy mcp add mobbin {URL_MCP_MOBBIN}   (o tipo http é detectado pela URL; flags vêm antes do nome)",
+        "Autorize no navegador quando o agy pedir. Conferir: agy mcp list.",
+    ]),
+    "mimocode": ("help", [
+        "mimo mcp add   (interativo: nome 'mobbin' e a URL " + URL_MCP_MOBBIN + ")",
+        "mimo mcp auth mobbin   (autoriza no navegador; `mimo mcp list` mostra quem ainda precisa de autenticação)",
+    ]),
+    "opencode": ("documentacao", [
+        'No opencode.json: "mcp": {"mobbin": {"type": "remote", "url": "' + URL_MCP_MOBBIN + '"}}   (não existe `opencode mcp add`)',
+        "opencode mcp auth mobbin   (autoriza no navegador; o OpenCode também inicia o OAuth sozinho ao receber 401)",
+    ]),
+    "omp": ("binario", [
+        f"Dentro do omp: /mcp add mobbin --scope user --url {URL_MCP_MOBBIN} --transport http",
+        "Dentro do omp: /mcp reauth mobbin   (autoriza no navegador); /mcp list mostra o status dos servidores.",
+    ]),
+    "gemini-cli": ("documentacao", [
+        f"gemini mcp add --transport http mobbin {URL_MCP_MOBBIN}",
+        "Dentro do Gemini CLI, rode /mcp auth mobbin e autorize no navegador. (Substituído pelo Antigravity CLI em 18/06/2026.)",
+    ]),
 }
 _PASSO_GENERICO = [
     f"Registre no seu harness um servidor MCP remoto chamado 'mobbin' apontando para {URL_MCP_MOBBIN}.",
@@ -91,14 +108,23 @@ def carregar_env() -> Dict[str, str]:
 
 def detectar_harness(env: Mapping[str, str]) -> str:
     chaves = list(env.keys())
+    if any(k in _VARIAVEIS_OMP for k in chaves) and not any(k.startswith("CLAUDECODE") for k in chaves):
+        return "omp"
     for prefixo, nome in _MARCADORES_HARNESS:
         if any(k == prefixo or k.startswith(prefixo + "_") or k.startswith(prefixo) for k in chaves):
             return nome
     return "desconhecido"
 
 
+def nivel_verificacao(harness: str) -> Optional[str]:
+    return _PASSOS_MCP[harness][0] if harness in _PASSOS_MCP else None
+
+
 def passo_a_passo_mcp(harness: str) -> List[str]:
-    return list(_PASSOS_MCP.get(harness, _PASSO_GENERICO))
+    if harness not in _PASSOS_MCP:
+        return list(_PASSO_GENERICO)
+    nivel, passos = _PASSOS_MCP[harness]
+    return [*passos, f"[verificação deste passo a passo: {nivel}]"]
 
 
 def variaveis_deploy_faltando(env: Mapping[str, str]) -> List[str]:

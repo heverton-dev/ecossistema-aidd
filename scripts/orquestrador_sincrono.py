@@ -86,7 +86,8 @@ class OrquestradorSincrono:
         pasta: str,
         origem_export: Optional[str] = None,
         dry_run: bool = False,
-        mobbin: Optional[str] = None
+        mobbin: Optional[str] = None,
+        modo_intake: str = "interativo"
     ):
         chave = str(fluxo).lower().strip() if not isinstance(fluxo, int) else fluxo
         fluxo_normalizado = MAPA_FLUXOS.get(chave)
@@ -101,6 +102,7 @@ class OrquestradorSincrono:
         self.origem_export = Path(origem_export).resolve() if origem_export else None
         self.dry_run = dry_run
         self.mobbin = mobbin
+        self.modo_intake = modo_intake
         self.log_execucao: List[Dict[str, Any]] = []
         self.contratos: Dict[str, Dict[str, Any]] = {}
         self.contratos_lidos: List[Dict[str, str]] = []
@@ -273,6 +275,17 @@ class OrquestradorSincrono:
             self.log("Ambiente do planner não registrado. Escolha como o Mobbin entra, nesta ordem:", "ERRO")
             self.log("  1. MCP oficial do Mobbin, pelo harness; 2. chave MOBBIN_API_KEY no .env; 3. nenhum.", "ERRO")
             self.log("Rode de novo com --mobbin <1|2|3> (ou: python ecossistema.py planner ambiente --pasta <pasta> --mobbin <1|2|3>).", "ERRO")
+            return False
+
+        # Intake: o planner só desenha depois do grill e da spec (com perguntas e direção visual).
+        # O harness conduz a entrevista e grava .aidd/intake/{grill,spec}.md; aqui só se valida.
+        rc = self._executar_comando([
+            sys.executable, "ecossistema.py", "planner", "entrevista",
+            "--pasta", str(self.pasta), "--modo", self.modo_intake,
+        ])
+        if rc != 0:
+            self.log("Intake incompleto: rode /aidd-grill (com perguntas visuais) e /aidd-spec e grave em "
+                     ".aidd/intake/grill.md e .aidd/intake/spec.md da pasta do projeto.", "ERRO")
             return False
 
         cmd = [
@@ -710,6 +723,8 @@ def main():
     parser.add_argument("--pasta", type=str, default=None, help="Caminho do diretório destino do projeto")
     parser.add_argument("--origem", type=str, default=None, help="Caminho do export original (somente Fluxo 3)")
     parser.add_argument("--dry-run", action="store_true", help="Simula execução sem disparar comandos no disco")
+    parser.add_argument("--modo-intake", choices=["autonomo", "interativo"], default="interativo",
+                        help="Registro do intake: autonomo = sem usuário no chat; interativo = com o usuário")
     parser.add_argument("--mobbin", choices=["1", "2", "3"], default=None,
                         help="Ambiente do planner: Mobbin por 1 = MCP oficial (harness), 2 = chave no .env, 3 = nenhum")
     parser.add_argument("posicionais", nargs="*", help="Argumentos posicionais para ergonomia simplificada")
@@ -779,7 +794,8 @@ def main():
         pasta=pasta,
         origem_export=origem,
         dry_run=args.dry_run,
-        mobbin=args.mobbin
+        mobbin=args.mobbin,
+        modo_intake=args.modo_intake
     )
 
     sucesso = orquestrador.executar_fluxo_completo()

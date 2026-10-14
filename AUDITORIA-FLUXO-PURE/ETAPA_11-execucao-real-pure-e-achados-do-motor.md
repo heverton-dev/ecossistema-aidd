@@ -1,0 +1,21 @@
+# Auditoria de Etapa: Execução real do `/pure` ponta a ponta e achados do motor
+
+> **EXECUTADO EM MODO AUTÔNOMO (`/goal`, 13/10/2026).** Eu fui o harness do protocolo delegado: li cada `_llm_request_<id>.json` do motor e gravei a resposta em `_llm_response_<id>.json`. Nenhuma resposta foi atribuída ao usuário.
+
+### [RECURSO]: Execução real das 7 etapas (clone, pasta `aidd-tmp/pure_real/controle-pedidos`)
+- **Ordem de Execução:** após as ETAPAs 08 a 10. Comando: `ecossistema.py pure "Controle de Pedidos" comercio --pasta <p> --mobbin 3 --modo-intake autonomo`, com `AIDD_TIMEOUT_DELEGACAO=1200`.
+- **Ação Executada:** 1ª tentativa: etapa 1 (forge) passou e a etapa 2 parou pedindo grill e spec, como projetado (exit 1). 2ª tentativa (foreground, timeout padrão de 30 s): o motor caiu no modo headless sem LLM configurado e falhou na etapa 4 (esperado: o harness precisa responder). 3ª tentativa (segundo plano, timeout longo): respondi 6 pedidos do motor (fase 2 análise; fase 8 schema; persistência; correção da persistência; quarteto; teste de integração).
+- **Entrega / Artefato Gerado:** projeto gerado com backend FastAPI + SQLite, frontend TanStack Router + Vite, `docker-compose.yml`, guias.
+- **Status & Diagnóstico:**
+  - *Sucesso:* Sim. **Etapas 1 a 7 OK, exit 0, 226,6 s**: forge, planner (com o intake), master, dispatch + engine (1/1 fatia integrada, contrato engine→master validado, craft Impeccable sinalizado), enterprise (sem drift), ops (manifestos Docker validados), auditoria final (`forge audit` exit 0).
+  - *Falhas / Anomalias (os 4 achados do motor, todos tratados aqui):*
+    1. **A spec não chegava ao motor.** O prompt da fase 2 usava a descrição do `PLANNER.json`, que sem `--descricao` era o texto de template ("Projeto de alta robustez desenvolvido via fluxo_01_generator..."). **Corrigido:** sem `--descricao`, o planner usa o contexto da spec (`intake.descricao_da_spec`, sem o bloco Visual Direction); `--descricao` explícita continua valendo. Red: 1 falhou; Green: `test_intake.py` **20 passed**.
+    2. **Instrução contraditória do prompt da fase 8:** mandava gravar em `infrastructure/persistencia_sqlite.py` e importar direto (`from persistencia_sqlite import`), mas só `src/` ia no `PYTHONPATH`; o teste gerado nunca importava (a rodada de correção reportou `ModuleNotFoundError`). **Corrigido:** `pythonpath_do_projeto(src)` põe `src/` e cada camada dentro dele no `PYTHONPATH` do sandbox (nas 2 chamadas da fase 8), com a lista aceita por `montar_env_minimo`; o prompt agora diz isso. Red: 3 falharam; Green: `test_sandbox_nivel_1.py` **22 passed**.
+    3. **Conexão SQLite entre threads:** o teste de integração com `TestClient` levantou `ProgrammingError` (o app roda em outra thread). **Corrigido no prompt de integração** (usar `check_same_thread=False` e `row_factory = sqlite3.Row`), com teste que trava o texto. Fase 8 inteira: **96 passed**.
+    4. **Scripts genéricos em vez dos módulos da spec** (validadores, serviços de domínio, persistência, quarteto): o conteúdo se adapta ao domínio (o schema saiu com `clientes`, `pedidos`, `itens_pedido`, `auditoria`), mas os nomes e a divisão dos scripts são os do esqueleto do motor. **Não corrigido: decisão de desenho do motor, registrada como Ticket 11-A.**
+
+## TICKETS
+- **Resolvidos aqui:** os achados 1, 2 e 3 acima.
+- **Ticket 11-A: o esqueleto de scripts do motor não deriva dos módulos da spec — ABERTO.** *Red:* `pure` para uma spec com módulos `pedidos` e `clientes` deve planejar scripts por módulo. *Prompt (EN):* Make phase 4 derive the script list from the PLANNER modules (one set per bounded context) instead of the fixed skeleton, and add a test that two different specs yield different script names.
+- **Ticket 11-B: o timeout delegado padrão (30 s) inviabiliza o harness humano — ABERTO:** o `/pure` em primeiro plano cai no modo headless sem LLM. *Prompt (EN):* When a harness is detected, raise the default delegated timeout (or wait indefinitely with a clear message) instead of falling back to headless.
+- **Ticket 11-C: a etapa 2 do `/pure` falha se o grill e a spec não existem e ela mesma já rodou a etapa 1 — ABERTO (ergonomia):** é preciso gravar `.aidd/intake/*` e rodar de novo. *Prompt (EN):* Let `/pure` resume from the planner stage when the intake files appear, without re-running the forge.

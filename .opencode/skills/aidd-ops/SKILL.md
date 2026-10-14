@@ -30,7 +30,7 @@ Done when: the pipeline exits 0.
 - **`ops deploy` stops at an `etapa_com_falha`** (`validacao_plano`, `bootstrap_vps`, `configuracao_dns`, `validacao_infra`, `deploy_docker`, `preflight_e2e`): fix that stage only, rerun with `--dry-run`, then `--real`; never skip stages.
 - **SSH unreachable or refused in `bootstrap`:** run `ops preflight <env> --host <host> --json`; if the port or key changed after hardening, stop and ask the user for console access instead of retrying.
 - **`[ERRO] INFRA_NAO_GERADA`** (plan with `HANDOFF_PLANNER_ENGINE.json` in `--pasta`): the `moldes/infra/*` pieces were not written; check the planner handoff `perfil_app`, then rerun `ops plan --pasta <project>`.
-- **Coolify path:** `ops coolify health` first; on `[ERRO]` from `ops coolify deploy <app> --real` read `ops coolify status <app>` and report, without forcing `--force`.
+- **Deploy path (compose-native only, Coolify was abolished):** `ops deploy <env> --plano <PLAN> --real` copies the project (never `.env`) over SSH and runs `docker compose up -d --build`; on `COMPOSE_UP_FALHOU` or `SERVICO_NAO_SAUDAVEL` read `detalhes.log_final` / `detalhes.servicos`, report them and do not retry in a loop. DNS needs `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ZONE_ID`.
 
 ## Stopping Checklist
 

@@ -69,7 +69,7 @@
         "codebase-memory-mcp"
       ],
       "enabled": true,
-      "cwd": "C:\\Users\\trcnologia\\Desktop\\worktrees_auditoria-modularizacao-vsa-ciclo-01\\Fase_4_Inspetor_Retorno"
+      "cwd": "C:\\Users\\trcnologia\\Desktop\\TESTE-ecossistema-aidd_04102026\\FLUXO-PURE"
     },
     "mcp-gatekeeper": {
       "type": "local",
@@ -78,7 +78,7 @@
         "componentes/compartilhado/src-core/mcp_gatekeeper.py"
       ],
       "enabled": true,
-      "cwd": "C:\\Users\\trcnologia\\Desktop\\worktrees_auditoria-modularizacao-vsa-ciclo-01\\Fase_4_Inspetor_Retorno"
+      "cwd": "C:\\Users\\trcnologia\\Desktop\\TESTE-ecossistema-aidd_04102026\\FLUXO-PURE"
     },
     "mobbin-mcp": {
       "type": "local",
