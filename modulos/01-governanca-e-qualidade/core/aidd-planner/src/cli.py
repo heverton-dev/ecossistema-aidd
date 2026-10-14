@@ -30,6 +30,7 @@ try:
         gravar_planta,
         pecas_disponiveis,
     )
+    from .core import ambiente, intake, referencias
 except ImportError:
     from src.core_planner.planner_engine import (
         PlannerValidationError,
@@ -46,6 +47,7 @@ except ImportError:
         gravar_planta,
         pecas_disponiveis,
     )
+    from src.core_planner import ambiente, intake, referencias
 
 MAPA_FLUXOS = {
     "1": "fluxo_01_generator",
@@ -76,6 +78,27 @@ def cmd_init(args: argparse.Namespace) -> int:
 
     os.makedirs(pasta_destino, exist_ok=True)
     arquivo_saida = os.path.join(pasta_destino, "PLANNER.json")
+
+    # Bloco Ambiente: o planner abre verificando o ambiente (Mobbin escolhido, deploy completo).
+    erros_ambiente = ambiente.verificar(pasta_destino, ambiente.carregar_env())
+    if erros_ambiente:
+        print("[ERRO] Ambiente incompleto; o planner não abre sem ele:", file=sys.stderr)
+        for linha in erros_ambiente:
+            print(linha, file=sys.stderr)
+        return 1
+
+    # Intake: o planner só desenha depois da entrevista (grill) e da spec; o bloco Visual Direction
+    # da spec alimenta o Design System.
+    erros_intake = intake.verificar(pasta_destino)
+    if erros_intake:
+        print("[ERRO] Intake incompleto; o planner não abre sem grill e spec:", file=sys.stderr)
+        for linha in erros_intake:
+            print("  - " + linha, file=sys.stderr)
+        return 1
+    direcao_visual = intake.ler_direcao_visual(pasta_destino)
+    if not args.descricao:
+        # sem --descricao, o motor recebe o contexto da spec (e não o texto de template)
+        descricao = intake.descricao_da_spec(pasta_destino) or descricao
 
     if os.path.exists(arquivo_saida) and not args.force:
         print(f"[ERRO] O arquivo '{arquivo_saida}' já existe. Use --force para sobrescrever.", file=sys.stderr)
@@ -117,12 +140,29 @@ def cmd_init(args: argparse.Namespace) -> int:
             from ui_reference_resolver import resolver_referencia_ui
 
     ui_ref_modo = getattr(args, "ui_ref", None)
-    _, tela_referencia = resolver_referencia_ui(
-        modo=ui_ref_modo,
-        projeto_nome=nome,
-        dominio=dominio,
-        plataforma="web"
-    )
+    referencias_ui = None
+    if direcao_visual is not None and ui_ref_modo is None:
+        # Caminho normal: o Mobbin escolhido no Ambiente (1 MCP, 2 chave, 3 nenhum) + a direção visual da
+        # spec. A queda para a spec nunca é silenciosa e fica registrada em referencias-ui.json.
+        caminho_mobbin = ((ambiente.ler(pasta_destino) or {}).get("mobbin") or {}).get("caminho")
+        referencias_ui = referencias.montar_referencias(
+            pasta_destino, direcao_visual, dominio,
+            usar_mobbin=(caminho_mobbin == "chave"), origem_mcp=(caminho_mobbin == "mcp"),
+        )
+        tela_referencia = None
+        if referencias_ui["origem"] == "mobbin_api" and referencias_ui.get("telas"):
+            primeira = referencias_ui["telas"][0]
+            tela_referencia = {
+                "fonte": "mobbin_api", "app_name": primeira.get("app_name"), "mobbin_url": primeira.get("mobbin_url"),
+                "tags": [t.lower() for t in [dominio, *direcao_visual.get("referencias", [])]],
+            }
+    else:
+        _, tela_referencia = resolver_referencia_ui(
+            modo=ui_ref_modo,
+            projeto_nome=nome,
+            dominio=dominio,
+            plataforma="web"
+        )
 
     design_system = gerar_design_system(
         projeto_nome=nome,
@@ -130,8 +170,13 @@ def cmd_init(args: argparse.Namespace) -> int:
         descricao=descricao,
         dominio=dominio,
         tela_referencia=tela_referencia,
-        plataforma="web"
+        plataforma="web",
+        direcao_visual=direcao_visual,
     )
+    if referencias_ui is not None:
+        design_system["referencias_ui"] = {"origem": referencias_ui["origem"], "arquivo": referencias.ARQUIVO_REFERENCIAS}
+        if referencias_ui["origem"] == "mobbin_api":
+            design_system["fonte"] = "spec/entrevista (Visual Direction) + mobbin api (consulta por tela) + motor topologico"
     os.makedirs(os.path.dirname(os.path.abspath(caminho_design_system)), exist_ok=True)
     with open(caminho_design_system, "w", encoding="utf-8") as f:
         json.dump(design_system, f, indent=2, ensure_ascii=False)
@@ -361,6 +406,20 @@ def main(argv: Optional[List[str]] = None) -> int:
     p_init.add_argument("--pasta", "-p", default=".", help="Pasta de destino onde salvar PLANNER.json")
     p_init.add_argument("--force", action="store_true", help="Sobrescreve PLANNER.json se já existir")
     p_init.set_defaults(func=cmd_init)
+
+    # Subcomando ambiente
+    p_amb = subparsers.add_parser("ambiente", help="Bloco Ambiente: escolhe o caminho do Mobbin e confere as variáveis de deploy")
+    p_amb.add_argument("--pasta", "-p", default=".", help="Pasta do projeto onde gravar .aidd/ambiente.json")
+    p_amb.add_argument("--mobbin", choices=["1", "2", "3"], default=None,
+                       help="Caminho do Mobbin: 1 = MCP oficial (harness), 2 = chave no .env, 3 = nenhum")
+    p_amb.set_defaults(func=ambiente.cmd_ambiente)
+
+    # Subcomando entrevista (grill + spec)
+    p_int = subparsers.add_parser("entrevista", help="Valida grill e spec do projeto (.aidd/intake) e grava o registro da entrevista")
+    p_int.add_argument("--pasta", "-p", default=".", help="Pasta do projeto com .aidd/intake/{grill,spec}.md")
+    p_int.add_argument("--modo", choices=list(intake.MODOS), default="interativo",
+                       help="autonomo = sem usuário no chat (o relatório deve dizer isso); interativo = com o usuário")
+    p_int.set_defaults(func=intake.cmd_intake)
 
     # Subcomando validate
     p_val = subparsers.add_parser("validate", help="Valida conformidade de um PLANNER.json")

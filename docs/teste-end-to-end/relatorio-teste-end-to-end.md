@@ -1769,3 +1769,82 @@
 - **Status:** **RESOLVIDO & 100% CONFORME**.
 
 
+## 17. Fluxo Canônico PURE — bloco Ambiente do planner (`aidd-planner`, orquestrador `/pure`)
+
+- **Data da Auditoria e Validação:** 13/10/2026
+- **Ambiente:** clone `C:\Users\trcnologia\Desktop\TESTE-ecossistema-aidd_04102026\FLUXO-PURE` e motor original (branch `fix/pure-etapa-08-planner-ambiente`, a partir da `main`)
+- **Ferramentas Tocadas:** `aidd-planner` (`src/core_planner/ambiente.py` novo, `aidd_planner/core/ambiente.py`, `src/cli.py`, testes) e `scripts/orquestrador_sincrono.py` (`--mobbin`).
+- **Achados do teste real:**
+  1. O `planner init` não verificava o ambiente: faltar o Mobbin caía no catálogo em silêncio e variáveis de deploy ausentes só apareciam no fim do fluxo.
+  2. O menu de referências de UI só existia em terminal interativo, o que não funciona dentro de um harness.
+- **O que executou:**
+  1. Novo comando `planner ambiente --pasta P --mobbin 1|2|3` (1 = MCP oficial pelo harness, 2 = chave `MOBBIN_API_KEY` no `.env`, 3 = nenhum) que grava `.aidd/ambiente.json` sem segredos e imprime o passo a passo do harness detectado.
+  2. O `planner init` e a etapa 2 do `/pure` só abrem com o ambiente registrado e as variáveis de deploy completas (`VPS_HOST`, `VPS_USER`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ZONE_ID`, `DEFAULT_ROOT_DOMAIN` e `SSH_KEY_PATH` ou `VPS_PASSWORD`). O Mobbin nunca bloqueia.
+  3. O orquestrador ganhou `--mobbin`; sem ambiente registrado e sem a flag, para e lista os 3 caminhos.
+- **Resultados Medidos (13/10/2026):**
+  - `aidd-planner`: **70 passed** (22 testes novos do ambiente); orquestrador (`test_orquestrador_contratos_reais`, `test_orquestrador_sincrono`, `test_orquestrador_ambiente`): **32 passed**.
+  - Prova real no clone: `--mobbin 1`, `2` (chave aceita pelo Mobbin em chamada real) e `3` com exit 0; sem escolha exit 1 listando os caminhos; nenhum segredo nas saídas.
+- **Pendências registradas:** `AUDITORIA-FLUXO-PURE/ETAPA_08` (Coolify abolido e deploy real do `compose-nativo`, documentação do bloco Ambiente, passo a passo dos harnesses OpenCode, MiMoCode e Antigravity não verificado).
+- **Status:** **RESOLVIDO** (commit `72907cf1`, branch `fix/pure-etapa-08-planner-ambiente`; pre-commit e pre-push com exit 0).
+
+## 18. Fluxo Canônico PURE — entrevista (grill e spec), Mobbin por tela, extrator de tokens e `forge mobbin` (`aidd-planner`, `aidd-forge`, `mobbin_mcp`)
+
+- **Data da Auditoria e Validação:** 13/10/2026 (executado em **modo autônomo**, `/goal`)
+- **Ambiente:** clone `C:\Users\trcnologia\Desktop\TESTE-ecossistema-aidd_04102026\FLUXO-PURE` e motor original (branch `fix/pure-etapa-09-planner-jornada`, empilhada sobre a da etapa 08)
+- **Ferramentas Tocadas:** `aidd-planner` (`intake.py`, `referencias.py`, `ambiente.py`, `mobbin_client.py`, `design_system.py`, `cli.py`), `scripts/orquestrador_sincrono.py` (`--modo-intake`), `componentes/compartilhado/mcps/mobbin_mcp/token_extractor.py`, `aidd-forge` (`scripts/cli.py`), skill e comando do planner, `.env.example`.
+- **Achados do teste real:**
+  1. O `/pure` não acionava grill nem spec: o plano nascia de template, sem entrevista nem direção visual.
+  2. O Mobbin entrava no `init` com 1 tela e o domínio como termo; a primária extraída saía quase branca (laço parado no 6º tom de fundo; depois, em telas reais quase cinzas, o fallback usava um tom de fundo).
+  3. `DESIGN-SYSTEM.json` lia `paleta.get("primary")` (a chave é `primaria`): o modo dual saía sempre `#3b82f6`.
+  4. O `aidd-forge` declarava o subcomando `mobbin` sem tratá-lo (duplicata do `planner mobbin`); `planner mobbin status` imprimia 8 caracteres da chave; o cliente fazia `sys.exit` dentro de biblioteca e aceitava o modo `fast` descontinuado.
+  5. O comando `planner intake` já era apelido antigo de `init` no `ecossistema.py`: o novo comando se chama `entrevista`.
+- **O que executou:**
+  1. `planner entrevista --pasta P --modo interativo|autonomo`: o `init` e a etapa 2 do `/pure` só abrem com `.aidd/intake/grill.md` (perguntas visuais) e `spec.md` (com `### Visual Direction`) válidos pelas CLIs reais.
+  2. `referencias.py`: uma consulta por tela (modo `standard`), cache por hash, só tokens e links em `referencias-ui.json`, fallback pela spec com aviso; o caminho MCP lê `.aidd/intake/referencias-mcp.json` do harness.
+  3. Extrator: recorte do rodapé, tons fundidos, primária por saturação×frequência com segundo passe e `primaria_detectada`, agregação por voto entre telas, `image.url`; cliente com `MobbinError` e só `standard|deep`; `status` sem a chave.
+  4. Remoção do `mobbin` do forge (fonte e 6 espelhos); documentação da jornada na skill, no comando e no `.env.example`.
+- **Resultados Medidos (13/10/2026):**
+  - `aidd-planner`: **105 passed**; raiz (extrator, `mobbin_mcp`, forge, documentação, orquestrador): **54 passed** no original.
+  - Prova real com a API do Mobbin (chave do `.env`): `planner init` exit 0 em 29,8 s (8 consultas, 46 telas, 8 arquivos de cache) e exit 0 em 3,5 s na segunda execução (cache); a cor da spec venceu no Design System; sem URL de imagem no `referencias-ui.json`.
+- **Pendências registradas:** `AUDITORIA-FLUXO-PURE/ETAPA_09` (limites do extrator: tipografia, espaçamentos e raios não saem da imagem; passo a passo de OpenCode, MiMoCode, Antigravity e Gemini CLI não verificado).
+- **Status:** **RESOLVIDO** (commit `939d357c`, branch `fix/pure-etapa-09-planner-jornada`; pre-commit e pre-push com exit 0).
+
+## 19. Fluxo Canônico PURE — abolição do Coolify, deploy `compose-nativo` e achados do motor (`aidd-ops`, `aidd-pure`, `aidd-planner`)
+
+- **Data da Auditoria e Validação:** 13/10/2026 (executado em **modo autônomo**, `/goal`)
+- **Ambiente:** clone `C:\Users\trcnologia\Desktop\TESTE-ecossistema-aidd_04102026\FLUXO-PURE` e motor original (branch `fix/pure-etapa-10-coolify-e-motor`, empilhada sobre a da etapa 09)
+- **Ferramentas Tocadas:** `aidd-ops` (`compose_deploy.py` e `cloudflare_dns.py` novos, `compose_preflight.py`, `pipeline_ops.py`, `GUIA.md`, Intake Web; removidos `coolify.py` e `test_coolify.py`), `aidd-pure` (`08_implementador.py`, `sandbox_nivel_1.py`), `aidd-planner` (`intake.py`, `cli.py`), skill `aidd-ops` (fonte e espelhos), `.env.example`.
+- **Achados do teste real:**
+  1. O Coolify continuava como motor e como CLI (`ops coolify`), e o deploy real do `compose-nativo` devolvia `REAL_NAO_IMPLEMENTADO`: 206 rastros vivos de Coolify (decisão do usuário: abolir; deploy só `compose-nativo` em todos os fluxos).
+  2. Rodando o `/pure` de verdade (7 etapas, o harness respondendo ao protocolo delegado): a spec do intake não chegava ao motor (a descrição do `PLANNER.json` era o texto de template); o prompt da fase 8 mandava gravar em `infrastructure/` e importar direto com só `src/` no `PYTHONPATH` (o teste gerado nunca importava); o teste de integração com `TestClient` levantava erro de thread do SQLite.
+- **O que executou:**
+  1. `ComposeDeployer`: valida o ambiente (anti shell injection), empacota o projeto sem `.env`, chaves, `.git` e `node_modules`, envia por SSH, roda `docker compose up -d --build` e confere os serviços; `garantir_registro_a` idempotente na Cloudflare; isolamento da VPS (portas privilegiadas só 80 e 443) sobre o compose; motor único em `DeployOrchestrator`; remoção do grupo `ops coolify`, da opção `--motor` e das variáveis `COOLIFY_*`.
+  2. Sem `--descricao`, o planner usa o contexto da spec; o sandbox da fase 8 põe `src/` e cada camada no `PYTHONPATH`; o prompt de integração orienta `check_same_thread=False`.
+- **Resultados Medidos (13/10/2026):**
+  - `aidd-ops`: **197 passed**; guarda `tests/test_sem_coolify_vivo.py`: 2 passed (206 rastros antes, 0 depois); `aidd-planner`: **107 passed**; fase 8 e sandbox do `aidd-pure`: **81 passed**.
+  - `ops plan` e `ops deploy` em simulação: exit 0 nas 6 etapas; `ops coolify health` → erro (subcomando removido).
+  - `/pure` completo no clone: etapas 1 a 7 OK em 226,6 s (exit 0).
+  - **Não verificado:** o transporte SSH real (paramiko) e a API real da Cloudflare contra uma VPS e uma zona de verdade; o encadeamento foi provado com SSH e HTTP injetados.
+- **Pendências registradas:** `AUDITORIA-FLUXO-PURE/ETAPA_10` e `ETAPA_11` (esqueleto de scripts do motor não deriva da spec; timeout delegado de 30 s; deploy real contra VPS descartável; `.env` do projeto não sobe).
+- **Status:** **RESOLVIDO NO CLONE E NO MOTOR ORIGINAL (commits `939d357c` e `636f472c`, no GitHub).**
+
+## 20. Fluxo Canônico PURE — fechamento dos abertos da etapa 09 (`aidd-planner`: tokens da spec e passo a passo por harness)
+
+- **Data da Auditoria e Validação:** 14/10/2026 (executado em **modo autônomo**, `/goal`; o escopo do 9-B foi ajustado pelo usuário durante a execução: mimo, agy, opencode, claude e omp)
+- **Ambiente:** motor original, branch `fix/pure-etapa-12-abertos-da-09` (sobre a da etapa 10)
+- **Ferramentas Tocadas:** `aidd-planner` (`ambiente.py`, `design_system.py`, `intake.py`), skill `aidd-planner` (fonte e 6 espelhos), `.env.example`.
+- **Achados do teste real:**
+  1. **9-A:** a imagem do Mobbin não informa tipografia, raios nem espaçamentos; eles vinham de uma tabela por app, sem relação com a spec.
+  2. **9-B:** o passo a passo do Mobbin por harness estava marcado "não verificado" e cobria 5 harnesses sem o omp. Verificação feita nesta máquina: `claude mcp add --transport http` + `get` + `remove` executados, e busca real pelo MCP (2 telas); `agy mcp add/list/remove` executados (o tipo http é detectado pela URL); `mimo mcp add/auth/list` existem no `--help` (o `add` é interativo); o `opencode` **não tem** `opencode mcp add` (o servidor entra no `opencode.json`) e a instalação local está quebrada (postinstall não rodou); o `omp` **não tem** subcomando `mcp` (os comandos são de barra: `/mcp add … --url … --transport http`, `/mcp reauth`), lidos no binário; o Gemini CLI foi substituído pelo Antigravity CLI em 18/06/2026 (documentação).
+  3. **9-C:** `.codebuddy/` local desatualizado (não versionado).
+- **O que executou:**
+  1. A Visual Direction aceita `fonte`, `raio` (reto, suave, arredondado) e `densidade` (compacta, confortavel, ampla), opcionais e validados; viram `tokens_da_direcao` no `DESIGN-SYSTEM.json`, e o que a spec não declara fica em `convencao` (nada é inventado).
+  2. Cada passo a passo carrega o nível de verificação (`executado`, `help`, `binario`, `documentacao`); o omp e o agy passam a ser detectados (o omp só por variáveis exatas, porque `OMP_NUM_THREADS` é do OpenMP); três testes reais (claude, agy, mimo) rodam só com `AIDD_TESTE_HARNESS_REAL=1`, com nome descartável e desfazendo a configuração.
+  3. `.codebuddy/` copiado da fonte da branch.
+- **Resultados Medidos (14/10/2026):**
+  - `aidd-planner`: **135 passed, 3 skipped** (os 3 são os testes reais, que passaram com a variável ligada: 17 passed no arquivo dos harnesses).
+  - Red do 9-A: erro de coleta (`tokens_da_direcao` inexistente); Green: 14 passed.
+  - Pre-commit: a 1ª tentativa reprovou em 3 gates (variável `AIDD_TESTE_HARNESS_REAL` sem documentação no `.env.example`, o teste do `G_ENV_ROT` que depende dela e a Lei #9 por falta desta seção); corrigido.
+  - **Não verificado:** a autorização OAuth em nenhum harness (só o registro do servidor); o opencode e o omp não foram executados.
+- **Pendências registradas:** `AUDITORIA-FLUXO-PURE/ETAPA_12` (OAuth real por harness; opencode com instalação quebrada).
+- **Status:** **RESOLVIDO NO CLONE E NO MOTOR ORIGINAL (9-A, 9-B, 9-C); OAUTH POR HARNESS E OPENCODE FICAM COMO LIMITE DECLARADO.**

@@ -3,7 +3,7 @@
   "gerado_por": "scripts/catalogo_pecas.py",
   "totais": {
     "ferramentas": 8,
-    "comandos_cli": 75,
+    "comandos_cli": 73,
     "skills": 45,
     "leis": 14,
     "lente_15d": 15,
@@ -170,17 +170,13 @@
       "comandos": [
         "bootstrap",
         "check",
-        "create",
         "decrypt",
         "deploy",
         "encrypt",
         "export",
-        "health",
         "init",
         "plan",
         "preflight",
-        "setenv",
-        "status",
         "up"
       ],
       "gates_proprios": [
@@ -191,7 +187,7 @@
         "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/mcps/cloudflare-mcp/server.py",
         "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/mcps/docker-mcp/server.py"
       ],
-      "arquivos_py": 26
+      "arquivos_py": 27
     },
     {
       "id": "aidd-planner",
@@ -199,7 +195,9 @@
       "chamada": "python ecossistema.py planner",
       "entrada_cli": "modulos/01-governanca-e-qualidade/core/aidd-planner/src/cli.py",
       "comandos": [
+        "ambiente",
         "audit",
+        "entrevista",
         "export",
         "export-dispatch",
         "init",
@@ -214,7 +212,7 @@
         "modulos/01-governanca-e-qualidade/core/aidd-planner/gates/G_PLANNER_SINE_QUA_NON.py"
       ],
       "mcps_proprios": [],
-      "arquivos_py": 20
+      "arquivos_py": 26
     },
     {
       "id": "aidd-pure",
@@ -425,7 +423,7 @@
     {
       "id": "aidd-planner",
       "descricao": "Generates and validates the canonical SDD/BDD app blueprint (PLANNER.json) that fuels the Triad flows (Generator, Factory, Bridge). Use when the user wants architecture intake, a project blueprint or a spec for a new app, or says \"planner\", \"pré-plano\", \"intake\", \"blueprint\", \"SDD\", \"BDD\". Not for ecosystem improvement plans in docs/planos/ (that is aidd-plan).",
-      "linhas": 64,
+      "linhas": 99,
       "terceiro": false
     },
     {
@@ -3026,6 +3024,7 @@
       "chamado_por": [
         "guardas",
         "painel",
+        "scripts",
         "testes"
       ]
     },
@@ -5686,6 +5685,22 @@
             "<var>",
             "--output",
             "<var>"
+          ],
+          [
+            "planner",
+            "entrevista",
+            "--pasta",
+            "<var>",
+            "--modo",
+            "<var>"
+          ],
+          [
+            "planner",
+            "ambiente",
+            "--pasta",
+            "<var>",
+            "--mobbin",
+            "<var>"
           ]
         ],
         "chamadas_por_fluxo": {},
@@ -5848,6 +5863,18 @@
     {
       "etapa": "etapa_02_planner",
       "chamada": "ecossistema.py planner export-dispatch <var> --output <var>",
+      "encaixa": true,
+      "problemas": []
+    },
+    {
+      "etapa": "etapa_02_planner",
+      "chamada": "ecossistema.py planner entrevista --pasta <var> --modo <var>",
+      "encaixa": true,
+      "problemas": []
+    },
+    {
+      "etapa": "etapa_02_planner",
+      "chamada": "ecossistema.py planner ambiente --pasta <var> --mobbin <var>",
       "encaixa": true,
       "problemas": []
     },
@@ -6390,7 +6417,7 @@
             "aidd-planner"
           ],
           "guardas": 15,
-          "arquivos_py": 62
+          "arquivos_py": 68
         },
         {
           "id": "gates",
@@ -6472,7 +6499,7 @@
             "aidd-ops"
           ],
           "guardas": 2,
-          "arquivos_py": 28
+          "arquivos_py": 29
         }
       ]
     },

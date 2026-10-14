@@ -43,6 +43,22 @@ def razao_contraste(lum1: float, lum2: float) -> float:
     return (mais_claro + 0.05) / (mais_escuro + 0.05)
 
 
+RODAPE_PX_EM_768 = 48  # barra escura "curated by Mobbin" das imagens da API (medida em 768 px de largura)
+
+
+def recortar_rodape(img):
+    """Tira a barra de rodapé do Mobbin (proporcional à largura) antes de amostrar as cores."""
+    corte = round(RODAPE_PX_EM_768 * img.width / 768)
+    if corte and img.height > corte * 3:
+        return img.crop((0, 0, img.width, img.height - corte))
+    return img
+
+
+def _agrupar_tons(img):
+    """Funde tons quase iguais (anti-aliasing, degradês de fundo) em 16 níveis por canal."""
+    return img.point(lambda v: (v // 16) * 16 + 8)
+
+
 def extrair_paleta_imagem(dados_imagem: bytes, max_cores: int = 6) -> Dict[str, Any]:
     """
     Amostra a imagem da referência e deriva SEMPRE os dois temas: Light e Dark.
@@ -53,9 +69,10 @@ def extrair_paleta_imagem(dados_imagem: bytes, max_cores: int = 6) -> Dict[str, 
 
     try:
         img = Image.open(BytesIO(dados_imagem)).convert("RGB")
-        img.thumbnail((120, 120))
+        img = _agrupar_tons(recortar_rodape(img))
+        img.thumbnail((160, 160))
 
-        cores = img.getcolors(maxcolors=20000)
+        cores = img.getcolors(maxcolors=40000)
         if not cores:
             return _fallback_tokens_duais()
 
@@ -68,25 +85,34 @@ def extrair_paleta_imagem(dados_imagem: bytes, max_cores: int = 6) -> Dict[str, 
 
         paleta_hex: List[str] = []
         cor_primaria = None
-        melhor_contraste_primaria = 0.0
+        melhor_pontuacao = 0.0
+        relaxada = None
+        melhor_relaxada = 0.0
 
-        for _, rgb in cores_ordenadas:
-            lum_c = luminancia_relativa(*rgb)
-            contraste = razao_contraste(lum_fundo, lum_c)
+        # Percorre TODAS as cores (o defeito antigo parava ao juntar 6 tons de fundo e nunca via a cor
+        # da marca). A primária é a mais saturada e frequente com contraste mínimo de 3:1 sobre o fundo.
+        for contagem, rgb in cores_ordenadas:
             h = rgb_para_hex(*rgb)
-            if h not in paleta_hex:
+            if h not in paleta_hex and len(paleta_hex) < max_cores:
                 paleta_hex.append(h)
 
             delta_cor = max(rgb) - min(rgb)
-            if delta_cor > 30 and contraste >= 3.0 and contraste > melhor_contraste_primaria:
-                cor_primaria = h
-                melhor_contraste_primaria = contraste
+            contraste = razao_contraste(lum_fundo, luminancia_relativa(*rgb))
+            if delta_cor > 30:
+                pontuacao = contagem * (delta_cor / 255.0)
+                if contraste >= 3.0 and pontuacao > melhor_pontuacao:
+                    cor_primaria = h
+                    melhor_pontuacao = pontuacao
+                elif contraste >= 1.8 and pontuacao > melhor_relaxada:
+                    relaxada = h
+                    melhor_relaxada = pontuacao
 
-            if len(paleta_hex) >= max_cores:
-                break
-
-        if not cor_primaria:
-            cor_primaria = paleta_hex[1] if len(paleta_hex) > 1 else "#3b82f6"
+        # Telas quase cinzas (ex.: Linear) não têm cor de marca confiável. Segundo passe com contraste
+        # menor; se ainda assim não houver, declara "não detectada" em vez de inventar um tom de fundo.
+        cor_primaria = cor_primaria or relaxada
+        primaria_detectada = cor_primaria is not None
+        if not primaria_detectada:
+            cor_primaria = "#3b82f6"
 
         # Constrói os dois modos de forma determinística
         tokens_dark = {
@@ -112,7 +138,8 @@ def extrair_paleta_imagem(dados_imagem: bytes, max_cores: int = 6) -> Dict[str, 
             "modo_nativo_referencia": "dark" if ref_is_dark else "light",
             "light": tokens_light,
             "dark": tokens_dark,
-            "paleta_extraida": paleta_hex[:max_cores]
+            "paleta_extraida": paleta_hex[:max_cores],
+            "primaria_detectada": primaria_detectada
         }
     except Exception:
         return _fallback_tokens_duais()
@@ -139,7 +166,8 @@ def _fallback_tokens_duais() -> Dict[str, Any]:
             "muted": "#64748b",
             "border": "rgba(0, 0, 0, 0.08)"
         },
-        "paleta_extraida": ["#3b82f6", "#10b981", "#f59e0b", "#ef4444"]
+        "paleta_extraida": ["#3b82f6", "#10b981", "#f59e0b", "#ef4444"],
+        "primaria_detectada": False
     }
 
 
@@ -165,17 +193,30 @@ def _derivar_stack_tipografico(app_name: str) -> Dict[str, str]:
     }
 
 
-def extrair_tokens_mobbin(tela: Dict[str, Any]) -> Dict[str, Any]:
+def _url_da_imagem(tela: Dict[str, Any]):
+    """`image.url` é o campo atual da API; `image_url` está deprecado e só vale se faltar o novo."""
+    imagem = tela.get("image")
+    if isinstance(imagem, dict) and imagem.get("url"):
+        return imagem["url"]
+    return tela.get("image_url")
+
+
+def _baixar_padrao(url: str) -> bytes:
+    resp = requests.get(url, timeout=10)
+    resp.raise_for_status()
+    return resp.content
+
+
+def extrair_tokens_mobbin(tela: Dict[str, Any], baixar=None) -> Dict[str, Any]:
     """Gera especificação de design tokens contendo nativamente os modos Light e Dark."""
     app_name = tela.get("app_name", "Referência Mobbin")
-    img_url = tela.get("image_url") or (tela.get("image", {}).get("url") if isinstance(tela.get("image"), dict) else None)
+    img_url = _url_da_imagem(tela)
+    baixar = baixar or _baixar_padrao
 
     tokens_cores = None
-    if img_url and requests:
+    if img_url:
         try:
-            resp = requests.get(img_url, timeout=10)
-            if resp.status_code == 200:
-                tokens_cores = extrair_paleta_imagem(resp.content)
+            tokens_cores = extrair_paleta_imagem(baixar(img_url))
         except Exception:
             pass
 
@@ -220,6 +261,7 @@ def extrair_tokens_mobbin(tela: Dict[str, Any]) -> Dict[str, Any]:
             "card": "8px",
             "pill": "9999px"
         },
+        "nao_extraido_da_imagem": ["tipografia", "espacamentos", "raios_borda"],
         "regras_craft_floor": [
             "Proibição estrita de emojis em interfaces corporativas: utilizar exclusivamente vetores SVG com stroke e fill semânticos",
             "Suporte nativo dual e espelhado a Light e Dark modes via :root e data-theme com transição atômica",
@@ -231,3 +273,49 @@ def extrair_tokens_mobbin(tela: Dict[str, Any]) -> Dict[str, Any]:
             "Botões devem possuir obrigatoriamente estados hover, active e focus-visible acessíveis"
         ]
     }
+
+
+def _distancia_rgb(a: str, b: str) -> int:
+    return sum(abs(int(a[i:i + 2], 16) - int(b[i:i + 2], 16)) for i in (1, 3, 5))
+
+
+def extrair_tokens_de_telas(telas: List[Dict[str, Any]], baixar=None) -> Dict[str, Any]:
+    """Agrega as telas de referência: a cor primária é a do maior grupo de cores parecidas (voto).
+
+    Telas cuja imagem não baixa são ignoradas (não derrubam as outras). Tipografia, espaçamentos e raios
+    são convenção do ecossistema: a imagem não informa fonte nem raio, e isso vem declarado no resultado.
+    """
+    baixar = baixar or _baixar_padrao
+    paletas = []
+    origem = []
+    for tela in telas:
+        url = _url_da_imagem(tela)
+        if not url:
+            continue
+        try:
+            paleta = extrair_paleta_imagem(baixar(url))
+        except Exception:
+            continue
+        paletas.append(paleta)
+        origem.append({"screen_id": tela.get("id"), "app_name": tela.get("app_name"), "mobbin_url": tela.get("mobbin_url")})
+
+    if not paletas:
+        base = extrair_tokens_mobbin({"app_name": "Referência Mobbin"}, baixar=lambda _u: b"")
+        base["telas_analisadas"] = 0
+        base["origem_referencias"] = []
+        return base
+
+    detectadas = [p for p in paletas if p.get("primaria_detectada")]
+    if detectadas:
+        primarias = [p["light"]["primary"] for p in detectadas]
+        grupos = [[c for c in primarias if _distancia_rgb(c, centro) < 60] for centro in primarias]
+        vencedora = max(grupos, key=len)[0]
+        escolhida = next(p for p in detectadas if p["light"]["primary"] == vencedora)
+    else:
+        escolhida = paletas[0]  # nenhuma tela tem cor de marca: o neutro declarado, com primaria_detectada=False
+
+    tokens = extrair_tokens_mobbin({**telas[0], "image": None, "image_url": None}, baixar=lambda _u: b"")
+    tokens["cores"] = escolhida
+    tokens["telas_analisadas"] = len(paletas)
+    tokens["origem_referencias"] = origem
+    return tokens

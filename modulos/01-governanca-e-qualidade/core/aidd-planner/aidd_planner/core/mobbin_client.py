@@ -11,6 +11,7 @@ Consome MOBBIN_API_KEY e MOBBIN_API_URL centralizados no .env raiz.
 """
 
 from src.core_planner.mobbin_client import (
+    MobbinError,
     obter_config,
     executar_busca,
     cmd_status,
@@ -19,6 +20,7 @@ from src.core_planner.mobbin_client import (
 )
 
 __all__ = [
+    "MobbinError",
     "obter_config",
     "executar_busca",
     "cmd_status",

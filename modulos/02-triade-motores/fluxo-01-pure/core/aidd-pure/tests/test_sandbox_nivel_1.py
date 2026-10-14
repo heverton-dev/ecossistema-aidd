@@ -181,3 +181,30 @@ def test_gate_passa_com_projeto_limpo(tmp_path):
 def test_gate_falha_se_pasta_nao_existe(tmp_path):
     gate = _carregar_gate()
     assert gate.executar_gate(tmp_path / 'nao-existe') == 1
+
+
+# --- PYTHONPATH com as camadas de src/ (achado do /pure real, 13/10/2026) ------------------------------------
+
+def test_pythonpath_aceita_lista_e_junta_com_o_separador_do_so(tmp_path):
+    import os
+    from sandbox_nivel_1 import montar_env_minimo
+    a, b = tmp_path / "src", tmp_path / "src" / "infrastructure"
+    env = montar_env_minimo(pythonpath=[a, b])
+    assert env["PYTHONPATH"] == f"{a}{os.pathsep}{b}"
+
+
+def test_pythonpath_do_projeto_inclui_src_e_cada_camada(tmp_path):
+    """O prompt manda gravar a persistência em infrastructure/ e importar direto (`from persistencia_sqlite import`):
+    só src/ no PYTHONPATH fazia o teste gerado nunca importar."""
+    from sandbox_nivel_1 import pythonpath_do_projeto
+    src = tmp_path / "src"
+    for camada in ("infrastructure", "domain", "application", "__pycache__"):
+        (src / camada).mkdir(parents=True)
+    caminhos = pythonpath_do_projeto(src)
+    assert caminhos[0] == src
+    assert {p.name for p in caminhos[1:]} == {"infrastructure", "domain", "application"}
+
+
+def test_pythonpath_do_projeto_sem_src_devolve_so_o_caminho(tmp_path):
+    from sandbox_nivel_1 import pythonpath_do_projeto
+    assert pythonpath_do_projeto(tmp_path / "nao-existe") == [tmp_path / "nao-existe"]

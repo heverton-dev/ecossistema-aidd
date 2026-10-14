@@ -1,4 +1,4 @@
-# AIDD-Ops Intake Web — execução local (docker compose) e modelo para o Coolify.
+# AIDD-Ops Intake Web — execução local e na VPS (docker compose).
 # Build context: modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops (pai deste diretório); Dockerfile.intake na raiz do contexto.
 services:
   intake:

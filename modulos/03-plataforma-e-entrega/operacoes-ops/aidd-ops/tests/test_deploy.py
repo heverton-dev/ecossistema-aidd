@@ -34,17 +34,28 @@ class TestDeployOrchestrator(unittest.TestCase):
         self.assertTrue(orc.dry_run)
 
     def test_deploy_dry_run_completo_sucesso(self):
-        orc = DeployOrchestrator(
-            ambiente="clinicas",
-            host="127.0.0.1",
-            dominio="clinicas.local",
-            dry_run=True,
-        )
-        res = orc.executar_deploy_completo()
-        self.assertTrue(res.sucesso)
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            dir_projeto = _criar_projeto_fake(tmp)
+            plano_path = _gerar_plano_real(tmp, dir_projeto, dir_projeto=dir_projeto)
+            orc = DeployOrchestrator(
+                ambiente="clinicas",
+                host="127.0.0.1",
+                dominio="clinicas.local",
+                plano_path=plano_path,
+                dry_run=True,
+            )
+            res = orc.executar_deploy_completo()
+        self.assertTrue(res.sucesso, res.erro if not res.sucesso else None)
         self.assertEqual(res.valor["ambiente"], "clinicas")
         self.assertEqual(res.valor["etapas_concluidas"], 6)
         self.assertIn("rollback_plan", res.valor)
+
+    def test_sem_projeto_para_implantar_o_deploy_para_com_erro_claro(self):
+        orc = DeployOrchestrator(ambiente="clinicas", host="127.0.0.1", dominio="clinicas.local", dry_run=True)
+        res = orc.executar_deploy_completo()
+        self.assertFalse(res.sucesso)
+        self.assertEqual(res.codigo, "DIR_PROJETO_AUSENTE")
 
     def test_fail_fast_quando_plano_corrompido(self):
         orc = DeployOrchestrator(
@@ -90,6 +101,23 @@ class TestDeployOrchestrator(unittest.TestCase):
             self.assertEqual(res.codigo, "TOKEN_DNS_MISSING")
 
 
+def _criar_projeto_fake(base_dir, servicos=("app", "nginx"), nome_projeto="app", subpasta="projeto"):
+    """Projeto gerado pelo aidd-master em miniatura: o único motor de deploy implanta o compose dele."""
+    import json as _json
+    projeto_dir = os.path.join(base_dir, subpasta)
+    os.makedirs(projeto_dir, exist_ok=True)
+    with open(os.path.join(projeto_dir, "PLANO-EXECUCAO-ESTRUTURADO.json"), "w", encoding="utf-8") as f:
+        _json.dump({"projeto": {"nome": nome_projeto}, "modulos": [{"slug": "principal"}]}, f)
+    linhas = ["services:"]
+    for nome in servicos:
+        linhas += [f"  {nome}:", "    image: nginx:alpine" if nome == "nginx" else "    build: ."]
+    with open(os.path.join(projeto_dir, "docker-compose.yml"), "w", encoding="utf-8") as f:
+        f.write("\n".join(linhas) + "\n")
+    with open(os.path.join(projeto_dir, "Dockerfile"), "w", encoding="utf-8") as f:
+        f.write("FROM python:3.12-slim\n")
+    return projeto_dir
+
+
 def _gerar_plano_real(tmp_path, texto: str, dir_projeto: str = None) -> str:
     """Roda o pipeline real (Fases 1-3) e devolve o caminho do
     PLANO-INFRAESTRUTURA.json gerado — mesmo mecanismo real usado por
@@ -105,90 +133,100 @@ def _gerar_plano_real(tmp_path, texto: str, dir_projeto: str = None) -> str:
     return plano_path
 
 
-class TestDeployStackDinamica(unittest.TestCase):
-    """Achado real corrigido: a Etapa 5 ignorava completamente o plano
-    carregado e sempre montava a mesma stack fixa (Twenty/Chatwoot/Calcom/
-    Postgres/UptimeKuma, o "nicho" clínicas) via Coolify — rodar `deploy`
-    para qualquer outro nicho curado implantava exatamente a mesma stack."""
+class TestDeployStackDoProjeto(unittest.TestCase):
+    """Achado real (18/09/2026): a Etapa 5 ignorava o plano carregado e implantava sempre a mesma stack fixa.
+    Com o motor único `compose-nativo`, o que sobe é o compose do PRÓPRIO projeto: projetos diferentes,
+    serviços diferentes."""
 
-    def _servicos_implantados(self, plano_path):
-        orc = DeployOrchestrator(
-            ambiente="teste", host="127.0.0.1", plano_path=plano_path, dry_run=True,
-        )
+    def _servicos_implantados(self, dir_projeto, tmp):
+        plano_path = _gerar_plano_real(tmp, dir_projeto, dir_projeto=dir_projeto)
+        orc = DeployOrchestrator(ambiente="teste", host="127.0.0.1", plano_path=plano_path, dry_run=True)
         res = orc.executar_deploy_completo()
         self.assertTrue(res.sucesso, res.erro if not res.sucesso else None)
-        etapa_deploy = next(e for e in res.valor["historico"] if e["etapa"] == "deploy_coolify")
-        apps = etapa_deploy["detalhes"]["plano_stack"]["apps"]
-        return sorted(a["nome_servico"] for a in apps)
+        etapa = next(e for e in res.valor["historico"] if e["etapa"] == "deploy_compose_nativo")
+        return sorted(etapa["detalhes"]["servicos_iniciados"])
 
-    def test_stacks_diferentes_para_nichos_diferentes(self):
-        import tempfile
-        with tempfile.TemporaryDirectory() as tmp1, tempfile.TemporaryDirectory() as tmp2:
-            plano_clinicas = _gerar_plano_real(tmp1, "Clinica odontologica com agendamento de pacientes")
-            plano_delivery = _gerar_plano_real(tmp2, "Lanchonete de delivery com cardapio pelo WhatsApp")
-
-            servicos_clinicas = self._servicos_implantados(plano_clinicas)
-            servicos_delivery = self._servicos_implantados(plano_delivery)
-
-            self.assertNotEqual(
-                servicos_clinicas, servicos_delivery,
-                "deploy montou a MESMA stack para nichos diferentes — voltou a ser hardcoded",
-            )
-
-
-class TestDeployMonolitoComposeNativo(unittest.TestCase):
-    """Motor 'compose-nativo': implanta o docker-compose.yml real do
-    projeto (aidd-master), selecionado automaticamente quando o plano vem
-    de `ops plan --dir-projeto`."""
-
-    def _criar_monolito_fake(self, base_dir, nome_projeto="app"):
-        projeto_dir = os.path.join(base_dir, "projeto")
-        os.makedirs(projeto_dir, exist_ok=True)
-        with open(os.path.join(projeto_dir, "PLANO-EXECUCAO-ESTRUTURADO.json"), "w", encoding="utf-8") as f:
-            import json as _json
-            _json.dump({"projeto": {"nome": nome_projeto}, "modulos": [{"slug": "principal"}]}, f)
-        with open(os.path.join(projeto_dir, "docker-compose.yml"), "w", encoding="utf-8") as f:
-            f.write("services:\n  app:\n    build: .\n  nginx:\n    image: nginx:alpine\n")
-        with open(os.path.join(projeto_dir, "Dockerfile"), "w", encoding="utf-8") as f:
-            f.write("FROM python:3.12-slim\n")
-        return projeto_dir
-
-    def test_motor_selecionado_automaticamente_para_monolito(self):
+    def test_projetos_diferentes_implantam_servicos_diferentes(self):
         import tempfile
         with tempfile.TemporaryDirectory() as tmp:
-            dir_projeto = self._criar_monolito_fake(tmp)
-            plano_path = _gerar_plano_real(tmp, dir_projeto, dir_projeto=dir_projeto)
+            a = _criar_projeto_fake(tmp, servicos=("api", "db"), subpasta="a")
+            b = _criar_projeto_fake(tmp, servicos=("web", "worker", "cache"), subpasta="b")
+            self.assertEqual(self._servicos_implantados(a, tmp), ["api", "db"])
+            self.assertEqual(self._servicos_implantados(b, tmp), ["cache", "web", "worker"])
 
+    def test_o_unico_motor_e_compose_nativo(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            dir_projeto = _criar_projeto_fake(tmp)
+            plano_path = _gerar_plano_real(tmp, dir_projeto, dir_projeto=dir_projeto)
             orc = DeployOrchestrator(ambiente="teste", host="127.0.0.1", plano_path=plano_path, dry_run=True)
             res = orc.executar_deploy_completo()
-
             self.assertTrue(res.sucesso, res.erro if not res.sucesso else None)
             self.assertEqual(orc.motor, "compose-nativo")
-            etapa_deploy = next(e for e in res.valor["historico"] if e["etapa"] == "deploy_compose_nativo")
-            self.assertEqual(sorted(etapa_deploy["detalhes"]["servicos_iniciados"]), ["app", "nginx"])
 
-    def test_deploy_real_falha_honestamente_sem_fingir_sucesso(self):
-        """Achado real corrigido: o modo não-Coolify em produção real só
-        gravava um log de sucesso fake sem executar nenhum comando de
-        verdade. Agora falha explicitamente (REAL_NAO_IMPLEMENTADO) em vez
-        de mentir."""
+    def test_outro_motor_e_recusado(self):
+        orc = DeployOrchestrator(ambiente="teste", host="127.0.0.1", dry_run=True, motor="outro")
+        res = orc.etapa_5_deploy_conteineres()
+        self.assertFalse(res.sucesso)
+        self.assertEqual(res.codigo, "MOTOR_DESCONHECIDO")
+
+
+class TestDeployRealComInfraInjetada(unittest.TestCase):
+    """Deploy real: o encadeamento é provado com SSH e HTTP injetados (sem VPS, sem Cloudflare)."""
+
+    class DeployerFalso:
+        def __init__(self, resultado):
+            self.resultado, self.chamadas = resultado, []
+
+        def deploy(self, dir_projeto, ambiente):
+            self.chamadas.append((dir_projeto, ambiente))
+            return self.resultado
+
+    class DnsFalso:
+        def __init__(self):
+            self.chamadas = []
+
+        def __call__(self, metodo, url, corpo=None, headers=None):
+            self.chamadas.append(metodo)
+            if metodo == "GET":
+                return 200, {"success": True, "result": []}
+            return 200, {"success": True, "result": {"id": "r1"}}
+
+    def _rodar(self, resultado_deploy):
         import tempfile
+        ambiente_env = {"CLOUDFLARE_API_TOKEN": "tok", "CLOUDFLARE_ZONE_ID": "z" * 32}  # pragma: allowlist secret
+        deployer, dns = self.DeployerFalso(resultado_deploy), self.DnsFalso()
         with tempfile.TemporaryDirectory() as tmp:
-            dir_projeto = self._criar_monolito_fake(tmp)
+            dir_projeto = _criar_projeto_fake(tmp)
             plano_path = _gerar_plano_real(tmp, dir_projeto, dir_projeto=dir_projeto)
-
             orc = DeployOrchestrator(
-                ambiente="teste", host="127.0.0.1", plano_path=plano_path,
-                dry_run=False, motor="compose-nativo", motor_explicito=True,
+                ambiente="teste", host="203.0.113.10", dominio="app.exemplo.com.br", plano_path=plano_path,
+                dry_run=False, http_dns=dns, fabrica_deployer=lambda host, user, port: deployer,
             )
-            # Isola a etapa sob teste (5): bootstrap/DNS reais de VPS não são
-            # o alvo aqui, mesmo padrão hermético já usado nesta suíte
-            # (ver test_fail_fast_quando_bootstrap_falha).
             with patch.object(orc, "etapa_2_bootstrap_vps", return_value=Result.ok([])), \
-                 patch.dict(os.environ, {"CLOUDFLARE_API_TOKEN": "fake-token-teste"}):
+                 patch.object(orc, "etapa_6_preflight_verificacao", return_value=Result.ok({})), \
+                 patch.dict(os.environ, ambiente_env):
                 res = orc.executar_deploy_completo()
-            self.assertFalse(res.sucesso)
-            self.assertEqual(res.codigo, "REAL_NAO_IMPLEMENTADO")
+        return res, deployer, dns
+
+    def test_deploy_real_cria_dns_e_implanta_o_compose_do_projeto(self):
+        res, deployer, dns = self._rodar(Result.ok({"servicos": ["app", "nginx"]}))
+        self.assertTrue(res.sucesso, res.erro if not res.sucesso else None)
+        self.assertEqual(dns.chamadas, ["GET", "POST"])
+        self.assertEqual(len(deployer.chamadas), 1)
+        self.assertEqual(deployer.chamadas[0][1], "teste")
+
+    def test_falha_do_deploy_real_nao_vira_sucesso(self):
+        res, _, _ = self._rodar(Result.fail("up falhou", codigo="COMPOSE_UP_FALHOU"))
+        self.assertFalse(res.sucesso)
+        self.assertEqual(res.codigo, "COMPOSE_UP_FALHOU")
+
+    def test_dns_real_exige_a_zona(self):
+        orc = DeployOrchestrator(ambiente="teste", host="1.2.3.4", dominio="app.exemplo.com.br", dry_run=False)
+        with patch.dict(os.environ, {"CLOUDFLARE_API_TOKEN": "tok"}, clear=True):
+            res = orc.etapa_3_configurar_dns()
+        self.assertFalse(res.sucesso)
+        self.assertEqual(res.codigo, "DNS_ZONA_AUSENTE")
 
 
 if __name__ == "__main__":

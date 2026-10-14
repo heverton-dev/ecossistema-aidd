@@ -12,6 +12,8 @@ Transforma ideias, requisitos de negócio ou especificações em um `PLANNER.jso
   Ex: `/planner 3 "Exportar protótipo Lovable para PostgreSQL"`
 
 ## Uso Técnico Avançado (CLI):
+- `/planner ambiente --pasta <destino> --mobbin <1|2|3>` (1 = MCP do harness, 2 = chave no `.env`, 3 = nenhum)
+- `/planner entrevista --pasta <destino> --modo <interativo|autonomo>` (valida grill e spec em `.aidd/intake/`)
 - `/planner init --fluxo <1|2|3> --nome <nome> --pasta <destino>`
 - `/planner validate <caminho_do_plano>`
 - `/planner export <caminho_do_plano> --formato factory`
@@ -19,6 +21,6 @@ Transforma ideias, requisitos de negócio ou especificações em um `PLANNER.jso
 
 ## Ação do Agente:
 Executa a skill `aidd-planner`:
-1. Conduz o alinhamento de requisitos (Intake SDD/BDD) com o usuário.
+1. Registra o Ambiente (`planner ambiente`), conduz a entrevista (`/aidd-grill`, com perguntas visuais) e a spec (`/aidd-spec`, com `Visual Direction`) e valida com `planner entrevista`.
 2. Executa deterministicamente `python ecossistema.py planner init ...` com os parâmetros alinhados.
 3. Valida a conformidade binária via `python ecossistema.py planner audit`.

@@ -45,6 +45,16 @@ _SUBPROCESS_FUNCS = frozenset({
 # ENV MÍNIMO
 # =============================================================================
 
+def pythonpath_do_projeto(src_dir):
+    """src/ e cada camada dentro dele (infrastructure, domain, ...): o prompt manda gravar a persistência em
+    infrastructure/ e importar direto, então todas precisam estar no PYTHONPATH do pytest gerado."""
+    src = Path(src_dir)
+    caminhos = [src]
+    if src.is_dir():
+        caminhos += sorted(p for p in src.iterdir() if p.is_dir() and not p.name.startswith(('__', '.')))
+    return caminhos
+
+
 def montar_env_minimo(pythonpath=None, tmpdir=None, path_host=None):
     """Monta dicionário de ambiente restrito com EXATAMENTE as chaves da allowlist.
 
@@ -62,7 +72,10 @@ def montar_env_minimo(pythonpath=None, tmpdir=None, path_host=None):
     if caminho:
         env['PATH'] = caminho
     if pythonpath is not None:
-        env['PYTHONPATH'] = str(pythonpath)
+        if isinstance(pythonpath, (list, tuple)):
+            env['PYTHONPATH'] = os.pathsep.join(str(p) for p in pythonpath)
+        else:
+            env['PYTHONPATH'] = str(pythonpath)
     env['PYTHONUTF8'] = '1'
     if tmpdir is not None:
         env['TMPDIR'] = str(tmpdir)

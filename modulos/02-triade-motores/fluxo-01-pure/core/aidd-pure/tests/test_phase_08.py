@@ -810,3 +810,13 @@ def test_formatar_violacoes_arquitetura(implementador_08):
     assert '2 ocorrência' in texto
     assert 'foo.py' in texto
 
+
+
+def test_prompt_de_integracao_avisa_sobre_sqlite_entre_threads():
+    """Achado do /pure real (13/10/2026): o TestClient roda o app em outra thread e a conexão SQLite criada
+    no teste levantava ProgrammingError. O prompt de integração precisa dizer como evitar isso."""
+    import inspect
+    import importlib.util
+    caminho = Path(__file__).resolve().parent.parent / "scripts" / "phases" / "08_implementador.py"
+    texto = caminho.read_text(encoding="utf-8")
+    assert "check_same_thread=False" in texto
