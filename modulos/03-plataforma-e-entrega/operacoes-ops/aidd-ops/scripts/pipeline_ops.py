@@ -357,7 +357,7 @@ def _sair(codigo: int) -> None:
 
 
 def _grupo_help_sem_acao(grupo) -> None:
-    """Sub-groups (monitor/cofre/coolify) invocados sem ação: imprime o help
+    """Sub-groups (monitor/cofre) invocados sem ação: imprime o help
     do grupo e sai 1 — reproduz o comportamento do argparse original."""
     ctx = click.get_current_context()
     if ctx.invoked_subcommand is None:
@@ -579,29 +579,8 @@ def _cmd_preflight(ambiente, host, timeout, retries, retry_interval, servicos, w
 # módulo, o único orquestrador canônico do AIDD-Ops — sem arquivos concorrentes.
 # O DeployOrchestrator encadeia as etapas 1-7 do deploy sobre o Result monádico,
 # com Fail-Fast estrito e modo padrão seguro (--dry-run). As dependências de
-# infraestrutura (SSHRunner, PreflightRunner, CoolifyManager) seguem o padrão
+# infraestrutura (SSHRunner, PreflightRunner, ComposeDeployer) seguem o padrão
 # de import preguiçoso dos demais comandos para não pesar no import do módulo.
-
-def _mapear_servico_coolify(nome_ferramenta: str) -> Dict[str, Any]:
-    """Mapeia o nome de uma ferramenta curada (Fase 2) para o formato que
-    `CoolifyManager.orquestrar_stack()` espera. Usa `data/requisitos_recursos.json`
-    (mesmo catálogo da Fase 3 de sizing) para vCPU/RAM reais quando disponível;
-    porta interna não é catalogada hoje — usa o default 3000, convenção da
-    maioria dos self-hosted apps curados (Next.js/Node)."""
-    dados = {}
-    try:
-        dados = _mod_sizing._carregar_requisitos().get("ferramentas", {}).get(nome_ferramenta, {})
-    except (OSError, json.JSONDecodeError):
-        pass
-    vcpu = dados.get("vcpu", 1)
-    ram_gb = dados.get("ram_gb", 1)
-    return {
-        "nome": nome_ferramenta,
-        "porta_interna": 3000,
-        "cpus": f"{float(vcpu):.1f}",
-        "memory": f"{int(float(ram_gb) * 1024)}M",
-    }
-
 
 class DeployOrchestrator:
     """Orquestrador do ciclo completo de deploy AIDD-Ops."""
@@ -615,8 +594,10 @@ class DeployOrchestrator:
         user_ssh: str = "root",
         port_ssh: int = 22,
         dry_run: bool = True,
-        motor: str = "coolify",
+        motor: str = "compose-nativo",
         motor_explicito: bool = False,
+        http_dns=None,
+        fabrica_deployer=None,
     ):
         self.ambiente = ambiente.strip()
         self.host = host.strip()
@@ -627,6 +608,8 @@ class DeployOrchestrator:
         self.dry_run = dry_run
         self.motor = motor.lower().strip()
         self.motor_explicito = motor_explicito
+        self._http_dns = http_dns
+        self._fabrica_deployer = fabrica_deployer
         self.plano_carregado: Optional[Dict[str, Any]] = None
         self.historico_etapas: List[Dict[str, Any]] = []
 
@@ -723,9 +706,18 @@ class DeployOrchestrator:
         if not token_cf:
             self._registrar_etapa("configuracao_dns", "falhou", "CLOUDFLARE_API_TOKEN ausente")
             return Result.fail(erro="Variável CLOUDFLARE_API_TOKEN necessária para deploy real", codigo="TOKEN_DNS_MISSING")
+        zone_id = os.environ.get("CLOUDFLARE_ZONE_ID")
+        if not zone_id:
+            self._registrar_etapa("configuracao_dns", "falhou", "CLOUDFLARE_ZONE_ID ausente")
+            return Result.fail(erro="Variável CLOUDFLARE_ZONE_ID necessária para deploy real", codigo="DNS_ZONA_AUSENTE")
 
-        self._registrar_etapa("configuracao_dns", "passou", {"modo": "real", "host": self.host, "dominio": self.dominio})
-        return Result.ok({"modo": "real", "dominio": self.dominio})
+        from core_ops.cloudflare_dns import garantir_registro_a
+        res = garantir_registro_a(token_cf, zone_id, self.dominio, self.host, http=self._http_dns)
+        if not res.sucesso:
+            self._registrar_etapa("configuracao_dns", "falhou", res.erro)
+            return res
+        self._registrar_etapa("configuracao_dns", "passou", {"modo": "real", "dominio": self.dominio, **res.valor})
+        return res
 
     def etapa_4_validar_templates(self) -> Result[Dict[str, Any]]:
         """Garante conformidade com templates canônicos e gate de infraestrutura."""
@@ -738,80 +730,18 @@ class DeployOrchestrator:
         return Result.ok({"status": "templates_validados", "templates_dir": templates_dir})
 
     def etapa_5_deploy_conteineres(self) -> Result[Dict[str, Any]]:
-        """Executa orquestração e deploy dos contêineres via Coolify ou Docker Compose nativo."""
+        """Implanta o `docker-compose.yml` do projeto por SSH (único motor: compose-nativo)."""
         if self.motor == "compose-nativo":
             return self._etapa_5_compose_nativo()
-
-        if self.motor == "coolify":
-            from core_ops.coolify import CoolifyManager
-            manager = CoolifyManager(dry_run=self.dry_run)
-            # Achado real corrigido: esta lista era sempre hardcoded
-            # (Twenty/Chatwoot/Calcom/Postgres/UptimeKuma, o "nicho" clínicas)
-            # e ignorava por completo o `--plano` carregado — rodar `deploy`
-            # para qualquer outro nicho curado (delivery, farmacias, ...)
-            # implantava exatamente a mesma stack de clínicas. Agora lê a
-            # stack real curada pela Fase 2 do plano (validação E2E do Fluxo
-            # 01/aidd-ops, 18/09/2026).
-            ferramentas_plano, _ = self._extrair_ferramentas_e_nicho(self.plano_carregado or {})
-            servicos_stack = [
-                _mapear_servico_coolify(f["nome"]) for f in ferramentas_plano if f.get("nome")
-            ] or [
-                {"nome": "Twenty", "porta_interna": 3000, "cpus": "1.0", "memory": "1024M"},
-                {"nome": "Chatwoot", "porta_interna": 3000, "cpus": "1.5", "memory": "2048M"},
-                {"nome": "Calcom", "porta_interna": 3000, "cpus": "1.0", "memory": "1024M"},
-                {"nome": "Postgres", "porta_interna": 5432, "cpus": "2.0", "memory": "4096M"},
-                {"nome": "UptimeKuma", "porta_interna": 3001, "cpus": "0.5", "memory": "512M"}
-            ]
-
-            # 1. Orquestração no Coolify (todos os contêineres)
-            res_orq = manager.orquestrar_stack(
-                nome_projeto=f"AIDD-{self.ambiente.capitalize()}",
-                ambiente=self.ambiente,
-                servicos=servicos_stack,
-                dominio_base=self.dominio
-            )
-            if not res_orq.sucesso:
-                self._registrar_etapa("deploy_coolify", "falhou", res_orq.erro)
-                return res_orq
-
-            # 2. Verificação estrita de isolamento VPS (NIH #21)
-            res_iso = manager.verificar_isolamento_vps(res_orq.valor)
-            if not res_iso.sucesso:
-                self._registrar_etapa("isolamento_vps", "falhou", res_iso.erro)
-                return res_iso
-
-            # 3. Configuração do AppShell White-Label (NIH #20)
-            res_appshell = manager.configurar_appshell_whitelabel(
-                nome_instancia=f"AIDD Portal {self.ambiente.capitalize()}",
-                marca="AIDD Ecosystem",
-                logo_url=f"https://static.{self.dominio}/logo.svg",
-                dashboard_fqdn=f"painel.{self.dominio}"
-            )
-
-            detalhes_sucesso = {
-                "motor": "Coolify",
-                "dry_run": self.dry_run,
-                "plano_stack": res_orq.valor,
-                "isolamento": res_iso.valor,
-                "appshell": res_appshell.valor if res_appshell.sucesso else None
-            }
-            self._registrar_etapa("deploy_coolify", "passou", detalhes_sucesso)
-            return Result.ok(detalhes_sucesso)
-
         return Result.fail(
-            f"Motor de deploy desconhecido: '{self.motor}'. Use 'coolify' ou 'compose-nativo'.",
+            f"Motor de deploy desconhecido: '{self.motor}'. O único motor é 'compose-nativo' (o Coolify foi abolido).",
             codigo="MOTOR_DESCONHECIDO",
         )
 
     def _etapa_5_compose_nativo(self) -> Result[Dict[str, Any]]:
-        """Motor 'compose-nativo': implanta o docker-compose.yml JÁ GERADO
-        pelo projeto (aidd-master), em vez de montar uma stack OSS fixa via
-        Coolify — cobre o Fluxo 01 (monólito customizado), que não é uma
-        composição de ferramentas de terceiros a orquestrar, e sim uma
-        aplicação já pronta com seu próprio Dockerfile/docker-compose.yml/
-        deploy.sh (achado real corrigido: antes, o motor não-Coolify nem
-        lia o compose do projeto, e em modo real só fingia sucesso sem
-        executar nada — validação E2E do Fluxo 01/aidd-ops, 18/09/2026)."""
+        """Único motor de deploy: implanta o docker-compose.yml JÁ GERADO pelo projeto
+        (aidd-master, em todos os fluxos) por SSH: copia o pacote sem segredos e roda
+        `docker compose up -d --build`, depois confere os serviços."""
         dir_projeto = self._dir_projeto_do_plano()
         if not dir_projeto:
             return Result.fail(
@@ -855,33 +785,23 @@ class DeployOrchestrator:
             self._registrar_etapa("deploy_compose_nativo", "passou", resultado)
             return Result.ok(resultado)
 
-        # Produção real: confirma que a VPS alvo está de fato alcançável via
-        # SSH antes de admitir honestamente o que ainda falta — cópia dos
-        # arquivos do projeto para a VPS + `docker compose up -d --build`
-        # remoto (ou o `deploy.sh` já gerado pelo projeto). Preferir falhar
-        # de forma explícita a fingir sucesso sem executar nada real.
-        from core_ops.ssh_runner import SSHRunner
-        runner = SSHRunner(host=self.host, user=self.user_ssh, port=self.port_ssh, dry_run=False)
-        res_conexao = runner.testar_conexao()
-        self._registrar_etapa(
-            "deploy_compose_nativo_preflight_ssh", "passou" if res_conexao.sucesso else "falhou",
-            res_conexao.valor if res_conexao.sucesso else res_conexao.erro,
-        )
-        return Result.fail(
-            "Deploy real via motor 'compose-nativo' ainda não está implementado "
-            "(falta cópia de arquivos + execução remota de "
-            "`docker compose up -d --build`/`deploy.sh`). "
-            + ("Conectividade SSH com a VPS alvo confirmada — falta só a execução remota."
-               if res_conexao.sucesso else
-               f"Alem disso, a conexao SSH com a VPS falhou: {res_conexao.erro}"),
-            codigo="REAL_NAO_IMPLEMENTADO",
-            detalhes={
-                "dir_projeto": dir_projeto,
-                "servicos": servicos,
-                "ssh_alcancavel": res_conexao.sucesso,
-                "alternativa": f"Copie '{dir_projeto}' para a VPS e rode ./deploy.sh manualmente.",
-            },
-        )
+        from core_ops.compose_preflight import verificar_isolamento_compose
+        erros_isolamento = verificar_isolamento_compose(compose_conteudo)
+        if erros_isolamento:
+            self._registrar_etapa("deploy_compose_nativo", "falhou", erros_isolamento)
+            return Result.fail("docker-compose.yml viola o isolamento da VPS.", codigo="ISOLAMENTO_VIOLADO",
+                               detalhes={"erros": erros_isolamento})
+
+        if self._fabrica_deployer is not None:
+            deployer = self._fabrica_deployer(self.host, self.user_ssh, self.port_ssh)
+        else:
+            from core_ops.compose_deploy import ComposeDeployer
+            deployer = ComposeDeployer(host=self.host, user=self.user_ssh, port=self.port_ssh,
+                                       chave=os.environ.get("SSH_KEY_PATH"), senha=os.environ.get("VPS_PASSWORD"))
+        res = deployer.deploy(dir_projeto, self.ambiente)
+        self._registrar_etapa("deploy_compose_nativo", "passou" if res.sucesso else "falhou",
+                              res.valor if res.sucesso else {"erro": res.erro, "detalhes": res.detalhes})
+        return res
 
     def etapa_6_preflight_verificacao(self) -> Result[Dict[str, Any]]:
         """Dispara a bateria de testes pré-produção via PreflightRunner."""
@@ -924,19 +844,6 @@ class DeployOrchestrator:
             return Result.fail(erro=r1.erro, codigo=r1.codigo, detalhes=self._gerar_relatorio_falha("validacao_plano"))
         print("[OK] Etapa 1: Plano de infraestrutura validado.")
         self.plano_carregado = r1.valor
-
-        # Seleciona o motor automaticamente a partir do plano carregado quando
-        # o chamador não pediu um motor explícito (achado real: a Etapa 5
-        # ignorava completamente o plano carregado e sempre montava a mesma
-        # stack fixa via Coolify, independente do que `ops plan` curou —
-        # corrigido na validação E2E do Fluxo 01, 18/09/2026). Monólitos
-        # customizados (aidd-master) usam o motor "compose-nativo" — não faz
-        # sentido orquestrá-los via Coolify, eles já trazem seu próprio
-        # docker-compose.yml/deploy.sh.
-        if not self.motor_explicito:
-            _, nicho_slug_plano = self._extrair_ferramentas_e_nicho(self.plano_carregado)
-            if nicho_slug_plano == _mod_intake.MONOLITO_SLUG:
-                self.motor = "compose-nativo"
 
         # 2. Bootstrap VPS
         r2 = self.etapa_2_bootstrap_vps()
@@ -1015,10 +922,7 @@ class DeployOrchestrator:
 @click.option("--port", type=int, default=22, show_default=True, help="Porta SSH")
 @click.option("--real", is_flag=True, help="Executa contra infraestrutura real (padrão é --dry-run seguro)")
 @click.option("--dry-run", is_flag=True, default=None, help="Executa em modo simulação seguro (padrão)")
-@click.option("--motor", type=click.Choice(["coolify", "compose-nativo"]), default=None,
-              help="Motor de implantação (default: 'coolify', ou 'compose-nativo' auto-selecionado quando o "
-                   "--plano vem de 'ops plan --dir-projeto' — monólito customizado). Passe aqui para forçar.")
-def _cmd_deploy(ambiente, host, plano, domain, user, port, real, dry_run, motor):
+def _cmd_deploy(ambiente, host, plano, domain, user, port, real, dry_run):
     if dry_run is None:
         dry_run = not real
     orchestrator = DeployOrchestrator(
@@ -1029,8 +933,6 @@ def _cmd_deploy(ambiente, host, plano, domain, user, port, real, dry_run, motor)
         user_ssh=user,
         port_ssh=port,
         dry_run=dry_run,
-        motor=motor or "coolify",
-        motor_explicito=motor is not None,
     )
     res = orchestrator.executar_deploy_completo()
     _sair(0 if res.sucesso else 1)
@@ -1155,207 +1057,6 @@ def _cofre_up(servico, chave_privada):
     res = cofre.subir_servico_com_cofre(servico, arquivo_chave_privada=chave_privada)
     if res.sucesso:
         print(f"[OK] Serviço em {servico} decifrado e subido: {' '.join(res.valor['comando'])}")
-        _sair(0)
-    print(f"[ERRO] {res.codigo}: {res.erro}")
-    _sair(1)
-
-
-# ── coolify ──
-
-def _coolify_url(url):
-    base_url = url or os.environ.get("COOLIFY_BASE_URL", "")
-    if not base_url:
-        print("[ERRO] URL base do Coolify ausente (env COOLIFY_BASE_URL ou --url).")
-        _sair(1)
-    return base_url
-
-
-@cli.group("coolify", invoke_without_command=True, context_settings=_CONTEXT,
-           help="Integracao com a API v1 do Coolify (Intake Web, NIH #19)")
-def _cmd_coolify():
-    _grupo_help_sem_acao(_cmd_coolify)
-
-
-@_cmd_coolify.command("health", context_settings=_CONTEXT, help="Checa se a instancia do Coolify responde (sem auth)")
-@click.option("--url", default=None, help="URL base do Coolify (default: env COOLIFY_BASE_URL)")
-def _coolify_health(url):
-    from core_ops.coolify import CoolifyClient
-    base_url = _coolify_url(url)
-    cliente = CoolifyClient(base_url=base_url)
-    res = cliente.checar_health()
-    if res.sucesso:
-        print(f"[OK] Coolify operacional em {base_url}: {res.valor}")
-        _sair(0)
-    print(f"[ERRO] {res.codigo}: {res.erro}")
-    _sair(1)
-
-
-for _acao, _ajuda in (("version", "Versao do servidor Coolify"), ("servers", "Lista servidores gerenciados"), ("apps", "Lista apps gerenciados")):
-
-    def _registrar_leitura(_acao=_acao, _ajuda=_ajuda):
-        @_cmd_coolify.command(_acao, context_settings=_CONTEXT, help=_ajuda)
-        @click.option("--url", default=None, help="URL base do Coolify")
-        @click.option("--token", default=None, help="API Token (default: env COOLIFY_API_TOKEN)")
-        def _coolify_leitura(url, token):
-            from core_ops.coolify import CoolifyClient
-            base_url = _coolify_url(url)
-            token_efetivo = token or os.environ.get("COOLIFY_API_TOKEN", "")
-            cliente = CoolifyClient(base_url=base_url, api_token=token_efetivo)
-            if _acao == "version":
-                res = cliente.obter_versao()
-                if res.sucesso:
-                    print(json.dumps(res.valor, ensure_ascii=False, indent=2))
-                    _sair(0)
-                print(f"[ERRO] {res.codigo}: {res.erro}")
-                _sair(1)
-            if _acao == "servers":
-                res = cliente.listar_servidores()
-                if not res.sucesso:
-                    print(f"[ERRO] {res.codigo}: {res.erro}")
-                    _sair(1)
-                servidores = res.valor or []
-                print(f"Servidores gerenciados ({len(servidores)}):")
-                for s in servidores:
-                    print(f"  - {s.get('uuid')} | {s.get('name', '?')} | {s.get('ip', '?')}")
-                _sair(0)
-            res = cliente.listar_apps()
-            if not res.sucesso:
-                print(f"[ERRO] {res.codigo}: {res.erro}")
-                _sair(1)
-            apps = res.valor or []
-            print(f"Apps gerenciados ({len(apps)}):")
-            for a in apps:
-                print(f"  - {a.get('uuid')} | {a.get('name', '?')} | {a.get('fqdn', a.get('domains', '?'))}")
-            _sair(0)
-        return _coolify_leitura
-
-    _registrar_leitura()
-
-
-@_cmd_coolify.command("status", context_settings=_CONTEXT, help="Detalhe de um app gerenciado")
-@click.option("--url", default=None, help="URL base do Coolify")
-@click.option("--token", default=None, help="API Token")
-@click.option("--app", required=True, help="UUID do app")
-def _coolify_status(url, token, app):
-    from core_ops.coolify import CoolifyClient
-    base_url = _coolify_url(url)
-    token_efetivo = token or os.environ.get("COOLIFY_API_TOKEN", "")
-    cliente = CoolifyClient(base_url=base_url, api_token=token_efetivo)
-    res = cliente.obter_app(app)
-    if not res.sucesso:
-        print(f"[ERRO] {res.codigo}: {res.erro}")
-        _sair(1)
-    print(json.dumps(res.valor, ensure_ascii=False, indent=2))
-    _sair(0)
-
-
-@_cmd_coolify.command("create", context_settings=_CONTEXT, help="Cria o Intake Web como app gerenciado (build_pack dockerfile)")
-@click.option("--url", default=None, help="URL base do Coolify")
-@click.option("--token", default=None, help="API Token")
-@click.option("--project-uuid", required=True, help="UUID do projeto no Coolify")
-@click.option("--server-uuid", required=True, help="UUID do servidor alvo")
-@click.option("--environment-name", default="production", show_default=True, help="Nome do ambiente")
-@click.option("--repo", required=True, help="URL do repositorio git publico do monopolito")
-@click.option("--branch", default="main", show_default=True, help="Branch a implantar")
-@click.option("--base-dir", default=None, help="Base Directory (default: modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops)")
-@click.option("--dockerfile", default=None, help="Dockerfile Location (default: Dockerfile.intake)")
-@click.option("--port-exposes", type=int, default=8501, show_default=True, help="Porta exposta pelo container")
-@click.option("--domain", default=None, help="Dominio publico (opcional)")
-@click.option("--nome", default=None, help="Nome do app (default: aidd-ops-intake)")
-@click.option("--real", is_flag=True, help="Executa contra o Coolify real (padrao e --dry-run)")
-@click.option("--dry-run", is_flag=True, default=None, help="Somente mostra o payload (padrao)")
-def _coolify_create(url, token, project_uuid, server_uuid, environment_name, repo, branch, base_dir, dockerfile, port_exposes, domain, nome, real, dry_run):
-    from core_ops.coolify import CoolifyClient
-    base_url = _coolify_url(url)
-    token_efetivo = token or os.environ.get("COOLIFY_API_TOKEN", "")
-    cliente = CoolifyClient(base_url=base_url, api_token=token_efetivo)
-    if dry_run is None:
-        dry_run = not real
-    print("=" * 72)
-    print(" [AIDD-Ops] Registro do Intake Web como app gerenciado no Coolify")
-    print(f" Repo: {repo} (branch {branch})")
-    print(f" Projeto: {project_uuid} | Servidor: {server_uuid} | Ambiente: {environment_name}")
-    print(f" Build: dockerfile | Base Directory: {base_dir or 'modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops'} | Dockerfile: {dockerfile or 'Dockerfile.intake'}")
-    print(f" Porta exposta: {port_exposes} | Dominio: {domain or '(nenhum)'} | Nome: {nome or 'aidd-ops-intake'}")
-    print("=" * 72)
-    if dry_run:
-        print("[DRY-RUN] Nenhuma chamada feita ao Coolify — passe --real para registrar o app.")
-        _sair(0)
-    res = cliente.criar_app_dockerfile(
-        project_uuid=project_uuid,
-        server_uuid=server_uuid,
-        environment_name=environment_name,
-        git_repository=repo,
-        git_branch=branch,
-        base_directory=base_dir,
-        dockerfile_location=dockerfile,
-        ports_exposes=[port_exposes],
-        domains=[domain] if domain else None,
-        nome=nome,
-    )
-    if res.sucesso:
-        print(f"[OK] App registrado — UUID: {res.valor}")
-        _sair(0)
-    print(f"[ERRO] {res.codigo}: {res.erro}")
-    _sair(1)
-
-
-@_cmd_coolify.command("setenv", context_settings=_CONTEXT, help="Cria variaveis de ambiente no app")
-@click.option("--url", default=None, help="URL base do Coolify")
-@click.option("--token", default=None, help="API Token")
-@click.option("--app", required=True, help="UUID do app")
-@click.argument("pares", nargs=-1, required=True)
-@click.option("--real", is_flag=True, help="Executa contra o Coolify real (padrao e --dry-run)")
-@click.option("--dry-run", is_flag=True, default=None, help="Somente mostra os pares (padrao)")
-def _coolify_setenv(url, token, app, pares, real, dry_run):
-    from core_ops.coolify import CoolifyClient
-    base_url = _coolify_url(url)
-    token_efetivo = token or os.environ.get("COOLIFY_API_TOKEN", "")
-    cliente = CoolifyClient(base_url=base_url, api_token=token_efetivo)
-    if dry_run is None:
-        dry_run = not real
-    pares_list = []
-    for par in pares:
-        if "=" not in par:
-            print(f"[ERRO] Par invalido (esperado CHAVE=VALOR): {par}")
-            _sair(1)
-        chave, valor = par.split("=", 1)
-        pares_list.append((chave.strip(), valor.strip()))
-    print(f"App {app}: {len(pares_list)} variavel(eis) de ambiente a aplicar")
-    for chave, valor in pares_list:
-        print(f"  - {chave}={valor}")
-    if dry_run:
-        print("[DRY-RUN] Nenhuma chamada feita ao Coolify — passe --real para criar as envs.")
-        _sair(0)
-    res = cliente.definir_env(app, pares_list)
-    if res.sucesso:
-        print(f"[OK] Envs criadas no app {app}: {', '.join(res.valor)}")
-        _sair(0)
-    print(f"[ERRO] {res.codigo}: {res.erro}")
-    _sair(1)
-
-
-@_cmd_coolify.command("deploy", context_settings=_CONTEXT, help="Dispara deploy no app gerenciado")
-@click.option("--url", default=None, help="URL base do Coolify")
-@click.option("--token", default=None, help="API Token")
-@click.option("--app", required=True, help="UUID do app")
-@click.option("--force", is_flag=True, help="Forca rebuild mesmo sem mudanca")
-@click.option("--real", is_flag=True, help="Executa contra o Coolify real (padrao e --dry-run)")
-@click.option("--dry-run", is_flag=True, default=None, help="Somente mostra o que seria enviado (padrao)")
-def _coolify_deploy(url, token, app, force, real, dry_run):
-    from core_ops.coolify import CoolifyClient
-    base_url = _coolify_url(url)
-    token_efetivo = token or os.environ.get("COOLIFY_API_TOKEN", "")
-    cliente = CoolifyClient(base_url=base_url, api_token=token_efetivo)
-    if dry_run is None:
-        dry_run = not real
-    print(f"App {app}: disparar deploy no Coolify (force={force})")
-    if dry_run:
-        print("[DRY-RUN] Nenhuma chamada feita ao Coolify — passe --real para disparar o deploy.")
-        _sair(0)
-    res = cliente.disparar_deploy(app, force=force)
-    if res.sucesso:
-        print(f"[OK] Deploy disparado: {json.dumps(res.valor, ensure_ascii=False, indent=2)}")
         _sair(0)
     print(f"[ERRO] {res.codigo}: {res.erro}")
     _sair(1)

@@ -1807,4 +1807,23 @@
   - `aidd-planner`: **105 passed**; raiz (extrator, `mobbin_mcp`, forge, documentação, orquestrador): **54 passed** no original.
   - Prova real com a API do Mobbin (chave do `.env`): `planner init` exit 0 em 29,8 s (8 consultas, 46 telas, 8 arquivos de cache) e exit 0 em 3,5 s na segunda execução (cache); a cor da spec venceu no Design System; sem URL de imagem no `referencias-ui.json`.
 - **Pendências registradas:** `AUDITORIA-FLUXO-PURE/ETAPA_09` (limites do extrator: tipografia, espaçamentos e raios não saem da imagem; passo a passo de OpenCode, MiMoCode, Antigravity e Gemini CLI não verificado).
+- **Status:** **RESOLVIDO** (commit `939d357c`, branch `fix/pure-etapa-09-planner-jornada`; pre-commit e pre-push com exit 0).
+
+## 19. Fluxo Canônico PURE — abolição do Coolify, deploy `compose-nativo` e achados do motor (`aidd-ops`, `aidd-pure`, `aidd-planner`)
+
+- **Data da Auditoria e Validação:** 13/10/2026 (executado em **modo autônomo**, `/goal`)
+- **Ambiente:** clone `C:\Users\trcnologia\Desktop\TESTE-ecossistema-aidd_04102026\FLUXO-PURE` e motor original (branch `fix/pure-etapa-10-coolify-e-motor`, empilhada sobre a da etapa 09)
+- **Ferramentas Tocadas:** `aidd-ops` (`compose_deploy.py` e `cloudflare_dns.py` novos, `compose_preflight.py`, `pipeline_ops.py`, `GUIA.md`, Intake Web; removidos `coolify.py` e `test_coolify.py`), `aidd-pure` (`08_implementador.py`, `sandbox_nivel_1.py`), `aidd-planner` (`intake.py`, `cli.py`), skill `aidd-ops` (fonte e espelhos), `.env.example`.
+- **Achados do teste real:**
+  1. O Coolify continuava como motor e como CLI (`ops coolify`), e o deploy real do `compose-nativo` devolvia `REAL_NAO_IMPLEMENTADO`: 206 rastros vivos de Coolify (decisão do usuário: abolir; deploy só `compose-nativo` em todos os fluxos).
+  2. Rodando o `/pure` de verdade (7 etapas, o harness respondendo ao protocolo delegado): a spec do intake não chegava ao motor (a descrição do `PLANNER.json` era o texto de template); o prompt da fase 8 mandava gravar em `infrastructure/` e importar direto com só `src/` no `PYTHONPATH` (o teste gerado nunca importava); o teste de integração com `TestClient` levantava erro de thread do SQLite.
+- **O que executou:**
+  1. `ComposeDeployer`: valida o ambiente (anti shell injection), empacota o projeto sem `.env`, chaves, `.git` e `node_modules`, envia por SSH, roda `docker compose up -d --build` e confere os serviços; `garantir_registro_a` idempotente na Cloudflare; isolamento da VPS (portas privilegiadas só 80 e 443) sobre o compose; motor único em `DeployOrchestrator`; remoção do grupo `ops coolify`, da opção `--motor` e das variáveis `COOLIFY_*`.
+  2. Sem `--descricao`, o planner usa o contexto da spec; o sandbox da fase 8 põe `src/` e cada camada no `PYTHONPATH`; o prompt de integração orienta `check_same_thread=False`.
+- **Resultados Medidos (13/10/2026):**
+  - `aidd-ops`: **197 passed**; guarda `tests/test_sem_coolify_vivo.py`: 2 passed (206 rastros antes, 0 depois); `aidd-planner`: **107 passed**; fase 8 e sandbox do `aidd-pure`: **81 passed**.
+  - `ops plan` e `ops deploy` em simulação: exit 0 nas 6 etapas; `ops coolify health` → erro (subcomando removido).
+  - `/pure` completo no clone: etapas 1 a 7 OK em 226,6 s (exit 0).
+  - **Não verificado:** o transporte SSH real (paramiko) e a API real da Cloudflare contra uma VPS e uma zona de verdade; o encadeamento foi provado com SSH e HTTP injetados.
+- **Pendências registradas:** `AUDITORIA-FLUXO-PURE/ETAPA_10` e `ETAPA_11` (esqueleto de scripts do motor não deriva da spec; timeout delegado de 30 s; deploy real contra VPS descartável; `.env` do projeto não sobe).
 - **Status:** **RESOLVIDO NO CLONE; ESPELHO NO MOTOR ORIGINAL EM ANDAMENTO.**

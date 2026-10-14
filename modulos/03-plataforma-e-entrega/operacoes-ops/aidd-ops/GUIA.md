@@ -43,27 +43,20 @@ Tags fechadas disponíveis (ver `TAGS_PERMITIDAS` em `ssh_runner.py`):
 `atualizar_pacotes`, `docker`, `firewall`, `fail2ban`, `os_hardening`,
 `ssh_hardening`, `swap`.
 
-## Orquestração Coolify, Isolamento VPS e AppShell White-Label (Anti-NIH #20 e #21)
+## Deploy `compose-nativo`, Isolamento VPS e DNS (Anti-NIH #21)
 
-Adotado como motor de infraestrutura nativo para substituição de esforço duplicado:
-- **Motor e Orquestração (`src/core/coolify.py` — `CoolifyManager`):** Orquestra todos os contêineres e aplicações via Coolify API v4 sem publicar portas diretamente no host.
-- **Isolamento Estrito em VPS Compartilhada (NIH #21):**
-  - Redes Docker privativas por projeto/ambiente (`coolify_net_<slug>_<ambiente>`).
-  - Zero portas de host expostas no `0.0.0.0` — todo tráfego é roteado pelo Traefik interno do Coolify com certificados TLS e FQDNs exclusivos.
-  - Mitigação de 'noisy neighbors' com limites estritos de CPU e RAM por aplicação.
-  - Validação determinística contínua via `CoolifyManager.verificar_isolamento_vps()`.
-- **AppShell White-Label e Studios Unificados (NIH #20):**
-  - Coolify Dashboard atua como portal administrativo centralizado white-label com personalização de marca e cores.
-  - Studios integrados mapeados para documentação de API (OpenAPI/Swagger), eventos (Webhooks), agentes (MCP Studio) e saúde da infraestrutura (Uptime Kuma).
-  - Configuração determinística via `CoolifyManager.configurar_appshell_whitelabel()`.
-- **Pipeline de Deploy:** Orquestrador consolidado (`DeployOrchestrator(motor="coolify")`) integrado no fonte única `scripts/pipeline_ops.py` (Item 2 — unificar-orquestradores).
-- **Comandos reais** (`python scripts/pipeline_ops.py coolify <subcomando>`): `health` (checa se a instância responde), `status <app>` (detalhe de um app gerenciado), `create` (cria o Intake Web como app gerenciado), `setenv` (grava variáveis de ambiente no app) e `deploy` (dispara o deploy no app gerenciado).
+Único motor de deploy (o Coolify foi abolido em 13/10/2026), para todos os fluxos:
+- **Deploy (`src/core_ops/compose_deploy.py` — `ComposeDeployer`):** valida o nome do ambiente, empacota o projeto gerado pelo aidd-master **sem segredos** (`.env`, `.env.*`, chaves), `.git`, `node_modules` e builds, envia por SSH para `/opt/aidd/<ambiente>`, roda `docker compose up -d --build` e confere `docker compose ps`: todo serviço precisa estar `running` e sem `unhealthy`. As variáveis de runtime do projeto (`.env`) não sobem; o operador as cria na VPS.
+- **Isolamento em VPS compartilhada (NIH #21):** `verificar_isolamento_compose()` reprova serviço que publica porta privilegiada (< 1024) do host além de 80 e 443.
+- **DNS da borda (`src/core_ops/cloudflare_dns.py`):** registro A idempotente do subdomínio do app (cria, atualiza se o IP mudou, não mexe se está certo), com `CLOUDFLARE_API_TOKEN` e `CLOUDFLARE_ZONE_ID`; o token nunca aparece em saída ou erro.
+- **Pipeline de Deploy:** `DeployOrchestrator` em `scripts/pipeline_ops.py`: `python scripts/pipeline_ops.py deploy <ambiente> --plano <PLANO-INFRAESTRUTURA.json> --host <ip> --domain <fqdn> [--real]` (padrão é simulação; o plano precisa vir de `ops plan --dir-projeto`).
+- **Limite conhecido:** o transporte SSH real (`TransporteParamiko`) e a API real da Cloudflare não foram exercitados contra uma VPS e uma zona de verdade; o encadeamento está provado com SSH e HTTP injetados.
 
 ## Cofre de Credenciais (NIH #18/#29: sops + age)
 
 Cofre local de segredos sem serviço externo — credenciais saem do `docker-compose.yml`/`.env` versionados e passam a viver cifradas.
 
-**Por que sops + age (decisão 2026-09-07, vs Vaultwarden):** para o caso de uso do pipeline automatizado (deploy via Coolify/Ansible em VPS), um cofre cliente-servidor traria um serviço + banco a manter, expor por rede e autenticar — sem ganho sobre uma cifragem assimétrica local não envolvendo rede. Detalhes e comparativo em `docs/planos/a-fazer/03-evolucao-aidd-ops-fase-completa/02-cofre-local-e-coleta-segura-de-credenciais.md`.
+**Por que sops + age (decisão 2026-09-07, vs Vaultwarden):** para o caso de uso do pipeline automatizado (deploy via SSH/Ansible em VPS), um cofre cliente-servidor traria um serviço + banco a manter, expor por rede e autenticar — sem ganho sobre uma cifragem assimétrica local não envolvendo rede. Detalhes e comparativo em `docs/planos/a-fazer/03-evolucao-aidd-ops-fase-completa/02-cofre-local-e-coleta-segura-de-credenciais.md`.
 
 **Fluxo:**
 1. **Gerar o cofre** — cria par de chaves age e o `.sops.yaml` com o `path_regex` agnóstico a separador de diretório (`templates[\\/]infra[\\/].*\.env$`, mirando o `.env` **de entrada**, não o `.env.enc`):

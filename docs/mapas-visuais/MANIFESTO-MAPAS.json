@@ -1,7 +1,7 @@
 {
   "ferramenta": "aidd-visual-maps",
   "catalogo": "docs/auditoria/mapa-pecas/catalogo-pecas.json",
-  "hash_catalogo": "754a7efffa282b0815248f5e2c8235c71f70b311f789ee6df6533f98cb004319",
+  "hash_catalogo": "06d1d7ef29745ba2a37981b41a0eb5eb823991733dd3da9bb959262f4d000be7",
   "mapas": [
     {
       "tipo": "leis",
@@ -21,14 +21,14 @@
       "tipo": "ferramentas",
       "arquivo": "docs/mapas-visuais/mapa-02-ferramentas.html",
       "versao": "tecnica",
-      "sha256": "d59d54569fa60906639343ad2ec8aa88a84a95973814d3c96b74bbcf921591b9",
+      "sha256": "68e612432e3573b01b9e5e367f4d4ac503fd503bb0478dc46a69781adf41e7dd",
       "status": "concluido"
     },
     {
       "tipo": "ferramentas",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-02-ferramentas.html",
       "versao": "nao-tecnica",
-      "sha256": "b4812ab396677cb73a4bf079fefc2e03dd898f61c40fc5bce0e6f3f4d49462a3",
+      "sha256": "537f7a63e915918fc2f7867eace317d56f3b7d1756550789c0319339ab7f6a5e",
       "status": "concluido"
     },
     {
@@ -189,14 +189,14 @@
       "tipo": "modulos",
       "arquivo": "docs/mapas-visuais/mapa-14-modulos.html",
       "versao": "tecnica",
-      "sha256": "3fba2b2afb67c08dffb60a638c85a293dbb1a90d0efada7bf5aa3c8ace7e969e",
+      "sha256": "48dc493396f83be95e445b3c5c24d443110e57851f003d0d451fecc2bf7ed22f",
       "status": "concluido"
     },
     {
       "tipo": "modulos",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-14-modulos.html",
       "versao": "nao-tecnica",
-      "sha256": "159596a6dadbd544e00f2b9a66336c3d169b8d99054213952edfe67f6a2ad59f",
+      "sha256": "f7471d372dae56d2882c2de3827655b1397c80a408cb5d7345778e2bc3a97a10",
       "status": "concluido"
     },
     {
@@ -238,7 +238,7 @@
       },
       {
         "arquivo": "docs/livros/mapas-aidd/partes/10-parte-i.md",
-        "sha256": "529bd14798fe6c0a64bd7558425d0a24cb4285538d6066e067dd036b663fb2e9"
+        "sha256": "b09bc1e58477a31455f68ce6b70458548524044671372c4f99ef05c9b2ce0e55"
       },
       {
         "arquivo": "docs/livros/mapas-aidd/partes/20-parte-ii.md",
@@ -269,7 +269,7 @@
       "comando": "python componentes/compartilhado/skills/aidd-textbook/scripts/livro.py build docs/livros/mapas-aidd",
       "exit_code": 0,
       "pdf": "docs/livros/mapas-aidd/26-09-2026_LIVRO-MAPAS-AIDD.pdf",
-      "sha256": "48439cde9e0a33739735f544aa2796eca7098d5b057845ea6e96b5e79f5ee5b2"
+      "sha256": "91d2b660e542d7c3628b1e510587f32f3d72fc197fad97bdf8f6d140d2cdc874"
     }
   }
 }
