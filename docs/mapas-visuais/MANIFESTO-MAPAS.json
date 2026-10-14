@@ -1,7 +1,7 @@
 {
   "ferramenta": "aidd-visual-maps",
   "catalogo": "docs/auditoria/mapa-pecas/catalogo-pecas.json",
-  "hash_catalogo": "3bbb3e583c683287296a92d61ab4e35f47c9d9d09080dc3d289430e1f6434cd3",
+  "hash_catalogo": "dcf9c4c48b34116c0612c0c90e3b52f4b9550230cacc8cf85e1098ddfebcc519",
   "mapas": [
     {
       "tipo": "leis",
@@ -105,14 +105,14 @@
       "tipo": "harnesses",
       "arquivo": "docs/mapas-visuais/mapa-08-harnesses.html",
       "versao": "tecnica",
-      "sha256": "87fe1371ca4a2ff61c4a0894c26351cda98c24098f80aa117492abb68f7802b0",
+      "sha256": "9185c05a98ef2ae0b9d8b01a4d4f58b7dd6ba4931823dcc41ad54daf38770b3c",
       "status": "concluido"
     },
     {
       "tipo": "harnesses",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-08-harnesses.html",
       "versao": "nao-tecnica",
-      "sha256": "0c11a14d6428b5fac5c277872b22968a39d2f0bb27f7cbea78203ccf24cfc242",
+      "sha256": "3fe0f30cd7e5081842dae891723f828afdc2c3af50decf23990e1c36e2cf9bea",
       "status": "concluido"
     },
     {
@@ -234,15 +234,15 @@
     "partes": [
       {
         "arquivo": "docs/livros/mapas-aidd/partes/00-frontmatter.md",
-        "sha256": "a4871626d01e18cc815674fa5d5493458b8a6832e7b45a4d29a3aeaa142f6c78"
+        "sha256": "8457be18d218d2e04dc233fafdd685cd5bacf85ac69f609b8b2d7c86802e6999"
       },
       {
         "arquivo": "docs/livros/mapas-aidd/partes/10-parte-i.md",
-        "sha256": "4b35b882f378bcc70b78cf90c3c669ed09e24e1e8296bde8591395498644585d"
+        "sha256": "81992cb6d1c42b782c264053cb67a25c19360deb7c630af4c8a80a0acf22edde"
       },
       {
         "arquivo": "docs/livros/mapas-aidd/partes/20-parte-ii.md",
-        "sha256": "8779452d81b96cea94a1ec0afa3bb8575ac266788d2a0ddeef7a7a03286ee1a0"
+        "sha256": "42c5e280006dd36fbe7437c99444d2eca046e77a2412f006d80db43bffa24af1"
       },
       {
         "arquivo": "docs/livros/mapas-aidd/partes/30-parte-iii.md",
@@ -250,7 +250,7 @@
       },
       {
         "arquivo": "docs/livros/mapas-aidd/partes/40-parte-iv.md",
-        "sha256": "8776b32f5a78a6fcdf2e152ca49a611bbce7cb2b7fce0cc92d5a040fe2ddde25"
+        "sha256": "a803d780a6d6241bbed52e7b3b226520b9a89bac2574cc76b8497aec57ea1404"
       },
       {
         "arquivo": "docs/livros/mapas-aidd/partes/50-parte-v.md",
@@ -262,14 +262,14 @@
       },
       {
         "arquivo": "docs/livros/mapas-aidd/partes/91-apendice-estado.md",
-        "sha256": "769a1109cb7acd0ff038b8f24bda3d7c28345e53a092738fa63c29c6c036687e"
+        "sha256": "cefa068b9863d019f213497c33744b92357451a5f31735be1e451d0582cb8a47"
       }
     ],
     "build": {
       "comando": "python componentes/compartilhado/skills/aidd-textbook/scripts/livro.py build docs/livros/mapas-aidd",
       "exit_code": 0,
       "pdf": "docs/livros/mapas-aidd/26-09-2026_LIVRO-MAPAS-AIDD.pdf",
-      "sha256": "0866d79fd3f56372ea4e240f81e3c2090e1dfb5fd75bffb31eb67df500af20ee"
+      "sha256": "ecd4be2a60af47c6fe46f86806c3399490b3fd32384b7cb8c4a4cc02b3f2ea8d"
     }
   }
 }
