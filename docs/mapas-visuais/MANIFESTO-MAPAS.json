@@ -269,7 +269,7 @@
       "comando": "python componentes/compartilhado/skills/aidd-textbook/scripts/livro.py build docs/livros/mapas-aidd",
       "exit_code": 0,
       "pdf": "docs/livros/mapas-aidd/26-09-2026_LIVRO-MAPAS-AIDD.pdf",
-      "sha256": "bc4c5e3de565bff1aba93e01e3511aed9edc7917be5a3704ac54a55c5ac48d9a"
+      "sha256": "4ff74d02a99122640bc816b359c6933f9b5fbc0fd07d7d764864233eedefc1bf"
     }
   }
 }
