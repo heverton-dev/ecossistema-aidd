@@ -3,7 +3,7 @@
   "gerado_por": "scripts/catalogo_pecas.py",
   "totais": {
     "ferramentas": 8,
-    "comandos_cli": 76,
+    "comandos_cli": 77,
     "skills": 45,
     "leis": 14,
     "lente_15d": 15,
@@ -201,6 +201,7 @@
       "comandos": [
         "ambiente",
         "audit",
+        "entrevista",
         "export",
         "export-dispatch",
         "init",
@@ -215,7 +216,7 @@
         "modulos/01-governanca-e-qualidade/core/aidd-planner/gates/G_PLANNER_SINE_QUA_NON.py"
       ],
       "mcps_proprios": [],
-      "arquivos_py": 22
+      "arquivos_py": 26
     },
     {
       "id": "aidd-pure",
@@ -426,7 +427,7 @@
     {
       "id": "aidd-planner",
       "descricao": "Generates and validates the canonical SDD/BDD app blueprint (PLANNER.json) that fuels the Triad flows (Generator, Factory, Bridge). Use when the user wants architecture intake, a project blueprint or a spec for a new app, or says \"planner\", \"pré-plano\", \"intake\", \"blueprint\", \"SDD\", \"BDD\". Not for ecosystem improvement plans in docs/planos/ (that is aidd-plan).",
-      "linhas": 64,
+      "linhas": 91,
       "terceiro": false
     },
     {
@@ -5691,6 +5692,14 @@
           ],
           [
             "planner",
+            "entrevista",
+            "--pasta",
+            "<var>",
+            "--modo",
+            "<var>"
+          ],
+          [
+            "planner",
             "ambiente",
             "--pasta",
             "<var>",
@@ -5858,6 +5867,12 @@
     {
       "etapa": "etapa_02_planner",
       "chamada": "ecossistema.py planner export-dispatch <var> --output <var>",
+      "encaixa": true,
+      "problemas": []
+    },
+    {
+      "etapa": "etapa_02_planner",
+      "chamada": "ecossistema.py planner entrevista --pasta <var> --modo <var>",
       "encaixa": true,
       "problemas": []
     },
@@ -6406,7 +6421,7 @@
             "aidd-planner"
           ],
           "guardas": 15,
-          "arquivos_py": 64
+          "arquivos_py": 68
         },
         {
           "id": "gates",
