@@ -673,6 +673,7 @@ def executar_pipeline(ideia: str, pasta_projeto: Path, nao_interativo: bool = Tr
     planner_json = pasta_projeto / 'PLANNER.json'
     handoff_json = pasta_projeto / 'HANDOFF_PLANNER_ENGINE.json'
     plano_fonte = handoff_json if handoff_json.exists() else (planner_json if planner_json.exists() else None)
+    spec_planner = None
     if plano_fonte:
         try:
             with open(plano_fonte, 'r', encoding='utf-8') as f:
@@ -684,6 +685,17 @@ def executar_pipeline(ideia: str, pasta_projeto: Path, nao_interativo: bool = Tr
             if nome and dominio:
                 ideia = f"{nome} ({dominio}): {desc or ideia}"
                 print(f"[HANDOFF] Plano de arquitetura integrado com sucesso a partir de {plano_fonte.name}!")
+            # Achado #1 — extrair spec estruturada (entrevista/grill) para Fase 2
+            spec_planner = (
+                plano_dados.get('spec')
+                or plano_dados.get('entrevista')
+                or plano_dados.get('grill')
+                or {k: plano_dados[k] for k in ('nome', 'dominio', 'descricao', 'requisitos',
+                                                  'telas_referencia', 'publico_alvo')
+                    if k in plano_dados}
+                or dict(meta)
+                or None
+            )
         except Exception as e:
             print(f"[HANDOFF] Aviso ao ler plano integrado: {e}")
 
@@ -762,7 +774,7 @@ def executar_pipeline(ideia: str, pasta_projeto: Path, nao_interativo: bool = Tr
         state_mgr.registrar_fase_iniciada('fase_2_analisador', 'Analisador', 2)
         ctx2 = _carregar_micro_ambiente(2)
         p2 = _carregar_fase(2)
-        idx2 = p2.AnalisadorFase2(cache_dir).executar(ideia, referencias)
+        idx2 = p2.AnalisadorFase2(cache_dir).executar(ideia, referencias, spec_planner=spec_planner)
         resultado['fases_completas']['fase_2'] = idx2 is not None
         _registrar_e_verificar_orcamento(idx2 or {}, 'Analisador', 2, orcamentos, pipeline_state_path)
         if idx2 is None:

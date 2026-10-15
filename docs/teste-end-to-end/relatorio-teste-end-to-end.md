@@ -1848,3 +1848,54 @@
   - **Não verificado:** a autorização OAuth em nenhum harness (só o registro do servidor); o opencode e o omp não foram executados.
 - **Pendências registradas:** `AUDITORIA-FLUXO-PURE/ETAPA_12` (OAuth real por harness; opencode com instalação quebrada).
 - **Status:** **RESOLVIDO NO CLONE E NO MOTOR ORIGINAL (9-A, 9-B, 9-C); OAUTH POR HARNESS E OPENCODE FICAM COMO LIMITE DECLARADO.**
+
+## 21. Motor PURE — Achado #1: Fase 2 não recebia spec estruturada do planner (`aidd-pure`)
+
+- **Data da Auditoria e Validação:** 15/10/2026 (executado em **modo autônomo**, `/goal`)
+- **Ambiente:** motor original, branch `fix/pure-motor-fase2-spec`
+- **Ferramentas Tocadas:** `aidd-pure` (`scripts/phases/02_analisador.py`, `scripts/pipeline_completo.py`)
+- **Achado:**
+  - `AnalisadorFase2.executar()` recebia apenas `ideia: str` e `referencias_phase1: Dict` (insights da fase 1).
+  - O bloco `PLANNER.json`/`HANDOFF_PLANNER_ENGINE.json` lido no `pipeline_completo.py` era colapsado em uma string (`"nome (dominio): descricao"`) e os campos estruturados da spec (requisitos, telas, público-alvo) nunca chegavam ao prompt da fase 2.
+- **O que executou:**
+  1. TDD red→green: 2 testes em `tests/test_phase_02_spec_planner.py` falhavam antes do fix (TypeError + asserção de conteúdo do prompt).
+  2. `AnalisadorFase2.executar()` recebe `spec_planner: Dict = None` (3.º argumento opcional).
+  3. `_analisar_ideia_com_llm()` serializa `spec_planner` e injeta como `{spec_planner_json}` no `PROMPT_ANALISADOR_IDEIA` (nova seção `PLANNER SPEC`).
+  4. `pipeline_completo.py` extrai a spec estruturada (`spec`, `entrevista`, `grill` ou campos diretos do plano) e a passa para a fase 2.
+- **Resultados Medidos (15/10/2026):**
+  - `aidd-pure`: **1023 passed, 5 skipped** (sem regressão).
+  - 2 testes novos: PASSED (red→green confirmado).
+- **Pendências registradas:** Achados #2, #3 e #4 do motor (fase 8 planos genéricos; contradiction infrastructure/ vs PYTHONPATH; SQLite cross-thread nos testes).
+- **Status:** **RESOLVIDO NA BRANCH `fix/pure-motor-fase2-spec`.**
+
+---
+
+## Seção 22 — Achado #2: Fase 8 gera `assert True` para módulos com nomes arbitrários
+
+- **Data:** 15/10/2026
+- **Ferramenta:** `aidd-pure`
+- **Achado:** `_gerar_teste_integracao_deterministico` usava keyword-match no nome do módulo (`validador`, `servico`, `persistencia`, `quarteto`). Módulos com nomes fora dessas keywords produziam `linhas_chamadas` vazia → corpo do teste de integração era `assert True` (placeholder inútil).
+- **Fix aplicado (`08_implementador.py`):**
+  - Novo método `_extrair_simbolo_publico(codigo)`: extrai via AST a primeira função/classe pública do código gerado.
+  - Ramo `else` no loop: usa o símbolo extraído para gerar `from <mod> import <simbolo>` + `assert <simbolo> is not None`; fallback para `import <mod> as _mod_<mod>` + `assert _mod_<mod> is not None` quando não há símbolo.
+  - Módulos com keywords conhecidas: comportamento preservado (regressão verificada).
+- **Testes adicionados:** `tests/test_phase_08_integracao_modulos_reais.py` — 9 testes (4 genéricos RED→GREEN, 4 regressão keywords, 1 múltiplos módulos).
+- **Resultados Medidos (15/10/2026):**
+  - `aidd-pure`: **1032 passed, 5 skipped** (sem regressão).
+  - 9 testes novos: PASSED (red→green confirmado).
+- **Pendências registradas:** Nenhuma pendência aberta no motor PURE. Todos os 4 achados resolvidos.
+- **Status:** **RESOLVIDO NA BRANCH `fix/pure-motor-fase2-spec`.**
+
+## Seção 23 — Achados #3 e #4: Contradição `infrastructure/` vs `PYTHONPATH` e SQLite cross-thread
+
+- **Data da Auditoria / Correção:** 15/10/2026.
+- **Ferramenta Afetada:** `modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure` (`scripts/phases/08_implementador.py`).
+- **Achado #3:** Em `_gerar_teste_integracao_deterministico`, o import de módulos com keyword `persistencia`/`sqlite` gerava incondicionalmente `from infrastructure.{mod} import RepositorioSQLite`. Se o módulo foi salvo na raiz de `src/` (e não sob `infrastructure/`), a execução falhava com `ModuleNotFoundError: No module named 'infrastructure'`.
+  - **Correção:** Import resiliente com detecção do caminho relativo (`caminho_relativo.startswith('infrastructure/')`) e bloco `try/except ImportError` de fallback mútuo entre direct import e package import.
+- **Achado #4:** Em `_gerar_implementacao_deterministica`, o template determinístico de `RepositorioSQLite` criava conexões via `sqlite3.connect(":memory:")` e `sqlite3.connect(self.db_path)` sem `check_same_thread=False`. Quando acessado em contexto multi-thread (ex: `FastAPI TestClient` ou runners assíncronos), causava `sqlite3.ProgrammingError: SQLite objects created in a thread can only be used in that same thread`.
+  - **Correção:** Adicionado `check_same_thread=False` explicitamente em ambas as chamadas `sqlite3.connect` do template determinístico.
+- **Testes adicionados:** `tests/test_phase_08_achados_3_e_4.py` — 3 testes cobrindo import resiliente de persistência na raiz e conexões SQLite multi-thread com `check_same_thread=False`.
+- **Resultados Medidos (15/10/2026):**
+  - `aidd-pure`: **1035 passed, 5 skipped** (100% de aprovação na suíte completa).
+  - 3 testes novos: PASSED (ciclo TDD red→green confirmado).
+- **Status:** **RESOLVIDO NA BRANCH `fix/pure-motor-fase2-spec`.**

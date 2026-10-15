@@ -1260,13 +1260,33 @@ class ImplementadorFase8:
         impl['caminho_teste'] = caminho_teste
         return impl, secao_schema, contexto
 
+    @staticmethod
+    def _extrair_simbolo_publico(codigo: str) -> Optional[str]:
+        """Extrai o nome da primeira função ou classe pública do código-fonte via AST (Lei #1)."""
+        if not codigo:
+            return None
+        try:
+            tree = ast.parse(codigo)
+            for node in ast.walk(tree):
+                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                    if not node.name.startswith('_'):
+                        return node.name
+        except SyntaxError:
+            pass
+        return None
+
     def _gerar_teste_integracao_deterministico(self, scripts_implementados: List[Dict]) -> Tuple[bool, Optional[Dict]]:
         """Gera teste de integração determinístico encadeando os módulos gerados (Lei #1)."""
-        modulos = [Path(s.get('caminho_relativo', '')).stem for s in scripts_implementados if s.get('caminho_relativo')]
         linhas_import = []
         linhas_chamadas = []
 
-        for mod in modulos:
+        for script in scripts_implementados:
+            caminho = script.get('caminho_relativo', '')
+            if not caminho:
+                continue
+            mod = Path(caminho).stem
+            codigo = script.get('codigo', '')
+
             if "validador" in mod:
                 linhas_import.append(f"from {mod} import validar_payload")
                 linhas_chamadas.append("    assert validar_payload({'id': 'e2e-1', 'nome': 'Teste'}) is True")
@@ -1275,13 +1295,39 @@ class ImplementadorFase8:
                 linhas_chamadas.append("    servico = ServicoDominio()")
                 linhas_chamadas.append("    assert servico.executar({'id': 'e2e-1', 'acao': 'ok'})['sucesso'] is True")
             elif "persistencia" in mod or "sqlite" in mod:
-                linhas_import.append(f"from infrastructure.{mod} import RepositorioSQLite")
+                # Fix achado #3: import resiliente — funciona se o módulo estiver em
+                # src/infrastructure/ ou diretamente na raiz de src/ (ambos no PYTHONPATH)
+                caminho_rel = script.get('caminho_relativo', '')
+                if caminho_rel.startswith(('infrastructure/', 'infrastructure\\')):
+                    linhas_import.append(
+                        f"try:\n"
+                        f"    from infrastructure.{mod} import RepositorioSQLite\n"
+                        f"except ImportError:\n"
+                        f"    from {mod} import RepositorioSQLite"
+                    )
+                else:
+                    linhas_import.append(
+                        f"try:\n"
+                        f"    from {mod} import RepositorioSQLite\n"
+                        f"except ImportError:\n"
+                        f"    from infrastructure.{mod} import RepositorioSQLite"
+                    )
                 linhas_chamadas.append("    repo = RepositorioSQLite(':memory:')")
                 linhas_chamadas.append("    assert repo.salvar('e2e-1', 'conteudo') is True")
                 linhas_chamadas.append("    assert repo.buscar('e2e-1') == 'conteudo'")
             elif "quarteto" in mod:
                 linhas_import.append(f"from {mod} import obter_openapi_spec")
                 linhas_chamadas.append("    assert obter_openapi_spec()['openapi'] == '3.1.0'")
+            else:
+                # Fix achado #2: derivar símbolo público do código gerado em vez de assert True
+                simbolo = self._extrair_simbolo_publico(codigo)
+                if simbolo:
+                    linhas_import.append(f"from {mod} import {simbolo}")
+                    linhas_chamadas.append(f"    assert {simbolo} is not None")
+                else:
+                    # Último recurso: importar o módulo e verificar que carrega sem erro
+                    linhas_import.append(f"import {mod} as _mod_{mod}")
+                    linhas_chamadas.append(f"    assert _mod_{mod} is not None")
 
         if not linhas_chamadas:
             linhas_chamadas = ["    assert True"]
@@ -1377,12 +1423,12 @@ class ImplementadorFase8:
                 '        self.db_path = db_path\n'
                 '        self._conn: Optional[sqlite3.Connection] = None\n'
                 '        if self.db_path == ":memory:":\n'
-                '            self._conn = sqlite3.connect(":memory:")\n'
+                '            self._conn = sqlite3.connect(":memory:", check_same_thread=False)\n'
                 '        self._inicializar()\n\n'
                 '    def _obter_conn(self) -> sqlite3.Connection:\n'
                 '        if self._conn is not None:\n'
                 '            return self._conn\n'
-                '        return sqlite3.connect(self.db_path)\n\n'
+                '        return sqlite3.connect(self.db_path, check_same_thread=False)\n\n'
                 '    def _inicializar(self) -> None:\n'
                 '        conn = self._obter_conn()\n'
                 '        try:\n'
