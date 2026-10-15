@@ -1295,7 +1295,23 @@ class ImplementadorFase8:
                 linhas_chamadas.append("    servico = ServicoDominio()")
                 linhas_chamadas.append("    assert servico.executar({'id': 'e2e-1', 'acao': 'ok'})['sucesso'] is True")
             elif "persistencia" in mod or "sqlite" in mod:
-                linhas_import.append(f"from infrastructure.{mod} import RepositorioSQLite")
+                # Fix achado #3: import resiliente — funciona se o módulo estiver em
+                # src/infrastructure/ ou diretamente na raiz de src/ (ambos no PYTHONPATH)
+                caminho_rel = script.get('caminho_relativo', '')
+                if caminho_rel.startswith(('infrastructure/', 'infrastructure\\')):
+                    linhas_import.append(
+                        f"try:\n"
+                        f"    from infrastructure.{mod} import RepositorioSQLite\n"
+                        f"except ImportError:\n"
+                        f"    from {mod} import RepositorioSQLite"
+                    )
+                else:
+                    linhas_import.append(
+                        f"try:\n"
+                        f"    from {mod} import RepositorioSQLite\n"
+                        f"except ImportError:\n"
+                        f"    from infrastructure.{mod} import RepositorioSQLite"
+                    )
                 linhas_chamadas.append("    repo = RepositorioSQLite(':memory:')")
                 linhas_chamadas.append("    assert repo.salvar('e2e-1', 'conteudo') is True")
                 linhas_chamadas.append("    assert repo.buscar('e2e-1') == 'conteudo'")
@@ -1407,12 +1423,12 @@ class ImplementadorFase8:
                 '        self.db_path = db_path\n'
                 '        self._conn: Optional[sqlite3.Connection] = None\n'
                 '        if self.db_path == ":memory:":\n'
-                '            self._conn = sqlite3.connect(":memory:")\n'
+                '            self._conn = sqlite3.connect(":memory:", check_same_thread=False)\n'
                 '        self._inicializar()\n\n'
                 '    def _obter_conn(self) -> sqlite3.Connection:\n'
                 '        if self._conn is not None:\n'
                 '            return self._conn\n'
-                '        return sqlite3.connect(self.db_path)\n\n'
+                '        return sqlite3.connect(self.db_path, check_same_thread=False)\n\n'
                 '    def _inicializar(self) -> None:\n'
                 '        conn = self._obter_conn()\n'
                 '        try:\n'

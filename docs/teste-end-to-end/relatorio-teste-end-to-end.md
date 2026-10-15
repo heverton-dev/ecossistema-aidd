@@ -1883,5 +1883,19 @@
 - **Resultados Medidos (15/10/2026):**
   - `aidd-pure`: **1032 passed, 5 skipped** (sem regressão).
   - 9 testes novos: PASSED (red→green confirmado).
-- **Pendências registradas:** Achados #3 e #4 do motor (contradiction infrastructure/ vs PYTHONPATH; SQLite cross-thread nos testes).
+- **Pendências registradas:** Nenhuma pendência aberta no motor PURE. Todos os 4 achados resolvidos.
+- **Status:** **RESOLVIDO NA BRANCH `fix/pure-motor-fase2-spec`.**
+
+## Seção 23 — Achados #3 e #4: Contradição `infrastructure/` vs `PYTHONPATH` e SQLite cross-thread
+
+- **Data da Auditoria / Correção:** 15/10/2026.
+- **Ferramenta Afetada:** `modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure` (`scripts/phases/08_implementador.py`).
+- **Achado #3:** Em `_gerar_teste_integracao_deterministico`, o import de módulos com keyword `persistencia`/`sqlite` gerava incondicionalmente `from infrastructure.{mod} import RepositorioSQLite`. Se o módulo foi salvo na raiz de `src/` (e não sob `infrastructure/`), a execução falhava com `ModuleNotFoundError: No module named 'infrastructure'`.
+  - **Correção:** Import resiliente com detecção do caminho relativo (`caminho_relativo.startswith('infrastructure/')`) e bloco `try/except ImportError` de fallback mútuo entre direct import e package import.
+- **Achado #4:** Em `_gerar_implementacao_deterministica`, o template determinístico de `RepositorioSQLite` criava conexões via `sqlite3.connect(":memory:")` e `sqlite3.connect(self.db_path)` sem `check_same_thread=False`. Quando acessado em contexto multi-thread (ex: `FastAPI TestClient` ou runners assíncronos), causava `sqlite3.ProgrammingError: SQLite objects created in a thread can only be used in that same thread`.
+  - **Correção:** Adicionado `check_same_thread=False` explicitamente em ambas as chamadas `sqlite3.connect` do template determinístico.
+- **Testes adicionados:** `tests/test_phase_08_achados_3_e_4.py` — 3 testes cobrindo import resiliente de persistência na raiz e conexões SQLite multi-thread com `check_same_thread=False`.
+- **Resultados Medidos (15/10/2026):**
+  - `aidd-pure`: **1035 passed, 5 skipped** (100% de aprovação na suíte completa).
+  - 3 testes novos: PASSED (ciclo TDD red→green confirmado).
 - **Status:** **RESOLVIDO NA BRANCH `fix/pure-motor-fase2-spec`.**
