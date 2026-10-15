@@ -95,9 +95,9 @@ def _pascal_case(texto: str) -> str:
     return "".join(w.capitalize() for w in palavras if w)
 
 
-def _gerar_fatia_modulo(pasta_saida: str, nome_ferramenta: str, nicho_slug: str) -> List[str]:
+def _gerar_fatia_modulo(pasta_saida: str, nome_ferramenta: str, nicho_slug: str, slug_override: Optional[str] = None) -> List[str]:
     """Gera os arquivos de uma fatia vertical completa em src/modules/<slug>/."""
-    slug = _slugify(nome_ferramenta)
+    slug = slug_override or _slugify(nome_ferramenta)
     pascal = _pascal_case(nome_ferramenta)
     mod_dir = os.path.join(pasta_saida, "src", "modules", slug)
     os.makedirs(mod_dir, exist_ok=True)
@@ -1421,7 +1421,7 @@ def gerar_fatias_verticais(
     for mod in modulos_para_gerar:
         nome = mod["nome"]
         slug = mod["slug"]
-        arquivos = _gerar_fatia_modulo(pasta_saida, nome, nicho_slug)
+        arquivos = _gerar_fatia_modulo(pasta_saida, nome, nicho_slug, slug_override=slug)
         mod_dir = os.path.join(pasta_saida, "src", "modules", slug)
         sha_arvore = _calcular_sha256_diretorio(mod_dir)
         slices_info.append({

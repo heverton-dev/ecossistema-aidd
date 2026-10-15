@@ -3347,9 +3347,9 @@
           "hook": ".claude/hooks/{nome}",
           "sub-agent": ".claude/agents/{nome}"
         },
-        "skills_em_disco": 59,
+        "skills_em_disco": 60,
         "nossas_faltando": [],
-        "terceiros_em_disco": 14,
+        "terceiros_em_disco": 15,
         "config_mcp": ".mcp.json"
       },
       {
@@ -3368,9 +3368,9 @@
           "hook": ".agents/hooks/{nome}",
           "sub-agent": ".agents/agents/{nome}"
         },
-        "skills_em_disco": 59,
+        "skills_em_disco": 60,
         "nossas_faltando": [],
-        "terceiros_em_disco": 14,
+        "terceiros_em_disco": 15,
         "config_mcp": ".agents/mcp_config.json"
       },
       {
@@ -3467,9 +3467,9 @@
           "command": ".codebuddy/commands/{nome}",
           "hook": ".codebuddy/hooks/{nome}"
         },
-        "skills_em_disco": 45,
+        "skills_em_disco": 46,
         "nossas_faltando": [],
-        "terceiros_em_disco": 0,
+        "terceiros_em_disco": 1,
         "config_mcp": ""
       }
     ],
