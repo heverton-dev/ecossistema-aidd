@@ -213,6 +213,9 @@ Analyze the PROVIDED project idea and the SIMILAR REFERENCES found.
 PROJECT IDEA:
 {ideia}
 
+PLANNER SPEC (structured intake from interview/grill — use as primary source of requirements):
+{spec_planner_json}
+
 SIMILAR REFERENCES (from Phase 1):
 {referencias_json}
 
@@ -388,7 +391,7 @@ class AnalisadorFase2:
         self.modelo_final = model_override or self.modelo_harness
         self.modelo_nome_amigavel = obter_nome_amigavel_modelo(self.modelo_final)
 
-    def executar(self, ideia_projeto: str, referencias_phase1: Dict) -> Optional[Dict]:
+    def executar(self, ideia_projeto: str, referencias_phase1: Dict, spec_planner: Dict = None) -> Optional[Dict]:
         """Executa pipeline completo da Phase 2"""
         print(f"\n📊 PHASE 2: Analisador da Ideia")
         print(f"   Ideia: {ideia_projeto}")
@@ -400,7 +403,7 @@ class AnalisadorFase2:
         # 1. Analisar ideia com LLM (via protocolo delegado ou headless)
         print(f"\n🤖 Analisando ideia...")
 
-        analise = self._analisar_ideia_com_llm(ideia_projeto, referencias_phase1)
+        analise = self._analisar_ideia_com_llm(ideia_projeto, referencias_phase1, spec_planner)
 
         # SEM fallback para mock: se a chamada real falhar, a fase falha de
         # verdade. Um fallback silencioso aqui é exatamente o padrão que a
@@ -451,7 +454,7 @@ class AnalisadorFase2:
 
         return index
 
-    def _analisar_ideia_com_llm(self, ideia: str, referencias: Dict) -> Optional[Dict]:
+    def _analisar_ideia_com_llm(self, ideia: str, referencias: Dict, spec_planner: Dict = None) -> Optional[Dict]:
         """
         Chama LLM via protocolo unificado (delegado ou headless).
 
@@ -464,9 +467,16 @@ class AnalisadorFase2:
 
         # Item 2 [TK-1]: handoff podado com teto de tokens (antes: dump bruto indent=2)
         referencias_json = montar_handoff_referencias(referencias, TETO_TOKENS_HANDOFF_FASE2)
+        # Spec estruturada do planner (entrevista/grill) — achado #1 do motor PURE.
+        spec_planner_json = json.dumps(spec_planner or {}, ensure_ascii=False, indent=2)
         # .replace() em vez de .format(): o template tem chaves literais nos
         # exemplos de JSON, que .format() tentaria interpretar como placeholders.
-        prompt = PROMPT_ANALISADOR_IDEIA.replace('{ideia}', ideia).replace('{referencias_json}', referencias_json)
+        prompt = (
+            PROMPT_ANALISADOR_IDEIA
+            .replace('{ideia}', ideia)
+            .replace('{spec_planner_json}', spec_planner_json)
+            .replace('{referencias_json}', referencias_json)
+        )
 
         contexto = f"Phase 2: Analisador de Ideia. Projeto: {ideia[:50]}"
 

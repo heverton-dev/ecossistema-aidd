@@ -1848,3 +1848,22 @@
   - **Não verificado:** a autorização OAuth em nenhum harness (só o registro do servidor); o opencode e o omp não foram executados.
 - **Pendências registradas:** `AUDITORIA-FLUXO-PURE/ETAPA_12` (OAuth real por harness; opencode com instalação quebrada).
 - **Status:** **RESOLVIDO NO CLONE E NO MOTOR ORIGINAL (9-A, 9-B, 9-C); OAUTH POR HARNESS E OPENCODE FICAM COMO LIMITE DECLARADO.**
+
+## 21. Motor PURE — Achado #1: Fase 2 não recebia spec estruturada do planner (`aidd-pure`)
+
+- **Data da Auditoria e Validação:** 15/10/2026 (executado em **modo autônomo**, `/goal`)
+- **Ambiente:** motor original, branch `fix/pure-motor-fase2-spec`
+- **Ferramentas Tocadas:** `aidd-pure` (`scripts/phases/02_analisador.py`, `scripts/pipeline_completo.py`)
+- **Achado:**
+  - `AnalisadorFase2.executar()` recebia apenas `ideia: str` e `referencias_phase1: Dict` (insights da fase 1).
+  - O bloco `PLANNER.json`/`HANDOFF_PLANNER_ENGINE.json` lido no `pipeline_completo.py` era colapsado em uma string (`"nome (dominio): descricao"`) e os campos estruturados da spec (requisitos, telas, público-alvo) nunca chegavam ao prompt da fase 2.
+- **O que executou:**
+  1. TDD red→green: 2 testes em `tests/test_phase_02_spec_planner.py` falhavam antes do fix (TypeError + asserção de conteúdo do prompt).
+  2. `AnalisadorFase2.executar()` recebe `spec_planner: Dict = None` (3.º argumento opcional).
+  3. `_analisar_ideia_com_llm()` serializa `spec_planner` e injeta como `{spec_planner_json}` no `PROMPT_ANALISADOR_IDEIA` (nova seção `PLANNER SPEC`).
+  4. `pipeline_completo.py` extrai a spec estruturada (`spec`, `entrevista`, `grill` ou campos diretos do plano) e a passa para a fase 2.
+- **Resultados Medidos (15/10/2026):**
+  - `aidd-pure`: **1023 passed, 5 skipped** (sem regressão).
+  - 2 testes novos: PASSED (red→green confirmado).
+- **Pendências registradas:** Achados #2, #3 e #4 do motor (fase 8 planos genéricos; contradiction infrastructure/ vs PYTHONPATH; SQLite cross-thread nos testes).
+- **Status:** **RESOLVIDO NA BRANCH `fix/pure-motor-fase2-spec`.**
