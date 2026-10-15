@@ -1899,3 +1899,26 @@
   - `aidd-pure`: **1035 passed, 5 skipped** (100% de aprovação na suíte completa).
   - 3 testes novos: PASSED (ciclo TDD red→green confirmado).
 - **Status:** **RESOLVIDO NA BRANCH `fix/pure-motor-fase2-spec`.**
+
+---
+
+## Seção 24 — Auditoria do Motor AIDD-Open: Achados de Slug e Runtime HTTP do Quarteto (`aidd-open`)
+
+- **Data da Auditoria e Validação:** 15/10/2026
+- **Ferramentas Tocadas:**
+  `modulos/02-triade-motores/fluxo-02-open/core/aidd-open` (`src/core_open/vsa_generator.py`),
+  `componentes/compartilhado/moldes/quarteto/variantes/aidd-open/openapi.py`,
+  `componentes/compartilhado/src-core/openapi.py`.
+- **Achados Identificados e Corrigidos (TDD Red -> Green):**
+  1. **Achado #1 (Slug Mismatch no VSA Generator):** Quando o ticket do planner especificava módulo nominal e slug explícito (ex: `"modulo": "Atendimento ao Cliente"`, `"slug": "tickets"`), o motor gerava o diretório baseado no nome sanitizado (`src/modules/atendimento_ao_cliente/`) enquanto o contrato C3 esperava o slug exato (`src/modules/tickets/`), deixando a pasta vazia.
+     - *Correção:* Adicionado parâmetro `slug_override` em `_gerar_fatia_modulo` e passado `slug_override=slug` em `gerar_fatias_verticais`.
+  2. **Achado #2 (Incompatibilidade OpenAPI Schema no RouteRegistry):** O servidor modular (`src/server.py`) invocava `registry.get_openapi_schema(suite_name, "1.0.0")`, mas a classe implementava apenas `generate_openapi_json`, resultando em falha ao servir `/openapi.json`.
+     - *Correção:* Adicionado método `get_openapi_schema` como alias padronizado em `RouteRegistry`.
+  3. **Achado #3 (Inexistência do Roteador `match` para Endpoints Dinâmicos e Estáticos):** O servidor HTTP despachava rotas via `registry.match(method, path)`, que não existia na classe, quebrando rotas dinâmicas com parâmetros tipados (`<int:id>`, `{param}`, etc.).
+     - *Correção:* Implementado roteador determinístico `match(method, path)` com regex compilado, extração tipada de parâmetros e suporte completo a rotas estáticas e dinâmicas.
+- **Testes Adicionados:**
+  - `modulos/02-triade-motores/fluxo-02-open/core/aidd-open/tests/test_open_achados_tdd.py` — 3 testes unitários cobrindo os 3 achados.
+- **Resultados Medidos (15/10/2026):**
+  - Suíte `test_open_achados_tdd.py`: **3 passed** em 0.44s.
+  - Suíte completa do `aidd-open`: **24 passed** (100% de aprovação, 0 falhas).
+- **Status:** **RESOLVIDO E AUDITADO VIA TDD (GREEN).**

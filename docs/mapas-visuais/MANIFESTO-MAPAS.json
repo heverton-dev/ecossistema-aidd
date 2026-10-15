@@ -1,7 +1,7 @@
 {
   "ferramenta": "aidd-visual-maps",
   "catalogo": "docs/auditoria/mapa-pecas/catalogo-pecas.json",
-  "hash_catalogo": "85442b29fe712e6906d3b7f6809a8e2c54afc9903ddff8b88a926cc0d484efca",
+  "hash_catalogo": "52569bddeb02b3716bbf19b2f0f68af3bc053192f9f78b555865b3b4b8fb5a40",
   "mapas": [
     {
       "tipo": "leis",
@@ -105,14 +105,14 @@
       "tipo": "harnesses",
       "arquivo": "docs/mapas-visuais/mapa-08-harnesses.html",
       "versao": "tecnica",
-      "sha256": "9185c05a98ef2ae0b9d8b01a4d4f58b7dd6ba4931823dcc41ad54daf38770b3c",
+      "sha256": "71dd2859d141c1562b65589796e0bc19bab682be5c5a91bcc8afd68ced7ba136",
       "status": "concluido"
     },
     {
       "tipo": "harnesses",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-08-harnesses.html",
       "versao": "nao-tecnica",
-      "sha256": "3fe0f30cd7e5081842dae891723f828afdc2c3af50decf23990e1c36e2cf9bea",
+      "sha256": "11e4cc6b2c6f927aed1ac5bc60feef9053143e858c4fe74a77d98d1e4d721f9e",
       "status": "concluido"
     },
     {
@@ -242,7 +242,7 @@
       },
       {
         "arquivo": "docs/livros/mapas-aidd/partes/20-parte-ii.md",
-        "sha256": "42c5e280006dd36fbe7437c99444d2eca046e77a2412f006d80db43bffa24af1"
+        "sha256": "8779452d81b96cea94a1ec0afa3bb8575ac266788d2a0ddeef7a7a03286ee1a0"
       },
       {
         "arquivo": "docs/livros/mapas-aidd/partes/30-parte-iii.md",
@@ -269,7 +269,7 @@
       "comando": "python componentes/compartilhado/skills/aidd-textbook/scripts/livro.py build docs/livros/mapas-aidd",
       "exit_code": 0,
       "pdf": "docs/livros/mapas-aidd/26-09-2026_LIVRO-MAPAS-AIDD.pdf",
-      "sha256": "7dfeabb2f76affa49b7e30124ee24522e14456d0f872b0811ad1f455ecb53dc8"
+      "sha256": "a65bb7137e33acc63864a8f9ac7a679b7e57bb79b23030a935ea521d34c8790e"
     }
   }
 }

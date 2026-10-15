@@ -1,4 +1,5 @@
 import json
+import re
 from pathlib import Path
 
 class RouteRegistry:
@@ -286,6 +287,68 @@ class RouteRegistry:
             "tags": [{"name": t} for t in sorted(tags_set)],
             "paths": paths_obj
         }
+
+    def get_openapi_schema(self, title: str, version: str = "1.0.0"):
+        """Alias para generate_openapi_json compatível com server.py modular."""
+        return self.generate_openapi_json(title, version)
+
+    def match(self, method: str, path: str):
+        """
+        Roteador determinístico para endpoints registrados no RouteRegistry.
+        Suporta rotas exatas (/api/tickets) e rotas dinâmicas (/api/tickets/<int:id> ou /api/tickets/{id}).
+        Retorna tupla: (match_encontrado: bool, handler_fn, route_params: dict).
+        """
+        method_upper = method.upper()
+        rotas_do_metodo = self.routes.get(method_upper, {})
+
+        # 1. Busca direta por rota exata
+        if path in rotas_do_metodo:
+            return True, rotas_do_metodo[path], {}
+
+        # 2. Busca por padrão dinâmico
+        for rota_registrada, handler in rotas_do_metodo.items():
+            if "<" not in rota_registrada and "{" not in rota_registrada:
+                continue
+
+            pattern = "^"
+            converters = {}
+            parts = re.split(r"(<[^>]+>|\{[^}]+\})", rota_registrada)
+            for part in parts:
+                if not part:
+                    continue
+                if part.startswith("<") and part.endswith(">"):
+                    conteudo = part[1:-1]
+                    if ":" in conteudo:
+                        tipo, nome_var = conteudo.split(":", 1)
+                    else:
+                        tipo, nome_var = "str", conteudo
+                    if tipo == "int":
+                        pattern += f"(?P<{nome_var}>\\d+)"
+                        converters[nome_var] = int
+                    else:
+                        pattern += f"(?P<{nome_var}>[^/]+)"
+                        converters[nome_var] = str
+                elif part.startswith("{") and part.endswith("}"):
+                    nome_var = part[1:-1]
+                    pattern += f"(?P<{nome_var}>[^/]+)"
+                    converters[nome_var] = str
+                else:
+                    pattern += re.escape(part)
+            pattern += "$"
+
+            m = re.match(pattern, path)
+            if m:
+                extracted = m.groupdict()
+                typed_params = {}
+                for k, v in extracted.items():
+                    conv = converters.get(k, str)
+                    try:
+                        typed_params[k] = conv(v)
+                    except Exception:
+                        typed_params[k] = v
+                return True, handler, typed_params
+
+        return False, None, {}
 
     def get_swagger_html(self, title: str):
         endpoints_json = json.dumps(self.endpoints, ensure_ascii=False)
