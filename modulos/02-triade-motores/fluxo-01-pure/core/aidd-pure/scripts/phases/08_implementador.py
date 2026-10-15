@@ -1260,13 +1260,33 @@ class ImplementadorFase8:
         impl['caminho_teste'] = caminho_teste
         return impl, secao_schema, contexto
 
+    @staticmethod
+    def _extrair_simbolo_publico(codigo: str) -> Optional[str]:
+        """Extrai o nome da primeira função ou classe pública do código-fonte via AST (Lei #1)."""
+        if not codigo:
+            return None
+        try:
+            tree = ast.parse(codigo)
+            for node in ast.walk(tree):
+                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                    if not node.name.startswith('_'):
+                        return node.name
+        except SyntaxError:
+            pass
+        return None
+
     def _gerar_teste_integracao_deterministico(self, scripts_implementados: List[Dict]) -> Tuple[bool, Optional[Dict]]:
         """Gera teste de integração determinístico encadeando os módulos gerados (Lei #1)."""
-        modulos = [Path(s.get('caminho_relativo', '')).stem for s in scripts_implementados if s.get('caminho_relativo')]
         linhas_import = []
         linhas_chamadas = []
 
-        for mod in modulos:
+        for script in scripts_implementados:
+            caminho = script.get('caminho_relativo', '')
+            if not caminho:
+                continue
+            mod = Path(caminho).stem
+            codigo = script.get('codigo', '')
+
             if "validador" in mod:
                 linhas_import.append(f"from {mod} import validar_payload")
                 linhas_chamadas.append("    assert validar_payload({'id': 'e2e-1', 'nome': 'Teste'}) is True")
@@ -1282,6 +1302,16 @@ class ImplementadorFase8:
             elif "quarteto" in mod:
                 linhas_import.append(f"from {mod} import obter_openapi_spec")
                 linhas_chamadas.append("    assert obter_openapi_spec()['openapi'] == '3.1.0'")
+            else:
+                # Fix achado #2: derivar símbolo público do código gerado em vez de assert True
+                simbolo = self._extrair_simbolo_publico(codigo)
+                if simbolo:
+                    linhas_import.append(f"from {mod} import {simbolo}")
+                    linhas_chamadas.append(f"    assert {simbolo} is not None")
+                else:
+                    # Último recurso: importar o módulo e verificar que carrega sem erro
+                    linhas_import.append(f"import {mod} as _mod_{mod}")
+                    linhas_chamadas.append(f"    assert _mod_{mod} is not None")
 
         if not linhas_chamadas:
             linhas_chamadas = ["    assert True"]

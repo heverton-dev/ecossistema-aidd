@@ -1867,3 +1867,21 @@
   - 2 testes novos: PASSED (red→green confirmado).
 - **Pendências registradas:** Achados #2, #3 e #4 do motor (fase 8 planos genéricos; contradiction infrastructure/ vs PYTHONPATH; SQLite cross-thread nos testes).
 - **Status:** **RESOLVIDO NA BRANCH `fix/pure-motor-fase2-spec`.**
+
+---
+
+## Seção 22 — Achado #2: Fase 8 gera `assert True` para módulos com nomes arbitrários
+
+- **Data:** 15/10/2026
+- **Ferramenta:** `aidd-pure`
+- **Achado:** `_gerar_teste_integracao_deterministico` usava keyword-match no nome do módulo (`validador`, `servico`, `persistencia`, `quarteto`). Módulos com nomes fora dessas keywords produziam `linhas_chamadas` vazia → corpo do teste de integração era `assert True` (placeholder inútil).
+- **Fix aplicado (`08_implementador.py`):**
+  - Novo método `_extrair_simbolo_publico(codigo)`: extrai via AST a primeira função/classe pública do código gerado.
+  - Ramo `else` no loop: usa o símbolo extraído para gerar `from <mod> import <simbolo>` + `assert <simbolo> is not None`; fallback para `import <mod> as _mod_<mod>` + `assert _mod_<mod> is not None` quando não há símbolo.
+  - Módulos com keywords conhecidas: comportamento preservado (regressão verificada).
+- **Testes adicionados:** `tests/test_phase_08_integracao_modulos_reais.py` — 9 testes (4 genéricos RED→GREEN, 4 regressão keywords, 1 múltiplos módulos).
+- **Resultados Medidos (15/10/2026):**
+  - `aidd-pure`: **1032 passed, 5 skipped** (sem regressão).
+  - 9 testes novos: PASSED (red→green confirmado).
+- **Pendências registradas:** Achados #3 e #4 do motor (contradiction infrastructure/ vs PYTHONPATH; SQLite cross-thread nos testes).
+- **Status:** **RESOLVIDO NA BRANCH `fix/pure-motor-fase2-spec`.**
