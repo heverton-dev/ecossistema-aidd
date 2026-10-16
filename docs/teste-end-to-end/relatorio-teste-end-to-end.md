@@ -1922,3 +1922,22 @@
   - Suíte `test_open_achados_tdd.py`: **3 passed** em 0.44s.
   - Suíte completa do `aidd-open`: **24 passed** (100% de aprovação, 0 falhas).
 - **Status:** **RESOLVIDO E AUDITADO VIA TDD (GREEN).**
+
+## Seção 25 — Auditoria do Motor AIDD-Freedom: Rotas TanStack, Função C3 e Vazamento de .env (`aidd-freedom`)
+
+- **Data da Auditoria e Validação:** 16/10/2026
+- **Ferramentas Tocadas:**
+  `modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom` (`aidd_freedom/scanner.py`, `aidd_freedom/cli.py`, `aidd_freedom/frontend_liberator.py`).
+- **Achados Identificados e Corrigidos (TDD Red -> Green):**
+  1. **Achado #1 (Rotas TanStack erradas):** `posts.$postId.tsx` virava `/posts.$postId`, `_auth.login.tsx` virava `/_auth.login`, `files.$.tsx` virava `/files.$`; `-helper.tsx` e `routeTree.gen.ts` entravam como rota/página.
+     - *Correção:* `_caminho_rota_tanstack` trata formato plano, pastas, `index`/`route`, layouts pathless, `posts_`, grupos `(grp)`, splat e parâmetros; arquivos `-*` e `routeTree.gen` são ignorados.
+  2. **Achado #2 (`funcao` do contrato C3 inválida):** `renderizar_posts-postid-tsx` (hífen + extensão, não é identificador) e colisão entre rotas homônimas em pastas distintas.
+     - *Correção:* `_funcoes_unicas_c3` gera identificador Python válido e único por rota.
+  3. **Achado #3 (Vazamento de segredos):** `FrontendLiberator` copiava `.env.production`, `.env.staging` e `.env.*.local` da origem para a saída.
+     - *Correção:* qualquer `.env*` é bloqueado, exceto `.env.example/.sample/.template/.dist`.
+  4. **Achado #4 (Builds SSR copiados):** `.output`, `.vinxi`, `.wrangler`, `.vercel`, `.netlify` agora ignorados.
+- **Testes Adicionados:**
+  - `modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom/tests/test_achados_auditoria_freedom.py` — 7 testes.
+- **Resultados Medidos (16/10/2026):**
+  - Suíte completa do `aidd-freedom`: **82 passed** (base anterior: 75), 0 falhas.
+- **Status:** **RESOLVIDO E AUDITADO VIA TDD (GREEN).**

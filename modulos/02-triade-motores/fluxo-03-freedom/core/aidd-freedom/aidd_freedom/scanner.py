@@ -102,6 +102,41 @@ class LovableScanner:
         except Exception as e:
             return {"error": str(e)}
 
+    @staticmethod
+    def _ignorado_tanstack(nome: str) -> bool:
+        """Arquivos que o TanStack Router nao trata como rota: `__root`, prefixo `-`
+        (colocalizado) e o routeTree.gen gerado."""
+        return nome.startswith(("__", "-")) or nome.startswith("routeTree.gen")
+
+    @staticmethod
+    def _caminho_rota_tanstack(rel: str):
+        """Converte o caminho relativo de um arquivo de rota TanStack em URL.
+
+        Cobre formato plano (`posts.$postId.tsx`), pastas, `index`/`route`,
+        layouts pathless (`_auth`), opt-out de aninhamento (`posts_`), grupos
+        `(grp)`, splat (`$`) e parametros (`$id`). Devolve None se algum
+        segmento for ignorado (prefixo `-`)."""
+        base = os.path.splitext(rel)[0]
+        segmentos = []
+        for parte in base.split("/"):
+            segmentos.extend(parte.split("."))
+        saida = []
+        for i, seg in enumerate(segmentos):
+            if not seg or seg.startswith("-"):
+                return None
+            if seg == "index" or (seg == "route" and i == len(segmentos) - 1):
+                continue
+            if seg.startswith("_") or (seg.startswith("(") and seg.endswith(")")):
+                continue
+            seg = seg.rstrip("_")
+            if seg == "$":
+                saida.append("*")
+            elif seg.startswith("$"):
+                saida.append(f":{seg[1:]}")
+            elif seg:
+                saida.append(seg)
+        return "/" + "/".join(saida)
+
     def _scan_pages(self) -> List[str]:
         pages = []
         for candidate_dir in ["src/pages", "src/routes"]:
@@ -109,7 +144,7 @@ class LovableScanner:
             if os.path.exists(full_dir):
                 for root, _, files in os.walk(full_dir):
                     for file in files:
-                        if file.endswith((".tsx", ".jsx", ".js", ".ts")) and not file.startswith("__"):
+                        if file.endswith((".tsx", ".jsx", ".js", ".ts")) and not self._ignorado_tanstack(file):
                             rel = os.path.relpath(os.path.join(root, file), self.project_dir)
                             pages.append(rel.replace("\\", "/"))
         return sorted(pages)
@@ -120,25 +155,14 @@ class LovableScanner:
         # 1. TanStack Router (File-based Routing em src/routes)
         routes_dir = os.path.join(self.project_dir, "src", "routes")
         if os.path.exists(routes_dir):
-            for root, _, files in os.walk(routes_dir):
+            for root, dirs, files in os.walk(routes_dir):
+                dirs.sort()
                 for file in sorted(files):
-                    if file.endswith((".tsx", ".jsx")) and not file.startswith("__"):
+                    if file.endswith((".tsx", ".jsx")) and not self._ignorado_tanstack(file):
                         rel_to_routes = os.path.relpath(os.path.join(root, file), routes_dir).replace("\\", "/")
-                        # Converte nome de arquivo TanStack em caminho de rota
-                        clean_name = rel_to_routes.replace(".tsx", "").replace(".jsx", "")
-                        if clean_name == "index":
-                            path = "/"
-                        else:
-                            parts = clean_name.split("/")
-                            formatted_parts = []
-                            for p in parts:
-                                if p == "index":
-                                    continue
-                                if p.startswith("$"):
-                                    formatted_parts.append(f":{p[1:]}")
-                                else:
-                                    formatted_parts.append(p)
-                            path = "/" + "/".join(formatted_parts)
+                        path = self._caminho_rota_tanstack(rel_to_routes)
+                        if path is None:
+                            continue
                         routes.append({
                             "path": path,
                             "component": file,

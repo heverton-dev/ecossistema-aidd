@@ -15,7 +15,8 @@ from typing import Dict, List
 
 from .vendor_patterns import EXTENSOES_VARREDURA, ANON_KEY_ASSIGNMENT, SUPABASE_URL_LITERAL
 
-IGNORAR_DIRS = {"node_modules", "dist", "build", ".git", ".next", ".nuxt", "__pycache__", ".turbo"}
+IGNORAR_DIRS = {"node_modules", "dist", "build", ".git", ".next", ".nuxt", "__pycache__", ".turbo",
+                ".output", ".vinxi", ".wrangler", ".vercel", ".netlify"}
 
 # Nunca copiar .env/.env.local/.env.development/etc para a saida liberada:
 # esses arquivos guardam segredos REAIS do projeto de origem (ex: chave da
@@ -27,6 +28,14 @@ IGNORAR_DIRS = {"node_modules", "dist", "build", ".git", ".next", ".nuxt", "__py
 # so tem placeholders, e documentacao util pro operador saber que variaveis
 # configurar.
 ENV_FILES_PROIBIDOS = {".env", ".env.local", ".env.development", ".env.production.local", ".env.test"}
+# Sufixos seguros por convencao (so placeholders); qualquer outro `.env.<x>` e `.env.<x>.local` e segredo.
+ENV_SUFIXOS_SEGUROS = {".env.example", ".env.sample", ".env.template", ".env.dist"}
+
+
+def _env_proibido(filename: str) -> bool:
+    if filename in ENV_FILES_PROIBIDOS:
+        return True
+    return filename.startswith(".env") and filename not in ENV_SUFIXOS_SEGUROS
 
 
 class FrontendLiberator:
@@ -42,7 +51,7 @@ class FrontendLiberator:
         for root, dirs, files in os.walk(self.project_dir):
             dirs[:] = [d for d in dirs if d not in IGNORAR_DIRS]
             for filename in files:
-                if filename in ENV_FILES_PROIBIDOS:
+                if _env_proibido(filename):
                     continue
                 src_path = os.path.join(root, filename)
                 rel_path = os.path.relpath(src_path, self.project_dir)
