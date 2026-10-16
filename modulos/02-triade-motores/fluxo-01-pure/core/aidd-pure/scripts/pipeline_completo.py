@@ -45,6 +45,7 @@ Consolidação v2.4 (Item 2 — unificar-orquestradores-generator-e-ops):
 import sys
 import os
 import json
+import re
 import time
 import hashlib
 from types import SimpleNamespace
@@ -1055,9 +1056,16 @@ def _emitir_contrato_c3(pasta_projeto: Path, slug_projeto: str = None) -> Option
         if planner_json.exists():
             try:
                 plano_d = json.loads(planner_json.read_text(encoding='utf-8'))
-                slug = plano_d.get('slug') or plano_d.get('metadados_projeto', {}).get('slug') or slug
+                slug = (
+                    (plano_d.get('meta') or {}).get('slug')
+                    or plano_d.get('slug')
+                    or (plano_d.get('metadados_projeto') or {}).get('slug')
+                    or slug
+                )
             except Exception:
                 pass
+        # O schema do C3 exige ^[a-z0-9-]+$: nome de pasta (ex.: "Meu_Projeto.v2") nao serve cru.
+        slug = re.sub(r'[^a-z0-9]+', '-', str(slug).lower()).strip('-') or 'projeto'
 
         c3_payload = {
             'versao_schema': '1.0.0',
