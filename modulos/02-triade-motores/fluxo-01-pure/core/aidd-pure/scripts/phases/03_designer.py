@@ -21,6 +21,7 @@ import sys
 import os
 import time
 import json
+import re
 import hashlib
 from pathlib import Path
 from datetime import datetime, timezone
@@ -535,6 +536,95 @@ class DesignerFase3:
 
         return resultados
 
+    @staticmethod
+    def _slug_de_script(modulo: Dict, usados: set, indice: int) -> str:
+        """Identificador Python seguro e único derivado do módulo do Planner."""
+        bruto = str(modulo.get('slug') or modulo.get('nome') or modulo.get('modulo') or '')
+        slug = re.sub(r'[^a-z0-9]+', '_', bruto.lower()).strip('_') or f'modulo_{indice}'
+        if slug[0].isdigit():
+            slug = f'm_{slug}'
+        base, n = slug, 2
+        while slug in usados:
+            slug, n = f'{base}_{n}', n + 1
+        usados.add(slug)
+        return slug
+
+    def _scripts_do_design_handoff(self, modulos: List[Dict]) -> List[Dict]:
+        """Ticket 11-A: um conjunto de scripts por módulo do Planner (validador,
+        serviço, persistência) + o Quarteto compartilhado. Sem módulos, mantém
+        o esqueleto fixo anterior."""
+        if not modulos:
+            return self._scripts_esqueleto_fixo()
+        usados: set = set()
+        scripts: List[Dict] = []
+        for indice, modulo in enumerate(modulos, start=1):
+            slug = self._slug_de_script(modulo if isinstance(modulo, dict) else {}, usados, indice)
+            scripts.extend([
+                {
+                    "camada": 1,
+                    "nome": f"validadores_{slug}.py",
+                    "responsabilidade": f"Validar payloads de entrada do módulo {slug}",
+                    "pseudocodigo": f"Validar campos obrigatórios das entidades de {slug} com Pydantic e retornar erros 422 descritivos",
+                    "determinismo_percentual": 100,
+                    "teste": f"assert validador_{slug}.validar(payload).is_valid"
+                },
+                {
+                    "camada": 2,
+                    "nome": f"servicos_{slug}.py",
+                    "responsabilidade": f"Aplicar as regras de negócio do módulo {slug}",
+                    "pseudocodigo": f"Executar transações de negócio de {slug} e registrar auditoria",
+                    "determinismo_percentual": 100,
+                    "teste": f"assert servico_{slug}.executar(cmd).sucesso is True"
+                },
+                {
+                    "camada": 3,
+                    "nome": f"persistencia_{slug}.py",
+                    "responsabilidade": f"Persistência atômica SQLite WAL das entidades de {slug}",
+                    "pseudocodigo": f"Conectar SQLite WAL, executar queries preparadas de {slug} e commit",
+                    "determinismo_percentual": 100,
+                    "teste": f"assert repo_{slug}.salvar(registro).id is not None"
+                },
+            ])
+        scripts.append(self._scripts_esqueleto_fixo()[-1])
+        return scripts
+
+    @staticmethod
+    def _scripts_esqueleto_fixo() -> List[Dict]:
+        return [
+            {
+                "camada": 1,
+                "nome": "validadores.py",
+                "responsabilidade": "Validar payloads de entrada e contratos Pydantic",
+                "pseudocodigo": "Validar campos obrigatórios com Pydantic e retornar erros 422 descritivos",
+                "determinismo_percentual": 100,
+                "teste": "assert validador.validar(payload).is_valid"
+            },
+            {
+                "camada": 2,
+                "nome": "servicos_dominio.py",
+                "responsabilidade": "Processar regras de negócio e lógica de aplicação",
+                "pseudocodigo": "Executar transações de negócio e registrar auditoria",
+                "determinismo_percentual": 100,
+                "teste": "assert servico.executar(cmd).sucesso is True"
+            },
+            {
+                "camada": 3,
+                "nome": "persistencia_sqlite.py",
+                "responsabilidade": "Persistência atômica no SQLite com WAL ativo",
+                "pseudocodigo": "Conectar SQLite WAL, executar queries preparadas e commit",
+                "determinismo_percentual": 100,
+                "teste": "assert repo.salvar(registro).id is not None"
+            },
+            {
+                "camada": 4,
+                "nome": "quarteto_studios.py",
+                "responsabilidade": "Disponibilizar endpoints OpenAPI, MCP Server, Webhooks e Docs",
+                "pseudocodigo": "Registrar rotas FastAPI, rotas SSE MCP e dispatcher HMAC",
+                "determinismo_percentual": 100,
+                "teste": "assert client.get('/docs').status_code == 200"
+            }
+        ]
+
     def _gerar_design_deterministico_handoff(self, plano_arquivo: Path, ideia_projeto: str) -> Dict:
         """Gera design arquitetural 100% determinístico baseado no contrato do Planner (Lei #1)."""
         with open(plano_arquivo, "r", encoding="utf-8") as f_plano:
@@ -582,40 +672,7 @@ class DesignerFase3:
             }
         ]
 
-        scripts = [
-            {
-                "camada": 1,
-                "nome": "validadores.py",
-                "responsabilidade": "Validar payloads de entrada e contratos Pydantic",
-                "pseudocodigo": "Validar campos obrigatórios com Pydantic e retornar erros 422 descritivos",
-                "determinismo_percentual": 100,
-                "teste": "assert validador.validar(payload).is_valid"
-            },
-            {
-                "camada": 2,
-                "nome": "servicos_dominio.py",
-                "responsabilidade": "Processar regras de negócio e lógica de aplicação",
-                "pseudocodigo": "Executar transações de negócio e registrar auditoria",
-                "determinismo_percentual": 100,
-                "teste": "assert servico.executar(cmd).sucesso is True"
-            },
-            {
-                "camada": 3,
-                "nome": "persistencia_sqlite.py",
-                "responsabilidade": "Persistência atômica no SQLite com WAL ativo",
-                "pseudocodigo": "Conectar SQLite WAL, executar queries preparadas e commit",
-                "determinismo_percentual": 100,
-                "teste": "assert repo.salvar(registro).id is not None"
-            },
-            {
-                "camada": 4,
-                "nome": "quarteto_studios.py",
-                "responsabilidade": "Disponibilizar endpoints OpenAPI, MCP Server, Webhooks e Docs",
-                "pseudocodigo": "Registrar rotas FastAPI, rotas SSE MCP e dispatcher HMAC",
-                "determinismo_percentual": 100,
-                "teste": "assert client.get('/docs').status_code == 200"
-            }
-        ]
+        scripts = self._scripts_do_design_handoff(modulos)
 
         tokens_info = {
             "fases": [

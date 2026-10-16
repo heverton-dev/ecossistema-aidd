@@ -1941,3 +1941,19 @@
 - **Resultados Medidos (16/10/2026):**
   - Suíte completa do `aidd-freedom`: **82 passed** (base anterior: 75), 0 falhas.
 - **Status:** **RESOLVIDO E AUDITADO VIA TDD (GREEN).**
+
+## Seção 26 — Retomada do Fluxo PURE: branches órfãs integradas e Ticket 11-A (`aidd-pure`)
+
+- **Data da Auditoria e Validação:** 16/10/2026
+- **Ferramentas Tocadas:**
+  `modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure` (`scripts/phases/03_designer.py`).
+- **Integração de branches órfãs (cherry-pick, nunca tinham chegado à `main`):**
+  `fix/pure-etapa-03-gitignore-env` (regra `.env` no `.gitignore`), `fix/pure-etapa-03-dryrun-sem-mkdir` (`pure --dry-run` não cria a pasta) e `fix/pure-etapa-02-hash-impeccable` (verify distingue deriva de versão de adulteração; `add-skill --versao-esperada`). Conflito no pin da `impeccable` resolvido mantendo o hash da 4.6.0 instalada, com `versao_esperada: 4.6.0`.
+- **Achado Identificado e Corrigido (TDD Red -> Green), Ticket 11-A da ETAPA_11:**
+  o design determinístico da Fase 3 (`_gerar_design_deterministico_handoff`) lia `modulos_funcionais` do Planner mas sempre emitia o mesmo esqueleto fixo (`validadores.py`, `servicos_dominio.py`, `persistencia_sqlite.py`, `quarteto_studios.py`).
+  - *Correção:* `_scripts_do_design_handoff` gera `validadores_<slug>.py`, `servicos_<slug>.py` e `persistencia_<slug>.py` por módulo (slug seguro e único) mais o `quarteto_studios.py` compartilhado; sem módulos mantém o esqueleto antigo.
+- **Testes Adicionados:**
+  `modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/tests/test_phase_03_scripts_por_modulo.py` — 5 testes (2 vermelhos antes da correção).
+- **Resultados Medidos (16/10/2026):**
+  - Suíte completa do `aidd-pure`: **1040 passed**, 5 skipped.
+- **Status:** **RESOLVIDO VIA TDD (GREEN); aguardando aprovação do usuário para push.**
