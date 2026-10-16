@@ -24,6 +24,26 @@ def _slugify(texto: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", str(texto).lower()).strip("-") or "app"
 
 
+def _funcoes_unicas_c3(rotas, dominio: str):
+    """Nomes de funcao do contrato C3: identificador Python valido e unico por rota."""
+    usados, nomes = set(), []
+    for rota in rotas:
+        if isinstance(rota, dict):
+            if rota.get("type") == "tanstack-file-route":
+                base = os.path.splitext(rota.get("source_file") or rota.get("component") or dominio)[0]
+            else:
+                base = rota.get("component", dominio)
+        else:
+            base = dominio
+        slug = re.sub(r"[^a-z0-9]+", "_", str(base).lower()).strip("_") or "app"
+        nome, n = f"renderizar_{slug}", 2
+        while nome in usados:
+            nome, n = f"renderizar_{slug}_{n}", n + 1
+        usados.add(nome)
+        nomes.append(nome)
+    return nomes
+
+
 def _resolver_projeto_scan(args) -> str:
     """Pasta do projeto de destino do scan (nunca o export escaneado).
 
@@ -144,12 +164,12 @@ def cmd_scan(args):
         return 1
 
     # Contrato C3 gravado pela propria ferramenta (quem produz escreve).
+    rotas_manifesto = manifest.get("routes", [])
+    funcoes = _funcoes_unicas_c3(rotas_manifesto, dominio)
     endpoints = []
-    for rota in manifest.get("routes", []):
+    for rota, funcao in zip(rotas_manifesto, funcoes):
         path = rota.get("path") if isinstance(rota, dict) else str(rota)
-        comp = rota.get("component", dominio) if isinstance(rota, dict) else dominio
-        endpoints.append({"rota": path, "metodo": "GET",
-                          "funcao": f"renderizar_{_slugify(comp)}"})
+        endpoints.append({"rota": path, "metodo": "GET", "funcao": funcao})
     tabelas = sorted(set(re.findall(
         r"CREATE TABLE (?:IF NOT EXISTS )?([A-Za-z0-9_.]+)",
         sql_convertido, flags=re.IGNORECASE)))
