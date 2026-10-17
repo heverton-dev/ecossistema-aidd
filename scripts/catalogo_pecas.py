@@ -828,7 +828,10 @@ def coletar_modulos() -> list[dict]:
     moram ali (MAPA-DONOS-FERRAMENTAS.json), guardas e arquivos .py."""
     donas = pastas()
     areas = []
-    for area in sorted(p for p in (RAIZ / "modulos").iterdir() if p.is_dir() and not p.name.startswith(("_", "."))):
+    pasta_modulos = RAIZ / "modulos"
+    if not pasta_modulos.is_dir():
+        return areas
+    for area in sorted(p for p in pasta_modulos.iterdir() if p.is_dir() and not p.name.startswith(("_", "."))):
         fatias = []
         for fatia in sorted(p for p in area.iterdir() if p.is_dir() and p.name not in IGNORAR
                             and not p.name.startswith(("_", "."))):
@@ -851,6 +854,8 @@ def coletar_agentes() -> list[dict]:
     por nome; versão por conteúdo (A, B…), como nos guardas: mesma letra = cópia idêntica."""
     base = RAIZ / "modulos" / "03-plataforma-e-entrega"
     por_nome = defaultdict(list)
+    if not base.is_dir():
+        return []
     for pasta in sorted(base.rglob("templates/agents")):
         if pasta.is_dir() and not _ignorado(pasta.relative_to(RAIZ)):
             for arq in sorted(pasta.glob("*.md")):

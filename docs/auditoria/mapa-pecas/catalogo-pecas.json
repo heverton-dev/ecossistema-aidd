@@ -19,7 +19,7 @@
     "mcps_internos": 5,
     "hooks": 5,
     "gates_nomes": 105,
-    "gates_arquivos": 133,
+    "gates_arquivos": 134,
     "contratos": 9,
     "etapas_receita": 7,
     "pipelines": 12,
@@ -2564,6 +2564,18 @@
         "fases": {
           "laudo_inicial": true,
           "plano_evolucao": true,
+          "laudo_revisado": false,
+          "dod": true
+        },
+        "nota": ""
+      },
+      {
+        "alvo": "kits-camadas",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/kits-camadas/ciclo-01",
+        "fases": {
+          "laudo_inicial": false,
+          "plano_evolucao": false,
           "laudo_revisado": false,
           "dod": true
         },
@@ -5164,12 +5176,17 @@
       "descricao": "Quality Gate determinístico que valida a integridade do template canônico TanStack Offline. Regido pelas Leis #1, #6, #10 e #11 do Ecossistema AIDD.",
       "copias": [
         {
-          "caminho": "modulos/02-triade-motores/fluxo-01-pure/gates/G_TEMPLATE_TANSTACK_OFFLINE.py",
+          "caminho": "componentes/compartilhado/gates/G_TEMPLATE_TANSTACK_OFFLINE.py",
           "versao": "A",
+          "papel": "componente"
+        },
+        {
+          "caminho": "modulos/02-triade-motores/fluxo-01-pure/gates/G_TEMPLATE_TANSTACK_OFFLINE.py",
+          "versao": "B",
           "papel": "ecossistema"
         }
       ],
-      "versoes_distintas": 1,
+      "versoes_distintas": 2,
       "no_pre_commit": true,
       "prova_que_morde": true,
       "leis": [
@@ -6694,6 +6711,7 @@
       "G_SAIDA_BINARIA",
       "G_SEGREDOS",
       "G_STACK_PADRAO_OURO",
+      "G_TEMPLATE_TANSTACK_OFFLINE",
       "G_TESTES_REAIS"
     ],
     "skills_mesma_descricao": [],

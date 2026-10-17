@@ -222,7 +222,7 @@ Onde mora: `gates/` e `tools/<f>/gates/`. Quem confere: o próprio pre-commit e 
 | guardas (nomes) | 105 |
 | no ecossistema | 72 |
 | rodam no commit | 67 |
-| com versões diferentes | 10 |
+| com versões diferentes | 11 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_gates`), os mesmos do mapa `mapa-04-guardas.html`.
 
@@ -537,7 +537,7 @@ Onde mora: `docs/planos/` e `docs/auditoria/`. Quem confere: o `scripts/atualiza
 | :-------------------------------------- | :-------------------------------------------- |
 | planos | 0 |
 | em execução | 0 |
-| ciclos de auditoria | 58 |
+| ciclos de auditoria | 59 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_oficina`), os mesmos do mapa `mapa-11-oficina.html`.
 
