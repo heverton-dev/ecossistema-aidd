@@ -1,49 +1,74 @@
-import os
-import shutil
+"""
+Bateria TDD para G_TEMPLATE_TANSTACK_OFFLINE.py — prova que o gate morde (Lei #13).
+Red: fixtures quebradas devem retornar exit 1.
+Green: template real deve retornar exit 0.
+"""
+import json
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
-
-def test_g_template_tanstack_offline_passa_no_template_real():
-    """Valida que o template canônico em componentes/compartilhado passa com exit 0."""
-    cmd = [
-        sys.executable,
-        "modulos/02-triade-motores/fluxo-01-pure/gates/G_TEMPLATE_TANSTACK_OFFLINE.py",
-        "componentes/compartilhado/templates/frontend-tanstack"
-    ]
-    res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8")
-    assert res.returncode == 0, f"Deveria passar com exit 0, mas retornou {res.returncode}: {res.stdout}\n{res.stderr}"
-    assert "EXIT 0" in res.stdout
+GATE = Path(__file__).parent.parent / "componentes" / "compartilhado" / "gates" / "G_TEMPLATE_TANSTACK_OFFLINE.py"
+TEMPLATE_REAL = Path(__file__).parent.parent / "componentes" / "compartilhado" / "templates" / "frontend-tanstack"
 
 
-def test_g_template_tanstack_offline_morde_se_houver_lockin(tmp_path):
-    """Lei #13: Prova que o portão morde (exit 1) se houver dependência com lock-in."""
-    origem = Path("componentes/compartilhado/templates/frontend-tanstack")
-    destino = tmp_path / "template-corrompido"
-    shutil.copytree(origem, destino)
-
-    pkg = destino / "package.json"
-    conteudo = pkg.read_text(encoding="utf-8")
-    pkg.write_text(conteudo.replace('"@tanstack/react-router":', '"@lovable.dev/cloud-auth-js": "1.0",\n    "@tanstack/react-router":'), encoding="utf-8")
-
-    cmd = [sys.executable, "modulos/02-triade-motores/fluxo-01-pure/gates/G_TEMPLATE_TANSTACK_OFFLINE.py", str(destino)]
-    res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8")
-    assert res.returncode == 1, f"Deveria falhar com exit 1 por lock-in, mas retornou {res.returncode}"
-    assert "Violação da Lei #6: detectada dependência com '@lovable.dev'" in res.stdout
+def rodar_gate(pasta: Path) -> int:
+    r = subprocess.run(
+        [sys.executable, str(GATE), str(pasta)],
+        capture_output=True,
+    )
+    return r.returncode
 
 
-def test_g_template_tanstack_offline_morde_se_faltar_quarteto(tmp_path):
-    """Lei #13: Prova que o portão morde (exit 1) se o AdminShell não integrar o Quarteto."""
-    origem = Path("componentes/compartilhado/templates/frontend-tanstack")
-    destino = tmp_path / "template-sem-quarteto"
-    shutil.copytree(origem, destino)
+def test_gate_morde_pacote_proprietario(tmp_path):
+    """exit 1 se package.json contém pacote de lock-in (lovable-auth)."""
+    (tmp_path / "package.json").write_text(
+        json.dumps({"dependencies": {"lovable-auth": "^1.0.0", "@tanstack/react-router": "^1.0.0"}}),
+        encoding="utf-8",
+    )
+    (tmp_path / "template-manifest.json").write_text("{}", encoding="utf-8")
+    shells = tmp_path / "src" / "components"
+    shells.mkdir(parents=True)
+    (shells / "AdminShell.tsx").write_text("export default function AdminShell() {}", encoding="utf-8")
+    (shells / "MobileShell.tsx").write_text("export default function MobileShell() {}", encoding="utf-8")
+    offline = tmp_path / "src" / "lib" / "offline"
+    offline.mkdir(parents=True)
+    (offline / "sync-queue.ts").write_text("// hmac", encoding="utf-8")
+    assert rodar_gate(tmp_path) == 1
 
-    shell = destino / "src" / "components" / "AdminShell.tsx"
-    conteudo = shell.read_text(encoding="utf-8")
-    shell.write_text(conteudo.replace('to="/webhook"', 'to="/outro"'), encoding="utf-8")
 
-    cmd = [sys.executable, "modulos/02-triade-motores/fluxo-01-pure/gates/G_TEMPLATE_TANSTACK_OFFLINE.py", str(destino)]
-    res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8")
-    assert res.returncode == 1, f"Deveria falhar com exit 1 por falta de rota do Quarteto, mas retornou {res.returncode}"
-    assert "AdminShell não possui link de navegação para '/webhook'" in res.stdout
+def test_gate_morde_sem_shells(tmp_path):
+    """exit 1 se AdminShell.tsx ou MobileShell.tsx ausentes."""
+    (tmp_path / "package.json").write_text(
+        json.dumps({"dependencies": {"@tanstack/react-router": "^1.0.0"}}),
+        encoding="utf-8",
+    )
+    (tmp_path / "template-manifest.json").write_text("{}", encoding="utf-8")
+    # sem src/components
+    offline = tmp_path / "src" / "lib" / "offline"
+    offline.mkdir(parents=True)
+    (offline / "sync-queue.ts").write_text("// hmac", encoding="utf-8")
+    assert rodar_gate(tmp_path) == 1
+
+
+def test_gate_morde_sem_hmac(tmp_path):
+    """exit 1 se sync-queue.ts não menciona hmac."""
+    (tmp_path / "package.json").write_text(
+        json.dumps({"dependencies": {"@tanstack/react-router": "^1.0.0"}}),
+        encoding="utf-8",
+    )
+    (tmp_path / "template-manifest.json").write_text("{}", encoding="utf-8")
+    shells = tmp_path / "src" / "components"
+    shells.mkdir(parents=True)
+    (shells / "AdminShell.tsx").write_text("export default function AdminShell() {}", encoding="utf-8")
+    (shells / "MobileShell.tsx").write_text("export default function MobileShell() {}", encoding="utf-8")
+    offline = tmp_path / "src" / "lib" / "offline"
+    offline.mkdir(parents=True)
+    (offline / "sync-queue.ts").write_text("// sem assinatura", encoding="utf-8")
+    assert rodar_gate(tmp_path) == 1
+
+
+def test_gate_passa_template_real():
+    """exit 0 no template canônico real."""
+    assert rodar_gate(TEMPLATE_REAL) == 0

@@ -1433,6 +1433,14 @@ def cmd_sessao(args):
         args = ["listar"]
     return run_command([sys.executable, script] + args, cwd=ROOT_DIR)
 
+def cmd_template_tanstack_offline(args):
+    """Valida o template canônico TanStack Offline via G_TEMPLATE_TANSTACK_OFFLINE."""
+    gate = os.path.join(ROOT_DIR, "componentes", "compartilhado", "gates", "G_TEMPLATE_TANSTACK_OFFLINE.py")
+    pasta = args[0] if args else os.path.join(ROOT_DIR, "componentes", "compartilhado", "templates", "frontend-tanstack")
+    r = subprocess.run([sys.executable, gate, pasta], cwd=ROOT_DIR)
+    return r.returncode
+
+
 def cmd_mobbin(args):
     """Executa consultas de UI, fluxos e telas via Mobbin Enterprise delegando ao aidd-planner."""
     return cmd_planner(["mobbin"] + args)
@@ -1740,6 +1748,7 @@ def comandos_disponiveis():
         "session": cmd_sessao,
         "sessoes": cmd_sessao,
         "mobbin": cmd_mobbin,
+        "template-tanstack-offline": cmd_template_tanstack_offline,
         "modularizacao-vsa": cmd_modularizacao_vsa,
         "preflight-host": cmd_preflight_host,
         "status": cmd_status,
