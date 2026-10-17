@@ -1941,3 +1941,26 @@
 - **Resultados Medidos (16/10/2026):**
   - Suíte completa do `aidd-freedom`: **82 passed** (base anterior: 75), 0 falhas.
 - **Status:** **RESOLVIDO E AUDITADO VIA TDD (GREEN).**
+
+## Seção 26 — Retomada do Fluxo PURE: branches órfãs integradas e Ticket 11-A (`aidd-pure`)
+
+- **Data da Auditoria e Validação:** 16/10/2026
+- **Ferramentas Tocadas:**
+  `modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure` (`scripts/phases/03_designer.py`).
+- **Integração de branches órfãs (cherry-pick, nunca tinham chegado à `main`):**
+  `fix/pure-etapa-03-gitignore-env` (regra `.env` no `.gitignore`), `fix/pure-etapa-03-dryrun-sem-mkdir` (`pure --dry-run` não cria a pasta) e `fix/pure-etapa-02-hash-impeccable` (verify distingue deriva de versão de adulteração; `add-skill --versao-esperada`). Conflito no pin da `impeccable` resolvido mantendo o hash da 4.6.0 instalada, com `versao_esperada: 4.6.0`.
+- **Achado Identificado e Corrigido (TDD Red -> Green), Ticket 11-A da ETAPA_11:**
+  o design determinístico da Fase 3 (`_gerar_design_deterministico_handoff`) lia `modulos_funcionais` do Planner mas sempre emitia o mesmo esqueleto fixo (`validadores.py`, `servicos_dominio.py`, `persistencia_sqlite.py`, `quarteto_studios.py`).
+  - *Correção:* `_scripts_do_design_handoff` gera `validadores_<slug>.py`, `servicos_<slug>.py` e `persistencia_<slug>.py` por módulo (slug seguro e único) mais o `quarteto_studios.py` compartilhado; sem módulos mantém o esqueleto antigo.
+- **Achados novos do `/pure` real (16/10/2026, pasta `pure_real2`, falha na etapa 4):**
+  1. **C3 reprovado por `projeto_slug`:** o slug do Planner mora em `PLANNER.json -> meta.slug`, mas `_emitir_contrato_c3` só olhava a raiz e `metadados_projeto` e caía no nome da pasta cru (`pure_real2` não casa `^[a-z0-9-]+$`). *Correção:* lê `meta.slug` e sanitiza o resultado (`pipeline_completo.py`).
+  2. **`pytest.ini` gerado só listava `src`:** o prompt da Fase 8 manda importar direto de `src/infrastructure/`, e o sandbox usa `src` + camadas, então a suíte passava na Fase 8 e reprovava no `G_TESTES_REAIS` do despacho VSA (`ModuleNotFoundError: persistencia_nucleo`). *Correção:* `pythonpath = src src/infrastructure src/domain src/application src/interfaces` (`05_criador.py`).
+- **Testes Adicionados:**
+  - `tests/test_phase_03_scripts_por_modulo.py` — 5 testes (2 vermelhos antes da correção).
+  - `tests/test_pipeline_c3_slug.py` — 3 testes (2 vermelhos).
+  - `tests/test_pytest_ini_camadas.py` — 2 testes (2 vermelhos; um deles roda o pytest real num projeto gerado).
+- **Resultados Medidos (16/10/2026):**
+  - Suíte completa do `aidd-pure`: **1045 passed**, 5 skipped.
+  - `/pure` real em `pure_real3` (pasta com underscore): **etapas 1 a 7 OK, exit 0, 944 s**; `HANDOFF_ENGINE_MASTER.json` com `projeto_slug: controle-de-pedidos` e 10/10 testes; `pytest` do projeto gerado: 20 passed.
+- **Limite declarado:** o Planner ainda colapsa a spec em um único módulo genérico (`nucleo`/`RegistroPrincipal`), então os scripts reais saíram `*_nucleo.py`; derivar `Pedido` e `Cliente` da spec fica como ticket 13-A.
+- **Status:** **RESOLVIDO VIA TDD (GREEN); aguardando aprovação do usuário para push.**

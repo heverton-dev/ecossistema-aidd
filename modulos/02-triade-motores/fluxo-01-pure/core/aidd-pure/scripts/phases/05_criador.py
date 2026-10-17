@@ -792,9 +792,13 @@ requests>=2.31.0
         # instalação editável ou config manual por quem implementa.
         # Achado real (2026-08-30): um harness entregou testes reais que
         # nunca rodaram por falta exatamente disso (ModuleNotFoundError).
+        # Achado do /pure real (16/10/2026): o prompt da Fase 8 manda importar direto
+        # o arquivo de src/infrastructure/ (e das demais camadas), e o sandbox poe
+        # src/ e cada camada no PYTHONPATH; o pytest.ini precisa listar as mesmas
+        # camadas, senao a suite passa na Fase 8 e reprova no pytest do projeto.
         pytest_ini = """[pytest]
 testpaths = tests
-pythonpath = src
+pythonpath = src src/infrastructure src/domain src/application src/interfaces
 addopts = -ra
 """
         escrever_atomico(self.pasta_projeto / 'pytest.ini', pytest_ini)

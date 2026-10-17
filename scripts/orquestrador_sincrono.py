@@ -231,7 +231,8 @@ class OrquestradorSincrono:
     def etapa_01_forge(self) -> bool:
         """Etapa 1: Fundação, Git, pre-commit e regras de governança."""
         self.log("INICIANDO ETAPA 1: aidd-forge (Fundação e Governança)", "ETAPA")
-        self.pasta.mkdir(parents=True, exist_ok=True)
+        if not self.dry_run:
+            self.pasta.mkdir(parents=True, exist_ok=True)
 
         # Garante repositorio git inicializado
         git_dir = self.pasta / ".git"
