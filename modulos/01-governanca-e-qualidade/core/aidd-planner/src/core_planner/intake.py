@@ -190,3 +190,101 @@ def descricao_da_spec(pasta: str, limite: int = 480) -> Optional[str]:
     linhas = [linha.strip() for linha in corpo.splitlines() if linha.strip()]
     descricao = " ".join(linhas)
     return descricao[:limite].rstrip() if len(descricao) >= 10 else None
+
+
+def extrair_contextos_da_spec(pasta: str) -> List[Dict[str, Any]]:
+    """Extrai bounded contexts, entidades e invariantes da spec (.aidd/intake/spec.md).
+
+    Analisa Seção 2 (Contracts & Typed Interfaces) para TypeScript interfaces e
+    Seção 3 (Invariants & Business Rules) para associar regras às entidades.
+    """
+    arquivo = caminhos(pasta)["spec"]
+    if not arquivo.is_file():
+        return []
+
+    texto = arquivo.read_text(encoding="utf-8")
+
+    # 1. Extrair Seção 2 (Contratos)
+    achou_s2 = re.search(r"^##\s*(?:2\.?\s*)?(?:Contracts|Contratos)[^\n]*\n", texto, re.IGNORECASE | re.MULTILINE)
+    texto_s2 = ""
+    if achou_s2:
+        resto_s2 = texto[achou_s2.end():]
+        fim_s2 = re.search(r"^##\s", resto_s2, re.MULTILINE)
+        texto_s2 = resto_s2[:fim_s2.start()] if fim_s2 else resto_s2
+
+    # 2. Extrair Seção 3 (Invariantes)
+    achou_s3 = re.search(r"^##\s*(?:3\.?\s*)?(?:Invariants|Invariantes|Regras)[^\n]*\n", texto, re.IGNORECASE | re.MULTILINE)
+    regras_invariantes = []
+    if achou_s3:
+        resto_s3 = texto[achou_s3.end():]
+        fim_s3 = re.search(r"^##\s", resto_s3, re.MULTILINE)
+        texto_s3 = resto_s3[:fim_s3.start()] if fim_s3 else resto_s3
+        for linha in texto_s3.splitlines():
+            linha_s = linha.strip()
+            # Casa itens numerados ou marcados com hífen: "1. Regra...", "- Regra..."
+            m_regra = re.match(r"^(?:\d+[\.\)]|[-*])\s+(.+)$", linha_s)
+            if m_regra:
+                regras_invariantes.append(m_regra.group(1).strip())
+
+    # 3. Parsear interfaces TS na Seção 2
+    # interface Nome { campo: tipo; ... }
+    padrao_interface = re.compile(r"interface\s+([A-Za-z0-9_]+)\s*\{([^}]+)\}", re.MULTILINE)
+    interfaces = padrao_interface.findall(texto_s2)
+
+    contextos: List[Dict[str, Any]] = []
+    for nome_interface, corpo in interfaces:
+        nome_entidade = nome_interface.strip()
+        # Pluraliza o nome da interface para o módulo: Pedido -> pedidos, Cliente -> clientes
+        slug_modulo = nome_entidade.lower()
+        if not slug_modulo.endswith("s"):
+            slug_modulo += "s"
+
+        atributos: Dict[str, str] = {}
+        for campo_raw in corpo.split(";"):
+            campo_raw = campo_raw.strip()
+            if not campo_raw or ":" not in campo_raw:
+                continue
+            partes = campo_raw.split(":", 1)
+            nome_campo = partes[0].strip().rstrip("?")
+            tipo_campo = partes[1].strip()
+            # Mapeamento simples de tipos TS para primitivos
+            if tipo_campo.startswith('"') or "|" in tipo_campo:
+                tipo_limpo = "string"
+            elif tipo_campo in ("number", "int", "float"):
+                tipo_limpo = "number"
+            elif tipo_campo in ("boolean", "bool"):
+                tipo_limpo = "boolean"
+            else:
+                tipo_limpo = "string"
+            atributos[nome_campo] = tipo_limpo
+
+        # Se não extraiu atributos, cria id padrão
+        if not atributos:
+            atributos = {"id": "string", "status": "string"}
+
+        # Associar invariantes relevantes a esta entidade
+        regras_entidade = [
+            r for r in regras_invariantes
+            if re.search(r"\b" + re.escape(nome_entidade) + r"\b", r, re.IGNORECASE)
+            or re.search(r"\b" + re.escape(slug_modulo) + r"\b", r, re.IGNORECASE)
+        ]
+        if not regras_entidade:
+            regras_entidade = [
+                f"O status inicial de {nome_entidade} deve ser sempre 'ativo'",
+                f"O identificador de {nome_entidade} deve ser único"
+            ]
+
+        contextos.append({
+            "modulo": slug_modulo,
+            "descricao": f"Contexto delimitado de {nome_entidade} derivado da especificação",
+            "entidades": [
+                {
+                    "nome": nome_entidade,
+                    "atributos": atributos,
+                    "regras_invariantes": regras_entidade
+                }
+            ]
+        })
+
+    return contextos
+

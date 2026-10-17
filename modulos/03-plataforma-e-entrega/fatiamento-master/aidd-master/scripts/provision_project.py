@@ -39,7 +39,7 @@ def _renderizar_e_escrever_docs_html(templates_dir, static_dir, suite_name, modu
     with open(os.path.join(static_dir, 'docs.html'), 'w', encoding='utf-8') as f:
         f.write(final_docs_html)
 
-def provision(project_desc, base_dir=None, frontend_stack='tanstack'):
+def provision(project_desc, base_dir=None, frontend_stack='tanstack', modulos_iniciais=None):
     if os.path.isabs(project_desc) or os.sep in project_desc or (os.altsep and os.altsep in project_desc) or os.path.exists(project_desc):
         project_dir = os.path.abspath(project_desc)
         slug = slugify(os.path.basename(project_dir)) or "projeto-modular"
@@ -142,34 +142,62 @@ def provision(project_desc, base_dir=None, frontend_stack='tanstack'):
             "modulos": []
         }, f, indent=2, ensure_ascii=False)
 
-    # 5. Criar modulo padrão inicial
+    # 5. Criar módulos iniciais
+    # Ticket 13-B: Se foram especificados módulos iniciais, criá-los;
+    # Caso contrário, verifica se há fatias em HANDOFF_ENGINE_MASTER.json (C3)
+    # ou PLANNER.json / HANDOFF_PLANNER_ENGINE.json. Se não houver nenhum, fallback para ["principal"].
     from add_module import criar_modulo
-    criar_modulo("principal", "Módulo principal", project_dir)
+    modulos_alvo = []
+    if modulos_iniciais:
+        modulos_alvo = [str(m).strip() for m in modulos_iniciais if str(m).strip()]
 
-    # 5.05. Renderizar docs.html de verdade (Jinja2), agora que "principal" já
-    # existe em disco (generate_documentation_html faz parsing AST do módulo).
+    if not modulos_alvo:
+        # Checar C3 (HANDOFF_ENGINE_MASTER.json) ou PLANNER.json
+        c3_caminho = os.path.join(project_dir, 'HANDOFF_ENGINE_MASTER.json')
+        planner_caminho = os.path.join(project_dir, 'PLANNER.json')
+        planner_h_caminho = os.path.join(project_dir, 'HANDOFF_PLANNER_ENGINE.json')
+        if os.path.isfile(c3_caminho):
+            try:
+                with open(c3_caminho, 'r', encoding='utf-8') as f_c3:
+                    dados_c3 = json.load(f_c3)
+                    modulos_alvo = [s.get('slice_nome') for s in dados_c3.get('slices_geradas', []) if s.get('slice_nome')]
+            except Exception:
+                pass
+        if not modulos_alvo and os.path.isfile(planner_caminho):
+            try:
+                with open(planner_caminho, 'r', encoding='utf-8') as f_pl:
+                    dados_pl = json.load(f_pl)
+                    modulos_alvo = [c.get('modulo') for c in dados_pl.get('ddd_bounded_contexts', []) if c.get('modulo')]
+            except Exception:
+                pass
+        if not modulos_alvo and os.path.isfile(planner_h_caminho):
+            try:
+                with open(planner_h_caminho, 'r', encoding='utf-8') as f_plh:
+                    dados_plh = json.load(f_plh)
+                    modulos_alvo = [c.get('modulo') or c.get('slug') for c in dados_plh.get('modulos_funcionais', []) if c.get('modulo') or c.get('slug')]
+            except Exception:
+                pass
+
+    if not modulos_alvo:
+        modulos_alvo = ["principal"]
+
+    # Cria cada módulo alvo
+    for m in modulos_alvo:
+        criar_modulo(m, f"Módulo {m}", project_dir)
+
+    # 5.05. Renderizar docs.html de verdade (Jinja2) com todos os módulos criados
     _renderizar_e_escrever_docs_html(
         templates_dir,
         os.path.join(project_dir, 'src', 'static'),
         slug,
-        ["principal"],
+        modulos_alvo,
         os.path.join(project_dir, 'src'),
     )
 
     # 5.1. Gerar o Servidor Monolítico Modular (src/server.py) e o frontend.
-    # criar_modulo() só RELIGA o server.py num módulo novo se ele já existir
-    # (ver comentário em add_module.py) — na primeira composição do projeto
-    # ele nunca existiu, então precisa ser gerado aqui, do mesmo jeito que
-    # compose_suite() faz.
-    #
-    # Lei Inviolável #11 (Padrão-Ouro de Stack, `AGENTS.md`): o frontend
-    # default é TanStack Start / Router + TypeScript + Tailwind CSS (`frontend_stack=
-    # "tanstack"`). O Super-App em HTML/CSS/JS Python puro só é gerado se
-    # pedido explicitamente (`frontend_stack="python-html"`). Next.js só se
-    # pedido explicitamente (`frontend_stack="nextjs"`).
     try:
         from compose_suite import generate_modular_server_code
-        server_code = generate_modular_server_code(slug, ["principal"], db_engine="sqlite", project_dir=project_dir)
+        server_code = generate_modular_server_code(slug, modulos_alvo, db_engine="sqlite", project_dir=project_dir)
         with open(os.path.join(project_dir, 'src', 'server.py'), 'w', encoding='utf-8') as f:
             f.write(server_code)
         print("  [+] Servidor dinâmico 'src/server.py' gerado com sucesso!")
@@ -190,7 +218,7 @@ def provision(project_desc, base_dir=None, frontend_stack='tanstack'):
             print("  [+] Front-end 'frontend/' gerado em Next.js + TypeScript + Tailwind!")
         else:
             from compose_suite import generate_superapp_index_html
-            index_html = generate_superapp_index_html(slug, ["principal"])
+            index_html = generate_superapp_index_html(slug, modulos_alvo)
             with open(os.path.join(project_dir, 'src', 'static', 'index.html'), 'w', encoding='utf-8') as f:
                 f.write(index_html)
             print("  [+] Front-end Super-App 'src/static/index.html' gerado com sucesso!")

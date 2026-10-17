@@ -168,23 +168,31 @@ def gerar_template_plano(
     slug: str,
     descricao: str,
     dominio: str,
-    modulos_adicionais: Optional[List[str]] = None
+    modulos_adicionais: Optional[List[str]] = None,
+    contextos_spec: Optional[List[Dict[str, Any]]] = None
 ) -> Dict[str, Any]:
     """Gera um dicionário de plano 100% em conformidade com o schema para o fluxo especificado."""
     if fluxo_alvo not in ["fluxo_01_generator", "fluxo_02_factory", "fluxo_03_bridge"]:
         raise ValueError(f"Fluxo alvo desconhecido: {fluxo_alvo}")
 
-    base = {
-        "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "meta": {
-            "projeto_nome": projeto_nome,
-            "slug": slug,
-            "versao": "1.0.0",
-            "descricao": descricao,
-            "dominio": dominio,
-            "fluxo_alvo": fluxo_alvo
-        },
-        "ddd_bounded_contexts": [
+    # Ticket 13-A: se a spec já traz bounded contexts tipados, usar diretamente
+    # em vez do fallback genérico 'nucleo/RegistroPrincipal'.
+    if contextos_spec:
+        ddd_contexts = list(contextos_spec)
+        bdd_cenarios = []
+        for idx, ctx in enumerate(ddd_contexts, start=1):
+            modulo_ctx = ctx.get("modulo", f"modulo_{idx}")
+            desc_ctx = ctx.get("descricao", f"Módulo {modulo_ctx}")
+            bdd_cenarios.append({
+                "id": f"SCN-{idx:03d}",
+                "modulo": modulo_ctx,
+                "titulo": f"Operação com sucesso em {modulo_ctx}",
+                "dado": "Um usuário autenticado com dados válidos",
+                "quando": f"Uma requisição POST for enviada para a rota de criação de {modulo_ctx}",
+                "entao": "O registro deve ser persistido e o sistema retorna status HTTP 201 com id gerado"
+            })
+    else:
+        ddd_contexts = [
             {
                 "modulo": "nucleo",
                 "descricao": f"Contexto delimitado principal para o domínio {dominio}",
@@ -204,8 +212,8 @@ def gerar_template_plano(
                     }
                 ]
             }
-        ],
-        "bdd_cenarios": [
+        ]
+        bdd_cenarios = [
             {
                 "id": "SCN-001",
                 "modulo": "nucleo",
@@ -214,7 +222,20 @@ def gerar_template_plano(
                 "quando": "Uma requisição POST for enviada para a rota de criação",
                 "entao": "O registro deve ser persistido e o sistema retorna status HTTP 201 com id gerado"
             }
-        ],
+        ]
+
+    base = {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "meta": {
+            "projeto_nome": projeto_nome,
+            "slug": slug,
+            "versao": "1.0.0",
+            "descricao": descricao,
+            "dominio": dominio,
+            "fluxo_alvo": fluxo_alvo
+        },
+        "ddd_bounded_contexts": ddd_contexts,
+        "bdd_cenarios": bdd_cenarios,
         "quarteto_sine_qua_non": {
           "swagger": {
             "ativo": True,
@@ -278,25 +299,48 @@ def gerar_template_plano(
         })
 
     if fluxo_alvo == "fluxo_01_generator":
-        base["payload_especifico_fluxo"] = {
-            "fatias_vsa": [
-                {
-                    "nome": "nucleo",
+        if contextos_spec:
+            fatias_vsa = []
+            casos_tdd = []
+            for ctx in ddd_contexts:
+                m_nome = ctx.get("modulo", "modulo")
+                fatias_vsa.append({
+                    "nome": m_nome,
                     "endpoints": [
-                        {"metodo": "POST", "caminho": "/nucleo", "resumo": "Cria novo registro"},
-                        {"metodo": "GET", "caminho": "/nucleo/{id}", "resumo": "Busca registro por ID"}
+                        {"metodo": "POST", "caminho": f"/{m_nome}", "resumo": f"Cria novo registro em {m_nome}"},
+                        {"metodo": "GET", "caminho": f"/{m_nome}/{{id}}", "resumo": f"Busca registro em {m_nome} por ID"}
                     ],
-                    "modelos": ["RegistroPrincipalCreate", "RegistroPrincipalResponse"]
-                }
-            ],
-            "casos_teste_tdd": [
-                {
-                    "nome": "test_criar_registro_sucesso",
-                    "red_expectation": "Rota POST /nucleo retorna 404 antes da implementação",
-                    "green_assertion": "Rota POST /nucleo retorna 201 com JSON contendo id e status ativo"
-                }
-            ]
-        }
+                    "modelos": [f"{m_nome.capitalize()}Create", f"{m_nome.capitalize()}Response"]
+                })
+                casos_tdd.append({
+                    "nome": f"test_criar_{m_nome}_sucesso",
+                    "red_expectation": f"Rota POST /{m_nome} retorna 404 antes da implementação",
+                    "green_assertion": f"Rota POST /{m_nome} retorna 201 com JSON contendo id e status ativo"
+                })
+            base["payload_especifico_fluxo"] = {
+                "fatias_vsa": fatias_vsa,
+                "casos_teste_tdd": casos_tdd
+            }
+        else:
+            base["payload_especifico_fluxo"] = {
+                "fatias_vsa": [
+                    {
+                        "nome": "nucleo",
+                        "endpoints": [
+                            {"metodo": "POST", "caminho": "/nucleo", "resumo": "Cria novo registro"},
+                            {"metodo": "GET", "caminho": "/nucleo/{id}", "resumo": "Busca registro por ID"}
+                        ],
+                        "modelos": ["RegistroPrincipalCreate", "RegistroPrincipalResponse"]
+                    }
+                ],
+                "casos_teste_tdd": [
+                    {
+                        "nome": "test_criar_registro_sucesso",
+                        "red_expectation": "Rota POST /nucleo retorna 404 antes da implementação",
+                        "green_assertion": "Rota POST /nucleo retorna 201 com JSON contendo id e status ativo"
+                    }
+                ]
+            }
     elif fluxo_alvo == "fluxo_02_factory":
         base["payload_especifico_fluxo"] = {
             "ferramentas_opensource": [

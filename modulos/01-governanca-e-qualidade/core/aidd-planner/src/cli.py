@@ -100,6 +100,8 @@ def cmd_init(args: argparse.Namespace) -> int:
         # sem --descricao, o motor recebe o contexto da spec (e não o texto de template)
         descricao = intake.descricao_da_spec(pasta_destino) or descricao
 
+    contextos_spec = intake.extrair_contextos_da_spec(pasta_destino)
+
     if os.path.exists(arquivo_saida) and not args.force:
         print(f"[ERRO] O arquivo '{arquivo_saida}' já existe. Use --force para sobrescrever.", file=sys.stderr)
         return 1
@@ -111,6 +113,7 @@ def cmd_init(args: argparse.Namespace) -> int:
         descricao=descricao,
         dominio=dominio,
         modulos_adicionais=getattr(args, "dominio_modulo", None),
+        contextos_spec=contextos_spec or None,
     )
 
     valido, erros = validar_plano(plano)

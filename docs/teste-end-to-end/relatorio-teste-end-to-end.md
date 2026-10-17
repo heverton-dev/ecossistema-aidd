@@ -1964,3 +1964,23 @@
   - `/pure` real em `pure_real3` (pasta com underscore): **etapas 1 a 7 OK, exit 0, 944 s**; `HANDOFF_ENGINE_MASTER.json` com `projeto_slug: controle-de-pedidos` e 10/10 testes; `pytest` do projeto gerado: 20 passed.
 - **Limite declarado:** o Planner ainda colapsa a spec em um único módulo genérico (`nucleo`/`RegistroPrincipal`), então os scripts reais saíram `*_nucleo.py`; derivar `Pedido` e `Cliente` da spec fica como ticket 13-A.
 - **Status:** **RESOLVIDO VIA TDD (GREEN); aguardando aprovação do usuário para push.**
+
+## Seção 27 — Resolução dos Tickets 13-A e 13-B: Derivação de Bounded Contexts da Spec e Eliminação de Módulo Residual (`aidd-planner` e `aidd-master`)
+
+- **Data da Auditoria e Validação:** 17/10/2026
+- **Ferramentas Tocadas:**
+  `modulos/01-governanca-e-qualidade/core/aidd-planner` (`src/core_planner/intake.py`, `src/core_planner/planner_engine.py`, `src/cli.py`, `tests/test_bounded_contexts_spec.py`),
+  `modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master` (`scripts/provision_project.py`, `tests/unit/test_provision_modulos_custom.py`).
+- **Achados Identificados e Corrigidos (TDD Red -> Green):**
+  1. **Ticket 13-A (`aidd-planner` - Derivação de Bounded Contexts a partir da Spec):** O planner colapsava qualquer especificação no contexto genérico `nucleo`/`RegistroPrincipal`, ignorando as interfaces TypeScript da Seção 2 e regras da Seção 3 em `.aidd/intake/spec.md`.
+     - *Correção:* Criada a função `extrair_contextos_da_spec(pasta: str) -> List[Dict[str, Any]]` em `intake.py`, realizando parsing estático determinístico (Lei #1 - Zero Token) das interfaces tipadas e invariantes da spec. Atualizada `gerar_template_plano` em `planner_engine.py` para popular `ddd_bounded_contexts`, cenários BDD e `payload_especifico_fluxo.fatias_vsa` diretamente das entidades reais (ex.: `pedidos` e `clientes`) eliminando o fallback genérico `nucleo`.
+  2. **Ticket 13-B (`aidd-master` - Eliminação de Módulo Residual `principal`):** O script `provision_project.py` criava incondicionalmente o módulo `"principal"` no passo 5, duplicando fatias quando o projeto já possuía módulos de domínio em `modulos_iniciais`, `HANDOFF_ENGINE_MASTER.json` (C3) ou `PLANNER.json`.
+     - *Correção:* Assinatura de `provision()` atualizada com `modulos_iniciais=None`. Implementada inspeção no passo 5: descobre módulos em `modulos_iniciais`, `HANDOFF_ENGINE_MASTER.json` (C3) ou `PLANNER.json`. O fallback para `"principal"` só ocorre caso nenhum módulo de domínio seja detectado. Atualizada a geração de `docs.html` e compilação do servidor monolítico dinâmico para registrar todos os módulos alvo.
+- **Testes Adicionados:**
+  - `modulos/01-governanca-e-qualidade/core/aidd-planner/tests/test_bounded_contexts_spec.py` — 2 testes TDD cobrindo extração estática de interfaces/invariantes e geração de plano com fatias reais.
+  - `modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/tests/unit/test_provision_modulos_custom.py` — 2 testes TDD validando omissão de `principal` quando há módulos explícitos ou contrato C3.
+- **Resultados Medidos (17/10/2026):**
+  - `aidd-planner`: **137 passed, 3 skipped** (100% de aprovação).
+  - `aidd-master`: **16 passed** nos testes de provisão e custom modules.
+- **Status:** **RESOLVIDO E HOMOLOGADO VIA TDD (GREEN).**
+

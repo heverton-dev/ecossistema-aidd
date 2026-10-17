@@ -28,9 +28,15 @@ VARIAVEIS_DE_REPOSITORIO_SENSÍVEIS = (
 
 
 def obter_env_sanitizado(env: Optional[Dict[str, str]] = None) -> Dict[str, str]:
-    """Retorna dicionário de variáveis de ambiente com variáveis git limpas."""
+    """Retorna dicionário de variáveis de ambiente com variáveis git limpas e TEMP isolado."""
     fonte = os.environ if env is None else env
-    return {k: v for k, v in fonte.items() if k not in VARIAVEIS_DE_REPOSITORIO_SENSÍVEIS}
+    d = {k: v for k, v in fonte.items() if k not in VARIAVEIS_DE_REPOSITORIO_SENSÍVEIS}
+    pasta_tmp = Path(r"C:\Users\trcnologia\aidd-tmp")
+    if pasta_tmp.is_dir():
+        d["TEMP"] = str(pasta_tmp)
+        d["TMP"] = str(pasta_tmp)
+        d["TMPDIR"] = str(pasta_tmp)
+    return d
 
 
 class WorktreeHermetico:

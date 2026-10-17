@@ -121,7 +121,8 @@ def _get_columns(db_path: str, table: str) -> list:
 def _run_alembic(args: list, db_path: str) -> subprocess.CompletedProcess:
     """Run alembic command with DATABASE_URL pointing to the test db."""
     env = os.environ.copy()
-    env["DATABASE_URL"] = f"sqlite:///{db_path}"
+    caminho_normalizado = os.path.abspath(db_path).replace("\\", "/")
+    env["DATABASE_URL"] = f"sqlite:///{caminho_normalizado}"
     return subprocess.run(
         ["alembic"] + args,
         capture_output=True,
