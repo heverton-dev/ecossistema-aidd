@@ -23,6 +23,15 @@ FONTES = ("scripts", "modulos", "componentes", "core", "contratos", "tests", "do
           "mimocode.jsonc", ".claude/settings.json", ".claude/hooks")
 
 
+def _limpar_env_git(env: dict | None = None) -> dict:
+    """Remove variáveis GIT_* do ambiente para evitar contaminação por pre-commit hooks."""
+    limpo = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+    limpo["PYTHONIOENCODING"] = "utf-8"
+    if env:
+        limpo.update(env)
+    return limpo
+
+
 def copiar_repo(destino: Path) -> Path:
     """Copia as FONTES da árvore de trabalho para `destino` e inicia um git vazio nela."""
     lista = subprocess.run(["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard", "--", *FONTES],
@@ -34,20 +43,21 @@ def copiar_repo(destino: Path) -> Path:
         alvo = destino / rel
         alvo.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(origem, alvo)
-    subprocess.run(["git", "init", "-q"], cwd=destino, check=True)
+    subprocess.run(["git", "init", "-q"], cwd=destino, check=True, env=_limpar_env_git())
     return destino
 
 
 def commitar(raiz: Path, *caminhos: str, mensagem: str = "fixture") -> None:
     """Commit local na cópia (autor fixo, sem hooks): o estado 'versionado' da fixture."""
-    subprocess.run(["git", "add", "--", *caminhos], cwd=raiz, check=True)
+    env = _limpar_env_git()
+    subprocess.run(["git", "add", "--", *caminhos], cwd=raiz, check=True, env=env)
     subprocess.run(["git", "-c", "user.name=fixture", "-c", "user.email=fixture@local", "-c", "core.hooksPath=/dev/null",
-                    "commit", "-q", "-m", mensagem], cwd=raiz, check=True)
+                    "commit", "-q", "-m", mensagem], cwd=raiz, check=True, env=env)
 
 
 def rodar(raiz: Path, *args: str, env: dict | None = None) -> subprocess.CompletedProcess:
     """Roda `python <args>` dentro da cópia e devolve o processo (exit code real, sem pipe)."""
-    ambiente = {**os.environ, "PYTHONIOENCODING": "utf-8", **(env or {})}
+    ambiente = _limpar_env_git(env)
     return subprocess.run([sys.executable, *args], cwd=raiz, capture_output=True, text=True,
                           encoding="utf-8", errors="replace", env=ambiente, timeout=600)
 

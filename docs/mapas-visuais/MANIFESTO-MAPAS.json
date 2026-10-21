@@ -1,7 +1,7 @@
 {
   "ferramenta": "aidd-visual-maps",
   "catalogo": "docs/auditoria/mapa-pecas/catalogo-pecas.json",
-  "hash_catalogo": "0b06e298ac1ac09badbefd8d2db97188b7c219c69ab6c82f7828ee99fc38b86a",
+  "hash_catalogo": "c1f6040f07f366939d91c684610c9f2246a768ab60910bb0f521b364af2fad86",
   "mapas": [
     {
       "tipo": "leis",
@@ -63,14 +63,14 @@
       "tipo": "skills",
       "arquivo": "docs/mapas-visuais/mapa-05-skills.html",
       "versao": "tecnica",
-      "sha256": "73404b685c1440bca076eb4fe4d922453c7423a63b84706d0ca3c5b5104cf24c",
+      "sha256": "382be526d6d98f0492308d0821e99b834585eb4498b39d938b7b84b35b60a8e7",
       "status": "concluido"
     },
     {
       "tipo": "skills",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-05-skills.html",
       "versao": "nao-tecnica",
-      "sha256": "59b22189d9d05a400808952a1fb8c99b06a9a2e0768e0b20e11023fbaf3676bc",
+      "sha256": "21bbe33a22525777599b5ddbb90fcbcd686d826022fe7762f972d6c8ccae297d",
       "status": "concluido"
     },
     {
@@ -105,14 +105,14 @@
       "tipo": "harnesses",
       "arquivo": "docs/mapas-visuais/mapa-08-harnesses.html",
       "versao": "tecnica",
-      "sha256": "71dd2859d141c1562b65589796e0bc19bab682be5c5a91bcc8afd68ced7ba136",
+      "sha256": "dc7f21a845c89deca161a7cba2ba43b69e3458dc63e47b812f18156c5c5f1ed9",
       "status": "concluido"
     },
     {
       "tipo": "harnesses",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-08-harnesses.html",
       "versao": "nao-tecnica",
-      "sha256": "11e4cc6b2c6f927aed1ac5bc60feef9053143e858c4fe74a77d98d1e4d721f9e",
+      "sha256": "666481cddbaef48a82e438f9dbaadb80426892d3e6053193bd2cab770468b7b8",
       "status": "concluido"
     },
     {

@@ -4,14 +4,14 @@
   "totais": {
     "ferramentas": 8,
     "comandos_cli": 73,
-    "skills": 45,
+    "skills": 46,
     "leis": 14,
     "lente_15d": 15,
     "oficina": 0,
     "scripts": 59,
     "moldes_entrega": 21,
     "harnesses": 7,
-    "skills_nossas": 45,
+    "skills_nossas": 46,
     "skills_terceiros_copiadas": 0,
     "skills_terceiros_registradas": 15,
     "comandos_slash": 20,
@@ -454,6 +454,12 @@
       "id": "aidd-session",
       "descricao": "Records the current agent session ID and metadata deterministically in secoes/historico_sessoes.json and secoes/INDICE-SESSOES.md for traceability and context recovery. Use when the user wants to save or see the session ID, or types \"/sessao\", \"/session\", \"/id\", \"/id-sessao\", \"/salvar-id\", \"salve o id desta sessão\", \"qual o id desta conversa\".",
       "linhas": 44,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-site-dominator",
+      "descricao": "Reconstructs and optimizes websites via REA, Top-20 benchmark, Mobbin, SEO/GEO, Impeccable, and Docker. Use when rebuilding market-leading sites.",
+      "linhas": 80,
       "terceiro": false
     },
     {
@@ -3359,7 +3365,7 @@
           "hook": ".claude/hooks/{nome}",
           "sub-agent": ".claude/agents/{nome}"
         },
-        "skills_em_disco": 60,
+        "skills_em_disco": 61,
         "nossas_faltando": [],
         "terceiros_em_disco": 15,
         "config_mcp": ".mcp.json"
@@ -3380,7 +3386,7 @@
           "hook": ".agents/hooks/{nome}",
           "sub-agent": ".agents/agents/{nome}"
         },
-        "skills_em_disco": 60,
+        "skills_em_disco": 61,
         "nossas_faltando": [],
         "terceiros_em_disco": 15,
         "config_mcp": ".agents/mcp_config.json"
@@ -3401,7 +3407,7 @@
           "hook": ".opencode/hooks/{nome}",
           "sub-agent": ".opencode/agents/{nome}"
         },
-        "skills_em_disco": 46,
+        "skills_em_disco": 47,
         "nossas_faltando": [],
         "terceiros_em_disco": 1,
         "config_mcp": "opencode.jsonc"
@@ -3422,7 +3428,7 @@
           "hook": ".mimocode/hooks/{nome}",
           "sub-agent": ".mimocode/agents/{nome}"
         },
-        "skills_em_disco": 46,
+        "skills_em_disco": 47,
         "nossas_faltando": [],
         "terceiros_em_disco": 1,
         "config_mcp": "mimocode.jsonc"
@@ -3441,7 +3447,7 @@
           "hook": ".gemini/hooks/{nome}",
           "sub-agent": ".gemini/agents/{nome}"
         },
-        "skills_em_disco": 45,
+        "skills_em_disco": 46,
         "nossas_faltando": [],
         "terceiros_em_disco": 0,
         "config_mcp": ".gemini/settings.json"
@@ -3460,7 +3466,7 @@
           "command": ".cursor/commands/{nome}",
           "hook": ".cursor/hooks/{nome}"
         },
-        "skills_em_disco": 46,
+        "skills_em_disco": 47,
         "nossas_faltando": [],
         "terceiros_em_disco": 1,
         "config_mcp": ".cursor/mcp.json"
@@ -3479,7 +3485,7 @@
           "command": ".codebuddy/commands/{nome}",
           "hook": ".codebuddy/hooks/{nome}"
         },
-        "skills_em_disco": 46,
+        "skills_em_disco": 47,
         "nossas_faltando": [],
         "terceiros_em_disco": 1,
         "config_mcp": ""

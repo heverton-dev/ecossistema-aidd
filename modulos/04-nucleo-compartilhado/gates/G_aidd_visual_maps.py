@@ -38,22 +38,29 @@ import mapa_visual as mv  # noqa: E402
 
 def html_na_pasta() -> set[str]:
     """Todo .html sob docs/mapas-visuais/ que o git vê (versionado ou novo não ignorado)."""
-    pasta = mv.MAPAS.relative_to(RAIZ).as_posix()
-    saida = subprocess.run(["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard", "--", pasta],
-                           cwd=RAIZ, capture_output=True, check=True).stdout.decode("utf-8")
-    return {Path(rel).relative_to(pasta).as_posix() for rel in saida.split("\0")
-            if rel.endswith(".html") and (RAIZ / rel).is_file()}
+    pasta = "docs/mapas-visuais"
+    pasta_abs = RAIZ / pasta
+    if not pasta_abs.is_dir():
+        return set()
+    try:
+        saida = subprocess.run(["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard", "--", pasta],
+                               cwd=RAIZ, capture_output=True, check=True).stdout.decode("utf-8")
+        return {Path(rel).relative_to(pasta).as_posix() for rel in saida.split("\0")
+                if rel.endswith(".html") and (RAIZ / rel).is_file()}
+    except Exception:
+        return {p.relative_to(pasta_abs).as_posix() for p in pasta_abs.rglob("*.html") if p.is_file()}
 
 
 def auditar() -> list[str]:
     motivos = []
-    em_dia, divergentes = cp.catalogo_em_dia(cp.RAIZ, cp.SAIDA_PADRAO)
+    saida_cat = RAIZ / "docs" / "auditoria" / "mapa-pecas" / "catalogo-pecas.json"
+    em_dia, divergentes = cp.catalogo_em_dia(RAIZ, saida_cat)
     if not em_dia:
         motivos.append(f"catálogo desatualizado ({', '.join(divergentes)}): rode python ecossistema.py visual-maps gerar")
     motivos += [f"HTML órfão: {rel}" for rel in sorted(html_na_pasta() - mv.arquivos_esperados())]
     motivos += [f"inglês no mapa não técnico: {achado}" for achado in mv.frases_em_ingles()]
     motivos += [f"contagem digitada: {achado}" for achado in mv.contagens_digitadas()]
-    manual = mv.MAPAS / mv.MANUAL
+    manual = RAIZ / "docs" / "mapas-visuais" / mv.MANUAL
     if not manual.is_file():
         motivos.append(f"manual ausente: {mv.MANUAL}")
     else:

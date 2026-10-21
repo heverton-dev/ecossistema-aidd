@@ -25,6 +25,7 @@
   "aidd-tdd": "TDD estrito com costuras combinadas, ciclo Vermelho-Verde, refatoração na revisão e nenhum esboço vazio.",
   "aidd-tickets": "Divide uma especificação em tickets de fatia vertical, do tipo bala traçadora, com as dependências de bloqueio.",
   "aidd-visual-maps": "Monta ou atualiza o mapa visual de um tipo de peça do ecossistema em docs/mapas-visuais/, a partir de um molde em PT-BR e dos dados do catálogo de peças, com testes que provam que o gerador morde.",
+  "aidd-site-dominator": "Reconstrói e otimiza aplicações web completas via engenharia reversa com REA e Playwright, benchmarking dos 20 líderes do setor, SEO/GEO, padrão Impeccable e empacotamento Docker.",
   "aidd-wizard": "Gera um assistente interativo em bash que conduz uma pessoa pelos passos que só ela pode fazer.",
   "aidd-xlsx": "Cria, lê, edita e confere planilhas (.xlsx, .xlsm, .csv, .tsv): fórmulas, modelos financeiros, scripts openpyxl, manipulação com pandas e formatação de tabelas."
 }

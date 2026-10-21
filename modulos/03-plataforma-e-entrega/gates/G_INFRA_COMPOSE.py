@@ -328,9 +328,12 @@ def auditar_init_postgres() -> List[str]:
     bash_bin = shutil.which("bash")
     if bash_bin:
         try:
-            res = subprocess.run([bash_bin, "-n", script_path], capture_output=True, text=True)
+            with open(script_path, "rb") as f:
+                script_bytes = f.read().replace(b"\r\n", b"\n")
+            res = subprocess.run([bash_bin, "-n"], input=script_bytes, capture_output=True)
             if res.returncode != 0:
-                erros.append(f"{rel_script}: erro de sintaxe bash -> {res.stderr.strip()}")
+                stderr_msg = res.stderr.decode("utf-8", errors="replace").strip()
+                erros.append(f"{rel_script}: erro de sintaxe bash -> {stderr_msg}")
                 print(f"[ERRO] {rel_script}: sintaxe bash inválida")
             else:
                 print(f"[OK] {rel_script}: sintaxe bash válida (bash -n)")
