@@ -1006,6 +1006,19 @@ def executar_pipeline(ideia: str, pasta_projeto: Path, nao_interativo: bool = Tr
     except Exception as _exc_cross:
         print(f"[GATE I3] Aviso ao executar G_INTEGRACAO_CROSS_SCRIPT: {_exc_cross}")
 
+    # Lei #11: Injeção Canônica do Frontend TanStack Start / Router + TypeScript + Tailwind
+    try:
+        _comp_dir = os.path.join(_achar_raiz_repo(os.path.dirname(__file__)), "componentes", "compartilhado", "src-core")
+        if _comp_dir not in sys.path:
+            sys.path.insert(0, _comp_dir)
+        from tanstack_exporter import TanStackRouterExporter
+        fe_dir = pasta_projeto / "frontend"
+        if not fe_dir.exists():
+            TanStackRouterExporter().export_project(str(pasta_projeto), str(fe_dir), suite_name=pasta_projeto.name)
+            print(f"[PURE] Frontend TanStack Start / Router exportado com sucesso em {fe_dir}")
+    except Exception as _fe_exc:
+        print(f"[PURE] Aviso ao exportar frontend TanStack: {_fe_exc}")
+
     # Emissão formal do Contrato C3 (HANDOFF_ENGINE_MASTER.json) do aidd-pure
     if resultado.get('status') == 'COMPLETO':
         c3_arq = _emitir_contrato_c3(pasta_projeto)

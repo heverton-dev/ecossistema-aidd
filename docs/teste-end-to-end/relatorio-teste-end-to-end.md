@@ -1984,3 +1984,37 @@
   - `aidd-master`: **16 passed** nos testes de provisão e custom modules.
 - **Status:** **RESOLVIDO E HOMOLOGADO VIA TDD (GREEN).**
 
+## Seção 28 — Prontidão de Produção e Alinhamento à Stack Padrão-Ouro RevNault (Tickets 01 a 04)
+
+- **Data da Auditoria e Validação:** 21/10/2026
+- **Ferramentas Tocadas:**
+  `modulos/02-triade-motores/fluxo-01-pure` (`core/aidd-pure/scripts/pipeline_completo.py`),
+  `modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master` (`scripts/compose_suite.py`, `src/core/storage.py`, `src/core/vector_store.py`),
+  `modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise` (`src/core/storage.py`, `src/core/vector_store.py`),
+  `componentes/compartilhado` (`templates/frontend-tanstack/package.json`, `src-core/storage.py`, `src-core/vector_store.py`).
+- **Achados Identificados e Corrigidos (TDD Red -> Green):**
+  1. **TICKET-01 (Modernização do Frontend TanStack Router):**
+     - Atualização para React 19, TypeScript 5.8, Vite 6, TanStack Router e TanStack Query v5 no template canônico `frontend-tanstack`.
+     - Aprovação com 100% de cobertura nos gates `G_TEMPLATE_TANSTACK_OFFLINE` e `G_NOVE_CAMADAS_MERCADO`.
+  2. **TICKET-02 (Abolição Estrita de Rastreios NextJS nos Motores):**
+     - Refatoração do `compose_suite.py` e `pipeline_completo.py` (`aidd-pure`) para eliminar fallbacks residuais a templates legados NextJS e padronizar unicamente em `frontend-tanstack`.
+     - Testes de orquestração síncrona validados com 12/12 aprovados.
+  3. **TICKET-03 (Camada de IA & Embeddings Vetoriais pgvector / sqlite-vec):**
+     - Implementação determinística de `vector_store.py` com suporte bidirecional: SQLite com extensão vetorial ou fallback local cosseno, e PostgreSQL com extensão `pgvector`.
+     - 100% aprovado nos testes unitários e registrado como infraestrutura legítima em `G_ARQUITETURA_DELIVERABLE`.
+  4. **TICKET-04 (Camada de Object Storage S3/Cloudflare R2):**
+     - Criação do cliente `storage.py` com assinatura AWS Signature v4 nativa sem SDKs pesados, proteção anti-IDOR via prefixo de tenant e suporte a presigned URLs.
+     - Documentação formal das variáveis `R2_*` no `.env.example` zerando integralmente o `G_ENV_ROT`.
+- **Testes Adicionados / Executados:**
+  - `tests/unit/test_vector_store.py` — 4 testes unitários cobrindo inserção, busca e isolamento de tenant.
+  - `tests/unit/test_storage.py` — 4 testes unitários cobrindo upload, download, presigned URL e mitigação anti-IDOR.
+  - `tests/test_orquestrador_sincrono.py` — 12 testes validando geração e empacotamento determinístico.
+- **Resultados Medidos (21/10/2026):**
+  - `test_vector_store.py`: **4 passed** (100%).
+  - `test_storage.py`: **4 passed** (100%).
+  - `test_orquestrador_sincrono.py`: **12 passed** (100%).
+  - `G_ARQUITETURA_DELIVERABLE`: **0 violações em 235 arquivos** (Aprovado).
+  - `G_ENV_ROT`: **100% aprovado**.
+- **Status:** **HOMOLOGADO E AUDITADO VIA TDD (GREEN).**
+
+

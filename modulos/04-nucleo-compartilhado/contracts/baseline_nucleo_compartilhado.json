@@ -123,6 +123,10 @@
         "esperado_identico": true,
         "motivo": null
       },
+      "storage.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
       "subagent_engine.py": {
         "esperado_identico": true,
         "motivo": null
@@ -132,6 +136,10 @@
         "motivo": null
       },
       "transaction_log.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
+      "vector_store.py": {
         "esperado_identico": true,
         "motivo": null
       },

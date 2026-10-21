@@ -457,6 +457,19 @@ class OrquestradorSincrono:
             self.pasta / "app"
         ]
         alvo_ui = next((p for p in candidatos_ui if p.is_dir()), None)
+        if not alvo_ui and not self.dry_run:
+            try:
+                _comp_dir = ROOT_DIR / "componentes" / "compartilhado" / "src-core"
+                if str(_comp_dir) not in sys.path:
+                    sys.path.insert(0, str(_comp_dir))
+                from tanstack_exporter import TanStackRouterExporter
+                fe_dir = self.pasta / "frontend"
+                TanStackRouterExporter().export_project(str(self.pasta), str(fe_dir), suite_name=self.slug)
+                self.log(f"Frontend TanStack Start / Router (Padrão-Ouro, Lei #11) gerado em {fe_dir}", "OK")
+                alvo_ui = fe_dir
+            except Exception as _fe_err:
+                self.log(f"Aviso ao gerar frontend TanStack: {_fe_err}", "WARN")
+
         if alvo_ui:
             self.log(f"Frontend detectado em {alvo_ui}. Acionando /impeccable-full mandatório...", "INFO")
             launcher_cmd = ROOT_DIR / ".claude" / "skills" / "impeccable" / "scripts" / "impeccable.cmd"

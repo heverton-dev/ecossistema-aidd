@@ -109,6 +109,9 @@ NUCLEO_COMPARTILHADO_INFRA = {
     # Auditoria do monolito de demonstracao). Persistencia pura por tabela,
     # sem regra de negocio — mesmo criterio das demais entradas desta lista.
     "repositories.py",
+    # vector_store.py: persistência de embeddings vetoriais (pgvector / sqlite-vec),
+    # pura infraestrutura de banco de dados sem lógica de domínio.
+    "vector_store.py",
 }
 
 # ---------------------------------------------------------------------------

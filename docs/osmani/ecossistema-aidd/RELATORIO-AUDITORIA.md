@@ -1,42 +1,42 @@
-# Relatório de Auditoria — Método Addy Osmani (Playbook A)
+# Relatório de Auditoria Factual — AIDD-Osmani (Estágio 2: Prontidão de Produção)
 
-- **Alvo:** Repositório Integral `ecossistema-aidd`
-- **Data da Auditoria:** 2026-10-20
-- **Execução:** Modo Somente Leitura (zero mutações destrutivas)
-
----
-
-## 1. Baseline Factual e Métricas Iniciais
-
-- **Total de Verificações de Gates:** 80 execuções registradas em `.git/audit.log`
-- **Portões Aprovados:** 63 (78,75%)
-- **Portões Reprovados:** 17 (21,25% - correspondendo a 8 portões raiz e seus testes derivados)
-
-### Portões Raiz Reprovados
-1. `G_HARNESS_COMPAT`: 8 divergências SHA-256 no componente `aidd-site-dominator`.
-2. `G_UNIVERSAL_HARNESS`: Falha de espelhamento em `.claude`, `.agents`, `.opencode`, etc.
-3. `G_COMPONENTE_AGNOSTICO`: Falta de registro no catálogo agnóstico do componente citado.
-4. `G_SKILL_ROT`: Descompasso de caminhos estáticos da nova skill.
-5. `G_mapa_pecas`: Catálogo de peças desatualizado per Lei #8.
-6. `G_aidd_visual_maps`: Mapas visuais divergem do catálogo per Lei #9.
-7. `G_INFRA_COMPOSE`: Erro de parsing de caminho Windows ao validar script `init-multiple-databases.sh` em bash.
-8. `G_PORTAO_PROVA_QUE_MORDE`: Meta-gate reprova testes de assert exit 0 que dependem da conformidade dos 7 portões anteriores.
+- **Alvo:** Repositório Integral `ecossistema-aidd` (Motores da Tríade, Scaffolds, Meso-Camada VSA e Infraestrutura)
+- **Data da Auditoria:** 2026-10-21
+- **Referencial Canônico:** Contrato de Qualidade [CONSTRAINTS.md](../../../CONSTRAINTS.md) baseado nas 9 Camadas Base RevNault
+- **Habilidades Lidas:** `code-review-and-quality`, `api-and-interface-design`, `security-and-hardening`, `test-driven-development`, `planning-and-task-breakdown`, `doubt-driven-development`
 
 ---
 
-## 2. Varredura por Eixo
+## 1. Resumo Executivo & Baseline Factual
 
-### Eixo A — Integridade Estrutural & Multi-Harness (Severidade: ALTA)
-- **Causa Raiz:** O componente `componentes/compartilhado/skills/aidd-site-dominator` foi introduzido ou modificado sem o disparo de sincronização `python ecossistema.py sync` / compilação de catálogo de peças.
-- **Impacto:** Quebra 6 gates encadeados de compatibilidade universal e inventário (Leis #6, #8 e #9).
+O ecossistema-aidd possui governança e gates rigorosos (54 gates ativos, preflight de host com 5/5 binários operacionais), mas para atingir a **plenitude de produção 100% funcional** na geração de aplicações de mercado topo de linha (padrão RevNault de 9 camadas), foram identificadas lacunas concretas entre os templates atuais e a execução real dos fluxos.
 
-### Eixo B — Compatibilidade de Plataforma SO (Windows/POSIX) (Severidade: MÉDIA)
-- **Localização:** `modulos/03-plataforma-e-entrega/gates/G_INFRA_COMPOSE.py:84`
-- **Causa Raiz:** Ao invocar `bash -n` no script `init-multiple-databases.sh`, o caminho absoluto Windows (`C:\Users\...`) é interpolado sem conversão para formato Unix/WSL/Git Bash, resultando em escape de barras (`C:Userstrcnologia...: No such file or directory`).
-- **Impacto:** Falso-negativo de lint de bash no ambiente Windows.
+| Eixo Auditado | Status Atual | Severidade | Causa Raiz & Lacuna de Produção |
+|---|---|:---:|---|
+| **Eixo 1: Frontend Padrão-Ouro** | Parcial (Descompasso de Versões e Injeção) | **ALTA** | Template `frontend-tanstack` está em React 18/Vite 5/TS 5.6 e só é acionado no Fluxo 02; Fluxos 01 e 03 não injetam a casca completa de produção. |
+| **Eixo 2: Backend ASGI & Contratos** | Conforme / Ajustes de Paridade | **MÉDIA** | OpenAPI 3.1 funcional, mas geração determinística de `api_contracts.ts` e DTOs Pydantic v2 precisa de sincronização automática no pipeline. |
+| **Eixo 3: Persistência Dual & Busca Vetorial** | Parcial (Falta Modelo Híbrido) | **ALTA** | Ecossistema suporta SQLite WAL, mas não fornece scaffolding nativo para migração transparente para PostgreSQL 16 com `pgvector` e `asyncpg`. |
+| **Eixo 4: Mensageria, Storage & Edge Proxy** | Lacuna nos Scaffolds | **ALTA** | Ausência de templates plugáveis para Redis 7 Streams (XGROUP/XREADGROUP), conector Cloudflare R2 e proxy reverso Traefik v3 no `aidd-ops`. |
+| **Eixo 5: Orquestrador da Tríade Ponta a Ponta** | Estruturado / Requer Prova Real | **CRÍTICA** | `orquestrador_sincrono.py` passa bastão formalmente, mas os 3 fluxos (`pure`, `open`, `freedom`) precisam de prova de execução real fim a fim para produção. |
 
-### Eixo C — Segurança e Isolamento de Fatias (Severidade: BAIXA / CONFORME)
-- `G_SEGREDOS`, `G_SUPPLY_CHAIN`, `G_ZERO_HEADLESS`, `G_MODULO_FRONTEIRA` aprovados com 100% de conformidade. Zero vazamentos ou stubs ilegais detectados.
+---
 
-### Eixo D — Arquitetura de Fatias & Micro-Gates (Severidade: CONFORME)
-- Micro-gates de `core-cli`, `master` e `planner` executaram com sucesso e isolamento completo.
+## 2. Varredura Detalhada por Eixo
+
+### Eixo 1: Frontend Padrão Ouro (Camadas 1, 2, 3 e 5 de CONSTRAINTS.md)
+- **Localização:** `componentes/compartilhado/templates/frontend-tanstack/package.json` e `componentes/compartilhado/src-core/tanstack_exporter.py`.
+- **Fato Auditado:** O `package.json` do template referencia `react: ^18.3.1`, `vite: ^5.4.10`, `typescript: ^5.6.3`.
+- **Exigência RevNault:** `React 19`, `TypeScript 5.8 (Strict)`, `Vite 6`, `TanStack Query v5`, `TanStack Router + Hash Router`, `Radix UI Primitives (shadcn/ui)`, `CVA + tailwind-merge`, `Lucide React (SVG sem emojis)`.
+- **Roteamento nos Fluxos:** `TanStackRouterExporter` só é instanciado em `modulos/02-triade-motores/fluxo-02-open/core/aidd-open/scripts/pipeline_factory.py:239`. O Fluxo 01 (`aidd-pure`) e o Fluxo 03 (`aidd-freedom`) não realizam a exportação determinística dessa casca.
+
+### Eixo 2: Persistência Relacional Dual & Embeddings (Camada 4 de CONSTRAINTS.md)
+- **Localização:** `modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/` e `componentes/compartilhado/`.
+- **Fato Auditado:** A persistência padrão foca em SQLite local com WAL. Para cargas pesadas de produção clínica/bancária/B2B (RevNault), é mandatória a arquitetura dual: escrita OLTP + leitura analítica assíncrona (`get_write_db`/`get_read_db`), compatibilidade PostgreSQL 16 com driver `asyncpg` e busca vetorial `pgvector` nativa.
+
+### Eixo 3: Mensageria com Eventos Reais, Storage e Borda (Camadas 5, 6, 7 e 8)
+- **Localização:** `modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/`.
+- **Fato Auditado:** O `aidd-ops` gera Dockerfile e docker-compose básicos. Falta o stack completo de produção com Traefik v3 (TLS automático Let's Encrypt), Redis 7 Streams com grupos de consumidores e cliente Cloudflare R2 com geração de Presigned URLs S3v4.
+
+### Eixo 4: Execução Fim a Fim dos 3 Fluxos da Tríade Canônica
+- **Localização:** `scripts/orquestrador_sincrono.py`.
+- **Fato Auditado:** Os contratos C1, C2, C3, C4, C5 estão definidos com schemas e SHA-256. Falta demonstrar e certificar a passagem limpa dos 3 fluxos (`ecossistema.py run-fluxo --fluxo pure|open|freedom`) gerando artefatos completos em pasta de destino com saída binária `exit 0`.

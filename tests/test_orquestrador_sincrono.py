@@ -218,3 +218,29 @@ def test_orquestrador_dry_run_nao_grava_readme_usuario(tmp_path):
     assert not (pasta_destino / "README-USUARIO.md").exists()
 
 
+def test_orquestrador_injeta_frontend_tanstack_se_ausente(tmp_path):
+    """Prova que a casca Padrão-Ouro TanStack Router (Lei #11) é injetada determinísticamente."""
+    pasta_destino = tmp_path / "projeto-real-com-frontend"
+    pasta_destino.mkdir(parents=True)
+    orq = OrquestradorSincrono(
+        fluxo=1,
+        nome="App Producao",
+        slug="app-producao",
+        dominio="saude",
+        pasta=str(pasta_destino),
+        dry_run=False,
+    )
+    # Dispara diretamente _auditar_frontend_impeccable em pasta sem frontend
+    orq._auditar_frontend_impeccable()
+    fe_dir = pasta_destino / "frontend"
+    assert fe_dir.is_dir()
+    pkg_json = fe_dir / "package.json"
+    assert pkg_json.is_file()
+    dados = json.loads(pkg_json.read_text(encoding="utf-8"))
+    assert dados["name"] == "app-app-producao"
+    assert "@tanstack/react-router" in dados["dependencies"]
+    assert "react" in dados["dependencies"]
+    assert dados["dependencies"]["react"] == "^19.0.0"
+
+
+

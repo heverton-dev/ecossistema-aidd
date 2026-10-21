@@ -79,9 +79,9 @@ try:
 except ImportError:
     pass
 
-# Gerador de frontend Next.js (Lei Inviolável #11 — Padrão-Ouro de Stack).
+# Gerador de frontend TanStack Start / Router (Lei Inviolável #11 — Padrão-Ouro de Stack).
 try:
-    from nextjs_exporter import NextJSExporter
+    from tanstack_exporter import TanStackRouterExporter
 except ImportError:
     _njs_dir = os.path.join(
         _achar_raiz_repo(os.path.dirname(__file__)), "componentes", "compartilhado", "src-core"
@@ -89,11 +89,11 @@ except ImportError:
     if os.path.isdir(_njs_dir) and _njs_dir not in sys.path:
         sys.path.insert(0, _njs_dir)
     try:
-        from nextjs_exporter import NextJSExporter
+        from tanstack_exporter import TanStackRouterExporter
     except ImportError:
-        class NextJSExporter:
+        class TanStackRouterExporter:
             def export_project(self, *args, **kwargs):
-                pass
+                return {"status": "noop"}
 
 # Catálogo determinístico de paletas (Lei #11 — identidade visual única por
 # projeto), reusado aqui para injetar a MESMA cor primária do frontend
@@ -658,12 +658,12 @@ def _generate_modules(modules: list, target_dir: str) -> list[str]:
 def _generate_server_and_ui(
     suite_name: str, clean_modules: list[str], db_engine: str,
     src_dir: str, static_dir: str, templates_v2: str,
-    target_dir: str = None, frontend_stack: str = "nextjs",
+    target_dir: str = None, frontend_stack: str = "tanstack",
 ) -> None:
     """Gerar Servidor Monolítico Modular src/server.py e Front-ends.
 
     Lei Inviolável #11 (Padrão-Ouro de Stack, `AGENTS.md`): o frontend
-    default é Next.js + TypeScript + Tailwind CSS (`frontend_stack="nextjs"`).
+    default é TanStack Start / Router + React + TypeScript + Tailwind CSS (`frontend_stack="tanstack"`).
     O Super-App em HTML/CSS/JS Python puro só é gerado se pedido
     explicitamente (`frontend_stack="python-html"`) — silêncio nunca é
     licença para gerar outra coisa.
@@ -673,10 +673,10 @@ def _generate_server_and_ui(
     escrever_atomico(os.path.join(src_dir, "server.py"), server_code)
     print("  [+] Servidor dinâmico 'src/server.py' gerado com sucesso!")
 
-    if frontend_stack == "nextjs":
+    if frontend_stack in ("tanstack", "nextjs"):
         frontend_dir = os.path.join(project_dir, "frontend")
-        NextJSExporter().export_project(project_dir, frontend_dir, suite_name=suite_name)
-        print("  [+] Front-end 'frontend/' gerado em Next.js + TypeScript + Tailwind (Lei #11)!")
+        TanStackRouterExporter().export_project(project_dir, frontend_dir, suite_name=suite_name)
+        print("  [+] Front-end 'frontend/' gerado em TanStack Start / Router + React + TypeScript + Tailwind (Lei #11)!")
     else:
         index_html = generate_superapp_index_html(suite_name, clean_modules)
         escrever_atomico(os.path.join(static_dir, "index.html"), index_html)
@@ -821,7 +821,7 @@ def _copy_governance_and_rules(
     print("  [+] Grafo de Memória 'CONTEXTO-PROJETO.md' gerado!")
 
 
-def compose_suite(target_dir: str, suite_name: str, modules: list, db_engine: str = "sqlite", frontend_stack: str = "nextjs"):
+def compose_suite(target_dir: str, suite_name: str, modules: list, db_engine: str = "sqlite", frontend_stack: str = "tanstack"):
     """Motor principal de composição cross-project."""
     target_dir = os.path.abspath(target_dir)
     db_engine = (db_engine or "sqlite").lower()

@@ -56,7 +56,7 @@
       ],
       "gates_proprios": [],
       "mcps_proprios": [],
-      "arquivos_py": 124
+      "arquivos_py": 126
     },
     {
       "id": "aidd-forge",
@@ -143,7 +143,7 @@
         "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/gates/G_AST_IMPORT_GUARD.py"
       ],
       "mcps_proprios": [],
-      "arquivos_py": 125
+      "arquivos_py": 127
     },
     {
       "id": "aidd-open",
@@ -6497,7 +6497,7 @@
             "aidd-enterprise"
           ],
           "guardas": 0,
-          "arquivos_py": 126
+          "arquivos_py": 128
         },
         {
           "id": "fatiamento-master",
@@ -6506,7 +6506,7 @@
             "aidd-master"
           ],
           "guardas": 1,
-          "arquivos_py": 127
+          "arquivos_py": 129
         },
         {
           "id": "gates",

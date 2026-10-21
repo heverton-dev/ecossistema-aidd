@@ -1,7 +1,7 @@
 {
   "ferramenta": "aidd-visual-maps",
   "catalogo": "docs/auditoria/mapa-pecas/catalogo-pecas.json",
-  "hash_catalogo": "c1f6040f07f366939d91c684610c9f2246a768ab60910bb0f521b364af2fad86",
+  "hash_catalogo": "9988da80153edc572f487212b22da3207ec5506a358edbcba279642e6f7d33bd",
   "mapas": [
     {
       "tipo": "leis",
@@ -21,14 +21,14 @@
       "tipo": "ferramentas",
       "arquivo": "docs/mapas-visuais/mapa-02-ferramentas.html",
       "versao": "tecnica",
-      "sha256": "68e612432e3573b01b9e5e367f4d4ac503fd503bb0478dc46a69781adf41e7dd",
+      "sha256": "34ea85de72fbe50c2c54c60e193a1eb9b9ae4a135dcf3feb6d52a6753227c349",
       "status": "concluido"
     },
     {
       "tipo": "ferramentas",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-02-ferramentas.html",
       "versao": "nao-tecnica",
-      "sha256": "537f7a63e915918fc2f7867eace317d56f3b7d1756550789c0319339ab7f6a5e",
+      "sha256": "f4a8a3545baf59bd7878835287a97046ec4c21c56f8259f6e8040568c2e3493f",
       "status": "concluido"
     },
     {
@@ -189,14 +189,14 @@
       "tipo": "modulos",
       "arquivo": "docs/mapas-visuais/mapa-14-modulos.html",
       "versao": "tecnica",
-      "sha256": "48dc493396f83be95e445b3c5c24d443110e57851f003d0d451fecc2bf7ed22f",
+      "sha256": "7d9ce27598fb18189f73cb53df104f1d7a2113ff37d6fff7ead559e7b97c913f",
       "status": "concluido"
     },
     {
       "tipo": "modulos",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-14-modulos.html",
       "versao": "nao-tecnica",
-      "sha256": "f7471d372dae56d2882c2de3827655b1397c80a408cb5d7345778e2bc3a97a10",
+      "sha256": "734b29e4e878c798a9a641f321861b35e2b7dd044b39ea17f86341cf8494c0b2",
       "status": "concluido"
     },
     {
