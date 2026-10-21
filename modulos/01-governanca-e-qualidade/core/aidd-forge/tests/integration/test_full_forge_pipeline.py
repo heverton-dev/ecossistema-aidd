@@ -21,8 +21,7 @@ from aidd_forge.commands.slash_router import IDE_COMMAND_DIRS
 pytestmark = pytest.mark.skipif(shutil.which("git") is None, reason="git nao disponivel no PATH")
 
 EXPECTED_SKILLS = (
-    "caveman-ultra", "orca-orchestration", "impeccable-ui",
-    "open-code-review", "post-mortem", "cybersecurity-audit",
+    "aidd-grill", "aidd-spec", "aidd-tdd", "aidd-tickets",
 )
 EXPECTED_PHASES = (
     "phase_00_bootstrap", "phase_01_requirements", "phase_02_architecture",
@@ -38,6 +37,20 @@ EXPECTED_GATES = (
 
 def _git(args: list[str], cwd: Path) -> subprocess.CompletedProcess:
     return subprocess.run(["git", *args], cwd=cwd, capture_output=True, text=True, check=True)
+
+
+def _sh_cmd() -> str:
+    if shutil.which("sh"):
+        return "sh"
+    git = shutil.which("git")
+    if git:
+        git_sh = Path(git).resolve().parent.parent / "bin" / "sh.exe"
+        if git_sh.is_file():
+            return str(git_sh)
+        usr_sh = Path(git).resolve().parent.parent / "usr" / "bin" / "sh.exe"
+        if usr_sh.is_file():
+            return str(usr_sh)
+    return "sh"
 
 
 def _init_repo(target: Path) -> None:
@@ -106,7 +119,7 @@ def test_freshly_bootstrapped_project_passes_every_gate(tmp_path: Path) -> None:
 
     hook_path = target / ".git" / "hooks" / "pre-commit"
     proc = subprocess.run(
-        ["sh", str(hook_path)], cwd=target, capture_output=True, text=True,
+        [_sh_cmd(), str(hook_path)], cwd=target, capture_output=True, text=True,
     )
 
     assert proc.returncode == 0, proc.stdout + proc.stderr
@@ -248,7 +261,7 @@ def test_forge_inject_creates_a_cybersecurity_skill_and_an_mcp_end_to_end(tmp_pa
     _write(target / "app.py", "def add(a, b):\n    return a + b\n")
     _git(["add", "-A"], cwd=target)
     hook_path = target / ".git" / "hooks" / "pre-commit"
-    proc = subprocess.run(["sh", str(hook_path)], cwd=target, capture_output=True, text=True)
+    proc = subprocess.run([_sh_cmd(), str(hook_path)], cwd=target, capture_output=True, text=True)
 
     assert proc.returncode == 0, proc.stdout + proc.stderr
     assert "Todos os Quality Gates aprovados" in proc.stdout

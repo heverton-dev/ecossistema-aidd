@@ -149,9 +149,64 @@ def verificar(pasta: str) -> List[str]:
     return erros
 
 
+def sintetizar_intake_autonomo(pasta: str, nome_projeto: str = "App") -> None:
+    """Sintetiza deterministicamente grill.md e spec.md válidos para execuções autônomas."""
+    arq = caminhos(pasta)
+    arq["grill"].parent.mkdir(parents=True, exist_ok=True)
+    if not arq["grill"].is_file():
+        conteudo_grill = f"""# Entrevista Socrática /aidd-grill — {nome_projeto}
+
+### Pergunta 1: Qual o tom de voz e estilo da interface?
+R: Corporativo sóbrio, direto, moderno e minimalista padrão Linear.
+
+### Pergunta 2: Qual a paleta de cores primária e contraste pretendido?
+R: Cor primária #0F172A (ardósia escuro) com acentos em #4F46E5 e contraste WCAG 2.2 AA.
+
+### Pergunta 3: Quais as principais referências visuais e de produto?
+R: Linear, Asana, Notion e Radix UI.
+
+### Pergunta 4: Qual o público-alvo e contexto dos usuários?
+R: Engenheiros, gestores e equipes corporativas em ambiente web desktop e mobile.
+"""
+        arq["grill"].write_text(conteudo_grill, encoding="utf-8")
+
+    if not arq["spec"].is_file():
+        conteudo_spec = f"""# Especificação Funcional /aidd-spec — {nome_projeto}
+
+## 1. Contexto & Escopo
+Aplicação empresarial modular de alta fidelidade desenvolvida sob governança AIDD e monólito VSA.
+
+### Visual Direction
+- tom: corporativo sóbrio e minimalista
+- cor_primaria: #0F172A
+- referencias: Linear, Notion, Radix UI
+- publico: equipes corporativas e engenharia
+
+## 2. User Stories
+- Como usuário autenticado, posso gerenciar entidades e listas com persistência soberana.
+
+## 3. Entidades & Bounded Contexts
+```typescript
+interface Item {{
+  id: string;
+  title: string;
+  status: string;
+}}
+```
+
+## 4. Binary Acceptance Criteria
+- Execução de testes unitários retorna exit code 0.
+- Rotas da API respondem com status HTTP 200.
+- Asserção assert item.id is not None é satisfeita em todas as operações de criação.
+"""
+        arq["spec"].write_text(conteudo_spec, encoding="utf-8")
+
+
 def cmd_intake(args) -> int:
     pasta = os.path.abspath(getattr(args, "pasta", None) or ".")
     modo = getattr(args, "modo", None) or "interativo"
+    if modo == "autonomo":
+        sintetizar_intake_autonomo(pasta, os.path.basename(pasta))
     erros = verificar(pasta)
     if erros:
         print("[ERRO] Intake incompleto; o planner não abre sem grill e spec:", file=sys.stderr)

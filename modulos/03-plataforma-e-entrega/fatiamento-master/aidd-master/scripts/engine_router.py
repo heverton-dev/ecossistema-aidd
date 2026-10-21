@@ -155,6 +155,23 @@ A fatia vertical **{modulo_nome}** (`{slug}`) provê isolamento de domínio e co
         f.write(guia_md)
 
 
+def _escrever_preservando_existente(caminho, conteudo, encoding="utf-8"):
+    """Escreve `conteudo` em `caminho` sem sobrescrever um arquivo do projeto.
+
+    Achado real (validacao E2E do Fluxo 01): o roteador de engine escrevia o
+    codigo generico da fatia (`src/slices/<slug>/{models,service,router}.py`) e
+    o teste correspondente por cima da implementacao real do projeto. O gate
+    G_TESTES_REAIS entao rodava contra o codigo generico (que nao conhece o
+    dominio TaskFlow) e reprovava o fluxo inteiro.
+    Regra: arquivo existente pertence ao projeto — nunca e sobrescrito.
+    """
+    if os.path.exists(caminho):
+        return False
+    os.makedirs(os.path.dirname(caminho), exist_ok=True)
+    with open(caminho, "w", encoding=encoding) as f:
+        f.write(conteudo)
+    return True
+
 def _rotear_fluxo_01_generator(
     slice_info: Dict[str, Any],
     worktree_path: Path,
@@ -200,7 +217,7 @@ class {slug.capitalize()}Model:
     nome: str
     criado_em: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 '''
-    (slice_dir / "models.py").write_text(models_code, encoding="utf-8")
+    _escrever_preservando_existente(slice_dir / "models.py", models_code)
 
     # 2. Service
     service_code = f'''# -*- coding: utf-8 -*-
@@ -221,7 +238,7 @@ class {slug.capitalize()}Service:
         self._items.append(novo)
         return novo
 '''
-    (slice_dir / "service.py").write_text(service_code, encoding="utf-8")
+    _escrever_preservando_existente(slice_dir / "service.py", service_code)
 
     # 3. Router
     router_code = f'''# -*- coding: utf-8 -*-
@@ -236,7 +253,7 @@ def get_items():
 def post_item(nome: str):
     return service.criar(nome).__dict__
 '''
-    (slice_dir / "router.py").write_text(router_code, encoding="utf-8")
+    _escrever_preservando_existente(slice_dir / "router.py", router_code)
 
     # 4. Injeção do Quarteto Sine Qua Non
     injetar_quarteto_sine_qua_non(slice_dir, modulo_ddd, slug)
@@ -260,7 +277,7 @@ def test_service_fluxo_completo():
     assert item.nome == "Item de Teste"
     assert len(srv.listar()) == 1
 '''
-    (tests_dir / f"test_{slug}.py").write_text(test_code, encoding="utf-8")
+    _escrever_preservando_existente(tests_dir / f"test_{slug}.py", test_code)
     for arq in slice_info.get("arquivos_esperados", []):
         if arq.startswith("tests/") and arq.endswith(".py"):
             caminho_arq = worktree_path / arq
@@ -328,7 +345,7 @@ class {slug.capitalize()}Service:
     def status(self) -> dict:
         return {{"service": "{slug}", "healthy": self.adapter.ping()}}
 '''
-    (slice_dir / "service.py").write_text(service_code, encoding="utf-8")
+    _escrever_preservando_existente(slice_dir / "service.py", service_code)
 
     router_code = f'''# -*- coding: utf-8 -*-
 """Router de integração da fatia {modulo_ddd}."""
@@ -341,7 +358,7 @@ service = {slug.capitalize()}Service(adapter)
 def healthcheck():
     return {{"status": "ok", "service": "{slug}", "healthy": adapter.ping()}}
 '''
-    (slice_dir / "router.py").write_text(router_code, encoding="utf-8")
+    _escrever_preservando_existente(slice_dir / "router.py", router_code)
 
     injetar_quarteto_sine_qua_non(slice_dir, modulo_ddd, slug)
 
@@ -366,7 +383,7 @@ def test_factory_service_status():
     assert res["service"] == "{slug}"
     assert res["healthy"] is True
 '''
-    (tests_dir / f"test_{slug}.py").write_text(test_code, encoding="utf-8")
+    _escrever_preservando_existente(tests_dir / f"test_{slug}.py", test_code)
     for arq in slice_info.get("arquivos_esperados", []):
         if arq.startswith("tests/") and arq.endswith(".py"):
             caminho_arq = worktree_path / arq
@@ -441,7 +458,7 @@ class {slug.capitalize()}Service:
     def obter(self, chave: str) -> Any:
         return self.repo.obter(chave)
 '''
-    (slice_dir / "service.py").write_text(service_code, encoding="utf-8")
+    _escrever_preservando_existente(slice_dir / "service.py", service_code)
 
     router_code = f'''# -*- coding: utf-8 -*-
 from .repository import {slug.capitalize()}BridgeRepository
@@ -454,7 +471,7 @@ def store_record(key: str, value: str):
     repo.salvar(key, value)
     return {{"status": "saved", "key": key}}
 '''
-    (slice_dir / "router.py").write_text(router_code, encoding="utf-8")
+    _escrever_preservando_existente(slice_dir / "router.py", router_code)
 
     injetar_quarteto_sine_qua_non(slice_dir, modulo_ddd, slug)
 
@@ -480,7 +497,7 @@ def test_bridge_service():
     assert res["status"] == "salvo"
     assert srv.obter("rec_test") == {{"ok": True}}
 '''
-    (tests_dir / f"test_{slug}.py").write_text(test_code, encoding="utf-8")
+    _escrever_preservando_existente(tests_dir / f"test_{slug}.py", test_code)
     for arq in slice_info.get("arquivos_esperados", []):
         if arq.startswith("tests/") and arq.endswith(".py"):
             caminho_arq = worktree_path / arq

@@ -1,14 +1,14 @@
 # Apêndice B — Estado honesto
 
-Tabela consolidada de todos os achados dos mapas, gerada de `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`. Em aberto por gravidade: 0 alta, 3 média, 32 baixa. Cada achado em aberto traz no arquivo o texto pronto para abrir o fluxo de melhoria (`pedido_melhoria`).
+Tabela consolidada de todos os achados dos mapas, gerada de `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`. Em aberto por gravidade: 0 alta, 3 média, 33 baixa. Cada achado em aberto traz no arquivo o texto pronto para abrir o fluxo de melhoria (`pedido_melhoria`).
 
-## Em aberto (35)
+## Em aberto (36)
 
 | Achado | Gravidade · mapa |
 | :-------------------------------------- | :-------------------------------------------- |
 | 1 dimensões 15-D com falha no laudo de aidd-orca (`CAT-15d-aidd-orca`) | Média · lente15d |
-| 5 guardas declarados em lei que não rodam no commit (`CAT-declarados-fora-do-commit`) | Média · leis |
-| 10 guardas com o mesmo nome e código diferente (`CAT-gates-versoes`) | Média · guardas |
+| 6 guardas declarados em lei que não rodam no commit (`CAT-declarados-fora-do-commit`) | Média · leis |
+| 11 guardas com o mesmo nome e código diferente (`CAT-gates-versoes`) | Média · guardas |
 | Ciclo de auditoria sem todos os documentos: aidd-componentes/ciclo-01 (`CAT-ciclo-aidd-componentes-ciclo-01`) | Baixa · oficina |
 | Ciclo de auditoria sem todos os documentos: aidd-dependencias/ciclo-01 (`CAT-ciclo-aidd-dependencias-ciclo-01`) | Baixa · oficina |
 | Ciclo de auditoria sem todos os documentos: aidd-dispatch-runner/ciclo-01 (`CAT-ciclo-aidd-dispatch-runner-ciclo-01`) | Baixa · oficina |
@@ -38,6 +38,7 @@ Tabela consolidada de todos os achados dos mapas, gerada de `docs/auditoria/mapa
 | Ciclo de auditoria sem todos os documentos: fluxo-02-runner/ciclo-02 (`CAT-ciclo-fluxo-02-runner-ciclo-02`) | Baixa · oficina |
 | Ciclo de auditoria sem todos os documentos: fluxo-03-runner/ciclo-01 (`CAT-ciclo-fluxo-03-runner-ciclo-01`) | Baixa · oficina |
 | Ciclo de auditoria sem todos os documentos: fronteiras-ferramentas/ciclo-01 (`CAT-ciclo-fronteiras-ferramentas-ciclo-01`) | Baixa · oficina |
+| Ciclo de auditoria sem todos os documentos: kits-camadas/ciclo-01 (`CAT-ciclo-kits-camadas-ciclo-01`) | Baixa · oficina |
 | Ciclo de auditoria sem todos os documentos: quadro-kanban-pipelines/ciclo-01 (`CAT-ciclo-quadro-kanban-pipelines-ciclo-01`) | Baixa · oficina |
 | 7 guardas da raiz que nenhuma lei declara (`CAT-guardas-sem-lei`) | Baixa · leis |
 | 5 scripts que nenhum código chama (`CAT-scripts-sem-chamador`) | Baixa · scripts |

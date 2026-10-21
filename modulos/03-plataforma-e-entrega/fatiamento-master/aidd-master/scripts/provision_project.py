@@ -6,6 +6,86 @@ from moldes_catalogo import gates_de_projeto, molde  # noqa: E402
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 
+
+def _projeto_tem_fatias_reais(project_dir) -> bool:
+    """True quando o projeto tem ao menos uma fatia vertical com implementacao real.
+
+    Uma fatia e real quando o seu `domain/entities.py` nao define o agregado
+    generico do catalogo (`class <Pascal>Item`).
+    """
+    raiz_modulos = os.path.join(project_dir, "src", "modules")
+    if not os.path.isdir(raiz_modulos):
+        return False
+    for modulo in os.listdir(raiz_modulos):
+        entities = os.path.join(raiz_modulos, modulo, "domain", "entities.py")
+        if not os.path.isfile(entities):
+            continue
+        try:
+            with open(entities, "r", encoding="utf-8") as f:
+                conteudo = f.read()
+        except OSError:
+            continue
+        if f"class {modulo.capitalize()}Item" not in conteudo:
+            return True
+    return False
+
+def _projeto_tem_kernel_proprio(project_dir) -> bool:
+    """True quando o projeto tem um kernel compartilhado proprio (implementacao real).
+
+    O TaskFlow implementa `src/core/` com configuracao, erros, seguranca
+    (Argon2id + JWT) e dependencias — o proprio. Nesse caso o kernel generico
+    do catalogo (database/events/outbox/mcp_server/...) e codigo morto.
+    """
+    security = os.path.join(project_dir, "src", "core", "security.py")
+    if not os.path.isfile(security):
+        return False
+    try:
+        with open(security, "r", encoding="utf-8") as f:
+            conteudo = f.read()
+    except OSError:
+        return False
+    return "def hashear_senha(" in conteudo and "class SecurityService" in conteudo
+
+def _copiar_preservando_existente(origem, destino):
+    """Copia `origem` -> `destino` SEM sobrescrever um arquivo que ja existe.
+
+    Achado real (validacao E2E do Fluxo 01): o `master init`/`master add-module`
+    reescrevia incondicionalmente `src/core/*`, `src/server.py`, `src/modules/<slug>/*`
+    e `frontend/` com os moldes genericos do catalogo. Ao rodar o fluxo de novo
+    sobre um projeto que JA tem a implementacao real (VSA do engine + frontend
+    proprio), o scaffold apagava o codigo entregue e o gate G_TESTES_REAIS quebrava
+    com `ImportError` nos modulos reais.
+
+    Regra adotada: arquivo existente e do DONO do projeto — nunca e sobrescrito
+    pelo molde. O molde so preenche lacuna (arquivo ausente). Comportamento
+    identico ao `aidd-forge init` (que reporta "arquivos ignorados (ja existem)").
+    """
+    if os.path.exists(destino):
+        return False
+    os.makedirs(os.path.dirname(destino), exist_ok=True)
+    shutil.copyfile(origem, destino)
+    return True
+
+
+def _copiar_arvore_preservando_existente(origem_raiz, destino_raiz, ignore=None):
+    """Copia arvore de arquivos preservando os que ja existem no destino."""
+    copiados = 0
+    for raiz, _, arquivos in os.walk(origem_raiz):
+        if ignore is not None:
+            ignorados = ignore(raiz, arquivos)
+            arquivos = [a for a in arquivos if a not in ignorados]
+        rel = os.path.relpath(raiz, origem_raiz)
+        destino_pasta = destino_raiz if rel == "." else os.path.join(destino_raiz, rel)
+        os.makedirs(destino_pasta, exist_ok=True)
+        for arquivo in arquivos:
+            destino = os.path.join(destino_pasta, arquivo)
+            if os.path.exists(destino):
+                continue
+            shutil.copyfile(os.path.join(raiz, arquivo), destino)
+            copiados += 1
+    return copiados
+
+
 def slugify(text):
     text = text.lower().strip()
     text = re.sub(r'[^\w\s-]', '', text)
@@ -66,7 +146,13 @@ def provision(project_desc, base_dir=None, frontend_stack='tanstack', modulos_in
     os.makedirs(os.path.join(project_dir, 'tests', 'load'), exist_ok=True)
     os.makedirs(os.path.join(project_dir, 'scripts', 'gates'), exist_ok=True)
     
-    open(os.path.join(project_dir, 'src', '__init__.py'), 'w', encoding='utf-8').close()
+    # `src/__init__.py` do projeto pode ter conteudo proprio (o TaskFlow usa-o
+    # para registrar `src/` no sys.path e assim o boot `uvicorn src.server:app`
+    # funcionar). Truncar o arquivo apagava esse bootstrap — achado real na
+    # validacao E2E do Fluxo 01. So cria o arquivo quando ele ainda nao existe.
+    src_init = os.path.join(project_dir, 'src', '__init__.py')
+    if not os.path.exists(src_init):
+        open(src_init, 'w', encoding='utf-8').close()
     open(os.path.join(project_dir, 'src', 'core', '__init__.py'), 'w', encoding='utf-8').close()
     open(os.path.join(project_dir, 'src', 'modules', '__init__.py'), 'w', encoding='utf-8').close()
     open(os.path.join(project_dir, 'tests', '__init__.py'), 'w', encoding='utf-8').close()
@@ -79,33 +165,40 @@ def provision(project_desc, base_dir=None, frontend_stack='tanstack', modulos_in
 
     if os.path.exists(templates_dir):
         from compose_suite import CORE_KERNEL_FILES
-        for f in CORE_KERNEL_FILES + ['repositories.py', 'swagger.html', 'webhook_studio.html', 'mcp_studio.html']:
+        # Se o projeto JA tem um kernel proprio (implementacao real em
+        # src/core/), o molde generico do catalogo nao e materializado: ele
+        # reintroduz codigo morto (SQL, ORM, event bus) que dilui a cobertura e
+        # nao e importado por nada (achado real na validacao E2E do Fluxo 01).
+        kernel_proprio = _projeto_tem_kernel_proprio(project_dir)
+        if kernel_proprio:
+            print("  [=] Projeto com kernel proprio em src/core — molde generico do catalogo nao materializado.")
+        for f in ([] if kernel_proprio else CORE_KERNEL_FILES) + ([] if kernel_proprio else ['repositories.py', 'swagger.html', 'webhook_studio.html', 'mcp_studio.html']):
             src = molde(templates_dir, f)
             if os.path.exists(src):
-                shutil.copyfile(src, os.path.join(project_dir, 'src', 'core', f))
+                _copiar_preservando_existente(src, os.path.join(project_dir, 'src', 'core', f))
 
         src_output_css = molde(templates_dir, 'output.css')
         if os.path.exists(src_output_css):
             os.makedirs(os.path.join(project_dir, 'src', 'static'), exist_ok=True)
-            shutil.copyfile(src_output_css, os.path.join(project_dir, 'src', 'static', 'output.css'))
+            _copiar_preservando_existente(src_output_css, os.path.join(project_dir, 'src', 'static', 'output.css'))
 
         # Ticket 17 / D1: infraestrutura (Dockerfile, docker-compose.yml, deploy.sh, nginx/)
         # não é mais gerada pelo aidd-master. Essa responsabilidade pertence ao aidd-ops.
 
         locust_src = molde(templates_dir, 'locustfile.py')
         if os.path.exists(locust_src):
-            shutil.copyfile(locust_src, os.path.join(project_dir, 'tests', 'load', 'locustfile.py'))
+            _copiar_preservando_existente(locust_src, os.path.join(project_dir, 'tests', 'load', 'locustfile.py'))
 
     # 3. Copiar scripts (aidd.py, add_module.py)
     hub_scripts = os.path.join(repo_root, 'scripts')
     for s in ['aidd.py', 'add_module.py']:
         src = os.path.join(hub_scripts, s)
         if os.path.exists(src):
-            shutil.copyfile(src, os.path.join(project_dir, 'scripts', s))
+            _copiar_preservando_existente(src, os.path.join(project_dir, 'scripts', s))
 
     # 4. Copiar Gates Rígidos
     for g, origem in sorted(gates_de_projeto(gates_dir).items()):
-        shutil.copyfile(origem, os.path.join(project_dir, 'scripts', 'gates', g))
+        _copiar_preservando_existente(origem, os.path.join(project_dir, 'scripts', 'gates', g))
 
     # 4.1. Garantir pytest.ini isolado para prevencao de colisao de namespace
     pytest_ini_path = os.path.join(project_dir, 'pytest.ini')
@@ -150,6 +243,14 @@ def provision(project_desc, base_dir=None, frontend_stack='tanstack', modulos_in
     modulos_alvo = []
     if modulos_iniciais:
         modulos_alvo = [str(m).strip() for m in modulos_iniciais if str(m).strip()]
+
+    # Remove o modulo "umbrella" com o nome do projeto quando o projeto ja tem
+    # fatias verticais REAIS: o C3 de uma execucao anterior pode listar esse
+    # modulo generico, e recria-lo a cada rodada (codigo morto). Achado real na
+    # validacao E2E do Fluxo 01.
+    if _projeto_tem_fatias_reais(project_dir) and slug in modulos_alvo:
+        modulos_alvo = [m for m in modulos_alvo if m != slug]
+        print(f"  [=] Módulo umbrella '{slug}' removido — o projeto já tem fatias verticais reais.")
 
     if not modulos_alvo:
         # Checar C3 (HANDOFF_ENGINE_MASTER.json) ou PLANNER.json
@@ -198,9 +299,13 @@ def provision(project_desc, base_dir=None, frontend_stack='tanstack', modulos_in
     try:
         from compose_suite import generate_modular_server_code
         server_code = generate_modular_server_code(slug, modulos_alvo, db_engine="sqlite", project_dir=project_dir)
-        with open(os.path.join(project_dir, 'src', 'server.py'), 'w', encoding='utf-8') as f:
-            f.write(server_code)
-        print("  [+] Servidor dinâmico 'src/server.py' gerado com sucesso!")
+        servidor_destino = os.path.join(project_dir, 'src', 'server.py')
+        if os.path.exists(servidor_destino):
+            print("  [=] 'src/server.py' já existe (implementação do projeto) — preservado.")
+        else:
+            with open(servidor_destino, 'w', encoding='utf-8') as f:
+                f.write(server_code)
+            print("  [+] Servidor dinâmico 'src/server.py' gerado com sucesso!")
 
         if frontend_stack == 'tanstack':
             frontend_dest = os.path.join(project_dir, 'frontend')
@@ -210,7 +315,7 @@ def provision(project_desc, base_dir=None, frontend_stack='tanstack', modulos_in
             if os.path.isdir(frontend_template):
                 def _ignorar_build(dir_src, names):
                     return {'node_modules', 'dist', '.git', '__pycache__'}.intersection(names)
-                shutil.copytree(frontend_template, frontend_dest, dirs_exist_ok=True, ignore=_ignorar_build)
+                _copiar_arvore_preservando_existente(frontend_template, frontend_dest, ignore=_ignorar_build)
             print("  [+] Front-end 'frontend/' gerado em TanStack Start / Router + TypeScript + Tailwind (Lei #11)!")
         elif frontend_stack == 'nextjs':
             from nextjs_exporter import NextJSExporter
@@ -227,8 +332,12 @@ def provision(project_desc, base_dir=None, frontend_stack='tanstack', modulos_in
 
     # 6. Gerar requirements.txt
     from compose_suite import CORE_KERNEL_REQUIREMENTS
-    with open(os.path.join(project_dir, 'requirements.txt'), 'w', encoding='utf-8') as f:
-        f.write(CORE_KERNEL_REQUIREMENTS)
+    requirements_destino = os.path.join(project_dir, 'requirements.txt')
+    if os.path.exists(requirements_destino):
+        print("  [=] 'requirements.txt' já existe — preservado.")
+    else:
+        with open(requirements_destino, 'w', encoding='utf-8') as f:
+            f.write(CORE_KERNEL_REQUIREMENTS)
 
     # 7. Completar PLANO-EXECUCAO-ESTRUTURADO.json com as fases do projeto.
     # Atualiza (não sobrescreve) o arquivo escrito no passo 4.5, preservando
@@ -291,7 +400,14 @@ def provision_backend_only(project_dir, modulo_nome, descricao=""):
 
     if os.path.exists(templates_dir):
         from compose_suite import CORE_KERNEL_FILES
-        for f in CORE_KERNEL_FILES + ['repositories.py', 'swagger.html', 'webhook_studio.html', 'mcp_studio.html']:
+        # Se o projeto JA tem um kernel proprio (implementacao real em
+        # src/core/), o molde generico do catalogo nao e materializado: ele
+        # reintroduz codigo morto (SQL, ORM, event bus) que dilui a cobertura e
+        # nao e importado por nada (achado real na validacao E2E do Fluxo 01).
+        kernel_proprio = _projeto_tem_kernel_proprio(project_dir)
+        if kernel_proprio:
+            print("  [=] Projeto com kernel proprio em src/core — molde generico do catalogo nao materializado.")
+        for f in ([] if kernel_proprio else CORE_KERNEL_FILES) + ([] if kernel_proprio else ['repositories.py', 'swagger.html', 'webhook_studio.html', 'mcp_studio.html']):
             src = molde(templates_dir, f)
             if os.path.exists(src):
                 shutil.copyfile(src, os.path.join(backend_dir, 'src', 'core', f))

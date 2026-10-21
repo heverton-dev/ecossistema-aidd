@@ -26,6 +26,10 @@
   },
   "shells": [
     "src/components/AdminShell.tsx",
-    "src/components/MobileShell.tsx"
+    "src/components/MobileShell.tsx",
+    "src/components/DataTable.tsx",
+    "src/components/KanbanBoard.tsx",
+    "src/components/MetricCard.tsx",
+    "src/tokens.css"
   ]
 }

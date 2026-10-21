@@ -35,7 +35,17 @@ def testar(target_dir: str = "."):
 
     print(f"[*] {len(test_files)} arquivo(s) de teste localizados. Executando pytest...")
 
-    cmd = [sys.executable, "-m", "pytest", "-v", test_dir]
+    try:
+        rel_test_dir = os.path.relpath(test_dir, target_dir)
+    except ValueError:
+        rel_test_dir = "tests/unit"
+
+    cmd = [
+        sys.executable, "-m", "pytest", "-v",
+        "-o", f"testpaths={rel_test_dir}",
+        "-p", "no:cacheprovider",
+        rel_test_dir
+    ]
     res = subprocess.run(cmd, cwd=target_dir, capture_output=True, text=True)
 
     print(res.stdout)

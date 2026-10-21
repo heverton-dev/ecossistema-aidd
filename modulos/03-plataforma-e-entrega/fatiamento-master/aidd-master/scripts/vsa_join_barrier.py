@@ -227,7 +227,12 @@ def agregar_fatias_no_monolito(target_repo: Path, slices_aprovadas: List[Dict[st
     for f in slices_aprovadas:
         s_id = f["slice_id"]
         slug = s_id.replace("slice_", "")
-        imports.append(f"from src.slices.{slug} import router as {slug}_router")
+        # O roteador e o objeto `router` expoSTADO por `src/slices/<slug>/router.py`.
+        # Importar o modulo (`from src.slices.<slug> import router`) traz o MODULO,
+        # nao o APIRouter, e o include_router do FastAPI quebra com
+        # "module ... has no attribute '_contains_router'" (achado real na
+        # validacao E2E do Fluxo 01).
+        imports.append(f"from src.slices.{slug}.router import router as {slug}_router")
         roteadores.append(f'    "{slug}": {slug}_router,')
 
     registry_content = f'''# -*- coding: utf-8 -*-
@@ -253,7 +258,17 @@ def listar_fatias_ativas() -> list[str]:
     """Lista os slugs de todas as fatias verticais registradas."""
     return list(ROUTER_REGISTRY.keys())
 '''
-    (core_dir / "router_registry.py").write_text(registry_content, encoding="utf-8")
+    destino = core_dir / "router_registry.py"
+    if destino.is_file():
+        try:
+            existente = destino.read_text(encoding="utf-8")
+        except OSError:
+            existente = ""
+        if "Gerado deterministicamente pela barreira de convergência master." not in existente:
+            # Registro da implementacao real do projeto — nao sobrescrever.
+            print("[CONVERGÊNCIA-MASTER] 'src/core/router_registry.py' já é da implementação real — preservado.")
+            return
+    destino.write_text(registry_content, encoding="utf-8")
 
 
 def gerar_manifesto_enterprise_handoff(

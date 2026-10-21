@@ -9,12 +9,6 @@ EXPECTED_SKILLS = (
     "aidd-spec",
     "aidd-tdd",
     "aidd-tickets",
-    "caveman-ultra",
-    "cybersecurity-audit",
-    "impeccable-ui",
-    "open-code-review",
-    "orca-orchestration",
-    "post-mortem",
 )
 
 

@@ -1,0 +1,43 @@
+{
+  "versao": "1.0.0",
+  "nicho": "perfil_taskflow_open",
+  "nome_exibicao": "TaskFlow-Open (Local-First Task Management)",
+  "descricao": "Plano de infraestrutura para TaskFlow-Open: monólito modular + frontend Vite/React local-first com SQLite WAL.",
+  "fonte": "perfil gerado para TaskFlow-Open (Fluxo 02 aidd-open)",
+  "blocos": [
+    {
+      "slug": "postgres",
+      "caminho": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/templates/infra/postgres/",
+      "obrigatorio": false,
+      "motivo": "Postgres opcional; default local-first é SQLite WAL no volume app_data."
+    }
+  ],
+  "bancos_logicos": [
+    {
+      "nome": "taskflow",
+      "usuario": "taskflow_user",
+      "bloco_consumer": "postgres",
+      "notas": "SQLite WAL embutido (default). Postgres opcional via DATABASE_URL."
+    }
+  ],
+  "ferramentas_sem_bloco": [
+    {
+      "nome": "app",
+      "motivo": "Monólito modular Python; sem gateway externo em dev local."
+    },
+    {
+      "nome": "nginx",
+      "motivo": "Reverse proxy opcional; Vite :3000 + backend :8000 em dev."
+    }
+  ],
+  "portas_host": {
+    "8000": "Backend TaskFlow-Open (API + Quarteto)",
+    "3000": "Frontend Vite dev server"
+  },
+  "requisitos_recursos": {
+    "vcpu_minima": 2,
+    "ram_minima_gb": 2,
+    "disco_minimo_gb": 10,
+    "notas": "App local-first leve; SQLite WAL no volume app_data."
+  }
+}

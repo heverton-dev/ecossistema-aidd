@@ -82,8 +82,13 @@ def _rodar_testes_fatia(projeto: str, fatia_dir: str):
     junit = os.path.join(cache_dir, "pytest_slice.xml")
     env = dict(os.environ)
     env["PYTHONDONTWRITEBYTECODE"] = "1"
+    try:
+        rel_fatia = os.path.relpath(fatia_dir, projeto)
+    except ValueError:
+        rel_fatia = fatia_dir
     proc = subprocess.run(
-        [sys.executable, "-m", "pytest", fatia_dir,
+        [sys.executable, "-m", "pytest", rel_fatia,
+         "-o", f"testpaths={rel_fatia}",
          "-q", "-p", "no:cacheprovider", f"--junitxml={junit}"],
         cwd=projeto, env=env, capture_output=True, text=True,
         encoding="utf-8", errors="replace",

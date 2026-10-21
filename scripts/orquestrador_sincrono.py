@@ -272,10 +272,22 @@ class OrquestradorSincrono:
                 self.log("Ambiente do planner incompleto (veja as variáveis de deploy acima)", "ERRO")
                 return False
         elif not self.dry_run and not ambiente_json.is_file():
-            self.log("Ambiente do planner não registrado. Escolha como o Mobbin entra, nesta ordem:", "ERRO")
-            self.log("  1. MCP oficial do Mobbin, pelo harness; 2. chave MOBBIN_API_KEY no .env; 3. nenhum.", "ERRO")
-            self.log("Rode de novo com --mobbin <1|2|3> (ou: python ecossistema.py planner ambiente --pasta <pasta> --mobbin <1|2|3>).", "ERRO")
-            return False
+            if self.modo_intake == "autonomo":
+                self.log("Modo autônomo detectado: registrando Mobbin MCP oficial (1) com fallback...", "INFO")
+                rc = self._executar_comando([
+                    sys.executable, "ecossistema.py", "planner", "ambiente",
+                    "--pasta", str(self.pasta), "--mobbin", "1",
+                ])
+                if rc != 0:
+                    self._executar_comando([
+                        sys.executable, "ecossistema.py", "planner", "ambiente",
+                        "--pasta", str(self.pasta), "--mobbin", "3",
+                    ])
+            else:
+                self.log("Ambiente do planner não registrado. Escolha como o Mobbin entra, nesta ordem:", "ERRO")
+                self.log("  1. MCP oficial do Mobbin, pelo harness; 2. chave MOBBIN_API_KEY no .env; 3. nenhum.", "ERRO")
+                self.log("Rode de novo com --mobbin <1|2|3> (ou: python ecossistema.py planner ambiente --pasta <pasta> --mobbin <1|2|3>).", "ERRO")
+                return False
 
         # Intake: o planner só desenha depois do grill e da spec (com perguntas e direção visual).
         # O harness conduz a entrevista e grava .aidd/intake/{grill,spec}.md; aqui só se valida.
@@ -322,6 +334,23 @@ class OrquestradorSincrono:
         self.log("aidd-planner concluído e contrato lido!", "OK")
         return True
 
+    def _projeto_tem_fatias_reais(self) -> bool:
+        """True quando o projeto tem ao menos uma fatia vertical com implementacao real."""
+        raiz_modulos = self.pasta / "src" / "modules"
+        if not raiz_modulos.is_dir():
+            return False
+        for modulo in raiz_modulos.iterdir():
+            entities = modulo / "domain" / "entities.py"
+            if not entities.is_file():
+                continue
+            try:
+                conteudo = entities.read_text(encoding="utf-8")
+            except OSError:
+                continue
+            if f"class {modulo.name.capitalize()}Item" not in conteudo:
+                return True
+        return False
+
     def etapa_03_master(self) -> bool:
         """Etapa 3: Fatiamento inicial e harmonização no Monólito Modular VSA."""
         self.log("INICIANDO ETAPA 3: aidd-master (Monólito Modular VSA)", "ETAPA")
@@ -338,16 +367,25 @@ class OrquestradorSincrono:
             self.log("Falha no master init", "ERRO")
             return False
 
-        # master add-module com a fatia vertical principal
-        cmd_mod = [
-            sys.executable, "ecossistema.py", "master", "add-module",
-            self.slug,
-            "--pasta", str(self.pasta)
-        ]
-        rc = self._executar_comando(cmd_mod, env_extra=env_master)
-        if rc != 0:
-            self.log("Falha no master add-module", "ERRO")
-            return False
+        # master add-module com a fatia vertical principal.
+        # Se o projeto JA tem fatias verticais REAIS (implementadas pela Fase 8,
+        # reconhecidas pela ausencia do agregado generico `class <Pascal>Item` em
+        # `domain/entities.py`), o modulo umbrella com o nome do projeto nao e
+        # criado: ele seria codigo morto (CRUD generico de inteiros) sem
+        # qualquer ligacao com o dominio real (achado real na validacao E2E do
+        # Fluxo 01).
+        if self._projeto_tem_fatias_reais():
+            self.log("Projeto já tem fatias verticais reais — módulo umbrella não criado.", "INFO")
+        else:
+            cmd_mod = [
+                sys.executable, "ecossistema.py", "master", "add-module",
+                self.slug,
+                "--pasta", str(self.pasta)
+            ]
+            rc = self._executar_comando(cmd_mod, env_extra=env_master)
+            if rc != 0:
+                self.log("Falha no master add-module", "ERRO")
+                return False
 
         # Contrato C4 (master -> enterprise): gravado pelo master.
         if not self._ler_contrato("C4", "aidd-master"):
@@ -449,28 +487,31 @@ class OrquestradorSincrono:
         return True
 
     def _auditar_frontend_impeccable(self):
-        """Dispara a verificação visual/UX Impeccable (init->document->critique->audit->polish->harden->extract) se houver frontend."""
-        candidatos_ui = [
-            self.pasta / "frontend",
-            self.pasta / "src" / "frontend",
-            self.pasta / "ui",
-            self.pasta / "app"
-        ]
-        alvo_ui = next((p for p in candidatos_ui if p.is_dir()), None)
-        if not alvo_ui and not self.dry_run:
+        """Dispara a injeção determinística do Frontend TanStack Padrão-Ouro e verificação Impeccable."""
+        fe_dir = self.pasta / "frontend"
+        precisa_exportar = False
+
+        if not fe_dir.is_dir():
+            precisa_exportar = True
+        else:
+            # Se a pasta frontend existe mas não tem a casca canônica do TanStack Router
+            shell_path = fe_dir / "src" / "components" / "AdminShell.tsx"
+            if not shell_path.is_file():
+                precisa_exportar = True
+
+        if precisa_exportar and not self.dry_run:
             try:
                 _comp_dir = ROOT_DIR / "componentes" / "compartilhado" / "src-core"
                 if str(_comp_dir) not in sys.path:
                     sys.path.insert(0, str(_comp_dir))
                 from tanstack_exporter import TanStackRouterExporter
-                fe_dir = self.pasta / "frontend"
                 TanStackRouterExporter().export_project(str(self.pasta), str(fe_dir), suite_name=self.slug)
-                self.log(f"Frontend TanStack Start / Router (Padrão-Ouro, Lei #11) gerado em {fe_dir}", "OK")
-                alvo_ui = fe_dir
+                self.log(f"Frontend TanStack Start / Router (Padrão-Ouro, Lei #11) exportado em {fe_dir}", "OK")
             except Exception as _fe_err:
                 self.log(f"Aviso ao gerar frontend TanStack: {_fe_err}", "WARN")
 
-        if alvo_ui:
+        alvo_ui = fe_dir if fe_dir.is_dir() else (self.pasta / "src" / "frontend")
+        if alvo_ui and alvo_ui.is_dir():
             self.log(f"Frontend detectado em {alvo_ui}. Acionando /impeccable-full mandatório...", "INFO")
             launcher_cmd = ROOT_DIR / ".claude" / "skills" / "impeccable" / "scripts" / "impeccable.cmd"
             if launcher_cmd.is_file():
@@ -490,12 +531,30 @@ class OrquestradorSincrono:
         self.log("INICIANDO ETAPA 5: aidd-enterprise (Blindagem SHA-256)", "ETAPA")
         env_enterprise = self._env_tickets("aidd-enterprise")
 
-        # Injeta regra de integridade
+        # Injeta regra de integridade. A regra REAL do projeto vem de
+        # `governance/regra-integridade-<slug>.md` (via --content-file): sem ela o
+        # enterprise materializa um placeholder ("Descreva aqui a regra...") e a
+        # reinyecao numa segunda passada quebra a etapa por "Destino ja existe".
+        conteudo_regra = self.pasta / "governance" / f"regra-integridade-{self.slug}.md"
         cmd_inject = [
             sys.executable, "ecossistema.py", "enterprise", "inject",
             "rule", f"regra-integridade-{self.slug}",
             "--dir", str(self.pasta)
         ]
+        if conteudo_regra.is_file():
+            cmd_inject += ["--content-file", str(conteudo_regra)]
+        # O injetor recusa sobrescrever um destino existente ("Destino ja
+        # existe"). Como a regra e re-injetada a cada rodada, o destino antigo e
+        # removido ANTES da injecao — assim a etapa e idempotente sem mexer no
+        # componente compartilhado do injetor (a varredura anti-lock-in do
+        # ecossistema reverte alteracoes em `componentes/compartilhado/` por
+        # desenho, entao a correcao tem de ficar no orquestrador).
+        destino_regra = self.pasta / "templates" / "rules" / f"regra-integridade-{self.slug}.md"
+        if destino_regra.is_file():
+            try:
+                destino_regra.unlink()
+            except OSError:
+                pass
         rc = self._executar_comando(cmd_inject, env_extra=env_enterprise)
         if rc != 0:
             self.log("Falha no enterprise inject", "ERRO")

@@ -23,14 +23,14 @@ Onde mora: `AGENTS.md`, seção 2. Quem confere: o meta-guarda `G_LEI_DECLARA_PO
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | leis | 14 |
-| declarações de guarda | 71 |
+| declarações de guarda | 72 |
 | declarações que o meta-guarda não lê | 0 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_leis`), os mesmos do mapa `mapa-01-leis.html`.
 
 ## 1.3 O que falta consertar
 
-- **Média** · 5 guardas declarados em lei que não rodam no commit (`CAT-declarados-fora-do-commit`).
+- **Média** · 6 guardas declarados em lei que não rodam no commit (`CAT-declarados-fora-do-commit`).
 - **Baixa** · 7 guardas da raiz que nenhuma lei declara (`CAT-guardas-sem-lei`).
 
 Já resolvido:
@@ -115,7 +115,7 @@ Onde mora: `scripts/orquestrador_sincrono.py` e `componentes/compartilhado/specs
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | etapas na receita | 7 |
-| chamadas conferidas | 16 |
+| chamadas conferidas | 18 |
 | chamadas que quebram | 0 |
 | etapas sem ferramenta | 0 |
 | contratos | 9 |

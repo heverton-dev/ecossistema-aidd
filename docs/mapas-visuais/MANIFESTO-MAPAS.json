@@ -1,20 +1,20 @@
 {
   "ferramenta": "aidd-visual-maps",
   "catalogo": "docs/auditoria/mapa-pecas/catalogo-pecas.json",
-  "hash_catalogo": "9988da80153edc572f487212b22da3207ec5506a358edbcba279642e6f7d33bd",
+  "hash_catalogo": "e5b12f18221afc8e38073ace95e81a64396dadb8ecf980914e54bd6442d6cb11",
   "mapas": [
     {
       "tipo": "leis",
       "arquivo": "docs/mapas-visuais/mapa-01-leis.html",
       "versao": "tecnica",
-      "sha256": "654557ea0eb39bedcee690cd81f1d79964becb433ebf456aede3e48f262ab3a1",
+      "sha256": "e84647112f5f2c5d035116352a83c83cd6e2ed666f0c3c4d914fef49009f6353",
       "status": "concluido"
     },
     {
       "tipo": "leis",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-01-leis.html",
       "versao": "nao-tecnica",
-      "sha256": "9355f8a77b6109907a00e9b981477522935db6005406e17237a6e8dc309e7cac",
+      "sha256": "65b37f5f1b83e8347e69e8f304ff9b946017773b3bb9a0b7879bcd3b11a2f22b",
       "status": "concluido"
     },
     {
@@ -35,28 +35,28 @@
       "tipo": "encaixes",
       "arquivo": "docs/mapas-visuais/mapa-03-encaixes.html",
       "versao": "tecnica",
-      "sha256": "28b4db53c40ec12a12c8fd0d344e936ba4923f9cfd6011dea97d0e3d4f2dd37d",
+      "sha256": "e0f9495a952198cc0d266e18dc9f0f97e333ca56dcadd7b81c7ce4c62263eb8a",
       "status": "concluido"
     },
     {
       "tipo": "encaixes",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-03-encaixes.html",
       "versao": "nao-tecnica",
-      "sha256": "3a7d0ecf9c6f5131f5669331342bb71bfc2527b10d09267754224c2fcf2d6f90",
+      "sha256": "7fb65d66160d88b5e2d8a122e486fcf7b5d1d759d629cbd9fd2cd43c54007cce",
       "status": "concluido"
     },
     {
       "tipo": "guardas",
       "arquivo": "docs/mapas-visuais/mapa-04-guardas.html",
       "versao": "tecnica",
-      "sha256": "636cb262a902356934284285e0db5be05dcc514f3e61039289b07da39fea2adf",
+      "sha256": "b72f703fe9a412881aa2cc1ae6a56665383dc66d45ae2458c2cffcbebd919f16",
       "status": "concluido"
     },
     {
       "tipo": "guardas",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-04-guardas.html",
       "versao": "nao-tecnica",
-      "sha256": "e8330cfdf562a3a7e994ee0a1500043d69725c6c9399a3c588520b933cadf4b5",
+      "sha256": "5ebe1d363e9c8261a25f3a4bf3cb7f38d906d9b63c30ccb709a4aff672f7806d",
       "status": "concluido"
     },
     {
@@ -119,14 +119,14 @@
       "tipo": "moldes",
       "arquivo": "docs/mapas-visuais/mapa-09-moldes.html",
       "versao": "tecnica",
-      "sha256": "a661f23888cd0b6269a56b3493c795efd0fc10456a58a569d136a74c5822aa0b",
+      "sha256": "a0d5e5d94109ec1ca3b7f86af726baf5704f71e70cfd69eba35fc15054e9881f",
       "status": "concluido"
     },
     {
       "tipo": "moldes",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-09-moldes.html",
       "versao": "nao-tecnica",
-      "sha256": "d1c021036f1bc67b694c310dc4c44ad8f61ad68881f06edfa3a114f09a4f7bb4",
+      "sha256": "3b29d4dcbdc437ba07397bd8aeb6261b089388d9f2250828f9f4e6cd844fa0b5",
       "status": "concluido"
     },
     {
@@ -189,14 +189,14 @@
       "tipo": "modulos",
       "arquivo": "docs/mapas-visuais/mapa-14-modulos.html",
       "versao": "tecnica",
-      "sha256": "7d9ce27598fb18189f73cb53df104f1d7a2113ff37d6fff7ead559e7b97c913f",
+      "sha256": "ed62aeddc75cdcaaf0648edbc84ed85f8e62d154503200019bd6a203f840330e",
       "status": "concluido"
     },
     {
       "tipo": "modulos",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-14-modulos.html",
       "versao": "nao-tecnica",
-      "sha256": "734b29e4e878c798a9a641f321861b35e2b7dd044b39ea17f86341cf8494c0b2",
+      "sha256": "8beb51e009a4dd06bda22551c81989705b1289002aa4ff6f110e6f3188529f61",
       "status": "concluido"
     },
     {
@@ -234,23 +234,23 @@
     "partes": [
       {
         "arquivo": "docs/livros/mapas-aidd/partes/00-frontmatter.md",
-        "sha256": "8457be18d218d2e04dc233fafdd685cd5bacf85ac69f609b8b2d7c86802e6999"
+        "sha256": "d436374937290dd67a25694169d3c1aa9659c12c5a1a4e6ed75313b463e54e9d"
       },
       {
         "arquivo": "docs/livros/mapas-aidd/partes/10-parte-i.md",
-        "sha256": "b09bc1e58477a31455f68ce6b70458548524044671372c4f99ef05c9b2ce0e55"
+        "sha256": "4e0f5f0dc1b47979ebaf8dc57a4505324cee0b405528a7aee4324f34f6b7b7f7"
       },
       {
         "arquivo": "docs/livros/mapas-aidd/partes/20-parte-ii.md",
-        "sha256": "8027a2db6b0e647a0f9e9618e5dfa8f29198877632bec9e7d4567ff4f37f7907"
+        "sha256": "8779969e2f0ac85144c0d25be860b520dc9a2b58be5df29e55310aea2d446479"
       },
       {
         "arquivo": "docs/livros/mapas-aidd/partes/30-parte-iii.md",
-        "sha256": "5fd6ea9b258466ac497c8d5b63fb2b3ec5fcf4156f55286fdf583a3b48ea2ca4"
+        "sha256": "a43fcf046b739f5f859f9469a70b2f046ee5b4b3f98c0ddd649730f498fd6dfe"
       },
       {
         "arquivo": "docs/livros/mapas-aidd/partes/40-parte-iv.md",
-        "sha256": "aef5d84888670ef412dd79561ced7a70bc55e446576f84c563e160f1d821af4c"
+        "sha256": "9054a42989955427a0e04f4474906b2edd39930a52257615a40f46e4ad827070"
       },
       {
         "arquivo": "docs/livros/mapas-aidd/partes/50-parte-v.md",
@@ -262,7 +262,7 @@
       },
       {
         "arquivo": "docs/livros/mapas-aidd/partes/91-apendice-estado.md",
-        "sha256": "cefa068b9863d019f213497c33744b92357451a5f31735be1e451d0582cb8a47"
+        "sha256": "f7be18d33e81691348c451dabdb0f8fd3df0830dabaa3aa51e6fdedb7856f7d9"
       }
     ],
     "build": {

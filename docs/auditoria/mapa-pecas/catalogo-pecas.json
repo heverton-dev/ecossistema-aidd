@@ -18,8 +18,8 @@
     "mcps_registrados": 11,
     "mcps_internos": 5,
     "hooks": 5,
-    "gates_nomes": 105,
-    "gates_arquivos": 134,
+    "gates_nomes": 106,
+    "gates_arquivos": 135,
     "contratos": 9,
     "etapas_receita": 7,
     "pipelines": 12,
@@ -935,6 +935,11 @@
         },
         {
           "gate": "G_FRONTEND_LAYERS",
+          "forca": "provado",
+          "visivel": true
+        },
+        {
+          "gate": "G_CRAFT_VISUAL",
           "forca": "provado",
           "visivel": true
         },
@@ -3343,7 +3348,7 @@
       "ferramenta": "aidd-ops",
       "molde": "infra",
       "caminho": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/templates/infra",
-      "arquivos": 30,
+      "arquivos": 31,
       "dona_canonica": "aidd-ops"
     }
   ],
@@ -3969,6 +3974,23 @@
       "no_pre_commit": true,
       "prova_que_morde": true,
       "leis": []
+    },
+    {
+      "id": "G_CRAFT_VISUAL",
+      "descricao": "Quality Gate Determinístico de Craft Visual e Maturidade de UI (Lei #11 / Lei #13). Audita os arquivos de frontend (TSX, JSX, CSS, HTML) contra vícios de design: Zero Emojis Unicode em UI (Lei #14):…",
+      "copias": [
+        {
+          "caminho": "modulos/01-governanca-e-qualidade/gates/G_CRAFT_VISUAL.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": true,
+      "leis": [
+        11
+      ]
     },
     {
       "id": "G_CYBERSECURITY_OWASP",
@@ -5724,6 +5746,22 @@
             "<var>",
             "--mobbin",
             "<var>"
+          ],
+          [
+            "planner",
+            "ambiente",
+            "--pasta",
+            "<var>",
+            "--mobbin",
+            "1"
+          ],
+          [
+            "planner",
+            "ambiente",
+            "--pasta",
+            "<var>",
+            "--mobbin",
+            "3"
           ]
         ],
         "chamadas_por_fluxo": {},
@@ -5898,6 +5936,18 @@
     {
       "etapa": "etapa_02_planner",
       "chamada": "ecossistema.py planner ambiente --pasta <var> --mobbin <var>",
+      "encaixa": true,
+      "problemas": []
+    },
+    {
+      "etapa": "etapa_02_planner",
+      "chamada": "ecossistema.py planner ambiente --pasta <var> --mobbin 1",
+      "encaixa": true,
+      "problemas": []
+    },
+    {
+      "etapa": "etapa_02_planner",
+      "chamada": "ecossistema.py planner ambiente --pasta <var> --mobbin 3",
       "encaixa": true,
       "problemas": []
     },
@@ -6446,8 +6496,8 @@
           "id": "gates",
           "caminho": "modulos/01-governanca-e-qualidade/gates",
           "ferramentas": [],
-          "guardas": 20,
-          "arquivos_py": 20
+          "guardas": 21,
+          "arquivos_py": 21
         }
       ]
     },

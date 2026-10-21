@@ -22,8 +22,8 @@ Onde mora: `gates/` e `tools/<f>/gates/`. Quem confere: o próprio pre-commit e 
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| guardas (nomes) | 105 |
-| no ecossistema | 72 |
+| guardas (nomes) | 106 |
+| no ecossistema | 79 |
 | rodam no commit | 67 |
 | com versões diferentes | 11 |
 
@@ -31,7 +31,7 @@ Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `c
 
 ## 4.3 O que falta consertar
 
-- **Média** · 10 guardas com o mesmo nome e código diferente (`CAT-gates-versoes`).
+- **Média** · 11 guardas com o mesmo nome e código diferente (`CAT-gates-versoes`).
 
 Já resolvido:
 
@@ -69,9 +69,9 @@ Onde mora: `componentes/compartilhado/skills/`. Quem confere: o `G_SKILL_FORMATO
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| skills nossas | 45 |
+| skills nossas | 46 |
 | nomes de terceiros registrados | 15 |
-| com "Use when" | 45 |
+| com "Use when" | 46 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_skills`), os mesmos do mapa `mapa-05-skills.html`.
 

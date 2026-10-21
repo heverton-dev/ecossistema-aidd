@@ -57,6 +57,62 @@ def pascal_case(text: str) -> str:
 CAMADAS_DDD = ("domain", "application", "infrastructure", "interfaces")
 
 
+def _modulo_ja_implementado_de_verdade(module_dir, pascal):
+    """True quando a fatia ja tem implementacao real (nao o molde generico).
+
+    O molde do catalogo define o agregado `class <Pascal>Item` em
+    `domain/entities.py`. Se o arquivo existe mas NAO define esse agregado,
+    a fatia foi implementada de verdade pelo motor (Fase 8) e nenhum artefato
+    generico pode ser materializado por cima — sob pena de sobrescrever a
+    implementacao e quebrar os testes (achado real na validacao E2E do Fluxo 01).
+    """
+    entities = os.path.join(module_dir, "domain", "entities.py")
+    if not os.path.isfile(entities):
+        return False
+    try:
+        with open(entities, "r", encoding="utf-8") as f:
+            conteudo = f.read()
+    except OSError:
+        return False
+    return f"class {pascal}Item" not in conteudo
+
+def _arquivo_e_da_implementacao_real(caminho):
+    """True quando o arquivo ja existe e NAO e o molde generico do catalogo.
+
+    O molde gerado pelo master e um servidor monolithico `http.server` com
+    imports de `modules.<slug>.models`; a implementacao real do projeto usa
+    FastAPI. A heuristica olha o proprio conteudo para nao sobrescrever codigo
+    do dono do projeto.
+    """
+    if not os.path.isfile(caminho):
+        return False
+    try:
+        with open(caminho, "r", encoding="utf-8") as f:
+            conteudo = f.read()
+    except OSError:
+        return False
+    return "fastapi" in conteudo.lower()
+
+def _mover_preservando_existente(origem, destino):
+    """Move `origem` -> `destino` sem sobrescrever um arquivo que ja existe.
+
+    Achado real (validacao E2E do Fluxo 01): `master add-module` reescrevia
+    incondicionalmente as camadas DDD da fatia (`domain/`, `application/`,
+    `infrastructure/`, `interfaces/`) e os facades `models.py`/`services.py`/
+    `routes.py` com os moldes genericos do catalogo, apagando a implementacao
+    real do projeto (que usa `domain/entities.py` proprio e o schema TaskFlow).
+    Regra adotada: arquivo existente e do DONO — nunca e sobrescrito pelo molde.
+    """
+    if os.path.exists(destino):
+        try:
+            os.remove(origem)
+        except OSError:
+            pass
+        return False
+    os.makedirs(os.path.dirname(destino), exist_ok=True)
+    shutil.move(origem, destino)
+    return True
+
 def _mover_camadas_ddd(gerado_dir: str, module_dir: str) -> None:
     """Copia as 4 camadas DDD (domain/application/infrastructure/interfaces)
     do template renderizado para o módulo, renomeando os arquivos gerados com
@@ -73,7 +129,7 @@ def _mover_camadas_ddd(gerado_dir: str, module_dir: str) -> None:
             os.makedirs(pasta_destino, exist_ok=True)
             for arquivo in arquivos:
                 nome_final = arquivo[:-3] if arquivo.endswith(".j2") else arquivo
-                shutil.move(
+                _mover_preservando_existente(
                     os.path.join(raiz, arquivo),
                     os.path.join(pasta_destino, nome_final),
                 )
@@ -118,22 +174,32 @@ def criar_modulo(nome_modulo: str, descricao: str = "", target_dir: str = "."):
         # que o TEMPLATE em si seja confundido com código gerado. O
         # arquivo já RENDERIZADO (sem chaves Jinja2) recebe o nome final
         # ".py" aqui, na cópia para o destino.
-        shutil.move(os.path.join(gerado_dir, "__init__.py"), os.path.join(module_dir, "__init__.py"))
-        for fname in ("models.py", "services.py", "routes.py"):
-            shutil.move(os.path.join(gerado_dir, f"{fname}.j2"), os.path.join(module_dir, fname))
+        if _modulo_ja_implementado_de_verdade(module_dir, pascal):
+            print(f"  [=] Fatia '{slug}' ja implementada de verdade — nenhum molde generico materializado.")
+        else:
+            _mover_preservando_existente(
+                os.path.join(gerado_dir, "__init__.py"), os.path.join(module_dir, "__init__.py")
+            )
+            for fname in ("models.py", "services.py", "routes.py"):
+                _mover_preservando_existente(
+                    os.path.join(gerado_dir, f"{fname}.j2"), os.path.join(module_dir, fname)
+                )
 
         # Camadas Clean Architecture / DDD (domain, application, infrastructure,
-        # interfaces) da fatia vertical.
-        _mover_camadas_ddd(gerado_dir, module_dir)
+        # interfaces) da fatia vertical. Numa fatia JA implementada de verdade,
+        # o molde generico nao pode ser materializado por cima.
+        if not _modulo_ja_implementado_de_verdade(module_dir, pascal):
+            _mover_camadas_ddd(gerado_dir, module_dir)
 
-        shutil.move(
+        _mover_preservando_existente(
             os.path.join(gerado_dir, "static", "components", f"{slug}.html"),
             os.path.join(comp_dir, f"{slug}.html")
         )
-        shutil.move(
-            os.path.join(gerado_dir, "tests", f"test_{slug}.py.j2"),
-            os.path.join(test_dir, f"test_{slug}.py")
-        )
+        if not _modulo_ja_implementado_de_verdade(module_dir, pascal):
+            _mover_preservando_existente(
+                os.path.join(gerado_dir, "tests", f"test_{slug}.py.j2"),
+                os.path.join(test_dir, f"test_{slug}.py")
+            )
 
     # 6. Atualizar PLANO-EXECUCAO-ESTRUTURADO.json se existir
     plano_path = os.path.join(target_dir, "PLANO-EXECUCAO-ESTRUTURADO.json")
@@ -197,9 +263,16 @@ def criar_modulo(nome_modulo: str, descricao: str = "", target_dir: str = "."):
                         module_slugs.append(slug)
 
                     server_code = generate_modular_server_code(suite_name, module_slugs, db_engine=db_engine, project_dir=target_dir)
-                    with open(server_path, "w", encoding="utf-8") as f:
-                        f.write(server_code)
-                    print(f"  [+] 'src/server.py' regenerado e religado com o módulo '{slug}'!")
+                    # Nao sobrescrever um `src/server.py` que ja e a implementacao real
+                    # do projeto (achado real da validacao E2E do Fluxo 01: o molde
+                    # gerado aqui nao conhece a composicao real e apagava o servidor
+                    # FastAPI do TaskFlow).
+                    if _arquivo_e_da_implementacao_real(server_path):
+                        print("  [=] 'src/server.py' ja e a implementacao real do projeto — preservado.")
+                    else:
+                        with open(server_path, "w", encoding="utf-8") as f:
+                            f.write(server_code)
+                        print(f"  [+] 'src/server.py' regenerado e religado com o módulo '{slug}'!")
 
                     # Regenerar também a página do novo módulo no frontend
                     # Next.js (Lei #11), quando o projeto já usa essa stack —

@@ -25,6 +25,23 @@ _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _ROOT not in sys.path:
     sys.path.insert(0, _ROOT)
 
+# Se `application` não estiver na raiz local (projeto instanciado), busca no ecossistema
+if not os.path.isdir(os.path.join(_ROOT, "application")):
+    _cand_bases = []
+    _curr = _ROOT
+    while os.path.dirname(_curr) != _curr:
+        _cand_bases.append(_curr)
+        _cand_bases.append(os.path.join(_curr, "ecossistema-aidd"))
+        _curr = os.path.dirname(_curr)
+
+    for _base in _cand_bases:
+        if _base and os.path.isdir(_base):
+            _master_cand = os.path.join(_base, "modulos", "03-plataforma-e-entrega", "fatiamento-master", "aidd-master")
+            if os.path.isdir(os.path.join(_master_cand, "application")):
+                if _master_cand not in sys.path:
+                    sys.path.insert(0, _master_cand)
+                break
+
 import click  # noqa: E402
 
 if hasattr(sys.stdout, 'reconfigure'):

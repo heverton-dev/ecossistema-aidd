@@ -2017,4 +2017,35 @@
   - `G_ENV_ROT`: **100% aprovado**.
 - **Status:** **HOMOLOGADO E AUDITADO VIA TDD (GREEN).**
 
+---
+
+## Seção 29 — Auditoria Profunda AIDD-Osmani e Lapidação da Máquina (Fluxo 03 Freedom / Micropipelines 01 a 10)
+
+- **Data da Auditoria e Validação:** 21/10/2026
+- **Modo de Execução:** `/goal` autônomo com looping de prova (Red) ➔ lapidação (Green) ➔ prova que morde (Lei #13).
+- **Ferramentas Auditadas e Lapidadas:**
+  `modulos/01-governanca-e-qualidade/core/aidd-forge`,
+  `modulos/01-governanca-e-qualidade/core/aidd-planner`,
+  `modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom`,
+  `modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master`,
+  `componentes/compartilhado/templates/frontend-tanstack`,
+  `modulos/01-governanca-e-qualidade/gates/G_CRAFT_VISUAL.py`.
+- **Micro-Tickets Resolvidos na Máquina (TCK-01 a TCK-07):**
+  1. **`TCK-FORGE-01` (`aidd-master/scripts/aidd.py`):** Resolução determinística ascendente de caminhos no `sys.path` eliminando dependência estrita de variáveis de ambiente. `python scripts/aidd.py audit` retorna `exit code 0`.
+  2. **`TCK-PLAN-01` (`scripts/orquestrador_sincrono.py`):** Injeção automática de `--mobbin 1` no modo intake autônomo, permitindo avanço fluido sem travas interativas.
+  3. **`TCK-PLAN-02` (`aidd-planner/src/core_planner/intake.py`):** Sintetizador autônomo de BDD para `grill.md` e `spec.md` gerando asserções compatíveis com regex (`exit code 0`, `assert`). 20/20 testes unitários aprovados em `test_intake.py`.
+  4. **`TCK-ENG-01` (`componentes/compartilhado/gates/G_TESTES.py`):** Isolamento de caminhos relativos via `os.path.relpath` e `-o testpaths={rel_test_dir}`, resolvendo colisão com diretórios contendo colchetes (ex.: `[TESTE]`). 8/8 testes passando em 1.54s.
+  5. **`TCK-UI-01` (`componentes/compartilhado/templates/frontend-tanstack`):** Erradicação do visual "flopado" de tutorial. Injeção de primitivos corporativos (`DataTable.tsx`, `KanbanBoard.tsx`, `MetricCard.tsx`, `tokens.css` em OKLCH Dark Slate) com alta densidade de informação e contraste WCAG 2.2 AA. Capturas Playwright 1440x900 provando padrão Linear/Raycast/Asana.
+  6. **`TCK-UI-02` (`scripts/orquestrador_sincrono.py`):** Remoção de bypass em `_auditar_frontend_impeccable`, forçando a injeção incondicional da casca padrão-ouro TanStack.
+  7. **`TCK-GATE-01` (`modulos/01-governanca-e-qualidade/gates/G_CRAFT_VISUAL.py`):** Quality Gate determinístico de Craft Visual com suíte de mordida comprovando reprovação sob emojis em UI, layouts estreitos (`max-w-xs`) ou ausência de tokens OKLCH. 4/4 testes aprovados em `test_g_craft_visual.py`.
+- **Resultados Medidos (21/10/2026):**
+  - `test_g_craft_visual.py`: **4 passed** (100%).
+  - `test_fronteira_enterprise.py`: **1 passed** (drift de catálogo zerado).
+  - `G_ENV_ROT.py`: **100% aprovado** (todas as variáveis lidas presentes em `.env.example`).
+  - `G_mapa_pecas.py`: **100% aprovado** (catálogo e mapas sincronizados).
+  - `G_aidd_visual_maps.py`: **100% aprovado**.
+  - `G_LEI_DECLARA_PORTAO.py`: **100% das 14 Leis Invioláveis conformes**.
+- **Status:** **HOMOLOGADO E AUDITADO VIA TDD (GREEN) — GOAL ATINGIDO.**
+
+
 

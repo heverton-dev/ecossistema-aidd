@@ -8,6 +8,12 @@
       "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_diagnose.py",
       "caminho_final": "modulos/01-governanca-e-qualidade/gates/G_aidd_diagnose.py"
     },
+    "G_CRAFT_VISUAL": {
+      "dono": "01-governanca-e-qualidade",
+      "transversal": false,
+      "caminho": "modulos/01-governanca-e-qualidade/gates/G_CRAFT_VISUAL.py",
+      "caminho_final": "modulos/01-governanca-e-qualidade/gates/G_CRAFT_VISUAL.py"
+    },
     "G_aidd_enterprise": {
       "dono": "03-plataforma-e-entrega",
       "transversal": false,

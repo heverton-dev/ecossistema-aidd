@@ -1,0 +1,28 @@
+@layer base {
+  :root {
+    --background: oklch(0.985 0.002 285);
+    --foreground: oklch(0.18 0.005 285);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.18 0.005 285);
+    --primary: oklch(0.55 0.22 265);
+    --primary-foreground: oklch(1 0 0);
+    --muted: oklch(0.96 0.003 285);
+    --muted-foreground: oklch(0.5 0.01 285);
+    --border: oklch(0.91 0.003 285);
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Paleta Dark Slate Corporativa (Linear / Asana) */
+    --background: oklch(0.13 0.015 260);     /* #090D16 - ardósia escuro profundo */
+    --foreground: oklch(0.96 0.005 260);     /* #F1F5F9 - texto de alto contraste */
+    --card: oklch(0.16 0.02 260);           /* #0F172A - superfície de camada 1 */
+    --card-foreground: oklch(0.96 0.005 260);
+    --primary: oklch(0.62 0.21 265);        /* #6366F1 - índigo calibrado suave */
+    --primary-foreground: oklch(1 0 0);
+    --muted: oklch(0.22 0.02 260);          /* #1E293B - cinza ardósia sutil */
+    --muted-foreground: oklch(0.7 0.015 260); /* #94A3B8 - contraste legível WCAG */
+    --border: oklch(0.25 0.02 260 / 0.5);   /* borda translúcida sutil */
+    --radius: 0.625rem;
+  }
+}

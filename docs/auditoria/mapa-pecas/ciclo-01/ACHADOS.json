@@ -7,12 +7,12 @@
   ],
   "como_usar": "Cada achado em aberto traz pedido_melhoria: o texto para python ecossistema.py melhoria init --pedido \"...\".",
   "totais": {
-    "aberto": 35,
+    "aberto": 36,
     "suspeita": 0,
     "resolvido": 14,
     "abertos_alta": 0,
     "abertos_media": 3,
-    "abertos_baixa": 32
+    "abertos_baixa": 33
   },
   "achados": [
     {
@@ -29,7 +29,7 @@
     },
     {
       "id": "CAT-declarados-fora-do-commit",
-      "titulo": "5 guardas declarados em lei que não rodam no commit",
+      "titulo": "6 guardas declarados em lei que não rodam no commit",
       "gravidade": "media",
       "estado": "aberto",
       "origem": "catalogo",
@@ -39,13 +39,14 @@
         "Lei #9: G_aidd_plan",
         "Lei #9: G_aidd_planner_runner",
         "Lei #9: G_aidd_session",
+        "Lei #11: G_CRAFT_VISUAL",
         "Lei #14: G_GRAPH_FIRST"
       ],
       "pedido_melhoria": "Colocar no pre-commit os guardas declarados nas leis, ou rebaixar a declaração."
     },
     {
       "id": "CAT-gates-versoes",
-      "titulo": "10 guardas com o mesmo nome e código diferente",
+      "titulo": "11 guardas com o mesmo nome e código diferente",
       "gravidade": "media",
       "estado": "aberto",
       "origem": "catalogo",
@@ -60,6 +61,7 @@
         "G_SAIDA_BINARIA",
         "G_SEGREDOS",
         "G_STACK_PADRAO_OURO",
+        "G_TEMPLATE_TANSTACK_OFFLINE",
         "G_TESTES_REAIS",
         "planejado em fronteiras-ferramentas/ciclo-01: Ticket 8 (Bloco 2, almoxarifado único) e Ticket 19 (Bloco 4, remove as cópias)"
       ],
@@ -412,6 +414,18 @@
         "faltam: laudo_revisado"
       ],
       "pedido_melhoria": "Completar ou fechar o ciclo fronteiras-ferramentas/ciclo-01."
+    },
+    {
+      "id": "CAT-ciclo-kits-camadas-ciclo-01",
+      "titulo": "Ciclo de auditoria sem todos os documentos: kits-camadas/ciclo-01",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "oficina",
+      "evidencia": [
+        "faltam: laudo_inicial, plano_evolucao, laudo_revisado"
+      ],
+      "pedido_melhoria": "Completar ou fechar o ciclo kits-camadas/ciclo-01."
     },
     {
       "id": "CAT-ciclo-quadro-kanban-pipelines-ciclo-01",

@@ -1169,6 +1169,20 @@ class ImplementadorFase8:
 
         arq_teste = self.pasta_projeto / 'tests' / nome_teste
         arq_teste.parent.mkdir(parents=True, exist_ok=True)
+
+        # Teste de integracao JA existente e do projeto: nao sobrescrever.
+        # O gerador deterministico (Lei #1) escreve simbolos genericos
+        # (`validar_payload`, `ServicoDominio`, `RepositorioSQLite`) que so existem
+        # nos moldes do catalogo — sobrescrever o teste real do projeto quebrava a
+        # coleta da suite inteira (achado real na validacao E2E do Fluxo 01).
+        # Regua: se o arquivo existe e o pytest passa nele, ele e reutilizado.
+        if arq_teste.is_file():
+            resultado_existente = self._rodar_pytest(caminho_relativo=nome_teste)
+            if resultado_existente.get('passaram', 0) > 0 and not resultado_existente.get('erro_coleta'):
+                print(f"   = Teste de integração já existe e passa — reutilizado (tests/{nome_teste}).")
+                return True, resultado_existente
+            print(f"   ! Teste de integração existente reprovou — regenerando (tests/{nome_teste}).")
+
         escrever_atomico(arq_teste, dados['teste'])
         print(f"   ✓ Teste de integração gerado e salvo em tests/{nome_teste}")
 
@@ -1276,7 +1290,23 @@ class ImplementadorFase8:
         return None
 
     def _gerar_teste_integracao_deterministico(self, scripts_implementados: List[Dict]) -> Tuple[bool, Optional[Dict]]:
-        """Gera teste de integração determinístico encadeando os módulos gerados (Lei #1)."""
+        """Gera teste de integração determinístico encadeando os módulos gerados (Lei #1).
+
+        Se o projeto JÁ tem um `tests/test_integracao.py` que passa, ele é
+        reutilizado: o gerador determinístico escreve simbolos genericos
+        (`validar_payload`, `ServicoDominio`, `RepositorioSQLite`) que só existem
+        nos moldes do catalogo e nao nos modulos reais do projeto (achado real na
+        validacao E2E do Fluxo 01 — sobrescrever o teste real quebrava a coleta
+        da suite inteira).
+        """
+        nome_teste = 'test_integracao.py'
+        arq_existente = self.pasta_projeto / 'tests' / nome_teste
+        if arq_existente.is_file():
+            resultado_existente = self._rodar_pytest(caminho_relativo=nome_teste)
+            if resultado_existente.get('passaram', 0) > 0 and not resultado_existente.get('erro_coleta'):
+                print(f"   = Teste de integração já existe e passa — reutilizado (tests/{nome_teste}).")
+                return True, resultado_existente
+
         linhas_import = []
         linhas_chamadas = []
 
@@ -1760,10 +1790,38 @@ class ImplementadorFase8:
             nome_base += '.py'
         return nome_base
 
+    # Marcadores do molde generico de implementacao (Lei #1 - Determinismo First).
+    # Quando o conteudo JA gravado NAO e o molde (ou seja: e a implementacao real
+    # do projeto), ele nunca e sobrescrito pelo gerador deterministico.
+    _MARCADORES_MOLDE = (
+        'class ServicoDominio',
+        'class RepositorioSQLite',
+        'def validar_payload(',
+        'Módulo de validação de schemas e contratos de entrada.',
+    )
+
+    def _conteudo_e_o_molde_generico(self, conteudo: str) -> bool:
+        """True quando o conteúdo é o molde genérico do catálogo (não implementação real)."""
+        if not conteudo:
+            return True
+        return any(marcador in conteudo for marcador in self._MARCADORES_MOLDE)
+
     def _escrever_implementacao(self, impl: Dict):
-        """Escreve código + teste em disco de verdade em UTF-8"""
+        """Escreve código + teste em disco de verdade em UTF-8.
+
+        Arquivo já existente que NÃO é o molde genérico pertence ao projeto e é
+        preservado: o gerador determinístico da Fase 8 produzia simbolos genericos
+        (`validar_payload`, `ServicoDominio`, `RepositorioSQLite`) que apagavam a
+        implementação real e quebravam a suíte (achado real na validação E2E do Fluxo 01).
+        """
         caminho_codigo = self.pasta_projeto / 'src' / impl['caminho_relativo']
         caminho_codigo.parent.mkdir(parents=True, exist_ok=True)
+        if caminho_codigo.is_file():
+            existente = caminho_codigo.read_text(encoding='utf-8')
+            if not self._conteudo_e_o_molde_generico(existente):
+                print(f"   = {impl['caminho_relativo']} já é implementação real — preservado.")
+                self._escrever_teste_de_impl(impl, caminho_codigo)
+                return
         escrever_atomico(caminho_codigo, impl['codigo'])
 
         init_src = self.pasta_projeto / 'src' / '__init__.py'
@@ -1774,8 +1832,17 @@ class ImplementadorFase8:
         if not init_parent.exists():
             escrever_atomico(init_parent, '')
 
+        self._escrever_teste_de_impl(impl, caminho_codigo)
+
+    def _escrever_teste_de_impl(self, impl: Dict, caminho_codigo: Path):
+        """Grava o teste da implementação preservando o teste real do projeto."""
         caminho_teste = self.pasta_projeto / 'tests' / impl['caminho_teste']
         caminho_teste.parent.mkdir(parents=True, exist_ok=True)
+        if caminho_teste.is_file():
+            existente = caminho_teste.read_text(encoding='utf-8')
+            if not self._conteudo_e_o_molde_generico(existente):
+                print(f"   = {impl['caminho_teste']} já é teste real do projeto — preservado.")
+                return
         escrever_atomico(caminho_teste, impl['teste'])
 
         init_tests = self.pasta_projeto / 'tests' / '__init__.py'
@@ -2173,10 +2240,20 @@ Rules:
         try:
             pasta_projeto_absoluta = self.pasta_projeto.resolve()
             with SandboxNivel1(pythonpath=pythonpath_do_projeto(pasta_projeto_absoluta / 'src')) as sandbox:
+                # O alvo do pytest e' RELATIVO ao projeto e o cwd e' a raiz do projeto.
+                # Motivo (achado real, Fluxo 01): pytest >= 9 rejeita no argv qualquer
+                # caminho ABSOLUTO que contenha '[' ou ']' — `resolve_collection_argument`
+                # faz `base, squacket, rest = arg.partition("[")` e levanta
+                # UsageError("path cannot contain [] parametrization: <arg>") quando nao
+                # ha '::' no argumento. Um path de projeto com colchetes (ex.: '[TESTE]')
+                # derrubava TODA execucao de pytest da Fase 8 -> gate I3 sempre vermelho ->
+                # loop infinito de phase_08_fix com timeout de 180s por tentativa.
+                # Passando alvo relativo + cwd=raiz do projeto, nenhum colchete chega ao argv;
+                # o ambiente minimo do Sandbox Nivel 1 (allowlist estrita) permanece intacto.
                 resultado = subprocess.run(
-                    [sys.executable, '-m', 'pytest', str(pasta_projeto_absoluta / alvo), '-v',
+                    [sys.executable, '-m', 'pytest', alvo, '-v',
                      f'--rootdir={pasta_projeto_absoluta}'],
-                    cwd=str(sandbox.cwd), capture_output=True, text=True,
+                    cwd=str(pasta_projeto_absoluta), capture_output=True, text=True,
                     encoding='utf-8', errors='replace', timeout=TIMEOUT_PYTEST_SEGUNDOS,
                     env=sandbox.env
                 )
