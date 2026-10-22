@@ -1,20 +1,20 @@
 {
   "ferramenta": "aidd-visual-maps",
   "catalogo": "docs/auditoria/mapa-pecas/catalogo-pecas.json",
-  "hash_catalogo": "e5b12f18221afc8e38073ace95e81a64396dadb8ecf980914e54bd6442d6cb11",
+  "hash_catalogo": "d7f817c8903e3cb927ea78f89cf7597052d867c00a1b69c075016e5f8859dc92",
   "mapas": [
     {
       "tipo": "leis",
       "arquivo": "docs/mapas-visuais/mapa-01-leis.html",
       "versao": "tecnica",
-      "sha256": "e84647112f5f2c5d035116352a83c83cd6e2ed666f0c3c4d914fef49009f6353",
+      "sha256": "d623ce61e0dd983d227b95608156d53d24665c9d615ab2fb137747fddfcd0b0f",
       "status": "concluido"
     },
     {
       "tipo": "leis",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-01-leis.html",
       "versao": "nao-tecnica",
-      "sha256": "65b37f5f1b83e8347e69e8f304ff9b946017773b3bb9a0b7879bcd3b11a2f22b",
+      "sha256": "db34a665aad452d856ba54dbc5531eca814f2f827c7c8bf165567e791755adfe",
       "status": "concluido"
     },
     {
@@ -49,14 +49,14 @@
       "tipo": "guardas",
       "arquivo": "docs/mapas-visuais/mapa-04-guardas.html",
       "versao": "tecnica",
-      "sha256": "b72f703fe9a412881aa2cc1ae6a56665383dc66d45ae2458c2cffcbebd919f16",
+      "sha256": "82e69267f79f78ad725401f06efb2fdf6527b4fb6dcd447d715f76da33000862",
       "status": "concluido"
     },
     {
       "tipo": "guardas",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-04-guardas.html",
       "versao": "nao-tecnica",
-      "sha256": "5ebe1d363e9c8261a25f3a4bf3cb7f38d906d9b63c30ccb709a4aff672f7806d",
+      "sha256": "01637c40cbf92d90bade3dd8e4414ea1b2e7016d68ccad247ffee4b4dbfb24ed",
       "status": "concluido"
     },
     {
@@ -189,14 +189,14 @@
       "tipo": "modulos",
       "arquivo": "docs/mapas-visuais/mapa-14-modulos.html",
       "versao": "tecnica",
-      "sha256": "ed62aeddc75cdcaaf0648edbc84ed85f8e62d154503200019bd6a203f840330e",
+      "sha256": "21e43a8940c91d4c811906931c880ff9c60dceb977a131c21f85447ee92f1315",
       "status": "concluido"
     },
     {
       "tipo": "modulos",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-14-modulos.html",
       "versao": "nao-tecnica",
-      "sha256": "8beb51e009a4dd06bda22551c81989705b1289002aa4ff6f110e6f3188529f61",
+      "sha256": "08ba2b77d00a11af6a970df99a826dc1bd06c0c22542b36e16c005f006c16525",
       "status": "concluido"
     },
     {

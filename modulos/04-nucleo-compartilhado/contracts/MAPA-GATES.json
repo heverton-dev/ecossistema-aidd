@@ -439,6 +439,12 @@
       "transversal": true,
       "caminho": "modulos/04-nucleo-compartilhado/gates/G_ZERO_HEADLESS.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_ZERO_HEADLESS.py"
+    },
+    "G_UI_API_PARITY": {
+      "dono": "01-governanca-e-qualidade",
+      "transversal": false,
+      "caminho": "modulos/01-governanca-e-qualidade/gates/G_UI_API_PARITY.py",
+      "caminho_final": "modulos/01-governanca-e-qualidade/gates/G_UI_API_PARITY.py"
     }
   }
 }

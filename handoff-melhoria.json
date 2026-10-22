@@ -3,7 +3,7 @@
   "ferramenta": "aidd-melhoria",
   "status": "SUCESSO",
   "codigo_saida": 0,
-  "emitido_em": "2026-10-10T20:23:33+00:00",
+  "emitido_em": "2026-10-21T23:43:49+00:00",
   "transicao": {
     "fase_atual": "melhoria",
     "proxima_fase": "plan",
@@ -13,7 +13,7 @@
   "artefatos": [
     {
       "caminho": "AGENTS.md",
-      "sha256": "6ce3f5e33700e27200c6bba3e6f2717aa66ad671097f2390f6000f44d30232ec"
+      "sha256": "eeda0487f7e9aea920f2d73722262bc74182cd50bf0436d9872be0246238025c"
     }
   ],
   "manifesto": "docs/melhorias/manifesto-exemplo.json",
@@ -24,6 +24,6 @@
   "assinatura": {
     "algoritmo": "sha256",
     "escopo": "payload-canonico-sem-assinatura",
-    "valor": "7ddebca4aa256289b46683ac2e0e922d1c16d1e54dfb895d3acfac1cdbf82e59"
+    "valor": "9f75175d13d89efec9353f3641d77104f39058c8dfd59182f35bad8979ee9608"
   }
 }

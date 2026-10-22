@@ -18,8 +18,8 @@
     "mcps_registrados": 11,
     "mcps_internos": 5,
     "hooks": 5,
-    "gates_nomes": 106,
-    "gates_arquivos": 135,
+    "gates_nomes": 107,
+    "gates_arquivos": 136,
     "contratos": 9,
     "etapas_receita": 7,
     "pipelines": 12,
@@ -908,6 +908,11 @@
         },
         {
           "gate": "G_QUARTETO_SINE_QUA_NON",
+          "forca": "provado",
+          "visivel": true
+        },
+        {
+          "gate": "G_UI_API_PARITY",
           "forca": "provado",
           "visivel": true
         }
@@ -5296,6 +5301,23 @@
       ]
     },
     {
+      "id": "G_UI_API_PARITY",
+      "descricao": "Audita a paridade estrita entre os endpoints OpenAPI 3.1 declarados no Backend e as chamadas HTTP ativas no Frontend (TypeScript / React / TanStack).",
+      "copias": [
+        {
+          "caminho": "modulos/01-governanca-e-qualidade/gates/G_UI_API_PARITY.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": true,
+      "leis": [
+        10
+      ]
+    },
+    {
       "id": "G_UNIVERSAL_HARNESS",
       "descricao": "Audita a garantia SINE QUA NON de que todo componente, skill, MCP e hook esteja universalmente sincronizado, configurado e disponível de forma agnóstica para qualquer harness e sistema operacional…",
       "copias": [
@@ -6496,8 +6518,8 @@
           "id": "gates",
           "caminho": "modulos/01-governanca-e-qualidade/gates",
           "ferramentas": [],
-          "guardas": 21,
-          "arquivos_py": 21
+          "guardas": 22,
+          "arquivos_py": 22
         }
       ]
     },
