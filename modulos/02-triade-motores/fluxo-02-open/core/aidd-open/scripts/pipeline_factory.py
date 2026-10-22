@@ -391,6 +391,33 @@ def executar_pipeline(plano_path: str, pasta_destino: str, incluir_llm: bool = T
     print(f" Output: {output_path}")
     print("=" * 72)
 
+    if not erros:
+        flag_path = os.path.join(pasta_destino, ".aidd", "PIPELINE_CONCLUIDO.flag")
+        try:
+            os.makedirs(os.path.dirname(flag_path), exist_ok=True)
+            with open(flag_path, "w", encoding="utf-8") as f:
+                json.dump({
+                    "status": "CONCLUIDO",
+                    "fluxo": "open",
+                    "motor": "aidd-open",
+                    "pasta": os.path.abspath(pasta_destino),
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "exit_code": 0
+                }, f, indent=2, ensure_ascii=False)
+        except Exception:
+            pass
+
+        print()
+        print("=" * 70)
+        print("🛑 [TERMINATION_SIGNAL / TRAVA ANTI-LOOP REFLEXIVO (Lei #7)]")
+        print("=" * 70)
+        print("• O pipeline aidd-open foi 100% concluído com sucesso (exit code 0).")
+        print("• DIRETIVA AGÊNTICA MANDATÓRIA:")
+        print("  O trabalho mecânico deste motor TERMINOU. É estritamente PROIBIDO")
+        print("  executar novos comandos, inventar refatorações especulativas ou entrar")
+        print("  em loops de auto-reflexão. Emita o resumo executivo e PARE imediatamente.")
+        print("=" * 70 + "\n")
+
     return 1 if erros else 0
 
 

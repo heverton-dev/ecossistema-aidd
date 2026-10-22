@@ -2,7 +2,7 @@
 """
 AIDD-Open — Frontend Generator Engine.
 
-Gera scaffold Next.js + Tailwind + shadcn/ui whitelabel.
+Gera scaffold TanStack Router + React + Tailwind + Vite (Padrão-Ouro Lei #11).
 """
 import os
 import sys
@@ -66,42 +66,45 @@ def _renderizar_template(nome_template: str, contexto: dict) -> Result:
 
 
 def gerar_frontend(analysis: dict, pasta_saida: str) -> Result:
-    """Gera o frontend Next.js whitelabel."""
+    """Gera o frontend TanStack Router + Vite Padrão-Ouro."""
     contexto = _montar_contexto(analysis)
     arquivos_gerados = []
 
     templates = [
-        ("next.config.js.j2", "next.config.js"),
-        ("layout.tsx.j2", "app/layout.tsx"),
-        ("page.tsx.j2", "app/page.tsx"),
         ("tenant.config.json.j2", "tenant.config.json"),
     ]
 
-    # package.json basico
+    # package.json padrao-ouro (Lei #11)
     nicho_slug = analysis["nicho_slug"]
     package_json = {
         "name": f"aidd-{nicho_slug}-frontend",
         "version": "1.0.0",
         "private": True,
+        "type": "module",
         "scripts": {
-            "dev": "next dev",
-            "build": "next build",
-            "start": "next start",
+            "dev": "vite",
+            "build": "tsc -b && vite build",
+            "preview": "vite preview"
         },
         "dependencies": {
-            "next": "^14.0.0",
-            "react": "^18.0.0",
-            "react-dom": "^18.0.0",
+            "@tanstack/react-router": "^1.139.1",
+            "@tanstack/react-query": "^5.67.1",
+            "react": "^19.0.0",
+            "react-dom": "^19.0.0",
+            "lucide-react": "^0.477.0",
+            "clsx": "^2.1.1",
+            "tailwind-merge": "^3.0.2"
         },
         "devDependencies": {
-            "tailwindcss": "^3.0.0",
-            "postcss": "^8.0.0",
-            "autoprefixer": "^10.0.0",
-            "@types/node": "^20.0.0",
-            "@types/react": "^18.0.0",
-            "typescript": "^5.0.0",
-        },
+            "@vitejs/plugin-react": "^4.3.4",
+            "vite": "^6.2.0",
+            "tailwindcss": "^4.0.0",
+            "typescript": "^5.8.0",
+            "@types/react": "^19.0.0",
+            "@types/react-dom": "^19.0.0"
+        }
     }
+
 
     import json
     out_dir = os.path.join(pasta_saida, "frontend")

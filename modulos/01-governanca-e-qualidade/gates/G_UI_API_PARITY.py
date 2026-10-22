@@ -37,14 +37,42 @@ from typing import Dict, List, Set, Tuple
 DEFAULT_MIN_PARITY = 85.0
 
 
+PREFIXOS_DISPENSADOS_UI = (
+    "/healthz",
+    "/health",
+    "/api/health",
+    "/api/webhooks",
+    "/api/webhook",
+    "/webhook",
+    "/webhooks",
+    "/api/mcp",
+    "/mcp",
+    "/api/docs",
+    "/docs",
+    "/api/openapi.json",
+    "/openapi.json",
+    "/api/jobs",
+    "/api/circuit-breakers",
+    "/api/auth/oauth",
+)
+
+
 def extrair_endpoints_openapi(caminho_openapi: Path) -> Set[str]:
-    """Extrai os caminhos (paths) únicos declarados em um arquivo openapi.json."""
+    """Extrai os caminhos (paths) únicos declarados em um arquivo openapi.json, excluindo infra/estúdios."""
     if not caminho_openapi.is_file():
         return set()
     try:
         dados = json.loads(caminho_openapi.read_text(encoding="utf-8"))
         paths = dados.get("paths", {})
-        return {p.rstrip("/") for p in paths.keys() if p}
+        rotas: Set[str] = set()
+        for p in paths.keys():
+            if not p:
+                continue
+            p_limpo = p.rstrip("/")
+            if any(p_limpo.startswith(disp) for disp in PREFIXOS_DISPENSADOS_UI):
+                continue
+            rotas.add(p_limpo)
+        return rotas
     except Exception:
         return set()
 
@@ -55,22 +83,40 @@ def extrair_endpoints_fastapi_ast(pasta_backend: Path) -> Set[str]:
     if not pasta_backend.is_dir():
         return rotas
 
+    # Regex para capturar prefixo de APIRouter
+    padrao_prefixo = re.compile(
+        r"APIRouter\s*\([^)]*prefix\s*=\s*['\"]([^'\"]+)['\"]",
+        re.IGNORECASE | re.DOTALL,
+    )
+
     # Regex robusto para capturar decoradores de rotas FastAPI: @router.get("/...") ou @app.post('/...')
     padrao_rota = re.compile(
-        r"@(?:router|app)\.(?:get|post|put|delete|patch|options|head)\s*\(\s*['\"]([^'\"]+)['\"]",
+        r"@(?:router|app)\.(?:get|post|put|delete|patch|options|head)\s*\(\s*['\"]([^'\"]*)['\"]",
         re.IGNORECASE,
     )
 
     for py_file in pasta_backend.rglob("*.py"):
         try:
             conteudo = py_file.read_text(encoding="utf-8", errors="ignore")
+            m_pref = padrao_prefixo.search(conteudo)
+            prefixo = m_pref.group(1).rstrip("/") if m_pref else ""
+
             for m in padrao_rota.finditer(conteudo):
-                rota = m.group(1).split("?")[0].rstrip("/")
-                if rota:
-                    rotas.add(rota)
+                sub_rota = m.group(1).split("?")[0]
+                if prefixo:
+                    rota_completa = f"{prefixo}/{sub_rota.lstrip('/')}".rstrip("/")
+                else:
+                    rota_completa = sub_rota.rstrip("/")
+
+                if not rota_completa:
+                    rota_completa = prefixo or "/"
+
+                if rota_completa and not any(rota_completa.startswith(disp) for disp in PREFIXOS_DISPENSADOS_UI):
+                    rotas.add(rota_completa)
         except OSError:
             continue
     return rotas
+
 
 
 def extrair_chamadas_api_frontend(pasta_frontend: Path) -> Set[str]:
@@ -109,10 +155,12 @@ def extrair_chamadas_api_frontend(pasta_frontend: Path) -> Set[str]:
 def normalizar_rota(rota: str) -> str:
     """Normaliza parâmetros de rota em formato padrão {param} para cruzamento."""
     rota_limpa = rota.rstrip("/")
-    # Transforma {deal_id}, {id}, :id em {param}
+    # Transforma {deal_id}, {id}, :id, <list_id> em {param}
     rota_norm = re.sub(r"\{[^}]+\}", "{param}", rota_limpa)
+    rota_norm = re.sub(r"<[^>]+>", "{param}", rota_norm)
     rota_norm = re.sub(r":([a-zA-Z0-9_]+)", "{param}", rota_norm)
     return rota_norm
+
 
 
 def calcular_paridade(

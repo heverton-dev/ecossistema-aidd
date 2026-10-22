@@ -176,6 +176,18 @@ def interceptar(
 
     is_confirmed = checar_confirmacao_explicita(payload, cli_confirmed)
 
+    # 0. Verificar trava de pipeline concluído (Anti-Loop Reflexivo - Lei #7)
+    if not is_confirmed:
+        flag_concluido = Path.cwd() / ".aidd" / "PIPELINE_CONCLUIDO.flag"
+        if flag_concluido.exists():
+            msg = (
+                f"[BLOQUEIO G_ZERO_HEADLESS] Lançamento de subagente bloqueado pela Trava Anti-Loop Reflexivo!\n"
+                f"  Motivo: O pipeline já foi concluído com sucesso ({flag_concluido}).\n"
+                f"  Violação: Lei Canônica #7 (Zero Subagentes Headless / Anti-Loop Reflexivo).\n"
+                f"  Ação Requerida: O trabalho deste pipeline terminou. Se desejar uma nova rodada, remova a flag ou confirme explicitamente com o usuário."
+            )
+            return 2, msg
+
     # 1. Verificar paralelismo na chamada
     eh_paralelo, motivo_paralelo = detectar_paralelismo_no_payload(payload)
     if eh_paralelo and not is_confirmed:

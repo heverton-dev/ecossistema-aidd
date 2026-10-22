@@ -777,6 +777,32 @@ class OrquestradorSincrono:
         print(f"Versão:      {status_git}")
         print()
 
+        # TRAVA ANTI-LOOP REFLEXIVO (Lei #7 & Lei #1 - Zero Infinite Loop)
+        if not self.dry_run:
+            flag_path = raiz / ".aidd" / "PIPELINE_CONCLUIDO.flag"
+            flag_path.parent.mkdir(parents=True, exist_ok=True)
+            with open(flag_path, "w", encoding="utf-8") as f:
+                json.dump({
+                    "status": "CONCLUIDO",
+                    "fluxo": self.fluxo,
+                    "nome_fluxo": self.nome_fluxo,
+                    "slug": self.slug,
+                    "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                    "exit_code": 0
+                }, f, indent=2, ensure_ascii=False)
+
+        print("=" * 70)
+        print("🛑 [TERMINATION_SIGNAL / TRAVA ANTI-LOOP REFLEXIVO (Lei #7)]")
+        print("=" * 70)
+        print("• O pipeline síncrono foi 100% concluído com sucesso (exit code 0).")
+        print("• DIRETIVA AGÊNTICA MANDATÓRIA:")
+        print("  O trabalho mecânico deste pipeline TERMINOU. É estritamente PROIBIDO")
+        print("  executar novos comandos, inventar refatorações especulativas ou entrar")
+        print("  em loops de auto-reflexão. Emita o resumo executivo e PARE imediatamente.")
+        print("=" * 70)
+        print()
+
+
 
 def main():
     parser = argparse.ArgumentParser(

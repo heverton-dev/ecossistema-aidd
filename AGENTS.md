@@ -28,8 +28,10 @@
 - **Long-task rule:** Run anything slower than ~2 minutes (full gate battery, `gate_final`, 4F pipeline) in the background and resume on its completion notice. Never ask the user to "call back in N minutes". One heavy cycle at a time: `scripts/fila_ciclos.py` queues the rest and notifies when each ends.
 - **Graph-first (Lei #14):** Always query knowledge graph (`codebase-memory-mcp` MCP) before Grep, Glob, or full file reads.
 - **Docs Ingestion constraint:** Read ONLY living canonical documentation (`docs/protocolos/`, `AGENTS.md`, `MEMORY.md`). Never ingest historical reports, superseded manuals, or past session logs as system truths.
+- **Anti-Loop Reflection Rule (Lei #7 & Lei #1 - Zero Infinite Loop):** When a command, pipeline or test battery outputs `PIPELINE_FINISHED rc=0` or `[TERMINATION_SIGNAL]`, the agent MUST immediately cease executing commands. Do NOT enter speculative loops, do NOT attempt unrequested refactorings, do NOT re-run green checks. Emit the final summary table and yield turn immediately.
 
 ---
+
 
 ## 2. Inviolable Laws
 

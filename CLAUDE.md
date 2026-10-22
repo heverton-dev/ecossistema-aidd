@@ -7,3 +7,7 @@ Enforced in this harness via `.claude/hooks/regra10_check.py`:
 2. Short bulleted body. Facts, numbers, findings. No narration of steps taken.
 3. One closing suggestion block, separated from the body.
 Forbidden: introductions, restating the request, recapping what was just said, listing options without a recommendation.
+
+## Anti-Loop Reflection Rule (Lei #7 & Lei #1 - Zero Infinite Loop)
+When any pipeline outputs `PIPELINE_FINISHED rc=0` or `🛑 [TERMINATION_SIGNAL]` or creates `.aidd/PIPELINE_CONCLUIDO.flag`, cease executing commands immediately. Do NOT enter speculative loops or unrequested refactorings. Emit the structured summary and stop.
+

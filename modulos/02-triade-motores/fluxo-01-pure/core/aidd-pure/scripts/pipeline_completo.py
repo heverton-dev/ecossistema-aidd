@@ -1207,6 +1207,32 @@ def cli(ideia, pasta, interativo, implementar_codigo, resume, orquestrador):
     print(f"   Duração: {resultado['duracao_segundos']:.1f}s")
     print("=" * 70 + "\n")
 
+    if resultado['status'] == 'COMPLETO':
+        flag_path = Path(pasta) / ".aidd" / "PIPELINE_CONCLUIDO.flag"
+        try:
+            flag_path.parent.mkdir(parents=True, exist_ok=True)
+            with open(flag_path, "w", encoding="utf-8") as f:
+                json.dump({
+                    "status": "CONCLUIDO",
+                    "fluxo": "pure",
+                    "motor": "aidd-pure",
+                    "pasta": str(pasta),
+                    "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                    "exit_code": 0
+                }, f, indent=2, ensure_ascii=False)
+        except Exception:
+            pass
+
+        print("=" * 70)
+        print("🛑 [TERMINATION_SIGNAL / TRAVA ANTI-LOOP REFLEXIVO (Lei #7)]")
+        print("=" * 70)
+        print("• O pipeline aidd-pure foi 100% concluído com sucesso (exit code 0).")
+        print("• DIRETIVA AGÊNTICA MANDATÓRIA:")
+        print("  O trabalho mecânico deste motor TERMINOU. É estritamente PROIBIDO")
+        print("  executar novos comandos, inventar refatorações especulativas ou entrar")
+        print("  em loops de auto-reflexão. Emita o resumo executivo e PARE imediatamente.")
+        print("=" * 70 + "\n")
+
     sys.exit(0 if resultado['status'] == 'COMPLETO' else 1)
 
 

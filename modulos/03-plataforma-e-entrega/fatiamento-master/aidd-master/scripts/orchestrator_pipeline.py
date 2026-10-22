@@ -567,6 +567,33 @@ class OrchestratorPipeline:
 
             elapsed = time.time() - start_global
             self.log(f"🎉 Pipeline executado com SUCESSO TOTAL em {elapsed:.2f}s.")
+
+            flag_path = os.path.join(self.repo_root, ".aidd", "PIPELINE_CONCLUIDO.flag")
+            try:
+                os.makedirs(os.path.dirname(flag_path), exist_ok=True)
+                with open(flag_path, "w", encoding="utf-8") as f:
+                    json.dump({
+                        "status": "CONCLUIDO",
+                        "fluxo": "pipeline-worktrees",
+                        "motor": "orchestrator_pipeline",
+                        "repo_root": os.path.abspath(self.repo_root),
+                        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                        "exit_code": 0
+                    }, f, indent=2, ensure_ascii=False)
+            except Exception:
+                pass
+
+            print()
+            print("=" * 70)
+            print("🛑 [TERMINATION_SIGNAL / TRAVA ANTI-LOOP REFLEXIVO (Lei #7)]")
+            print("=" * 70)
+            print("• O pipeline em worktrees foi 100% concluído com sucesso (exit code 0).")
+            print("• DIRETIVA AGÊNTICA MANDATÓRIA:")
+            print("  O trabalho mecânico deste pipeline TERMINOU. É estritamente PROIBIDO")
+            print("  executar novos comandos, inventar refatorações especulativas ou entrar")
+            print("  em loops de auto-reflexão. Emita o resumo executivo e PARE imediatamente.")
+            print("=" * 70 + "\n")
+
             return 0
 
         except Exception as e:
