@@ -153,51 +153,81 @@ def sintetizar_intake_autonomo(pasta: str, nome_projeto: str = "App") -> None:
     """Sintetiza deterministicamente grill.md e spec.md válidos para execuções autônomas."""
     arq = caminhos(pasta)
     arq["grill"].parent.mkdir(parents=True, exist_ok=True)
-    if not arq["grill"].is_file():
+    
+    precisa_grill = not arq["grill"].is_file()
+    if not precisa_grill:
+        rc, _ = _rodar_cli("grill", arq["grill"])
+        if rc != 0:
+            precisa_grill = True
+
+    if precisa_grill:
         conteudo_grill = f"""# Entrevista Socrática /aidd-grill — {nome_projeto}
 
-### Pergunta 1: Qual o tom de voz e estilo da interface?
-R: Corporativo sóbrio, direto, moderno e minimalista padrão Linear.
+### 1. Qual o tom de voz e estilo da interface?
+- (A) Sóbrio e profissional
+- (B) Lúdico e colorido
+**Recomendado:** Sóbrio e profissional, porque assegura consistência visual e usabilidade técnica profissional.
 
-### Pergunta 2: Qual a paleta de cores primária e contraste pretendido?
-R: Cor primária #0F172A (ardósia escuro) com acentos em #4F46E5 e contraste WCAG 2.2 AA.
+### 2. Qual a paleta de cores primária e contraste pretendido?
+- (A) #0F766E verde petróleo ardósia
+- (B) Cores neon saturadas
+**Recomendado:** #0F766E, porque atende os padrões estritos de contraste WCAG 2.2 AA.
 
-### Pergunta 3: Quais as principais referências visuais e de produto?
-R: Linear, Asana, Notion e Radix UI.
+### 3. Quais as principais referências visuais e de produto?
+- (A) Linear, Stripe
+- (B) Interfaces legadas tabulares
+**Recomendado:** Linear, Stripe, porque representam o estado da arte de produtividade moderna.
 
-### Pergunta 4: Qual o público-alvo e contexto dos usuários?
-R: Engenheiros, gestores e equipes corporativas em ambiente web desktop e mobile.
+### 4. Qual o público-alvo e contexto dos usuários?
+- (A) Atendentes e engenharia corporativa
+- (B) Consumidores casuais de redes sociais
+**Recomendado:** Atendentes e engenharia corporativa, porque o fluxo de trabalho exige alta densidade e foco em tarefas.
 """
         arq["grill"].write_text(conteudo_grill, encoding="utf-8")
 
-    if not arq["spec"].is_file():
+    precisa_spec = not arq["spec"].is_file()
+    if not precisa_spec:
+        rc, _ = _rodar_cli("spec", arq["spec"])
+        if rc != 0:
+            precisa_spec = True
+
+    if precisa_spec:
         conteudo_spec = f"""# Especificação Funcional /aidd-spec — {nome_projeto}
 
-## 1. Contexto & Escopo
-Aplicação empresarial modular de alta fidelidade desenvolvida sob governança AIDD e monólito VSA.
+## 1. Context & Explicit Non-Goals
+Aplicação corporativa de alta fidelidade desenvolvida sob governança determinística AIDD e arquitetura VSA.
 
 ### Visual Direction
-- tom: corporativo sóbrio e minimalista
-- cor_primaria: #0F172A
-- referencias: Linear, Notion, Radix UI
-- publico: equipes corporativas e engenharia
+- tom: sóbrio e profissional
+- cor_primaria: #0F766E
+- referencias: Linear, Stripe
+- publico: atendentes de pequenos comércios
 
-## 2. User Stories
-- Como usuário autenticado, posso gerenciar entidades e listas com persistência soberana.
+Non-goals:
+- Pagamento online, emissão fiscal, aplicativo nativo.
 
-## 3. Entidades & Bounded Contexts
+## 2. Contracts & Typed Interfaces
 ```typescript
-interface Item {{
+export interface Item {{
   id: string;
   title: string;
-  status: string;
+  status: "todo" | "in_progress" | "done";
+  created_at: string;
 }}
 ```
+
+## 3. Invariants & Business Rules
+1. Todo item deve possuir identificador único universal (UUID ou ID determinístico).
+2. Acesso restrito e isolamento estrito entre usuários e inquilinos.
 
 ## 4. Binary Acceptance Criteria
 - Execução de testes unitários retorna exit code 0.
 - Rotas da API respondem com status HTTP 200.
 - Asserção assert item.id is not None é satisfeita em todas as operações de criação.
+
+## 5. Failure & Degradation Modes
+- Em caso de indisponibilidade de rede ou banco de dados, o cliente deve exibir fallback gracioso de erro.
+- Requisições inválidas devem retornar status HTTP 400 com payload estruturado de erro.
 """
         arq["spec"].write_text(conteudo_spec, encoding="utf-8")
 
