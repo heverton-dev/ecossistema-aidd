@@ -21,7 +21,7 @@
     "gates_nomes": 108,
     "gates_arquivos": 137,
     "contratos": 9,
-    "etapas_receita": 7,
+    "etapas_receita": 11,
     "pipelines": 12,
     "modulos": 4,
     "agentes": 9,
@@ -5378,8 +5378,16 @@
         "chama_alguma_ferramenta": true
       },
       {
-        "etapa": "etapa_03_master",
-        "descricao": "Etapa 3: Fatiamento inicial e harmonização no Monólito Modular VSA.",
+        "etapa": "etapa_03_reconstruct",
+        "descricao": "Etapa 3: Benchmark visual multi-fonte, REA, tokens OKLCH e catálogo de primitivas.",
+        "chamadas_cli": [],
+        "chamadas_por_fluxo": {},
+        "atalhos_internos": [],
+        "chama_alguma_ferramenta": false
+      },
+      {
+        "etapa": "etapa_04_master",
+        "descricao": "Etapa 4: Fatiamento inicial e harmonização no Monólito Modular VSA.",
         "chamadas_cli": [
           [
             "master",
@@ -5401,8 +5409,8 @@
         "chama_alguma_ferramenta": true
       },
       {
-        "etapa": "etapa_04_engine",
-        "descricao": "Etapa 4: Despacho das fatias VSA em Git worktrees + Execução da Engine Especialista.",
+        "etapa": "etapa_05_dispatch",
+        "descricao": "Etapa 5: Despacho das fatias VSA em Git worktrees efêmeras sob isolamento.",
         "chamadas_cli": [
           [
             "dispatch",
@@ -5411,7 +5419,16 @@
             "--target-dir",
             "<var>",
             "--barrier-sync"
-          ],
+          ]
+        ],
+        "chamadas_por_fluxo": {},
+        "atalhos_internos": [],
+        "chama_alguma_ferramenta": true
+      },
+      {
+        "etapa": "etapa_06_engine",
+        "descricao": "Etapa 6: Execução da Engine Especialista (Pure / Open / Freedom).",
+        "chamadas_cli": [
           [
             "pure-motor",
             "<var>",
@@ -5463,8 +5480,26 @@
         "chama_alguma_ferramenta": true
       },
       {
-        "etapa": "etapa_05_enterprise",
-        "descricao": "Etapa 5: Blindagem SHA-256 e detecção de drift.",
+        "etapa": "etapa_07_impeccable_osmani",
+        "descricao": "Etapa 7: Quality Gate de UI e Craft (Soberania do Modo Claro, 5 estados do Osmani, WCAG 2.2).",
+        "chamadas_cli": [],
+        "chamadas_por_fluxo": {},
+        "atalhos_internos": [],
+        "chama_alguma_ferramenta": false
+      },
+      {
+        "etapa": "etapa_08_barreira_sync",
+        "descricao": "Etapa 8: Barreira de Sincronização e Convergência Segura (Rebase e Micro-Gates).",
+        "chamadas_cli": [],
+        "chamadas_por_fluxo": {},
+        "atalhos_internos": [
+          "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts"
+        ],
+        "chama_alguma_ferramenta": false
+      },
+      {
+        "etapa": "etapa_09_enterprise",
+        "descricao": "Etapa 9: Blindagem SHA-256 e detecção de drift.",
         "chamadas_cli": [
           [
             "enterprise",
@@ -5486,8 +5521,8 @@
         "chama_alguma_ferramenta": true
       },
       {
-        "etapa": "etapa_06_ops",
-        "descricao": "Etapa 6: Infraestrutura, Docker Compose e Validação de Portas.",
+        "etapa": "etapa_10_ops",
+        "descricao": "Etapa 10: Infraestrutura, Docker Compose e Validação de Portas.",
         "chamadas_cli": [
           [
             "ops",
@@ -5502,8 +5537,8 @@
         "chama_alguma_ferramenta": true
       },
       {
-        "etapa": "etapa_07_auditoria",
-        "descricao": "Etapa 7: Auditoria de conformidade do projeto gerado (não do monorepo).",
+        "etapa": "etapa_11_entrega_quarteto",
+        "descricao": "Etapa 11: Entrega com Healthcheck e os 4 Estúdios do Quarteto Sine Qua Non Dinâmico.",
         "chamadas_cli": [
           [
             "forge",
@@ -5561,67 +5596,67 @@
       "problemas": []
     },
     {
-      "etapa": "etapa_03_master",
+      "etapa": "etapa_04_master",
       "chamada": "ecossistema.py master init <var> --pasta <var>",
       "encaixa": true,
       "problemas": []
     },
     {
-      "etapa": "etapa_03_master",
+      "etapa": "etapa_04_master",
       "chamada": "ecossistema.py master add-module <var> --pasta <var>",
       "encaixa": true,
       "problemas": []
     },
     {
-      "etapa": "etapa_04_engine",
+      "etapa": "etapa_05_dispatch",
       "chamada": "ecossistema.py dispatch --dispatch <var> --target-dir <var> --barrier-sync",
       "encaixa": true,
       "problemas": []
     },
     {
-      "etapa": "etapa_04_engine",
+      "etapa": "etapa_06_engine",
       "chamada": "ecossistema.py pure-motor <var> --pasta <var> --implementar-codigo",
       "encaixa": true,
       "problemas": []
     },
     {
-      "etapa": "etapa_04_engine",
+      "etapa": "etapa_06_engine",
       "chamada": "ecossistema.py open-motor --plano <var> --pasta <var>",
       "encaixa": true,
       "problemas": []
     },
     {
-      "etapa": "etapa_04_engine",
+      "etapa": "etapa_06_engine",
       "chamada": "ecossistema.py freedom-motor scan <var>",
       "encaixa": true,
       "problemas": []
     },
     {
-      "etapa": "etapa_04_engine",
+      "etapa": "etapa_06_engine",
       "chamada": "ecossistema.py freedom-motor convert-db <var> --output <var>",
       "encaixa": true,
       "problemas": []
     },
     {
-      "etapa": "etapa_05_enterprise",
+      "etapa": "etapa_09_enterprise",
       "chamada": "ecossistema.py enterprise inject rule <var> --dir <var>",
       "encaixa": true,
       "problemas": []
     },
     {
-      "etapa": "etapa_05_enterprise",
+      "etapa": "etapa_09_enterprise",
       "chamada": "ecossistema.py enterprise verificar-drift --dir <var>",
       "encaixa": true,
       "problemas": []
     },
     {
-      "etapa": "etapa_06_ops",
+      "etapa": "etapa_10_ops",
       "chamada": "ecossistema.py ops plan <var> --pasta <var>",
       "encaixa": true,
       "problemas": []
     },
     {
-      "etapa": "etapa_07_auditoria",
+      "etapa": "etapa_11_entrega_quarteto",
       "chamada": "ecossistema.py forge audit <var>",
       "encaixa": true,
       "problemas": []
@@ -6380,8 +6415,16 @@
       "G_TESTES_REAIS"
     ],
     "skills_mesma_descricao": [],
-    "etapas_sem_ferramenta": [],
-    "etapas_com_atalho_interno": {},
+    "etapas_sem_ferramenta": [
+      "etapa_03_reconstruct",
+      "etapa_07_impeccable_osmani",
+      "etapa_08_barreira_sync"
+    ],
+    "etapas_com_atalho_interno": {
+      "etapa_08_barreira_sync": [
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts"
+      ]
+    },
     "declaracoes_de_lei_invisiveis_ao_meta_gate": []
   }
 }

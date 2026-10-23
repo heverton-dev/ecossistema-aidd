@@ -165,10 +165,10 @@ Onde mora: `scripts/orquestrador_sincrono.py` e `componentes/compartilhado/specs
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| etapas na receita | 7 |
+| etapas na receita | 11 |
 | chamadas conferidas | 18 |
 | chamadas que quebram | 0 |
-| etapas sem ferramenta | 0 |
+| etapas sem ferramenta | 3 |
 | contratos | 9 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `verificar_encaixes`), os mesmos do mapa `mapa-03-encaixes.html`.

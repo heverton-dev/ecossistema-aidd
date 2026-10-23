@@ -1,7 +1,7 @@
 {
   "ferramenta": "aidd-visual-maps",
   "catalogo": "docs/auditoria/mapa-pecas/catalogo-pecas.json",
-  "hash_catalogo": "7d7115866f648b3e6cd0e8fa064eaf5552321574478686f05da86ee635ee9007",
+  "hash_catalogo": "1d2271efa4219107382be3069aaf88240998a357e367ebcda23b7958036d47fe",
   "mapas": [
     {
       "tipo": "leis",
@@ -35,14 +35,14 @@
       "tipo": "encaixes",
       "arquivo": "docs/mapas-visuais/mapa-03-encaixes.html",
       "versao": "tecnica",
-      "sha256": "e0f9495a952198cc0d266e18dc9f0f97e333ca56dcadd7b81c7ce4c62263eb8a",
+      "sha256": "654f9165fd9a352822e1706b64ee24c931a78a80c6ab2affd8e277f509e9b785",
       "status": "concluido"
     },
     {
       "tipo": "encaixes",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-03-encaixes.html",
       "versao": "nao-tecnica",
-      "sha256": "7fb65d66160d88b5e2d8a122e486fcf7b5d1d759d629cbd9fd2cd43c54007cce",
+      "sha256": "3fcde31750de1a97858b5a591db019f2c8f991d4cfe2be66178b33e88e4f0285",
       "status": "concluido"
     },
     {
@@ -238,7 +238,7 @@
       },
       {
         "arquivo": "docs/livros/mapas-aidd/partes/10-parte-i.md",
-        "sha256": "66f80cdcbe212f61e6ea9af9f50703f3b2e61b76a4d7ddf09ad343a9f1b956cd"
+        "sha256": "2cfacd9f161d057aae34b08a1b3a62de9668033333b88ef1d6a4b55d8e010905"
       },
       {
         "arquivo": "docs/livros/mapas-aidd/partes/20-parte-ii.md",
@@ -269,7 +269,7 @@
       "comando": "python componentes/compartilhado/skills/aidd-textbook/scripts/livro.py build docs/livros/mapas-aidd",
       "exit_code": 0,
       "pdf": "docs/livros/mapas-aidd/26-09-2026_LIVRO-MAPAS-AIDD.pdf",
-      "sha256": "88a36c2fbe9276844e00b5dfac796b40b001159412b247ebfcc4d528ef5fc639"
+      "sha256": "d69f9ff68af261b10b204940226dc2671377125b3b5152bee579277696df5126"
     }
   }
 }
