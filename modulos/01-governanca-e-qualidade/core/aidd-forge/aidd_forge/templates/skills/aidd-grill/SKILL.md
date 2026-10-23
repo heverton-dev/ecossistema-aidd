@@ -1,6 +1,6 @@
 ---
 name: aidd-grill
-description: Socratic interview that resolves assumptions, trade-offs and invariants before code. Use when requirements are open, or "grill".
+description: Socratic interview to resolve assumptions before coding.
 ---
 
 # AIDD-Grill — Pre-Code Socratic Protocol

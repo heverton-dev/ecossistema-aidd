@@ -33,10 +33,10 @@ Para resolver a necessidade de testes rápidos, determinísticos e desconectados
 
 | Característica | Mock Tradicional (`unittest.mock`) | Fake Adapter Tipado AIDD |
 | :--- | :---: | :---: |
-| **Aderência à Lei #5** | ❌ Não (stubs e objetos dinâmicos) | ✅ Sim (código 100% tipado e funcional) |
-| **Verificação de Tipos (mypy/pyright)** | ❌ Falha silenciosa | ✅ 100% verificado |
-| **Validação de Invariantes** | ❌ Requer asserts manuais extras | ✅ Integrada no contrato de execução |
-| **Rastreabilidade e Auditoria** | ❌ Transitória no mock | ✅ `history` estruturado e exportável |
+| **Aderência à Lei #5** | Não (stubs e objetos dinâmicos) | Sim (código 100% tipado e funcional) |
+| **Verificação de Tipos (mypy/pyright)** | Falha silenciosa | 100% verificado |
+| **Validação de Invariantes** | Requer asserts manuais extras | Integrada no contrato de execução |
+| **Rastreabilidade e Auditoria** | Transitória no mock | `history` estruturado e exportável |
 
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: aidd-tdd
-description: Strict TDD with agreed seams, Red-Green loop, refactor at review, zero stubs. Use when implementing test first, or "tdd".
+description: Strict TDD: agreed seams, Red-Green loop, zero stubs.
 ---
 
 # AIDD-TDD — Polyglot Test-Driven Development

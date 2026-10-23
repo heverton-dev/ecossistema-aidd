@@ -46,7 +46,7 @@ class TanStackRouterExporter:
             raise FileNotFoundError(f"Template canônico TanStack não encontrado em {template_dir}")
 
         def _ignorar_build(dir_src, names):
-            return {"node_modules", "dist", ".git", "__pycache__", ".turbo"}.intersection(names)
+            return {"node_modules", ".git", "__pycache__", ".turbo"}.intersection(names)
 
         shutil.copytree(template_dir, output_dir, dirs_exist_ok=True, ignore=_ignorar_build)
 

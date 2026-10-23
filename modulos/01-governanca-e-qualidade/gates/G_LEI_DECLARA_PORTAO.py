@@ -155,6 +155,9 @@ PORTOES_CANONICOS_CONHECIDOS = {
     13: [
         {"target": "modulos/01-governanca-e-qualidade/gates/G_PORTAO_PROVA_QUE_MORDE.py", "strength": "provado"},
     ],
+    14: [
+        {"target": "modulos/04-nucleo-compartilhado/gates/G_GRAPH_FIRST.py", "strength": "provado"},
+    ],
 }
 
 

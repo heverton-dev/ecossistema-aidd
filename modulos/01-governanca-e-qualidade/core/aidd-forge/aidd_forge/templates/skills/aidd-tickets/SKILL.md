@@ -1,6 +1,6 @@
 ---
 name: aidd-tickets
-description: Splits a spec into vertical-slice tracer-bullet tickets with Blocked by. Use when breaking work into tasks, or "tickets".
+description: Split spec into vertical-slice tracer-bullet tickets.
 ---
 
 # AIDD-Tickets — Atomic Task Decomposition

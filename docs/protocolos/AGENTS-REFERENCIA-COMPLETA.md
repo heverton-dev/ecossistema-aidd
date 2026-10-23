@@ -221,3 +221,35 @@ Para qualquer relatório gerado em `.html` salvo em `docs/relatorios/`:
 | `get_code_snippet` | Extração pontual e econômica de blocos de código |
 
 Fallback para Grep/Glob/Read **apenas** quando o graph não cobrir o que você precisa.
+
+---
+
+## §GATES — Catálogo Canônico de Quality Gates do Ecossistema
+
+Gates especializados registrados no ecossistema e validados pelo harness:
+- `gates/G_CRAFT_VISUAL.py`: Craft visual e integridade de tokens OKLCH/Light Mode.
+- `gates/G_DISPATCH_PIPELINE_VSA.py`: Despacho topológico e barreira síncrona VSA.
+- `gates/G_GESTOR_SESSOES.py`: Persistência determinística de sessões per Lei #3.
+- `gates/G_GRAPH_FIRST.py`: Conformidade da Lei #14 (consulta ao grafo antes de varredura).
+- `gates/G_HANDOFF_MELHORIA.py`: Contrato e integridade do handoff do ciclo de evolução.
+- `gates/G_NOVE_CAMADAS_MERCADO.py`: Validação das camadas estruturadas de mercado.
+- `gates/G_PROVA_SKILLS_POCOCK.py`: Prova empírica de execução de skills per Pocock.
+- `gates/G_SKILL_FORMATO.py`: Formato e metadados das skills multi-harness.
+- `gates/G_TEMPLATE_FORGE_ROT.py`: Anti-rot nos templates do aidd-forge.
+- `gates/G_TEMPLATE_TANSTACK_OFFLINE.py`: Integridade offline dos templates TanStack.
+- `gates/G_UI_API_PARITY.py`: Paridade funcional de rotas de UI e API.
+- `gates/G_ZERO_EMOJIS_DOCS.py`: Bloqueio estrito de emojis em documentação e regras.
+- `gates/G_aidd_diagnose.py`: Gate da esteira de diagnóstico e triagem científica.
+- `gates/G_aidd_enterprise.py`: Gate de blindagem e SHA-256 do aidd-enterprise.
+- `gates/G_aidd_forge.py`: Gate de fundação e scaffolding do aidd-forge.
+- `gates/G_aidd_handoff.py`: Gate de serialização de contexto de sessão.
+- `gates/G_aidd_plan.py`: Gate de plano de melhorias e scoring.
+- `gates/G_aidd_planner_runner.py`: Gate de execução de blueprints do planner.
+- `gates/G_aidd_session.py`: Gate de recuperação e integridade de ID de sessão.
+- `gates/G_aidd_spec.py`: Gate de geração de especificações determinísticas.
+- `gates/G_aidd_tdd.py`: Gate de ciclo TDD estrito e zero stubs.
+- `gates/G_aidd_tickets.py`: Gate de fatiamento de tickets verticais.
+- `gates/G_aidd_visual_maps.py`: Gate de mapas visuais de peças e componentes.
+- `gates/G_amelhoria.py`: Gate de melhoria contínua e investigação.
+- `gates/G_mapa_pecas.py`: Integridade do catálogo de peças e mapas do ecossistema.
+

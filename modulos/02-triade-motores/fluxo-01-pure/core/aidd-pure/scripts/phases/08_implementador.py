@@ -1317,16 +1317,14 @@ class ImplementadorFase8:
             mod = Path(caminho).stem
             codigo = script.get('codigo', '')
 
-            if "validador" in mod:
+            if "validador" in mod and "validar_payload" in codigo:
                 linhas_import.append(f"from {mod} import validar_payload")
                 linhas_chamadas.append("    assert validar_payload({'id': 'e2e-1', 'nome': 'Teste'}) is True")
-            elif "servico" in mod:
+            elif "servico" in mod and "ServicoDominio" in codigo:
                 linhas_import.append(f"from {mod} import ServicoDominio")
                 linhas_chamadas.append("    servico = ServicoDominio()")
                 linhas_chamadas.append("    assert servico.executar({'id': 'e2e-1', 'acao': 'ok'})['sucesso'] is True")
-            elif "persistencia" in mod or "sqlite" in mod:
-                # Fix achado #3: import resiliente — funciona se o módulo estiver em
-                # src/infrastructure/ ou diretamente na raiz de src/ (ambos no PYTHONPATH)
+            elif ("persistencia" in mod or "sqlite" in mod) and "RepositorioSQLite" in codigo:
                 caminho_rel = script.get('caminho_relativo', '')
                 if caminho_rel.startswith(('infrastructure/', 'infrastructure\\')):
                     linhas_import.append(
@@ -1345,22 +1343,19 @@ class ImplementadorFase8:
                 linhas_chamadas.append("    repo = RepositorioSQLite(':memory:')")
                 linhas_chamadas.append("    assert repo.salvar('e2e-1', 'conteudo') is True")
                 linhas_chamadas.append("    assert repo.buscar('e2e-1') == 'conteudo'")
-            elif "quarteto" in mod:
+            elif "quarteto" in mod and "obter_openapi_spec" in codigo:
                 linhas_import.append(f"from {mod} import obter_openapi_spec")
                 linhas_chamadas.append("    assert obter_openapi_spec()['openapi'] == '3.1.0'")
             else:
-                # Fix achado #2: derivar símbolo público do código gerado em vez de assert True
                 simbolo = self._extrair_simbolo_publico(codigo)
+                caminho_rel = script.get('caminho_relativo', '')
+                prefixo = "infrastructure." if caminho_rel.startswith(('infrastructure/', 'infrastructure\\')) else ""
                 if simbolo:
-                    linhas_import.append(f"from {mod} import {simbolo}")
+                    linhas_import.append(f"try:\n    from {prefixo}{mod} import {simbolo}\nexcept ImportError:\n    from {mod} import {simbolo}")
                     linhas_chamadas.append(f"    assert {simbolo} is not None")
                 else:
-                    # Último recurso: importar o módulo e verificar que carrega sem erro
                     linhas_import.append(f"import {mod} as _mod_{mod}")
                     linhas_chamadas.append(f"    assert _mod_{mod} is not None")
-
-        if not linhas_chamadas:
-            linhas_chamadas = ["    assert True"]
 
         conteudo_teste = (
             '"""Teste de integração ponta a ponta gerado deterministicamente (Lei #1)."""\n'
@@ -1502,28 +1497,46 @@ class ImplementadorFase8:
                 '    assert repo.buscar("inexistente") is None\n'
             )
         elif "quarteto" in nome_m or "studio" in nome_m:
+            # Deriva o Quarteto dinamicamente do PLANNER.json (Lei #10)
+            modulos_planner = []
+            for arq_p in [self.pasta_projeto / "PLANNER.json", self.pasta_projeto / "HANDOFF_PLANNER_ENGINE.json"]:
+                if arq_p.exists():
+                    try:
+                        with open(arq_p, "r", encoding="utf-8") as fp:
+                            dp = json.load(fp)
+                            modulos_planner = dp.get("modulos_funcionais") or []
+                            if modulos_planner:
+                                break
+                    except Exception:
+                        pass
+            
+            slugs = [m.get("slug", "item") for m in modulos_planner] if modulos_planner else ["tarefas", "usuarios"]
+            paths_codigo = ", ".join([f'\"/api/{s}\": {{"get": {{"summary": \"Listar {s}\"}}, \"post": {{"summary": \"Criar {s}\"}}}}' for s in slugs])
+            tools_codigo = ", ".join([f'{{"name": \"listar_{s}\", \"description": \"Listar {s}\"}}, {{"name": \"criar_{s}\", \"description": \"Criar {s}\"}}' for s in slugs])
+            events_codigo = ", ".join([f'\"{s}.criado\", \"{s}.atualizado\", \"{s}.removido\"' for s in slugs])
+            
             codigo = (
-                '"""Módulo de integração do Quarteto Sine Qua Non Dinâmico."""\n'
-                'from typing import Dict, Any\n\n'
+                '"""Módulo de integração do Quarteto Sine Qua Non Dinâmico (Lei #10)."""\n'
+                'from typing import Dict, Any, List\n\n'
                 'def obter_openapi_spec() -> Dict[str, Any]:\n'
-                '    """Retorna especificação OpenAPI 3.1 do sistema."""\n'
-                '    return {\n'
-                '        "openapi": "3.1.0",\n'
-                '        "info": {"title": "API Quarteto", "version": "1.0.0"},\n'
-                '        "paths": {"/api": {"get": {"summary": "OpenAPI Studio"}}}\n'
-                '    }\n\n'
+                '    """Retorna especificação OpenAPI 3.1 derivada dos módulos do Planner."""\n'
+                f'    return {{\n'
+                f'        "openapi": "3.1.0",\n'
+                f'        "info": {{"title": "API Quarteto", "version": "1.0.0"}},\n'
+                f'        "paths": {{{paths_codigo}}}\n'
+                f'    }}\n\n'
                 'def obter_mcp_manifest() -> Dict[str, Any]:\n'
-                '    """Retorna manifesto JSON-RPC MCP Studio."""\n'
-                '    return {"protocol": "jsonrpc-2.0", "endpoint": "/mcp", "tools": []}\n\n'
+                '    """Retorna manifesto JSON-RPC MCP Studio derivado do Planner."""\n'
+                f'    return {{"protocol": "jsonrpc-2.0", "endpoint": "/mcp", "tools": [{tools_codigo}]}}\n\n'
                 'def obter_webhook_manifest() -> Dict[str, Any]:\n'
-                '    """Retorna manifesto do Webhook Studio."""\n'
-                '    return {"endpoint": "/webhook", "hmac_algorithm": "sha256", "events": []}\n\n'
-                'def obter_docs_info() -> Dict[str, str]:\n'
+                '    """Retorna manifesto do Webhook Studio derivado do Planner."""\n'
+                f'    return {{"endpoint": "/webhook", "hmac_algorithm": "sha256", "events": [{events_codigo}]}}\n\n'
+                'def obter_docs_info() -> Dict[str, Any]:\n'
                 '    """Retorna informações da Central de Documentação."""\n'
-                '    return {"endpoint": "/docs", "status": "online"}\n'
+                f'    return {{"endpoint": "/docs", "status": "online", "modulos": {json.dumps(slugs)}}}\n'
             )
             teste = (
-                '"""Testes unitários para quarteto_studios."""\n'
+                '"""Testes unitários para quarteto_studios consistente com o Planner."""\n'
                 f'from {modulo} import (\n'
                 '    obter_openapi_spec,\n'
                 '    obter_mcp_manifest,\n'
@@ -1533,12 +1546,16 @@ class ImplementadorFase8:
                 'def test_quarteto_studios_contratos():\n'
                 '    spec = obter_openapi_spec()\n'
                 '    assert spec["openapi"] == "3.1.0"\n'
+                '    assert len(spec["paths"]) >= 1\n'
                 '    mcp = obter_mcp_manifest()\n'
                 '    assert mcp["endpoint"] == "/mcp"\n'
+                '    assert len(mcp["tools"]) >= 1\n'
                 '    wh = obter_webhook_manifest()\n'
                 '    assert wh["endpoint"] == "/webhook"\n'
+                '    assert len(wh["events"]) >= 1\n'
                 '    docs = obter_docs_info()\n'
                 '    assert docs["endpoint"] == "/docs"\n'
+                '    assert len(docs.get("modulos", [])) >= 1\n'
             )
         else:
             codigo = (

@@ -1,4 +1,4 @@
-# 📜 Protocolo Norteador de Validação Humana e Testes Reais do Ecossistema AIDD
+# Protocolo Norteador de Validação Humana e Testes Reais do Ecossistema AIDD
 
 > **Status:** ATIVO & VIGENTE  
 > **Data:** 06/09/2026  

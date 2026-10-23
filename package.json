@@ -3,6 +3,7 @@
   "version": "5.1.0",
   "description": "Meta-Orquestrador e Framework de Engenharia Agêntica AIDD",
   "bin": {
+    "aidd": "./bin/create-aidd-app.js",
     "create-aidd-app": "./bin/create-aidd-app.js",
     "aidd-create": "./bin/create-aidd-app.js"
   },

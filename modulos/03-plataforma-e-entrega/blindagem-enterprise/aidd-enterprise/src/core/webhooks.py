@@ -1,4 +1,4 @@
-import html, urllib.request, urllib.error, json, threading, hmac, hashlib, time, uuid, os
+import html, urllib.request, urllib.error, json, threading, hmac, hashlib, time, uuid, os, re
 from pathlib import Path
 
 try:
@@ -252,10 +252,14 @@ class WebhookDispatcher:
         _html = _html.replace("__MODAL_CHECKBOXES__", str(modal_checkboxes))
         _html = _html.replace("__EVENT_TEMPLATES_JSON__", str(event_templates_json))
         _html = _html.replace("__INITIAL_EVENT__", str(initial_event))
+        cor_primaria = primary or "#0f766e"
+        cor_primaria_hover = primary_hover or "#115e59"
+        _html = _html.replace("__PRIMARY__", str(cor_primaria))
+        _html = _html.replace("__PRIMARY_HOVER__", str(cor_primaria_hover))
         if primary:
-            _html = _html.replace("--primary: #0284c7;", f"--primary: {primary};")
+            _html = re.sub(r"--primary:\s*#[0-9a-fA-F]+;", f"--primary: {primary};", _html)
         if primary_hover:
-            _html = _html.replace("--primary-hover: #0369a1;", f"--primary-hover: {primary_hover};")
+            _html = re.sub(r"--primary-hover:\s*#[0-9a-fA-F]+;", f"--primary-hover: {primary_hover};", _html)
         return _html
 
     def init_schema(self, conn, demo_url: str = "https://webhook.site/demo-aidd-master"):

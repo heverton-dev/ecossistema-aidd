@@ -36,8 +36,8 @@ except ImportError:
 
 def criar_aplicacao(nome_app: str, fluxo: str = "pure", destino: str = None, instalar_deps: bool = False):
     print("=" * 72)
-    print(f"🚀 [AIDD CREATE] Inicializando nova aplicação: {nome_app}")
-    print(f"📦 Fluxo Canônico Selecionado: aidd-{fluxo}")
+    print(f"[AIDD CREATE] Inicializando nova aplicacao: {nome_app}")
+    print(f"[FLUXO] Fluxo Canonico Selecionado: aidd-{fluxo}")
     print("=" * 72)
 
     # 1. Definir pasta de destino
@@ -47,7 +47,7 @@ def criar_aplicacao(nome_app: str, fluxo: str = "pure", destino: str = None, ins
         pasta_destino = ROOT_DIR / "projetos" / nome_app
 
     pasta_destino.mkdir(parents=True, exist_ok=True)
-    print(f"📁 Destino: {pasta_destino}")
+    print(f"Destino: {pasta_destino}")
 
     # 2. Copiar template canônico do Padrão-Ouro (aidd-master templates/v2)
     origem_template = ROOT_DIR / "modulos" / "03-plataforma-e-entrega" / "fatiamento-master" / "aidd-master" / "templates" / "v2"
@@ -128,7 +128,7 @@ def criar_aplicacao(nome_app: str, fluxo: str = "pure", destino: str = None, ins
     iniciar_ps1.write_text(
         "$host.UI.RawUI.WindowTitle = 'AIDD App Server'\n"
         "Write-Host '==================================================' -ForegroundColor Cyan\n"
-        f"Write-Host '🚀 Iniciando {nome_app} no Padrão Ouro AIDD' -ForegroundColor Green\n"
+        f"Write-Host 'Iniciando {nome_app} no Padrao Ouro AIDD' -ForegroundColor Green\n"
         "Write-Host '==================================================' -ForegroundColor Cyan\n"
         "Start-Process powershell -ArgumentList '-NoExit', '-Command', 'cd frontend; npm run dev' -WindowStyle Normal\n"
         "Start-Process powershell -ArgumentList '-NoExit', '-Command', 'python src/server.py' -WindowStyle Normal\n"
@@ -142,7 +142,7 @@ def criar_aplicacao(nome_app: str, fluxo: str = "pure", destino: str = None, ins
     iniciar_sh = pasta_destino / "iniciar.sh"
     iniciar_sh.write_text(
         "#!/usr/bin/env bash\n"
-        f"echo '🚀 Iniciando {nome_app} no Padrão Ouro AIDD...'\n"
+        f"echo 'Iniciando {nome_app} no Padrao Ouro AIDD...'\n"
         "(cd frontend && npm run dev) &\n"
         "python src/server.py &\n"
         "sleep 2\n"
@@ -153,7 +153,7 @@ def criar_aplicacao(nome_app: str, fluxo: str = "pure", destino: str = None, ins
 
     # 3. Opcional: Instalar dependências se solicitado
     if instalar_deps:
-        print("📦 Instalando dependências do frontend (npm install)...")
+        print("[DEPS] Instalando dependencias do frontend (npm install)...")
         try:
             subprocess.run(["npm", "install"], cwd=str(frontend_dest), check=True, shell=True)
             print("  ✓ Dependências NPM instaladas com sucesso.")
@@ -161,8 +161,8 @@ def criar_aplicacao(nome_app: str, fluxo: str = "pure", destino: str = None, ins
             print(f"  ⚠ Aviso: Execute 'cd frontend && npm install' manualmente ({e}).")
 
     print("\n" + "=" * 72)
-    print("✨ Aplicação criada com sucesso!")
-    print(f"👉 Local: {pasta_destino}")
+    print("Aplicacao criada com sucesso!")
+    print(f"Local: {pasta_destino}")
     print("\nPara rodar agora em 1 clique:")
     print(f"   cd {pasta_destino}")
     print("   .\\iniciar.ps1   (no Windows) ou ./iniciar.sh (no Linux/Mac)")

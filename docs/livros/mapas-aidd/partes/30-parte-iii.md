@@ -23,7 +23,7 @@ Onde mora: `tools/<f>/templates/`. Quem confere: os guardas de entrega gerados p
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | moldes | 21 |
-| arquivos de molde | 342 |
+| arquivos de molde | 344 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_moldes_entrega`), os mesmos do mapa `mapa-09-moldes.html`.
 
@@ -62,9 +62,9 @@ Onde mora: `scripts/`. Quem confere: nenhum guarda específico; o mapa mede quem
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| scripts | 60 |
-| chamados pelo painel | 22 |
-| nenhum código chama | 6 |
+| scripts | 77 |
+| chamados pelo painel | 23 |
+| nenhum código chama | 20 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_scripts`), os mesmos do mapa `mapa-10-scripts.html`.
 

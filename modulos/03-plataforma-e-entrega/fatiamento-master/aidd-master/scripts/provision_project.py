@@ -314,7 +314,7 @@ def provision(project_desc, base_dir=None, frontend_stack='tanstack', modulos_in
                 frontend_template = os.path.join(repo_root, 'templates', 'frontend')
             if os.path.isdir(frontend_template):
                 def _ignorar_build(dir_src, names):
-                    return {'node_modules', 'dist', '.git', '__pycache__'}.intersection(names)
+                    return {'node_modules', '.git', '__pycache__'}.intersection(names)
                 _copiar_arvore_preservando_existente(frontend_template, frontend_dest, ignore=_ignorar_build)
             print("  [+] Front-end 'frontend/' gerado em TanStack Start / Router + TypeScript + Tailwind (Lei #11)!")
         elif frontend_stack == 'nextjs':

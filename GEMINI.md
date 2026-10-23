@@ -27,7 +27,7 @@ Proibido: saudação, repetir o pedido, recapitular o que acabou de ser dito, li
 - Se faltar argumento, peça só o necessário (caminho do export, do plano ou do JSON) e confirme que o fluxo está ativo.
 
 ## Trava Anti-Loop Reflexivo (Lei #7 & Lei #1 - Zero Infinite Loop)
-- Quando qualquer comando, pipeline ou motor emitir `🛑 [TERMINATION_SIGNAL]` ou criar `.aidd/PIPELINE_CONCLUIDO.flag`, o agente DEVE parar IMEDIATAMENTE.
+- Quando qualquer comando, pipeline ou motor emitir `[TERMINATION_SIGNAL]` ou criar `.aidd/PIPELINE_CONCLUIDO.flag`, o agente DEVE parar IMEDIATAMENTE.
 - É estritamente PROIBIDO rodar novos comandos, inventar verificações extras não solicitadas ou entrar em ciclos de auto-crítica/reflexão infinita.
 - Emita a resposta em PT-BR estruturada (O que já foi feito / O que precisa fazer / Próximo passo) e encerre o turno sem novas tool calls.
 

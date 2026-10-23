@@ -1,4 +1,4 @@
-# 🧠 MEMORY.md — Memória Estruturada e Contexto Operacional Consolidado
+# MEMORY.md — Memória Estruturada e Contexto Operacional Consolidado
 
 > **Repositório:** `https://github.com/heverton-dev/ecossistema-aidd`  
 > **Última Atualização:** 2026-09-22  

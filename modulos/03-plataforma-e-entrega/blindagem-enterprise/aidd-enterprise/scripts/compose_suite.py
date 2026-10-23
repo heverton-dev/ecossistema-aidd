@@ -119,6 +119,21 @@ def generate_modular_server_code(suite_name: str, module_slugs: list, db_engine:
     18/09/2026) — senão o frontend Next.js e os Studios nativos calculam
     cores "dinâmicas" diferentes para o MESMO projeto sem
     `DESIGN-SYSTEM.json`."""
+    # Carrega módulos dinamicamente do PLANNER.json para o Quarteto (Lei #10)
+    if project_dir and (not module_slugs or module_slugs == ["modulo1"]):
+        for p_cand in [os.path.join(project_dir, "PLANNER.json"), os.path.join(project_dir, "HANDOFF_PLANNER_ENGINE.json")]:
+            if os.path.isfile(p_cand):
+                try:
+                    import json
+                    with open(p_cand, "r", encoding="utf-8") as fp:
+                        dados_pl = json.load(fp)
+                        mods_pl = [m.get("slug") for m in dados_pl.get("modulos_funcionais", []) if m.get("slug")]
+                        if mods_pl:
+                            module_slugs = mods_pl
+                            break
+                except Exception:
+                    pass
+
     identidade_paleta = f"{suite_name} {' '.join(module_slugs)}"
     paleta = resolver_paleta_projeto(project_dir, identidade_paleta) if project_dir else escolher_paleta(identidade_paleta)
     primary_hex = paleta["primaria"]

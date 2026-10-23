@@ -1,0 +1,25 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "aidd"
+version = "5.1.0"
+description = "Meta-Orquestrador e Framework de Engenharia Agêntica AIDD"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+    { name = "Heverton", email = "contato@heverton.dev" }
+]
+keywords = ["aidd", "agentic", "ai", "scaffold", "tanstack", "fastapi", "triade"]
+dependencies = [
+    "click>=8.0.0",
+]
+
+[project.scripts]
+aidd = "scripts.cli_entrypoint:main"
+create-aidd-app = "scripts.cli_entrypoint:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["scripts"]

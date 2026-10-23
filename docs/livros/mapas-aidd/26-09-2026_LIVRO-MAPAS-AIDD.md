@@ -74,7 +74,7 @@ Onde mora: `AGENTS.md`, seção 2. Quem confere: o meta-guarda `G_LEI_DECLARA_PO
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | leis | 14 |
-| declarações de guarda | 73 |
+| declarações de guarda | 0 |
 | declarações que o meta-guarda não lê | 0 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_leis`), os mesmos do mapa `mapa-01-leis.html`.
@@ -219,7 +219,7 @@ Onde mora: `gates/` e `tools/<f>/gates/`. Quem confere: o próprio pre-commit e 
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| guardas (nomes) | 107 |
+| guardas (nomes) | 108 |
 | no ecossistema | 74 |
 | rodam no commit | 67 |
 | com versões diferentes | 11 |
@@ -447,7 +447,7 @@ Onde mora: `tools/<f>/templates/`. Quem confere: os guardas de entrega gerados p
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | moldes | 21 |
-| arquivos de molde | 342 |
+| arquivos de molde | 344 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_moldes_entrega`), os mesmos do mapa `mapa-09-moldes.html`.
 
@@ -486,9 +486,9 @@ Onde mora: `scripts/`. Quem confere: nenhum guarda específico; o mapa mede quem
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| scripts | 60 |
-| chamados pelo painel | 22 |
-| nenhum código chama | 6 |
+| scripts | 77 |
+| chamados pelo painel | 23 |
+| nenhum código chama | 20 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_scripts`), os mesmos do mapa `mapa-10-scripts.html`.
 
