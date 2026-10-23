@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "HandoffEnterpriseToOpsSchema",
   "description": "Contrato formal de transferência do projeto blindado pelo aidd-enterprise para o aidd-ops (C5) para empacotamento, Docker e deploy VPS.",
   "type": "object",
@@ -14,7 +14,9 @@
   "properties": {
     "versao_schema": {
       "type": "string",
-      "enum": ["1.0.0"]
+      "enum": [
+        "1.0.0"
+      ]
     },
     "diretorio_projeto": {
       "type": "string",
@@ -22,9 +24,14 @@
     },
     "registry": {
       "type": "object",
-      "required": ["caminho", "sha256"],
+      "required": [
+        "caminho",
+        "sha256"
+      ],
       "properties": {
-        "caminho": { "type": "string" },
+        "caminho": {
+          "type": "string"
+        },
         "sha256": {
           "type": "string",
           "pattern": "^[0-9a-f]{64}$"
@@ -39,30 +46,56 @@
     },
     "drift": {
       "type": "object",
-      "required": ["verificado", "exit_code"],
+      "required": [
+        "verificado",
+        "exit_code"
+      ],
       "properties": {
-        "verificado": { "type": "boolean", "enum": [true] },
-        "exit_code": { "type": "integer", "enum": [0] }
+        "verificado": {
+          "type": "boolean",
+          "enum": [
+            true
+          ]
+        },
+        "exit_code": {
+          "type": "integer",
+          "enum": [
+            0
+          ]
+        }
       },
       "description": "Resultado da execução real do verificador de drift (exit code 0)."
     },
     "perfil_app": {
       "type": "object",
-      "required": ["tipo_runtime", "portas_expostas", "banco"],
+      "required": [
+        "tipo_runtime",
+        "portas_expostas",
+        "banco"
+      ],
       "properties": {
         "tipo_runtime": {
           "type": "string",
-          "enum": ["monolito_modular_docker", "compose_multi_service"]
+          "enum": [
+            "monolito_modular_docker",
+            "compose_multi_service"
+          ]
         },
         "portas_expostas": {
           "type": "array",
           "minItems": 1,
-          "items": { "type": "integer" }
+          "items": {
+            "type": "integer"
+          }
         },
-        "banco": { "type": "string" },
+        "banco": {
+          "type": "string"
+        },
         "servicos_adicionais": {
           "type": "array",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         }
       },
       "description": "Perfil operacional do aplicativo derivado dinamicamente da planta."

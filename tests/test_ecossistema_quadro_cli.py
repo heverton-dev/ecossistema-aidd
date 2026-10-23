@@ -1,4 +1,4 @@
-﻿import subprocess
+import subprocess
 import sys
 
 def test_ecossistema_quadro_help():

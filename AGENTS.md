@@ -162,25 +162,32 @@ Every robust application in the ecosystem originates from **`aidd-forge`** (supr
   - CLI: `python ecossistema.py evolucao <tool>` ou `python ecossistema.py evolucao --manifest <json>`
   - Skill: `aidd-evolution`
 
-- **PIPELINE CANÔNICO CALIBRADO (Fluxo de 10 Etapas com Gates em 2 Níveis e Schemas SHA-256):**
+- **PIPELINE CANÔNICO CALIBRADO (Fluxo Oficial de 11 Etapas com Reconstruct Visual e Craft Impeccable):**
+  - Documentação Completa: `docs/manuais/DISSECACAO-ESTEIRA-11-PASSOS-AIDD.md`
   - Encadeamento Canônico Estrito:
     ```
-    [1. FORGE] ➔ [2. PLANNER (SHA-256)] ➔ [3. MASTER (Fatiamento VSA)]
-          ➔ [4. DISPATCH (Worktrees + Micro-Gates)] ➔ [5. ENGINE (Execução das Fatias)]
-          ➔ [6. BARREIRA (Rebase Sync)] ➔ [7. ENTERPRISE] ➔ [8. OPS]
-          ➔ [9. 54 MACRO-GATES] ➔ [10. COMMIT CONSOLIDADO]
+    [1. FORGE] ➔ [2. PLANNER (SHA-256)] ➔ [3. RECONSTRUCT (Mobbin/REA)]
+          ➔ [4. MASTER (Fatiamento VSA)] ➔ [5. DISPATCH (Worktrees)] 
+          ➔ [6. ENGINE (Pure/Open/Freedom)] ➔ [7. IMPECCABLE / OSMANI (Craft UI)]
+          ➔ [8. BARREIRA (Rebase Sync)] ➔ [9. ENTERPRISE (SHA-256)] 
+          ➔ [10. OPS (Docker/VPS)] ➔ [11. ENTREGA & QUARTETO SINE QUA NON]
     ```
   - **Papel das Etapas e dos Motores da Tríade:**
-    - O `aidd-master` atua antes da execução do código compilando o fatiamento e inicializando a estrutura do monólito modular VSA.
+    - O `aidd-forge` inicializa a governança, regras de token e git hooks.
+    - O `aidd-planner` elabora a especificação de domínio, modelos de dados e rotas em `PLANNER.json`.
+    - O `aidd-reconstruct` extrai do Mobbin e REA o mapa de telas reais, jornadas e design tokens em `UI_BLUEPRINT.json`.
+    - O `aidd-master` compila o fatiamento modular VSA unindo as APIs do Planner às telas do Reconstruct em `VSA_DISPATCH.json`.
     - O `aidd-dispatch` gera as Git Worktrees paralelas/efêmeras.
-    - O **Motor da Tríade** (`aidd-pure` | `aidd-open` | `aidd-freedom`) executa *dentro das worktrees*, materializando as fatias sob isolamento rigoroso.
-    - A **Barreira de Sincronização** valida os micro-gates, executa o rebase preventivo e consolida as fatias na branch de integração.
+    - O **Motor da Tríade** (`aidd-pure` | `aidd-open` | `aidd-freedom`) executa *dentro das worktrees*, materializando as fatias.
+    - O `aidd-impeccable-full` / Addy Osmani audita e homologa o craft visual (Modo Claro soberano, contraste WCAG, Zod).
+    - A **Barreira de Sincronização** valida os micro-gates, executa o rebase preventivo e consolida as fatias.
     - O `aidd-enterprise` blinda a árvore unificada contra vulnerabilidades e desvios de integridade SHA-256.
-    - O `aidd-ops` empacota a infraestrutura em Docker Compose e valida as portas expostas.
-  - **Contratos e Handoff Formal:** Todos os contratos centrais (`PLANNER.json`, `VSA_DISPATCH.json`, `handoff_evolution.json`) exigem integridade criptográfica `payload_sha256` calculada sobre o payload canônico. Se o hash divergir, o bastão é bloqueado imediatamente (exit 1).
+    - O `aidd-ops` empacota a infraestrutura em Docker Compose e valida portas expostas.
+    - A **Entrega & Quarteto** sobe os serviços locais (HTTP 200) e entrega os 4 estúdios ativos (`/docs`, `/api`, `/webhook`, `/mcp`).
+  - **Contratos e Handoff Formal:** Todos os contratos centrais (`PLANNER.json`, `UI_BLUEPRINT.json`, `VSA_DISPATCH.json`, `handoff_evolution.json`) exigem integridade criptográfica `payload_sha256` calculada sobre o payload canônico. Se o hash divergir, o bastão é bloqueado imediatamente (exit 1).
   - **Gates em 2 Níveis (Shift-Left):**
     - *Nível 1 (Micro-Gates de Worktree):* Execução rápida (< 2s) em isolamento da fatia (`py_compile`, verificação de stubs/Lei #5, testes unitários da fatia, verificação de fronteiras). Reprovação aborta a worktree antes do merge.
-    - *Nível 2 (54 Macro-Gates Globais):* Executados pós-convergência via `python ecossistema.py audit` / `pre-commit run --all-files`.
+    - *Nível 2 (Macro-Gates Globais):* Executados pós-convergência via `python ecossistema.py audit` / `pre-commit run --all-files`.
   - **Barreira de Sincronização (--barrier-sync):** Rebase preventivo da branch de integração na worktree antes do merge. Em caso de conflito, executa rollback automático e grava `dispatch_rollback_report.json`.
 
 **Interoperabilidade Universal dos Slash Commands:** Em harnesses sem suporte a slash commands customizados na UI ou com colisões de namespace (como `/open` no Google Antigravity CLI), qualquer entrada do usuário referenciando `/pure`, `pure`, `/open`, `/aidd-open`, `open`, `/freedom`, `freedom`, `/factory`, `/bridge`, `/run-plan`, `run-plan`, `/pipeline`, `pipeline`, `/dispatch`, `dispatch`, `/aidd-dispatch`, `/audit-4f`, `audit-4f`, `/aidd-auditor`, `/evolucao`, `evolucao`, `/aidd-evolucao`, `/sessao`, `sessao`, `/session`, `session`, `/id` DEVE ser interceptada pelo agente como a invocação imediata do respectivo fluxo ou comando do ecossistema. Silêncio ou erro de "comando não suportado" é estritamente proibido.

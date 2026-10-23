@@ -26,17 +26,18 @@ export default function Layout() {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#0b0f19]">
+    <div className="flex h-screen overflow-hidden bg-slate-50 text-slate-900">
       {/* Sidebar */}
-      <aside className="w-60 flex-shrink-0 border-r border-slate-800 bg-sidebar flex flex-col">
-        <div className="px-4 py-5 border-b border-slate-800">
-          <h1 className="text-lg font-bold tracking-tight">
-            <span className="text-primary">AIDD</span> Enterprise
+      <aside className="w-64 flex-shrink-0 border-r border-slate-200 bg-white flex flex-col shadow-xs">
+        <div className="px-5 py-5 border-b border-slate-200">
+          <h1 className="text-base font-bold tracking-tight text-slate-900 flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-teal-600"></span>
+            AIDD Enterprise
           </h1>
-          <p className="text-xs text-muted-foreground mt-0.5">Suite Hospitalar</p>
+          <p className="text-xs text-slate-500 mt-0.5">Gestão Corporativa</p>
         </div>
 
-        <nav className="flex-1 px-3 py-4 space-y-1">
+        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
           {navItems.map(({ to, label, icon: Icon }) => (
             <NavLink
               key={to}

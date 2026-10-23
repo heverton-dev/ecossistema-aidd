@@ -185,6 +185,10 @@
         "esperado_identico": true,
         "motivo": null
       },
+      "screen_synthesizer.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
       "test_live.py": {
         "esperado_identico": true,
         "motivo": null
@@ -226,7 +230,9 @@
     "divergencias_documentadas": {
       "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/detector_camada.py": "Copia com _PROJETO_PADRAO fixo em 'aidd-enterprise'; a peça deduz o projeto pela localização. Desde o Ticket 18 o enterprise carrega a peça (application/pecas_catalogo.py). Copia antiga, fica no disco até a remoção com o usuário (Ticket 19).",
       "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/detector_camada.py": "Copia com _PROJETO_PADRAO fixo em 'aidd-master'; a peça deduz o projeto pela localização. Copia antiga, fica no disco até a remoção com o usuário (Ticket 19).",
-      "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/profiles_registry.py": "Versão do aidd-master (hooks em JSON, 9325afa); a peça é a base do enterprise com esses hooks juntados. Copia antiga, fica no disco até a remoção com o usuário (Ticket 19)."
+      "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/profiles_registry.py": "Versão do aidd-master (hooks em JSON, 9325afa); a peça é a base do enterprise com esses hooks juntados. Copia antiga, fica no disco até a remoção com o usuário (Ticket 19).",
+      "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/schema_injector_request.json": "Esquema JSON com validacoes especificas de blindagem do modulo correspondente.",
+      "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/schemas/injection_request.schema.json": "Esquema JSON com validacoes especificas de blindagem do modulo correspondente."
     }
   }
 }

@@ -1693,9 +1693,24 @@ def cmd_quadro(args):
         print("\n[aidd-quadro] Encerrando servidor.")
     return 0
 
+def cmd_novo(args):
+    """Cria uma nova aplicação no Padrão-Ouro RevNault com 1 comando (experiência NPX)."""
+    import sys
+    sys.path.insert(0, os.path.join(ROOT_DIR, "scripts"))
+    import create_aidd_app
+    sys_argv_backup = list(sys.argv)
+    try:
+        sys.argv = ["create_aidd_app.py"] + args
+        return create_aidd_app.main() or 0
+    finally:
+        sys.argv = sys_argv_backup
+
 def comandos_disponiveis():
     """Mapa comando -> função, já com os nomes antigos como apelido que avisa."""
     dispatch = {
+        "novo": cmd_novo,
+        "create": cmd_novo,
+        "create-app": cmd_novo,
         "forge": cmd_forge,
         "pure-motor": cmd_pure_motor,
         "master": cmd_master,

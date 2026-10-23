@@ -1,0 +1,22 @@
+{
+  "name": "ecossistema-aidd",
+  "version": "5.1.0",
+  "description": "Meta-Orquestrador e Framework de Engenharia Agêntica AIDD",
+  "bin": {
+    "create-aidd-app": "./bin/create-aidd-app.js",
+    "aidd-create": "./bin/create-aidd-app.js"
+  },
+  "scripts": {
+    "create": "node ./bin/create-aidd-app.js"
+  },
+  "keywords": [
+    "aidd",
+    "agentic",
+    "ai",
+    "scaffold",
+    "tanstack",
+    "fastapi"
+  ],
+  "author": "heverton-dev",
+  "license": "MIT"
+}

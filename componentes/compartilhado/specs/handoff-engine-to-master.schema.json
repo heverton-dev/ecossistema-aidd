@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "HandoffEngineToMasterSchema",
   "description": "Contrato formal e determinístico de transferência dos módulos e regras gerados pela Engine para a harmonização Monolito Modular VSA no aidd-master (C3).",
   "type": "object",
@@ -15,11 +15,17 @@
   "properties": {
     "versao_schema": {
       "type": "string",
-      "enum": ["1.0.0"]
+      "enum": [
+        "1.0.0"
+      ]
     },
     "origem_engine": {
       "type": "string",
-      "enum": ["aidd-pure", "aidd-open", "aidd-freedom"]
+      "enum": [
+        "aidd-pure",
+        "aidd-open",
+        "aidd-freedom"
+      ]
     },
     "projeto_slug": {
       "type": "string",
@@ -30,9 +36,17 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["slice_nome", "caminho_src", "sha256_arvore", "endpoints", "tabelas_sql"],
+        "required": [
+          "slice_nome",
+          "caminho_src",
+          "sha256_arvore",
+          "endpoints",
+          "tabelas_sql"
+        ],
         "properties": {
-          "slice_nome": { "type": "string" },
+          "slice_nome": {
+            "type": "string"
+          },
           "caminho_src": {
             "type": "string",
             "pattern": "^src/modules/[^/]+",
@@ -47,50 +61,115 @@
             "type": "array",
             "items": {
               "type": "object",
-              "required": ["rota", "metodo", "funcao"],
+              "required": [
+                "rota",
+                "metodo",
+                "funcao"
+              ],
               "properties": {
-                "rota": { "type": "string" },
-                "metodo": { "type": "string", "enum": ["GET", "POST", "PUT", "DELETE", "PATCH"] },
-                "funcao": { "type": "string" }
+                "rota": {
+                  "type": "string"
+                },
+                "metodo": {
+                  "type": "string",
+                  "enum": [
+                    "GET",
+                    "POST",
+                    "PUT",
+                    "DELETE",
+                    "PATCH"
+                  ]
+                },
+                "funcao": {
+                  "type": "string"
+                }
               }
             }
           },
           "tabelas_sql": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
           }
         }
       }
     },
     "artefatos_frontend": {
       "type": "object",
-      "required": ["tecnologia", "paginas_geradas", "origem_design"],
+      "required": [
+        "tecnologia",
+        "paginas_geradas",
+        "origem_design"
+      ],
       "properties": {
-        "tecnologia": { "type": "string", "enum": ["nextjs_app_router", "tanstack_router"] },
+        "tecnologia": {
+          "type": "string",
+          "enum": [
+            "nextjs_app_router",
+            "tanstack_router"
+          ]
+        },
         "paginas_geradas": {
           "type": "array",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         },
         "origem_design": {
           "type": "string",
-          "enum": ["tailwind_standard", "lovable_preserved", "custom_tdd"]
+          "enum": [
+            "tailwind_standard",
+            "lovable_preserved",
+            "custom_tdd"
+          ]
         }
       }
     },
     "testes_executados": {
       "type": "object",
-      "required": ["total", "passaram", "falharam", "zero_stubs", "relatorio_pytest"],
+      "required": [
+        "total",
+        "passaram",
+        "falharam",
+        "zero_stubs",
+        "relatorio_pytest"
+      ],
       "properties": {
-        "total": { "type": "integer", "minimum": 1 },
-        "passaram": { "type": "integer", "minimum": 1 },
-        "falharam": { "type": "integer", "maximum": 0 },
-        "zero_stubs": { "type": "boolean", "enum": [true] },
+        "total": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "passaram": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "falharam": {
+          "type": "integer",
+          "maximum": 0
+        },
+        "zero_stubs": {
+          "type": "boolean",
+          "enum": [
+            true
+          ]
+        },
         "relatorio_pytest": {
           "type": "object",
-          "required": ["caminho", "exit_code"],
+          "required": [
+            "caminho",
+            "exit_code"
+          ],
           "properties": {
-            "caminho": { "type": "string" },
-            "exit_code": { "type": "integer", "enum": [0] }
+            "caminho": {
+              "type": "string"
+            },
+            "exit_code": {
+              "type": "integer",
+              "enum": [
+                0
+              ]
+            }
           },
           "description": "Evidência real de execução de testes vinda de relatório do pytest."
         }

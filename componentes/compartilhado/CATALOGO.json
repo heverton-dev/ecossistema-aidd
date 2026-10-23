@@ -735,7 +735,7 @@
       "papel": "variante",
       "dono_do_conteudo": "aidd-enterprise",
       "versao": "1.0.0",
-      "sha256": "sha256-1449718a2713f936a638aec6bae9522fa0fd245ad1cf8553b10080bba2e4f1e1",
+      "sha256": "sha256-dbbbf264c5f6a1ad5ae34902bfd36542f273a9d73cb05907b67de89ecf56dbb0",
       "consumidores": [
         "aidd-master"
       ],
@@ -1046,7 +1046,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-master",
       "versao": "1.0.0",
-      "sha256": "sha256-63224c0301699eeecbab3e06b4ac5c493954038cd3c6fcffdcb6b07619870af9",
+      "sha256": "sha256-dfad7094b598087f588a8db48379b3261cfebd500fda89734836015739ec3420",
       "consumidores": [
         "aidd-enterprise",
         "aidd-master",
@@ -1080,7 +1080,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-master",
       "versao": "1.0.0",
-      "sha256": "sha256-b88d77245bcfd8404590437f917bde14b4fadd03c360815c91c93a8ebcc861da",
+      "sha256": "sha256-cc5c0a36d7c99aa00e4141f690dbf7e2a0b2bcdfdbaef005177c27244e252120",
       "consumidores": [
         "aidd-enterprise",
         "aidd-master",
@@ -1128,7 +1128,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-master",
       "versao": "1.0.0",
-      "sha256": "sha256-3fb1ca046b832f0bb64d6d3de9aa554368ec438145580ab09359bdfbf3ee4f44",
+      "sha256": "sha256-11e1d2e3b5376583c9988bbd5f74ba2216221fabd50c0ba3be9088fe11878b31",
       "consumidores": [
         "aidd-enterprise",
         "aidd-master",
@@ -1321,7 +1321,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-master",
       "versao": "1.0.0",
-      "sha256": "sha256-fd643066eed45531ff942f196fb59e5312e394175ba4d851b1402af2068b8495",
+      "sha256": "sha256-d6e4818614293140b0b3102eb8605995cb2422db90f84db2c0531f6f44285607",
       "consumidores": [
         "aidd-enterprise",
         "aidd-master",
@@ -1355,7 +1355,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-forge",
       "versao": "1.0.0",
-      "sha256": "sha256-8e4d1b45e525a5a2bda564256af7e757a839b1b20c80e0b13b765362287476a0",
+      "sha256": "sha256-67089daf8e5d85051791e32f0360508e169d001219ee6a00cd18795315d0ec48",
       "consumidores": [
         "aidd-forge",
         "ecossistema-raiz"
@@ -1385,7 +1385,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-master",
       "versao": "1.0.0",
-      "sha256": "sha256-05f69ab39c8f4f4ec3f6ab69acf4010d4672e2729819e72cf8e999fb8fa2020a",
+      "sha256": "sha256-7c8983229d2ee0ba0bba99589d32da86b6695117c42da655d13b0fed1b641d2a",
       "consumidores": [
         "aidd-master",
         "ecossistema-raiz"
@@ -1400,7 +1400,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-enterprise",
       "versao": "1.0.0",
-      "sha256": "sha256-a6365797f87bd46c5c56d0deec0041b0114696c276671f30a6bd6dec86dafbb3",
+      "sha256": "sha256-e0f67244101bd0033d314d22c46c2f0d126f89f5771b57d5b23d75ba2393f427",
       "consumidores": [
         "aidd-enterprise",
         "ecossistema-raiz"
@@ -1415,7 +1415,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-planner",
       "versao": "1.0.0",
-      "sha256": "sha256-01cb178daf965f8ebdb1cb1c2a7fb09f0cd24dd47367e877b13e67b9aee58b3c",
+      "sha256": "sha256-cc0b71209c033f33ef1bed9dfea1f133495f3a0aca5d641f283a9b042716e382",
       "consumidores": [
         "aidd-planner",
         "ecossistema-raiz"
@@ -1430,7 +1430,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-forge",
       "versao": "1.0.0",
-      "sha256": "sha256-6b7bc9daf1575d37689c1327dadf48328b907c0e6c5c86c11eb1eda52359a8c6",
+      "sha256": "sha256-2dd3cd0f6608cb8ccfde5f6ba11892577eb91cdf04a5fdbdf2413b9b1ba72afe",
       "consumidores": [
         "aidd-forge",
         "ecossistema-raiz"
@@ -1445,7 +1445,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-master",
       "versao": "1.0.0",
-      "sha256": "sha256-a3d72e40abfa52091c856f9b09a59cbd01ff90b68356abad5a9ff136de7c97ed",
+      "sha256": "sha256-4cd42436bfc5ae385e28f76d94d8485794a3506f18b055c18d1e18e4a15e2713",
       "consumidores": [
         "aidd-master",
         "ecossistema-raiz"
@@ -1460,7 +1460,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-forge",
       "versao": "1.0.0",
-      "sha256": "sha256-c55001bc63caf6ca001bf9d0039147d3f67fc3d3d445b22f6a565727a6d41e33",
+      "sha256": "sha256-6f4832374b3ac7188e47dff09b485df9f7e0d5d2445f6b5f2335e393602661f6",
       "consumidores": [
         "aidd-forge",
         "ecossistema-raiz"
@@ -1475,7 +1475,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-planner",
       "versao": "1.0.0",
-      "sha256": "sha256-172239de30e191cc4363f2f774b0ddbc1b8594a70361b172db77e2399ddb1532",
+      "sha256": "sha256-3bc9da935c3f5fcd5e9cc4245e9133f55cb0e2109fa6e4ae282a61d054bd1832",
       "consumidores": [
         "aidd-planner",
         "ecossistema-raiz"
@@ -1508,7 +1508,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-planner",
       "versao": "1.0.0",
-      "sha256": "sha256-7615c26086bedd100dd6eb463c4156c2206f93b200e6f4efd0f29d964f2c2492",
+      "sha256": "sha256-d653023acd04ecd8a5f7e37982a3d325d102fb0b591409fe97f4815c16ff5f95",
       "consumidores": [
         "aidd-planner",
         "ecossistema-raiz"

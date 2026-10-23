@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atlas da Esteira Canônica AIDD — 11 Etapas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-subtle: #f1f5f9;
+            --border: #e2e8f0;
+            --border-hover: #cbd5e1;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --text-tertiary: #94a3b8;
+            --primary: #0284c7;
+            --primary-hover: #0369a1;
+            --primary-surface: #f0f9ff;
+            --primary-border: #bae6fd;
+            --emerald: #059669;
+            --emerald-surface: #ecfdf5;
+            --emerald-border: #a7f3d0;
+            --amber: #d97706;
+            --amber-surface: #fffbeb;
+            --amber-border: #fde68a;
+            --purple: #7c3aed;
+            --purple-surface: #f5f3ff;
+            --purple-border: #ddd6fe;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.04);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.03);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        html, body {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body { background-color: var(--bg-base); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
+
+        /* ICON UTILITY */
+        .svg-icon {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            stroke-width: 1.75;
+            stroke: currentColor;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            vertical-align: middle;
+            flex-shrink: 0;
+        }
+
+        /* HEADER */
+        header {
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            box-shadow: var(--shadow-xs);
+            gap: 1rem;
+        }
+        .header-brand { display: flex; align-items: center; gap: 0.85rem; min-width: 0; }
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-md);
+            background: var(--primary-surface);
+            border: 1px solid var(--primary-border);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .header-title { min-width: 0; }
+        .header-title h1 {
+            font-size: clamp(0.95rem, 2vw, 1.15rem);
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.01em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .header-title p {
+            font-size: clamp(0.72rem, 1.5vw, 0.8rem);
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .badge-version {
+            background-color: var(--bg-subtle);
+            color: var(--text-muted);
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 0.18rem 0.45rem;
+            border-radius: 9999px;
+            border: 1px solid var(--border);
+            font-family: 'JetBrains Mono', monospace;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .stats-bar { display: flex; gap: 1.5rem; flex-shrink: 0; }
+        .stat-item { text-align: right; }
+        .stat-label { font-size: 0.65rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.04em; }
+        .stat-value { font-size: 0.95rem; font-weight: 800; color: var(--text-main); font-family: 'JetBrains Mono', monospace; }
+
+        /* MAIN */
+        main {
+            flex: 1;
+            max-width: 1440px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 1.75rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.75rem;
+        }
+
+        /* BANNER OSMANI */
+        .principles-banner {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--primary);
+            border-radius: var(--radius-md);
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+            box-shadow: var(--shadow-xs);
+        }
+        .principles-info h2 { font-size: 0.95rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.5rem; }
+        .principles-info p { font-size: 0.82rem; color: var(--text-muted); max-width: 820px; line-height: 1.5; }
+        .principles-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .pill { font-size: 0.72rem; font-weight: 700; padding: 0.25rem 0.65rem; border-radius: 9999px; border: 1px solid transparent; }
+        .pill-blue { background: var(--primary-surface); color: var(--primary); border-color: var(--primary-border); }
+        .pill-emerald { background: var(--emerald-surface); color: var(--emerald); border-color: var(--emerald-border); }
+        .pill-amber { background: var(--amber-surface); color: var(--amber); border-color: var(--amber-border); }
+
+        /* TIMELINE TRACK */
+        .timeline-section { display: flex; flex-direction: column; gap: 1.25rem; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+        .section-header h2 { font-size: clamp(0.95rem, 2vw, 1.1rem); font-weight: 800; color: var(--text-main); letter-spacing: -0.01em; }
+        
+        .filter-buttons {
+            display: flex;
+            gap: 0.4rem;
+            background: #ffffff;
+            padding: 0.25rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            max-width: 100%;
+        }
+        .filter-btn {
+            background: transparent;
+            border: none;
+            padding: 0.4rem 0.75rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+        .filter-btn:hover { color: var(--text-main); }
+        .filter-btn.active { background: var(--bg-subtle); color: var(--text-main); font-weight: 700; }
+        .filter-btn:focus-visible, .step-card:focus-visible, .close-btn:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            grid-column: 1 / -1;
+            background: #ffffff;
+            border: 1px dashed var(--border);
+            border-radius: var(--radius-lg);
+            padding: 3rem 2rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .empty-state h3 { font-size: 1.05rem; font-weight: 800; color: var(--text-main); }
+        .empty-state p { font-size: 0.82rem; color: var(--text-muted); max-width: 420px; line-height: 1.5; }
+        .empty-btn {
+            background: var(--primary-surface);
+            color: var(--primary);
+            border: 1px solid var(--primary-border);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .empty-btn:hover {
+            background: var(--primary);
+            color: #ffffff;
+        }
+
+        /* GRID */
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+            gap: 1.25rem;
+            width: 100%;
+        }
+
+        .step-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1.35rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+            cursor: pointer;
+            position: relative;
+            min-width: 0;
+        }
+        .step-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-border);
+        }
+
+        .step-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem; }
+        .step-number {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-md);
+            background: var(--bg-subtle);
+            color: var(--text-main);
+            font-weight: 800;
+            font-size: 0.88rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+            font-family: 'JetBrains Mono', monospace;
+            flex-shrink: 0;
+        }
+        .step-card:hover .step-number {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+        }
+
+        .step-title { min-width: 0; }
+        .step-title h3 { font-size: 1rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.15rem; word-break: break-word; }
+        .step-title .tool-name { font-family: 'JetBrains Mono', monospace; font-size: 0.73rem; color: var(--text-muted); word-break: break-all; }
+
+        .badge-nature {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 0.2rem 0.5rem;
+            border-radius: var(--radius-sm);
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .nat-det { background: var(--emerald-surface); color: var(--emerald); border: 1px solid var(--emerald-border); }
+        .nat-prob { background: #fff1f2; color: #be123c; border: 1px solid #fecdd3; }
+        .nat-misto { background: var(--primary-surface); color: var(--primary); border: 1px solid var(--primary-border); }
+
+        .step-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.45; word-break: break-word; }
+
+        .handoff-box {
+            background: var(--bg-base);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 0.6rem 0.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            min-width: 0;
+        }
+        .handoff-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: var(--text-tertiary); letter-spacing: 0.03em; }
+        .handoff-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+        }
+
+        .micro-steps-summary {
+            border-top: 1px solid var(--border);
+            padding-top: 0.65rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+        .micro-item {
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            color: var(--text-main);
+            word-break: break-word;
+        }
+        .micro-dot { width: 5px; height: 5px; border-radius: 50%; background: #94a3b8; flex-shrink: 0; }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-content {
+            background: #ffffff;
+            width: 100%;
+            max-width: 860px;
+            max-height: 88vh;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: modalFade 0.15s ease-out;
+        }
+        @keyframes modalFade {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-header {
+            padding: 1.25rem 1.75rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            gap: 1rem;
+        }
+        .modal-header h3 { font-size: 1.15rem; font-weight: 800; color: var(--text-main); word-break: break-word; }
+        .close-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            flex-shrink: 0;
+        }
+        .close-btn:hover { background: var(--bg-subtle); color: var(--text-main); }
+
+        .modal-body {
+            padding: 1.5rem 1.75rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            background: #fafafa;
+        }
+
+        .detail-block {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 1.15rem 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+            min-width: 0;
+        }
+        .detail-block h4 { font-size: 0.85rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 0.4rem; text-transform: uppercase; letter-spacing: 0.03em; }
+
+        /* TABLE RESPONSIVE */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: #ffffff;
+        }
+        .detail-table {
+            width: 100%;
+            min-width: 520px;
+            border-collapse: collapse;
+            font-size: 0.78rem;
+        }
+        .detail-table th { text-align: left; padding: 0.55rem 0.65rem; color: var(--text-tertiary); border-bottom: 1px solid var(--border); font-size: 0.7rem; text-transform: uppercase; background: var(--bg-base); }
+        .detail-table td { padding: 0.6rem 0.65rem; border-bottom: 1px solid var(--bg-subtle); vertical-align: middle; }
+        .code-pill {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            background: var(--bg-subtle);
+            color: var(--text-main);
+            padding: 0.15rem 0.4rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            display: inline-block;
+            word-break: break-all;
+        }
+
+        /* FOOTER */
+        footer {
+            border-top: 1px solid var(--border);
+            background: #ffffff;
+            padding: 1.25rem 2rem;
+            text-align: center;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        /* =========================================================================
+           RESPONSIVE BREAKPOINTS (Mobile, Tablet, Desktop)
+           ========================================================================= */
+
+        /* TABLET & LAPTOP (<= 1024px) */
+        @media (max-width: 1024px) {
+            header { padding: 0.85rem 1.5rem; }
+            main { padding: 1.5rem 1.5rem; gap: 1.5rem; }
+            .principles-banner {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            .principles-tags { width: 100%; }
+        }
+
+        /* TABLET VERTICAL / PHABLET (<= 768px) */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 0.85rem 1rem;
+                gap: 0.85rem;
+            }
+            .header-brand {
+                justify-content: flex-start;
+            }
+            .stats-bar {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.5rem;
+                border-top: 1px solid var(--border);
+                padding-top: 0.65rem;
+                width: 100%;
+            }
+            .stat-item {
+                text-align: center;
+            }
+            .stat-label {
+                font-size: 0.6rem;
+            }
+            .stat-value {
+                font-size: 0.85rem;
+            }
+
+            main { padding: 1rem 1rem; gap: 1.25rem; }
+
+            .section-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.75rem;
+            }
+            .filter-buttons {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                padding: 0.3rem;
+            }
+            .filter-buttons::-webkit-scrollbar { display: none; }
+            .filter-btn {
+                padding: 0.45rem 0.85rem;
+                min-height: 38px;
+                flex-shrink: 0;
+            }
+
+            .steps-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .modal-overlay {
+                padding: 0.5rem;
+                align-items: flex-end;
+            }
+            .modal-content {
+                max-height: 92vh;
+                border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            }
+            .modal-header {
+                padding: 1rem 1.25rem;
+            }
+            .modal-header h3 {
+                font-size: 1rem;
+            }
+            .modal-body {
+                padding: 1rem 1.25rem;
+                gap: 1rem;
+            }
+        }
+
+        /* MOBILE PEQUENO (<= 480px) */
+        @media (max-width: 480px) {
+            header { padding: 0.75rem 0.75rem; }
+            main { padding: 0.75rem 0.75rem; gap: 1rem; }
+            
+            .header-title h1 { font-size: 0.95rem; }
+            .header-title p { font-size: 0.7rem; }
+            .badge-version { font-size: 0.6rem; padding: 0.15rem 0.35rem; }
+
+            .stats-bar {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.25rem;
+            }
+            .stat-label { font-size: 0.55rem; }
+            .stat-value { font-size: 0.75rem; }
+
+            .principles-banner {
+                padding: 0.85rem 1rem;
+            }
+            .principles-info h2 {
+                font-size: 0.88rem;
+            }
+            .principles-info p {
+                font-size: 0.75rem;
+            }
+
+            .step-card {
+                padding: 1rem;
+                gap: 0.75rem;
+            }
+            .step-title h3 {
+                font-size: 0.92rem;
+            }
+            .step-title .tool-name {
+                font-size: 0.68rem;
+            }
+            .handoff-box {
+                padding: 0.5rem 0.65rem;
+            }
+            .handoff-value {
+                font-size: 0.7rem;
+            }
+
+            .modal-overlay {
+                padding: 0;
+            }
+            .modal-content {
+                max-height: 94vh;
+                border-radius: var(--radius-md) var(--radius-md) 0 0;
+            }
+            .modal-header {
+                padding: 0.85rem 1rem;
+            }
+            .modal-body {
+                padding: 0.85rem 1rem;
+            }
+            .detail-block {
+                padding: 0.85rem 0.9rem;
+            }
+
+            footer {
+                padding: 1rem 1rem;
+                font-size: 0.72rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="header-brand">
+            <div class="brand-icon">
+                <svg class="svg-icon" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+            </div>
+            <div class="header-title">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.15rem;">
+                    <h1>Atlas da Esteira Canônica AIDD</h1>
+                    <span class="badge-version">11 ETAPAS • V2.1</span>
+                </div>
+                <p>Navegação Arquitetural Fractal: Macro ➔ Fluxos ➔ 11 Etapas ➔ Micro-Fases</p>
+            </div>
+        </div>
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-label">Sequência Oficial</div>
+                <div class="stat-value">11 Etapas</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Quality Gates</div>
+                <div class="stat-value">69 Ativos</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Padrão Visual</div>
+                <div class="stat-value">Light Mode Sovereign</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <main>
+        <!-- PRINCÍPIOS OSMANI TRANSVERSAIS -->
+        <div class="principles-banner">
+            <div class="principles-info">
+                <h2>
+                    <svg class="svg-icon" viewBox="0 0 24 24" style="color: var(--primary);"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    Princípios Transversais de Engenharia & Craft (Addy Osmani)
+                </h2>
+                <p>A esteira canônica obedece a 4 regras invioláveis: <strong>Soberania do Modo Claro</strong> (WCAG 2.2 AA/AAA com superfícies limpas), <strong>Zero Layout Shift</strong> (CLS = 0), <strong>5 Estados Obrigatórios de UI</strong> (Idle, Loading, Empty, Error, Success) e <strong>Componentização Anti-Duplicação</strong>.</p>
+            </div>
+            <div class="principles-tags">
+                <span class="pill pill-blue">Light Mode Sovereign</span>
+                <span class="pill pill-emerald">Zod Strict Forms</span>
+                <span class="pill pill-amber">Performance Budget</span>
+            </div>
+        </div>
+
+        <!-- TIMELINE & FILTERS -->
+        <div class="timeline-section">
+            <div class="section-header">
+                <h2>Dissecação Cirúrgica das 11 Etapas (Selecione para inspecionar)</h2>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="filtrarEtapas('todas')">Todas (11)</button>
+                    <button class="filter-btn" onclick="filtrarEtapas('det')">Determinísticas</button>
+                    <button class="filter-btn" onclick="filtrarEtapas('ui')">Design & Craft UI</button>
+                    <button class="filter-btn" onclick="filtrarEtapas('infra')">Segurança & Ops</button>
+                </div>
+            </div>
+
+            <!-- GRID DOS CARDS -->
+            <div class="steps-grid" id="stepsGrid">
+                <!-- Inserido dinamicamente via JS -->
+            </div>
+        </div>
+    </main>
+
+    <!-- MODAL DE DETALHES -->
+    <div class="modal-overlay" id="modalOverlay" onclick="fecharModal(event)" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div>
+                    <span id="modalStepNumber" class="code-pill" style="margin-bottom: 0.35rem; display: inline-block;"></span>
+                    <h3 id="modalTitle"></h3>
+                </div>
+                <button class="close-btn" onclick="fecharModalDirect()" aria-label="Fechar">
+                    <svg class="svg-icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Conteúdo detalhado da etapa -->
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        Ecossistema AIDD • Governança Canônica Zero Stubs • Manual Completo: <a href="file:///c:/Users/trcnologia/Desktop/ecossistema-aidd/docs/manuais/DISSECACAO-ESTEIRA-11-PASSOS-AIDD.md" style="color: var(--primary); text-decoration: none; font-weight: 600;">DISSECACAO-ESTEIRA-11-PASSOS-AIDD.md</a>
+    </footer>
+
+    <script>
+        const etapas = [
+            {
+                id: 1,
+                nome: "FORGE",
+                ferramenta: "aidd-forge",
+                natureza: "Determinística",
+                natClass: "nat-det",
+                categoria: "infra",
+                descricao: "Prepara a fundação do repositório: instala git hooks invioláveis, perfis multi-harness e regras de economia de tokens.",
+                handoff: "Repositório Blindado + Hooks Ativos",
+                skills: ["aidd-forge"],
+                mcps: ["codebase-memory-mcp"],
+                gates: ["G_TEMPLATE_FORGE_ROT.py", "G_aidd_forge.py", "G_TESTES_REAIS.py"],
+                microFases: [
+                    { id: "1.1", nome: "Instalação de Git Hooks", nat: "Determinística", desc: "Instala pre-commit e commit-msg em .git/hooks/.", script: "git_hooks.py" },
+                    { id: "1.2", nome: "Injeção Multi-Harness", nat: "Determinística", desc: "Materializa .claude, .gemini, .agents, .cursor sem drift.", script: "injector_profiles.py" },
+                    { id: "1.3", nome: "Regras de Token Economy", nat: "Determinística", desc: "Injeta AGENTS.md e travas de contexto < 2000 tokens.", script: "almoxarifado.py" }
+                ]
+            },
+            {
+                id: 2,
+                nome: "PLANNER",
+                ferramenta: "aidd-planner",
+                natureza: "Mista",
+                natClass: "nat-misto",
+                categoria: "todas",
+                descricao: "Conduz entrevista socrática (grill), confronta a arquitetura e gera a especificação com critérios binários.",
+                handoff: "PLANNER.json (Assinado SHA-256)",
+                skills: ["aidd-planner", "aidd-grill", "aidd-spec", "aidd-tickets"],
+                mcps: ["codebase-memory-mcp"],
+                gates: ["G_aidd_plan.py", "G_aidd_spec.py", "G_aidd_tickets.py", "G_aidd_grill.py"],
+                microFases: [
+                    { id: "2.1", nome: "Entrevista Socrática (Grill)", nat: "Probabilística", desc: "Perguntas causais para resolver premissas de negócio.", script: "aidd-grill" },
+                    { id: "2.2", nome: "Confronto com Arquitetura", nat: "Mista", desc: "Valida regras contra o Grafo de Conhecimento.", script: "aidd-grill-docs" },
+                    { id: "2.3", nome: "Especificação Binária & Tickets", nat: "Determinística", desc: "Gera PLANNER.json com critérios de aceite e tickets tracer-bullet.", script: "compiler.py" }
+                ]
+            },
+            {
+                id: 3,
+                nome: "RECONSTRUCT",
+                ferramenta: "aidd-reconstruct / cataloger",
+                natureza: "Mista",
+                natClass: "nat-misto",
+                categoria: "ui",
+                descricao: "Inicia mandatoriamente pelo Benchmark Multi-Fonte (Mobbin, Refero, Dribbble), executa REA e cataloga componentes anti-duplicação.",
+                handoff: "UI_BLUEPRINT.json + DESIGN-SYSTEM.json",
+                skills: ["aidd-site-dominator", "aidd-cataloger"],
+                mcps: ["mobbin-mcp", "rea"],
+                gates: ["G_CRAFT_VISUAL.py", "G_linter_design.py"],
+                microFases: [
+                    { id: "3.1", nome: "Benchmark Multi-Fonte (Primeiro Passo)", nat: "Mista", desc: "Mapeamento em Mobbin, Refero.design, Styles, Dribbble e Transitions.dev.", script: "mobbin_buscar_telas" },
+                    { id: "3.2", nome: "Engenharia Reversa Visual (REA)", nat: "Mista", desc: "Decomposição da hierarquia, densidade e proporções das telas.", script: "rea / reverse-engineer-anything" },
+                    { id: "3.3", nome: "Extração de Design Tokens", nat: "Determinística", desc: "Tokens semânticos em OKLCH (Modo Claro Soberano).", script: "extrair_tokens_mobbin.py" },
+                    { id: "3.4", nome: "Componentização Anti-Duplicação", nat: "Determinística", desc: "Catálogo de primitivas compartilhadas com os 5 estados do Osmani.", script: "mobbin_compilar_design_system" }
+                ]
+            },
+            {
+                id: 4,
+                nome: "MASTER",
+                ferramenta: "aidd-master",
+                natureza: "Determinística",
+                natClass: "nat-det",
+                categoria: "det",
+                descricao: "Harmoniza APIs do Planner com as telas do Reconstruct, compilando a arquitetura em Fatias Verticais (VSA).",
+                handoff: "VSA_DISPATCH.json (DAG de Fatias)",
+                skills: ["aidd-master"],
+                mcps: ["codebase-memory-mcp"],
+                gates: ["G_MODULO_FRONTEIRA.py", "G_COPIA_UNICA_VSA.py", "G_DRIFT_NUCLEO_COMPARTILHADO.py"],
+                microFases: [
+                    { id: "4.1", nome: "Fatiamento Modular VSA", nat: "Determinística", desc: "Associa rotas OpenAPI às telas do Reconstruct em fatias autônomas.", script: "add_module.py" },
+                    { id: "4.2", nome: "Infraestrutura Transversal", nat: "Determinística", desc: "Injeta EventBus, Outbox assíncrono, SQLite WAL e RLS.", script: "scaffold_infra.py" }
+                ]
+            },
+            {
+                id: 5,
+                nome: "DISPATCH",
+                ferramenta: "aidd-dispatch",
+                natureza: "Determinística",
+                natClass: "nat-det",
+                categoria: "det",
+                descricao: "Calcula a ordenação topológica (Kahn DAG) e materializa Git Worktrees efêmeras para desenvolvimento isolado.",
+                handoff: "Worktrees Efêmeras Isoladas (.worktrees/vsa_*)",
+                skills: ["aidd-dispatch"],
+                mcps: [],
+                gates: ["G_DISPATCH_PIPELINE_VSA.py", "G_MICRO_GATES_DIFF.py"],
+                microFases: [
+                    { id: "5.1", nome: "Ordenação Topológica Kahn", nat: "Determinística", desc: "Organiza a fila de fatias sem dependências bloqueantes.", script: "dispatch_pipeline.py" },
+                    { id: "5.2", nome: "Criação de Worktrees", nat: "Determinística", desc: "Executa git worktree add com branches efêmeras e micro-gates.", script: "dispatch_pipeline.py" }
+                ]
+            },
+            {
+                id: 6,
+                nome: "ENGINE TRÍADE",
+                ferramenta: "pure | open | freedom",
+                natureza: "Mista",
+                natClass: "nat-misto",
+                categoria: "todas",
+                descricao: "Constrói a fatia vertical dentro da worktree: TDD Red-Green estrito, FastAPI backend e React 19 + TanStack Router.",
+                handoff: "Código Funcional da Fatia (Backend + Frontend)",
+                skills: ["aidd-pure", "aidd-open", "aidd-freedom", "aidd-tdd"],
+                mcps: ["codebase-memory-mcp"],
+                gates: ["G_STACK_PADRAO_OURO.py", "G_NOVE_CAMADAS_MERCADO.py", "G_TESTES_REAIS.py"],
+                microFases: [
+                    { id: "6.1", nome: "TDD Red-Green Estrito", nat: "Determinística", desc: "Testes unitários escritos antes do código de produção.", script: "pytest" },
+                    { id: "6.2", nome: "Materialização Frontend Conectado", nat: "Mista", desc: "Consome UI_BLUEPRINT e conecta nos endpoints via TanStack Query.", script: "aidd-pure / aidd-frontend-forms" }
+                ]
+            },
+            {
+                id: 7,
+                nome: "IMPECCABLE / OSMANI",
+                ferramenta: "impeccable-full / osmani",
+                natureza: "Mista",
+                natClass: "nat-misto",
+                categoria: "ui",
+                descricao: "Quality Gate de Interface: audita contraste WCAG 2.2, Light Mode soberano, formulários Zod e zero layout shifts.",
+                handoff: "Frontend Homologado com Relatório de Craft",
+                skills: ["impeccable-full", "aidd-frontend-forms", "aidd-linter-design"],
+                mcps: ["chrome-devtools-mcp", "playwright"],
+                gates: ["G_CRAFT_VISUAL.py", "G_UI_API_PARITY.py"],
+                microFases: [
+                    { id: "7.1", nome: "Auditoria Visual Headless", nat: "Determinística", desc: "Checagem de contraste WCAG, foco de teclado e responsividade.", script: "lighthouse / chrome-devtools" },
+                    { id: "7.2", nome: "Osmani Polish & Validações Zod", nat: "Mista", desc: "Refinamento de formulários, feedback de loading e micro-interações.", script: "impeccable-full" }
+                ]
+            },
+            {
+                id: 8,
+                nome: "BARREIRA DE SYNC",
+                ferramenta: "vsa_join_barrier",
+                natureza: "Determinística",
+                natClass: "nat-det",
+                categoria: "det",
+                descricao: "Executa rebase preventivo, roda micro-gates locais, realiza merge seguro e destrói as worktrees efêmeras.",
+                handoff: "Branch de Integração Unificada",
+                skills: ["aidd-pipeline"],
+                mcps: [],
+                gates: ["G_PIPELINE_HANDOFF.py", "G_ESCRITOR_ATOMICO.py", "G_TRANSACTION_LOG_LRU.py"],
+                microFases: [
+                    { id: "8.1", nome: "Rebase Preventivo & Micro-Gates", nat: "Determinística", desc: "Valida py_compile e testes unitários antes de qualquer merge.", script: "vsa_join_barrier.py" },
+                    { id: "8.2", nome: "Merge Seguro & Rollback Door", nat: "Determinística", desc: "Mescla fatias na branch principal; em conflito, rollback instantâneo.", script: "vsa_join_barrier.py" }
+                ]
+            },
+            {
+                id: 9,
+                nome: "ENTERPRISE",
+                ferramenta: "aidd-enterprise",
+                natureza: "Determinística",
+                natClass: "nat-det",
+                categoria: "infra",
+                descricao: "Blindagem de segurança: varredura OWASP Top 10, sanitização de segredos, pin de dependências e selagem SHA-256.",
+                handoff: "Repositório Selado com Laudo de Cibersegurança",
+                skills: ["aidd-enterprise"],
+                mcps: ["codebase-memory-mcp"],
+                gates: ["G_aidd_enterprise.py", "G_CYBERSECURITY_OWASP.py", "G_BLOQUEAR_SEGREDOS.py", "G_DEPENDENCIAS_PIN_HASH.py"],
+                microFases: [
+                    { id: "9.1", nome: "Varredura OWASP & Segredos", nat: "Determinística", desc: "Bloqueia SQLi, XSS, SSRF e chaves de API commitadas.", script: "G_CYBERSECURITY_OWASP.py" },
+                    { id: "9.2", nome: "Selagem Criptográfica SHA-256", nat: "Determinística", desc: "Carimba os hashes de integridade em todas as peças do almoxarifado.", script: "pecas_catalogo.py" }
+                ]
+            },
+            {
+                id: 10,
+                nome: "OPS",
+                ferramenta: "aidd-ops",
+                natureza: "Determinística",
+                natClass: "nat-det",
+                categoria: "infra",
+                descricao: "Empacota a solução em Docker Compose multi-stage, audita Dockerfile com Hadolint e configura portas de produção.",
+                handoff: "docker-compose.yml + Scripts de Deploy",
+                skills: ["aidd-ops", "cloudflare", "wrangler"],
+                mcps: ["cloudflare-docs"],
+                gates: ["G_INFRA_COMPOSE.py", "G_HADOLINT.py"],
+                microFases: [
+                    { id: "10.1", nome: "Docker Compose Multi-Stage", nat: "Determinística", desc: "Gera containers enxutos sem ferramentas de build em runtime.", script: "compose_suite.py" },
+                    { id: "10.2", nome: "Auditoria Hadolint & Portas", nat: "Determinística", desc: "Garante conformidade de infraestrutura e portas isoladas.", script: "G_HADOLINT.py" }
+                ]
+            },
+            {
+                id: 11,
+                nome: "ENTREGA & QUARTETO",
+                ferramenta: "quarteto-studios",
+                natureza: "Determinística",
+                natClass: "nat-det",
+                categoria: "todas",
+                descricao: "Sobe o backend (3000) e frontend (5173), valida HTTP 200 e entrega os 4 estúdios em Modo Claro corporativo.",
+                handoff: "RESUMO-USUARIO.md + Aplicação Viva (HTTP 200)",
+                skills: ["aidd-delivery", "aidd-session"],
+                mcps: [],
+                gates: ["G_QUARTETO_SINE_QUA_NON.py", "G_CONTRACT_ROT.py", "G_RESUMO_USUARIO.py", "G_SAIDA_BINARIA.py"],
+                microFases: [
+                    { id: "11.1", nome: "Healthcheck & Sobe Servidores", nat: "Determinística", desc: "Verifica resposta HTTP 200 no backend e frontend.", script: "run_server / vite" },
+                    { id: "11.2", nome: "Quarteto Sine Qua Non Dinâmico", nat: "Determinística", desc: "Ativa Swagger (/docs), Webhook (/webhook), MCP (/mcp) e Guia (/docs/guia).", script: "quarteto-studios" },
+                    { id: "11.3", nome: "Resumo Executivo Transparente", nat: "Determinística", desc: "Emite RESUMO-USUARIO.md no padrão Rule 10.", script: "aidd-delivery" }
+                ]
+            }
+        ];
+
+        function renderizarEtapas(lista) {
+            const grid = document.getElementById("stepsGrid");
+            grid.innerHTML = "";
+
+            if (!lista || lista.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <svg class="svg-icon" viewBox="0 0 24 24" style="width: 2.5rem; height: 2.5rem; color: var(--text-tertiary);"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                        <h3>Nenhuma etapa encontrada</h3>
+                        <p>Nenhuma das etapas da esteira corresponde aos filtros selecionados.</p>
+                        <button class="empty-btn" onclick="filtrarEtapas('todas')">Ver todas as 11 etapas</button>
+                    </div>
+                `;
+                return;
+            }
+
+            lista.forEach(etapa => {
+                const card = document.createElement("div");
+                card.className = "step-card";
+                card.tabIndex = 0;
+                card.setAttribute("role", "button");
+                card.setAttribute("aria-label", `Inspecionar Etapa ${etapa.id}: ${etapa.nome}`);
+                card.onclick = () => abrirModal(etapa);
+                card.onkeydown = (e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        abrirModal(etapa);
+                    }
+                };
+
+                card.innerHTML = `
+                    <div class="step-header">
+                        <div class="step-number">${etapa.id}</div>
+                        <span class="badge-nature ${etapa.natClass}">${etapa.natureza}</span>
+                    </div>
+                    <div class="step-title">
+                        <h3>${etapa.nome}</h3>
+                        <div class="tool-name">${etapa.ferramenta}</div>
+                    </div>
+                    <p class="step-desc">${etapa.descricao}</p>
+                    <div class="handoff-box">
+                        <span class="handoff-label">Handoff de Saída</span>
+                        <span class="handoff-value">
+                            <svg class="svg-icon" viewBox="0 0 24 24" style="width: 0.85rem; height: 0.85rem;"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                            ${etapa.handoff}
+                        </span>
+                    </div>
+                    <div class="micro-steps-summary">
+                        ${etapa.microFases.map(m => `
+                            <div class="micro-item">
+                                <span class="micro-dot"></span>
+                                <span><strong>${m.id}</strong> ${m.nome}</span>
+                            </div>
+                        `).join("")}
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filtrarEtapas(categoria) {
+            document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove("active"));
+            event.target.classList.add("active");
+
+            if (categoria === "todas") {
+                renderizarEtapas(etapas);
+            } else if (categoria === "det") {
+                renderizarEtapas(etapas.filter(e => e.natureza === "Determinística"));
+            } else {
+                renderizarEtapas(etapas.filter(e => e.categoria === categoria || e.categoria === "todas"));
+            }
+        }
+
+        function abrirModal(etapa) {
+            document.getElementById("modalStepNumber").innerText = `ETAPA ${etapa.id} • ${etapa.ferramenta}`;
+            document.getElementById("modalTitle").innerText = `${etapa.nome} — Dissecação Micro-Fase a Micro-Fase`;
+
+            const body = document.getElementById("modalBody");
+            body.innerHTML = `
+                <div class="detail-block">
+                    <h4>Visão Geral & Contrato de Handoff</h4>
+                    <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5;">${etapa.descricao}</p>
+                    <div style="margin-top: 0.4rem; font-size: 0.8rem;">
+                        <strong>Entrega para a próxima etapa:</strong> <span class="code-pill">${etapa.handoff}</span>
+                    </div>
+                </div>
+
+                <div class="detail-block">
+                    <h4>Micro-Fases Internas do Pipeline</h4>
+                    <div class="table-responsive">
+                        <table class="detail-table">
+                            <thead>
+                                <tr>
+                                    <th>Fase</th>
+                                    <th>Nome & Processamento</th>
+                                    <th>Natureza</th>
+                                    <th>Script / Responsável</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${etapa.microFases.map(m => `
+                                    <tr>
+                                        <td><span class="code-pill">${m.id}</span></td>
+                                        <td>
+                                            <strong>${m.nome}</strong><br/>
+                                            <span style="color: var(--text-muted); font-size: 0.73rem;">${m.desc}</span>
+                                        </td>
+                                        <td><span class="badge-nature ${m.nat === 'Determinística' ? 'nat-det' : m.nat === 'Probabilística' ? 'nat-prob' : 'nat-misto'}">${m.nat}</span></td>
+                                        <td><span class="code-pill">${m.script}</span></td>
+                                    </tr>
+                                `).join("")}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="detail-block">
+                    <h4>Quality Gates & Ferramentas Associadas</h4>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: min(100%, 250px);">
+                            <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-tertiary); text-transform: uppercase;">Quality Gates Ativos:</span>
+                            <div style="display: flex; flex-direction: column; gap: 0.25rem; margin-top: 0.35rem;">
+                                ${etapa.gates.map(g => `<span class="code-pill" style="color: #991b1b; background: #fef2f2; border-color: #fecaca;">${g}</span>`).join("")}
+                            </div>
+                        </div>
+                        <div style="flex: 1; min-width: min(100%, 200px);">
+                            <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-tertiary); text-transform: uppercase;">Skills & MCPs:</span>
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.35rem;">
+                                ${etapa.skills.map(s => `<span class="code-pill" style="color: #0369a1; background: var(--primary-surface); border-color: var(--primary-border);">${s}</span>`).join("")}
+                                ${etapa.mcps.map(m => `<span class="code-pill" style="color: #6b21a8; background: var(--purple-surface); border-color: var(--purple-border);">mcp:${m}</span>`).join("")}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById("modalOverlay").classList.add("open");
+        }
+
+        function fecharModal(e) {
+            if (e.target.id === "modalOverlay") {
+                fecharModalDirect();
+            }
+        }
+
+        function fecharModalDirect() {
+            document.getElementById("modalOverlay").classList.remove("open");
+        }
+
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") fecharModalDirect();
+        });
+
+        // Inicializa
+        renderizarEtapas(etapas);
+    </script>
+</body>
+</html>

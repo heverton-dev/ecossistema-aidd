@@ -16,6 +16,26 @@ export default defineConfig({
         target: 'http://localhost:3000',
         changeOrigin: true,
       },
+      '/webhooks': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+      '/webhook': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+      '/mcp': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+      '/swagger': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+      '/guia': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
     },
   },
   build: {

@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "descricao": "Mapa canônico de donos, responsabilidades, fronteiras e zonas de escrita das 8 ferramentas do ecossistema AIDD (Ciclo 01).",
   "versao": "1.0.0",
   "aidd-forge": {

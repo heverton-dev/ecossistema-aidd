@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 Multi-App Unifier — Fusão de 2 a N projetos Lovable em um único
 sistema em Fatias Verticais (Vertical Slices), unificando Tailwind e Rotas.

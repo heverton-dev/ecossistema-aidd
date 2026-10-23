@@ -74,3 +74,15 @@ RELATORIO-EXECUCAO-E2E.md
 opencode.jsonc
 projetos/
 secoes/medicoes/
+.hypothesis/
+.freebuff/
+commit.log
+audit.log
+*.tmp
+*.temp
+chaves/
+docs/relatorios/
+docs/reports/
+docs/diagnosticos/
+docs/pesquisas/
+docs/prompts/

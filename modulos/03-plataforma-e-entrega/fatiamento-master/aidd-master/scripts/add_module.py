@@ -153,6 +153,10 @@ def criar_modulo(nome_modulo: str, descricao: str = "", target_dir: str = "."):
     os.makedirs(module_dir, exist_ok=True)
     os.makedirs(comp_dir, exist_ok=True)
     os.makedirs(test_dir, exist_ok=True)
+    modules_root_init = os.path.join(src_dir, "modules", "__init__.py")
+    if not os.path.exists(modules_root_init):
+        with open(modules_root_init, "w", encoding="utf-8") as mf:
+            mf.write("# Fatias Verticais\n")
 
     # 0-5. Gera a fatia vertical inteira (models.py, services.py, routes.py,
     # componente UI e teste pytest) delegando ao Cookiecutter/Jinja2 —
@@ -290,7 +294,17 @@ def criar_modulo(nome_modulo: str, descricao: str = "", target_dir: str = "."):
                                 )
                                 print(f"  [+] Front-end 'frontend/' religado com o módulo '{slug}' (Next.js)!")
                             else:
-                                print(f"  [+] Front-end 'frontend/' mantido em TanStack Start / Router (Lei #11) para o módulo '{slug}'!")
+                                try:
+                                    from screen_synthesizer import sintetizar_tela_entidade
+                                except ImportError:
+                                    from scripts.screen_synthesizer import sintetizar_tela_entidade
+                                pages_dir = os.path.join(target_dir, "frontend", "src", "pages")
+                                os.makedirs(pages_dir, exist_ok=True)
+                                page_path = os.path.join(pages_dir, f"{pascal}Page.tsx")
+                                code = sintetizar_tela_entidade(nome_modulo=pascal, slug_modulo=slug)
+                                with open(page_path, "w", encoding="utf-8") as pf:
+                                    pf.write(code)
+                                print(f"  [+] Front-end sintetizado dinamicamente para '{slug}' em '{page_path}' (Zero window.alert/confirm, Toasts e Modais proprietários)!")
                         except Exception as e:
                             print(f"  [!] Aviso: não foi possível regenerar o frontend: {e}")
         except Exception as e:

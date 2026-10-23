@@ -9,19 +9,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-base: #060913;
-            --bg-surface: #0c1222;
-            --bg-elevated: #131d36;
-            --bg-hover: #1b284a;
-            --border: #1e293b;
-            --border-light: rgba(255, 255, 255, 0.08);
-            --border-focus: #38bdf8;
-            --text-main: #f1f5f9;
-            --text-muted: #94a3b8;
-            --text-subtle: #64748b;
-            --primary: __PRIMARY__;
-            --primary-hover: __PRIMARY_HOVER__;
-            --violet: #0ea5e9;
+            --bg-base: #f8fafc;
+            --bg-surface: #ffffff;
+            --bg-elevated: #f8fafc;
+            --bg-hover: #f1f5f9;
+            --border: #e2e8f0;
+            --border-light: #f1f5f9;
+            --border-focus: #0f766e;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --text-subtle: #94a3b8;
+            --primary: #0f766e;
+            --primary-hover: #115e59;
+            --violet: #0f766e;
             --green: #10b981;
             --green-bg: rgba(16, 185, 129, 0.12);
             --red: #ef4444;
@@ -43,12 +43,14 @@
         }
         ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: var(--bg-base); }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         
         header {
-            background: rgba(12, 18, 34, 0.95);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border);
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
             padding: 0 1.5rem;
             min-height: 56px;
             height: 56px;
@@ -73,9 +75,9 @@
             flex-shrink: 0;
         }
         .badge-ver {
-            background: rgba(14, 165, 233, 0.15);
-            color: #38bdf8;
-            border: 1px solid rgba(14, 165, 233, 0.4);
+            background: #f0fdfa;
+            color: #0f766e;
+            border: 1px solid #99f6e4;
             font-size: 0.68rem;
             font-weight: 700;
             padding: 0.15rem 0.5rem;
@@ -86,7 +88,7 @@
         .nav-tabs {
             display: flex;
             gap: 0.35rem;
-            background: rgba(0, 0, 0, 0.3);
+            background: #f1f5f9;
             padding: 0.25rem;
             border-radius: var(--radius-md);
             border: 1px solid var(--border);
@@ -108,7 +110,7 @@
             white-space: nowrap;
             flex-shrink: 0;
         }
-        .nav-btn:hover { color: var(--text-main); background: rgba(255, 255, 255, 0.04); }
+        .nav-btn:hover { color: var(--text-main); background: #ffffff; }
         .nav-btn.active { color: #ffffff; background: var(--primary); }
 
         .btn {
@@ -122,7 +124,7 @@
             cursor: pointer;
             text-decoration: none;
             border: 1px solid var(--border);
-            background: var(--bg-surface);
+            background: #ffffff;
             color: var(--text-main);
         }
         .btn-primary { background: var(--primary); border-color: var(--primary); color: #fff; }
@@ -134,6 +136,7 @@
             background: var(--bg-surface);
             border: 1px solid var(--border);
             border-radius: var(--radius-md);
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
             padding: 1.25rem;
             display: flex;
             flex-direction: column;
@@ -147,6 +150,7 @@
             background: var(--bg-surface);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
             overflow: hidden;
             margin-bottom: 1.5rem;
         }
@@ -161,8 +165,8 @@
         .panel-desc { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem; }
 
         table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
-        th { background: var(--bg-elevated); padding: 0.75rem 1.25rem; text-align: left; color: var(--text-muted); font-weight: 700; border-bottom: 1px solid var(--border); }
-        td { padding: 0.85rem 1.25rem; border-bottom: 1px solid var(--border-light); }
+        th { background: #f8fafc; padding: 0.75rem 1.25rem; text-align: left; color: var(--text-muted); font-weight: 700; border-bottom: 1px solid var(--border); }
+        td { padding: 0.85rem 1.25rem; border-bottom: 1px solid var(--border); }
         tr:hover td { background: var(--bg-hover); }
 
         .badge {
@@ -172,18 +176,18 @@
             font-size: 0.72rem;
             font-weight: 700;
         }
-        .badge-event { background: rgba(14, 165, 233, 0.15); color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.3); }
-        .badge-success { background: var(--green-bg); color: #34d399; }
-        .badge-danger { background: var(--red-bg); color: #f87171; }
-        .code-pill { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; background: rgba(0,0,0,0.4); padding: 0.2rem 0.4rem; border-radius: 4px; }
+        .badge-event { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+        .badge-success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+        .badge-danger { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+        .code-pill { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; background: #f1f5f9; color: #0f172a; padding: 0.2rem 0.4rem; border-radius: 4px; border: 1px solid #e2e8f0; }
 
         .playground-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
         .form-group { margin-bottom: 1rem; }
         .form-label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.35rem; }
         .form-control {
             width: 100%;
-            background: var(--bg-base);
-            border: 1px solid var(--border);
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
             color: var(--text-main);
             padding: 0.6rem 0.85rem;
             border-radius: var(--radius-sm);
@@ -192,24 +196,24 @@
         }
         .form-control:focus { border-color: var(--border-focus); }
         .console-box {
-            background: #020617;
-            border: 1px solid var(--border);
+            background: #0f172a;
+            border: 1px solid #1e293b;
             border-radius: var(--radius-sm);
             padding: 0.85rem;
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.75rem;
-            color: #94a3b8;
+            color: #38bdf8;
             overflow-x: auto;
             white-space: pre-wrap;
         }
 
         /* MODAL */
         .modal-overlay {
-            position: fixed; inset: 0; background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(4px);
+            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px);
             display: none; align-items: center; justify-content: center; z-index: 100; p: 1rem;
         }
         .modal-overlay.active { display: flex; }
-        .modal-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); width: 100%; max-width: 580px; overflow: hidden; }
+        .modal-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); width: 100%; max-width: 580px; overflow: hidden; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12); }
         .modal-header { padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
         .modal-body { padding: 1.5rem; }
         .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 0.6rem; }
@@ -253,15 +257,15 @@
         <!-- BUSCA RÁPIDA / Ctrl + K -->
         <div style="position: relative; display: flex; align-items: center; min-width: 260px;">
             <svg style="position: absolute; left: 0.65rem; color: var(--text-muted); pointer-events: none;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" id="wh-global-search" placeholder="Filtrar eventos e logs (Ctrl + K)..." onclick="abrirSpotlight()" oninput="filtrarWebhookStudio(this.value)" class="form-control" style="padding-left: 2rem; padding-right: 3.5rem; font-size: 0.75rem; height: 32px; cursor: pointer;">
-            <kbd onclick="abrirSpotlight()" style="position: absolute; right: 0.5rem; font-size: 0.65rem; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; padding: 0.1rem 0.35rem; color: var(--text-muted); font-family: monospace; cursor: pointer;">Ctrl K</kbd>
+            <input type="text" id="wh-global-search" placeholder="Filtrar eventos e logs (Ctrl + K)..." onclick="abrirSpotlight()" oninput="filtrarWebhookStudio(this.value)" class="form-control" style="padding-left: 2rem; padding-right: 3.5rem; font-size: 0.75rem; height: 32px; cursor: pointer; background: #ffffff;">
+            <kbd onclick="abrirSpotlight()" style="position: absolute; right: 0.5rem; font-size: 0.65rem; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 4px; padding: 0.1rem 0.35rem; color: var(--text-muted); font-family: monospace; cursor: pointer;">Ctrl K</kbd>
         </div>
 
         <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <button type="button" onclick="abrirSpotlight()" class="btn" style="border-color: rgba(245, 158, 11, 0.4); color: #f59e0b; display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer;" title="Comandos rápidos (Ctrl + K)">
+            <button type="button" onclick="abrirSpotlight()" class="btn" style="border-color: #0d9488; color: #0f766e; background: #f0fdfa; display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer;" title="Comandos rápidos (Ctrl + K)">
                 <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 <span>Buscar</span>
-                <kbd style="background: rgba(255,255,255,0.08); padding: 1px 5px; border-radius: 4px; font-size: 0.65rem; color: #94a3b8; border: 1px solid rgba(255,255,255,0.15);">Ctrl K</kbd>
+                <kbd style="background: #ffffff; padding: 1px 5px; border-radius: 4px; font-size: 0.65rem; color: #0f766e; border: 1px solid #99f6e4;">Ctrl K</kbd>
             </button>
             <a href="/" class="btn">Super-App</a>
             <a href="/docs" class="btn">Swagger Studio</a>

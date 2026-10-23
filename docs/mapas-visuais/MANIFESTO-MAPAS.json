@@ -1,7 +1,7 @@
 {
   "ferramenta": "aidd-visual-maps",
   "catalogo": "docs/auditoria/mapa-pecas/catalogo-pecas.json",
-  "hash_catalogo": "d7f817c8903e3cb927ea78f89cf7597052d867c00a1b69c075016e5f8859dc92",
+  "hash_catalogo": "8a7ddc011b034473db80ca5913567eb61e53e0d82228ab2d07fd88ea206ae012",
   "mapas": [
     {
       "tipo": "leis",
@@ -119,28 +119,28 @@
       "tipo": "moldes",
       "arquivo": "docs/mapas-visuais/mapa-09-moldes.html",
       "versao": "tecnica",
-      "sha256": "a0d5e5d94109ec1ca3b7f86af726baf5704f71e70cfd69eba35fc15054e9881f",
+      "sha256": "8eb639883eb942ec40c71375a1018f919c59622385ae74ada6ef45069be1aafd",
       "status": "concluido"
     },
     {
       "tipo": "moldes",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-09-moldes.html",
       "versao": "nao-tecnica",
-      "sha256": "3b29d4dcbdc437ba07397bd8aeb6261b089388d9f2250828f9f4e6cd844fa0b5",
+      "sha256": "6d4ba335662bba01be007deb9eb1e75935ea9ac21ab774dec70ac69756bd86dd",
       "status": "concluido"
     },
     {
       "tipo": "scripts",
       "arquivo": "docs/mapas-visuais/mapa-10-scripts.html",
       "versao": "tecnica",
-      "sha256": "d9dc1e63a4b0541ed1bcf8775dadf915e39451508aab94db1aaad0cede3b889c",
+      "sha256": "3caa5956da8bcd88057c2690b85d0e3b71721380e776c54b9ba2a873f3d09eb2",
       "status": "concluido"
     },
     {
       "tipo": "scripts",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-10-scripts.html",
       "versao": "nao-tecnica",
-      "sha256": "a940ff0dda5fdb77f17faf10398566558b350cb1fb113da834037924b2fd2267",
+      "sha256": "1ee61afb1012be2743f7110a4d7628c7509bfa1b728ce2413b121b47b5c433d0",
       "status": "concluido"
     },
     {
@@ -238,15 +238,15 @@
       },
       {
         "arquivo": "docs/livros/mapas-aidd/partes/10-parte-i.md",
-        "sha256": "4e0f5f0dc1b47979ebaf8dc57a4505324cee0b405528a7aee4324f34f6b7b7f7"
+        "sha256": "ce3855361e74dc6ffba76de52dca6f199132245afbbc6e91a12692625da37740"
       },
       {
         "arquivo": "docs/livros/mapas-aidd/partes/20-parte-ii.md",
-        "sha256": "8779969e2f0ac85144c0d25be860b520dc9a2b58be5df29e55310aea2d446479"
+        "sha256": "bd8d86606f91ffca04d682f7c73dd1006592331315c11907eb66791a52d49365"
       },
       {
         "arquivo": "docs/livros/mapas-aidd/partes/30-parte-iii.md",
-        "sha256": "a43fcf046b739f5f859f9469a70b2f046ee5b4b3f98c0ddd649730f498fd6dfe"
+        "sha256": "6f3fa6355a7125d0a5eae9707bc7f9f1852520df2c6a36d0a1193bf231e0e166"
       },
       {
         "arquivo": "docs/livros/mapas-aidd/partes/40-parte-iv.md",
@@ -269,7 +269,7 @@
       "comando": "python componentes/compartilhado/skills/aidd-textbook/scripts/livro.py build docs/livros/mapas-aidd",
       "exit_code": 0,
       "pdf": "docs/livros/mapas-aidd/26-09-2026_LIVRO-MAPAS-AIDD.pdf",
-      "sha256": "74aab5e7fce60b20ba7ed8b2a120ee374f23ee0163b49dc9e7922b885eb77884"
+      "sha256": "c967f4e28e593477b15e073d8e8802eeb45b89289f10440635b76d84d7a46e0f"
     }
   }
 }

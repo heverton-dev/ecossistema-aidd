@@ -17,7 +17,7 @@ abstract: |
   Cada capítulo corresponde a um mapa visual, na mesma ordem dos arquivos em docs/mapas-visuais/.
 
   Nada aqui é estimado. Os números vêm do catálogo de peças e os defeitos vêm do arquivo de achados, que
-  hoje registra 35 achados em aberto, 0 sob suspeita e 14 resolvidos.
+  hoje registra 36 achados em aberto, 0 sob suspeita e 14 resolvidos.
 ---
 
 # Como ler este livro
@@ -74,14 +74,14 @@ Onde mora: `AGENTS.md`, seção 2. Quem confere: o meta-guarda `G_LEI_DECLARA_PO
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | leis | 14 |
-| declarações de guarda | 71 |
+| declarações de guarda | 73 |
 | declarações que o meta-guarda não lê | 0 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_leis`), os mesmos do mapa `mapa-01-leis.html`.
 
 ## 1.3 O que falta consertar
 
-- **Média** · 5 guardas declarados em lei que não rodam no commit (`CAT-declarados-fora-do-commit`).
+- **Média** · 6 guardas declarados em lei que não rodam no commit (`CAT-declarados-fora-do-commit`).
 - **Baixa** · 7 guardas da raiz que nenhuma lei declara (`CAT-guardas-sem-lei`).
 
 Já resolvido:
@@ -166,7 +166,7 @@ Onde mora: `scripts/orquestrador_sincrono.py` e `componentes/compartilhado/specs
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | etapas na receita | 7 |
-| chamadas conferidas | 16 |
+| chamadas conferidas | 18 |
 | chamadas que quebram | 0 |
 | etapas sem ferramenta | 0 |
 | contratos | 9 |
@@ -219,8 +219,8 @@ Onde mora: `gates/` e `tools/<f>/gates/`. Quem confere: o próprio pre-commit e 
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| guardas (nomes) | 105 |
-| no ecossistema | 72 |
+| guardas (nomes) | 107 |
+| no ecossistema | 74 |
 | rodam no commit | 67 |
 | com versões diferentes | 11 |
 
@@ -228,7 +228,7 @@ Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `c
 
 ## 4.3 O que falta consertar
 
-- **Média** · 10 guardas com o mesmo nome e código diferente (`CAT-gates-versoes`).
+- **Média** · 11 guardas com o mesmo nome e código diferente (`CAT-gates-versoes`).
 
 Já resolvido:
 
@@ -266,9 +266,9 @@ Onde mora: `componentes/compartilhado/skills/`. Quem confere: o `G_SKILL_FORMATO
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| skills nossas | 45 |
+| skills nossas | 46 |
 | nomes de terceiros registrados | 15 |
-| com "Use when" | 45 |
+| com "Use when" | 46 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_skills`), os mesmos do mapa `mapa-05-skills.html`.
 
@@ -447,7 +447,7 @@ Onde mora: `tools/<f>/templates/`. Quem confere: os guardas de entrega gerados p
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | moldes | 21 |
-| arquivos de molde | 339 |
+| arquivos de molde | 342 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_moldes_entrega`), os mesmos do mapa `mapa-09-moldes.html`.
 
@@ -486,9 +486,9 @@ Onde mora: `scripts/`. Quem confere: nenhum guarda específico; o mapa mede quem
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| scripts | 59 |
+| scripts | 60 |
 | chamados pelo painel | 22 |
-| nenhum código chama | 5 |
+| nenhum código chama | 6 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_scripts`), os mesmos do mapa `mapa-10-scripts.html`.
 
@@ -521,7 +521,7 @@ Onde a fábrica é consertada: os planos, os ciclos de auditoria e a lente que o
 #ficha(
   ("Mapa", "mapa-11-oficina.html"),
   ("Para que serve", "todos os planos e ciclos de auditoria, com as fases cumpridas"),
-  ("Achados em aberto", "30"),
+  ("Achados em aberto", "31"),
 )
 ```
 
@@ -572,6 +572,7 @@ Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `c
 - **Baixa** · Ciclo de auditoria sem todos os documentos: fluxo-02-runner/ciclo-02 (`CAT-ciclo-fluxo-02-runner-ciclo-02`).
 - **Baixa** · Ciclo de auditoria sem todos os documentos: fluxo-03-runner/ciclo-01 (`CAT-ciclo-fluxo-03-runner-ciclo-01`).
 - **Baixa** · Ciclo de auditoria sem todos os documentos: fronteiras-ferramentas/ciclo-01 (`CAT-ciclo-fronteiras-ferramentas-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: kits-camadas/ciclo-01 (`CAT-ciclo-kits-camadas-ciclo-01`).
 - **Baixa** · Ciclo de auditoria sem todos os documentos: quadro-kanban-pipelines/ciclo-01 (`CAT-ciclo-quadro-kanban-pipelines-ciclo-01`).
 
 O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`.
@@ -769,15 +770,15 @@ O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditor
 
 # Apêndice B — Estado honesto
 
-Tabela consolidada de todos os achados dos mapas, gerada de `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`. Em aberto por gravidade: 0 alta, 3 média, 32 baixa. Cada achado em aberto traz no arquivo o texto pronto para abrir o fluxo de melhoria (`pedido_melhoria`).
+Tabela consolidada de todos os achados dos mapas, gerada de `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`. Em aberto por gravidade: 0 alta, 3 média, 33 baixa. Cada achado em aberto traz no arquivo o texto pronto para abrir o fluxo de melhoria (`pedido_melhoria`).
 
-## Em aberto (35)
+## Em aberto (36)
 
 | Achado | Gravidade · mapa |
 | :-------------------------------------- | :-------------------------------------------- |
 | 1 dimensões 15-D com falha no laudo de aidd-orca (`CAT-15d-aidd-orca`) | Média · lente15d |
-| 5 guardas declarados em lei que não rodam no commit (`CAT-declarados-fora-do-commit`) | Média · leis |
-| 10 guardas com o mesmo nome e código diferente (`CAT-gates-versoes`) | Média · guardas |
+| 6 guardas declarados em lei que não rodam no commit (`CAT-declarados-fora-do-commit`) | Média · leis |
+| 11 guardas com o mesmo nome e código diferente (`CAT-gates-versoes`) | Média · guardas |
 | Ciclo de auditoria sem todos os documentos: aidd-componentes/ciclo-01 (`CAT-ciclo-aidd-componentes-ciclo-01`) | Baixa · oficina |
 | Ciclo de auditoria sem todos os documentos: aidd-dependencias/ciclo-01 (`CAT-ciclo-aidd-dependencias-ciclo-01`) | Baixa · oficina |
 | Ciclo de auditoria sem todos os documentos: aidd-dispatch-runner/ciclo-01 (`CAT-ciclo-aidd-dispatch-runner-ciclo-01`) | Baixa · oficina |
@@ -807,6 +808,7 @@ Tabela consolidada de todos os achados dos mapas, gerada de `docs/auditoria/mapa
 | Ciclo de auditoria sem todos os documentos: fluxo-02-runner/ciclo-02 (`CAT-ciclo-fluxo-02-runner-ciclo-02`) | Baixa · oficina |
 | Ciclo de auditoria sem todos os documentos: fluxo-03-runner/ciclo-01 (`CAT-ciclo-fluxo-03-runner-ciclo-01`) | Baixa · oficina |
 | Ciclo de auditoria sem todos os documentos: fronteiras-ferramentas/ciclo-01 (`CAT-ciclo-fronteiras-ferramentas-ciclo-01`) | Baixa · oficina |
+| Ciclo de auditoria sem todos os documentos: kits-camadas/ciclo-01 (`CAT-ciclo-kits-camadas-ciclo-01`) | Baixa · oficina |
 | Ciclo de auditoria sem todos os documentos: quadro-kanban-pipelines/ciclo-01 (`CAT-ciclo-quadro-kanban-pipelines-ciclo-01`) | Baixa · oficina |
 | 7 guardas da raiz que nenhuma lei declara (`CAT-guardas-sem-lei`) | Baixa · leis |
 | 5 scripts que nenhum código chama (`CAT-scripts-sem-chamador`) | Baixa · scripts |

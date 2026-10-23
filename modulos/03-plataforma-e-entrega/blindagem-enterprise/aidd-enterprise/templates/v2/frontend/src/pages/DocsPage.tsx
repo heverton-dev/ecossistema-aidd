@@ -3,10 +3,10 @@ import { BookOpen, ExternalLink, Code2, Webhook, Bot } from 'lucide-react'
 
 export default function DocsPage() {
   const links = [
-    { title: 'OpenAPI / Swagger Studio', desc: 'Contratos e documentação interativa da API REST', url: '/docs', icon: Code2 },
-    { title: 'Webhook Studio', desc: 'Gerenciador e endpoints de disparo de eventos', url: '/webhooks', icon: Webhook },
+    { title: 'OpenAPI / Swagger Studio', desc: 'Contratos e documentação interativa da API REST', url: '/swagger', icon: Code2 },
+    { title: 'Webhook Studio', desc: 'Gerenciador e endpoints de disparo de eventos', url: '/webhook', icon: Webhook },
     { title: 'MCP Studio', desc: 'Servidor Model Context Protocol exposto para IA', url: '/mcp', icon: Bot },
-    { title: 'Guia do Utilizador', desc: 'Documentação viva e manuais de utilização', url: '/docs/guia', icon: BookOpen },
+    { title: 'Guia do Utilizador', desc: 'Documentação viva e manuais de utilização', url: '/guia', icon: BookOpen },
   ]
 
   return (

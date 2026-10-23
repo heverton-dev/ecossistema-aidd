@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "VSATopologicalDispatchSchema",
   "description": "Contrato canônico formal para despacho de fatias verticais (VSA) em grafo topológico acíclico dirigido (DAG) pelas engines da Tríade Canônica (pure, open, freedom).",
   "type": "object",
@@ -19,7 +19,10 @@
     },
     "versao_schema": {
       "type": "string",
-      "enum": ["1.0.0", "1.1.0"],
+      "enum": [
+        "1.0.0",
+        "1.1.0"
+      ],
       "description": "Versão estrita do schema de despacho VSA."
     },
     "projeto_slug": {
@@ -57,12 +60,19 @@
       "properties": {
         "target_branch": {
           "type": "string",
-          "enum": ["main", "master"],
+          "enum": [
+            "main",
+            "master"
+          ],
           "description": "Branch base de destino para fusão das fatias aprovadas."
         },
         "merge_strategy": {
           "type": "string",
-          "enum": ["fast-forward", "merge-commit", "squash"],
+          "enum": [
+            "fast-forward",
+            "merge-commit",
+            "squash"
+          ],
           "description": "Estratégia de integração no branch de convergência."
         },
         "post_merge_suite": {
@@ -114,7 +124,9 @@
         },
         "isolamento": {
           "type": "string",
-          "enum": ["git-worktree"],
+          "enum": [
+            "git-worktree"
+          ],
           "description": "Mecanismo determinístico de isolamento de execução da fatia."
         },
         "arquivos_esperados": {

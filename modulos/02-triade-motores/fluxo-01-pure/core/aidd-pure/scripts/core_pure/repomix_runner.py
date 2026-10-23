@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 REPOMIX RUNNER - AIDD Generator v2.2 (NIH #22)
 Empacotador de contexto de repositorio para LLM delegando ao Repomix.

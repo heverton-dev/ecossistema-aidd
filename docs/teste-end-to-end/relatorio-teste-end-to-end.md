@@ -2078,6 +2078,29 @@
   - `G_SEGREDOS`: **APROVADO**.
 - **Status:** **HOMOLOGADO E AUDITADO VIA TDD (GREEN) — TODOS OS 3 FLUXOS SELADOS.**
 
+---
 
+## Seção 31 — Soberania do Modo Claro (Light Mode Sovereign) e Telas Tri-Modais de Negócio no Motor do Ecossistema
 
-
+- **Data da Auditoria e Validação:** 22/10/2026
+- **Alvo:** Templates canônicos do motor (`aidd-master/templates/v2/frontend/` e `aidd-enterprise/templates/v2/frontend/`).
+- **Problema Abordado:** O scaffold padrão do frontend nascia com tema escuro fixo ("gamer") e apenas cartões conceituais estáticos sem páginas de domínio ou conexão real às rotas de negócio do SQLite WAL.
+- **Entregas e Ações Executadas (Lei #11 & Lei #9):**
+  1. **Soberania do Modo Claro (Light Mode Sovereign) nos Templates do Motor:**
+     - `index.css`: Reconfiguração dos tokens de cor para paleta corporativa clara B2B (`--color-background: #f8fafc`, `--color-foreground: #0f172a`, `--color-card: #ffffff`, `--color-primary: #0f766e`, `--color-border: #e2e8f0`).
+     - `card.tsx`: Remoção de fundos escuros, adoção de `bg-card border-slate-200 text-card-foreground shadow-xs`.
+     - `Layout.tsx`: Sidebar limpa off-white com bordas ardósia de 1px e link de navegação para `/tarefas`.
+     - `DashboardPage.tsx` e `ModulosPage.tsx`: Conversão integral para visual limpo de alto contraste com cards executivos.
+  2. **Injeção de Página de Domínio Tri-Modal (`TarefasPage.tsx`):**
+     - Criação da página `TarefasPage.tsx` suportando 3 modos de visualização corporativos: Tabela de Dados, Checklist Rápido e Quadro Kanban.
+     - Formulário nativo integrado para criação e gerenciamento de tarefas conectado à API real (`/api/items`).
+     - Sincronização e paridade rigorosa entre `aidd-master` e `aidd-enterprise`.
+  3. **Validação Factual de Build e Renderização:**
+     - Build de produção do frontend (`npm run build`) aprovado em 5.62s com TypeScript estrito (exit code 0).
+     - Roteamento do backend Python servindo a aplicação SPA diretamente em `http://localhost:3000/`.
+     - Homologação visual comprovada via Chrome DevTools / Playwright sem falhas visuais nem violações de contraste WCAG 2.2 AA.
+- **Resultados Medidos (22/10/2026):**
+  - `G_DISCIPLINA_TESTE_FERRAMENTA`: **APROVADO**.
+  - `G_STACK_PADRAO_OURO`: **APROVADO**.
+  - `G_CRAFT_VISUAL`: **APROVADO**.
+- **Status:** **HOMOLOGADO E INCORPORADO AO MOTOR DO ECOSSISTEMA.**

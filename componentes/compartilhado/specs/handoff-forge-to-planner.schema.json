@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "HandoffForgeToPlannerSchema",
   "description": "Contrato formal e determinístico de prontidão do terreno (C1) emitido pelo aidd-forge para o aidd-planner.",
   "type": "object",
@@ -17,7 +17,9 @@
   "properties": {
     "versao_schema": {
       "type": "string",
-      "enum": ["1.0.0"]
+      "enum": [
+        "1.0.0"
+      ]
     },
     "projeto_dir": {
       "type": "string",
@@ -26,11 +28,16 @@
     },
     "git": {
       "type": "object",
-      "required": ["inicializado", "commit_inicial"],
+      "required": [
+        "inicializado",
+        "commit_inicial"
+      ],
       "properties": {
         "inicializado": {
           "type": "boolean",
-          "enum": [true]
+          "enum": [
+            true
+          ]
         },
         "commit_inicial": {
           "type": "string",
@@ -44,10 +51,17 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["pacote", "versao"],
+        "required": [
+          "pacote",
+          "versao"
+        ],
         "properties": {
-          "pacote": { "type": "string" },
-          "versao": { "type": "string" }
+          "pacote": {
+            "type": "string"
+          },
+          "versao": {
+            "type": "string"
+          }
         }
       }
     },
@@ -56,10 +70,18 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["gate", "sha256"],
+        "required": [
+          "gate",
+          "sha256"
+        ],
         "properties": {
-          "gate": { "type": "string" },
-          "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+          "gate": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
         }
       }
     },
@@ -72,7 +94,10 @@
     },
     "almoxarifado": {
       "type": "object",
-      "required": ["catalogo_sha256", "pecas_disponiveis"],
+      "required": [
+        "catalogo_sha256",
+        "pecas_disponiveis"
+      ],
       "properties": {
         "catalogo_sha256": {
           "type": "string",
@@ -80,22 +105,32 @@
         },
         "pecas_disponiveis": {
           "type": "array",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
     "capacidade_llm": {
       "type": "string",
-      "enum": ["delegado_com_resposta", "headless_com_chave", "nenhuma"],
+      "enum": [
+        "delegado_com_resposta",
+        "headless_com_chave",
+        "nenhuma"
+      ],
       "description": "Evidência factual de capacidade LLM ativa comprovada via round-trip."
     },
     "estrutura_projeto": {
       "type": "object",
-      "required": ["pastas_criadas"],
+      "required": [
+        "pastas_criadas"
+      ],
       "properties": {
         "pastas_criadas": {
           "type": "array",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         }
       }
     }

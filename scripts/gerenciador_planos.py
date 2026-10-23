@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """
 Gerenciador deterministico de planos de auditoria/evolucao/testes.
 Cria a estrutura padrao (00-PROCESSO-E-DECISOES.md e NN-<item>.md) e checa integridade de cercas de codigo.

@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 =============================================================================
 ECOSSISTEMA AIDD — QUALITY GATE: G_COMPONENTE_AGNOSTICO

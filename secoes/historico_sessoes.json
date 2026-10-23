@@ -1,7 +1,7 @@
 {
   "versao": "1.0",
-  "atualizado_em": "2026-10-22T05:48:04.878974",
-  "total_sessoes": 70,
+  "atualizado_em": "2026-10-22T20:55:21.057461",
+  "total_sessoes": 72,
   "sessoes": [
     {
       "id": "fc4566a8-0804-4748-ab5f-ec105414273c",
@@ -645,12 +645,31 @@
     },
     {
       "id": "9ef143eb-a56b-415c-a186-58129e23c833",
-      "registrado_em": "2026-10-22 05:48:04",
+      "registrado_em": "2026-10-22 12:16:44",
+      "harness": "antigravity",
+      "modelo": "auto",
+      "titulo": "Bateria Autonoma da Triade AIDD e Auditoria do Projeto 1 Pure",
+      "workspace": "c:\\Users\\trcnologia\\Desktop\\ecossistema-aidd",
+      "transcript_path": "",
+      "atualizado_em": "2026-10-22 12:16:44"
+    },
+    {
+      "id": "854bb42e-c83a-4f35-88fe-039e66375fdd",
+      "registrado_em": "2026-10-22 15:18:57",
       "harness": "antigravity",
       "modelo": "gemini-3.8-flash-high",
       "titulo": "Sessão Ativa (Auto-Registrada)",
       "workspace": "c:/Users/trcnologia/Desktop/ecossistema-aidd",
-      "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-ide/brain/9ef143eb-a56b-415c-a186-58129e23c833/.system_generated/logs/transcript_full.jsonl"
+      "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-ide/brain/854bb42e-c83a-4f35-88fe-039e66375fdd/.system_generated/logs/transcript_full.jsonl"
+    },
+    {
+      "id": "2ec26422-354b-4c97-9f3a-b58f292616b4",
+      "registrado_em": "2026-10-22 20:55:21",
+      "harness": "antigravity",
+      "modelo": "gemini-3.8-flash-high",
+      "titulo": "Sessão Ativa (Auto-Registrada)",
+      "workspace": "C:/Users/trcnologia/Desktop/ecossistema-aidd",
+      "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-cli/brain/2ec26422-354b-4c97-9f3a-b58f292616b4/.system_generated/logs/transcript_full.jsonl"
     }
   ]
 }

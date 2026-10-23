@@ -57,6 +57,7 @@ def test_hook_reproducao_bloqueia_dois_agentes_paralelos(tmp_path):
         text=True,
         encoding="utf-8",
         errors="replace",
+        cwd=tmp_path,
         env=env
     )
     saida = (res.stdout or "") + "\n" + (res.stderr or "")
@@ -91,6 +92,7 @@ def test_hook_reproducao_bloqueia_concorrencia_com_agente_ativo(tmp_path):
         text=True,
         encoding="utf-8",
         errors="replace",
+        cwd=tmp_path,
         env=env
     )
     saida = (res.stdout or "") + "\n" + (res.stderr or "")
@@ -118,6 +120,7 @@ def test_hook_reproducao_permite_caminho_legitimo_com_confirmacao(tmp_path):
         text=True,
         encoding="utf-8",
         errors="replace",
+        cwd=tmp_path,
         env=env
     )
     saida = (res.stdout or "") + "\n" + (res.stderr or "")

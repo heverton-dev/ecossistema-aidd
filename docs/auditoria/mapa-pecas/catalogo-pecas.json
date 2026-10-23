@@ -8,7 +8,7 @@
     "leis": 14,
     "lente_15d": 15,
     "oficina": 0,
-    "scripts": 59,
+    "scripts": 60,
     "moldes_entrega": 21,
     "harnesses": 7,
     "skills_nossas": 46,
@@ -3154,6 +3154,11 @@
       ]
     },
     {
+      "id": "runner_teste_triade_autonomo",
+      "descricao": "runner_teste_triade_autonomo.py — Execução autônoma sequencial dos 3 fluxos da Tríade AIDD.",
+      "chamado_por": []
+    },
+    {
       "id": "scaffold_auditoria",
       "descricao": "",
       "chamado_por": [
@@ -3311,7 +3316,7 @@
       "ferramenta": "aidd-enterprise",
       "molde": "v2",
       "caminho": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/templates/v2",
-      "arquivos": 69,
+      "arquivos": 70,
       "dona_canonica": "aidd-master"
     },
     {
@@ -3346,7 +3351,7 @@
       "ferramenta": "aidd-master",
       "molde": "v2",
       "caminho": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/templates/v2",
-      "arquivos": 57,
+      "arquivos": 58,
       "dona_canonica": "aidd-master"
     },
     {

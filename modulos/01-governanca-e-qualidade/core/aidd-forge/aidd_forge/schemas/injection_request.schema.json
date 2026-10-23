@@ -1,12 +1,23 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://aidd-forge/schemas/injection_request.schema.json",
+  "$id": "https://aidd-forge-core.local/schemas/injection_request.schema.json",
   "title": "Requisicao de Injecao Universal de Componente",
   "type": "object",
   "properties": {
     "tipo": {
       "type": "string",
-      "enum": ["skill", "mcp", "rule", "spec", "roteiro", "config", "command", "hook", "sub-agent", "script"]
+      "enum": [
+        "skill",
+        "mcp",
+        "rule",
+        "spec",
+        "roteiro",
+        "config",
+        "command",
+        "hook",
+        "sub-agent",
+        "script"
+      ]
     },
     "nome": {
       "type": "string",
@@ -23,9 +34,20 @@
     },
     "camada_alvo": {
       "type": "integer",
-      "enum": [1, 2, 3, 4, 5]
+      "enum": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
     }
   },
-  "required": ["tipo", "nome", "descricao", "conteudo"],
+  "required": [
+    "tipo",
+    "nome",
+    "descricao",
+    "conteudo"
+  ],
   "additionalProperties": false
 }

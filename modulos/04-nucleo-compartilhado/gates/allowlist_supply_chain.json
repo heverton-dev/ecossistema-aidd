@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "descricao": "Allowlist de vulnerabilidades/advisories conhecidos e auditados para o gate G_SUPPLY_CHAIN",
   "advisories_aceitos": [
     {
@@ -73,6 +73,12 @@
       "pacote": "litellm",
       "versao": "1.83.0",
       "motivo": "Template injection em proxy do litellm não executado."
+    },
+    {
+      "id": "CVE-2026-114603",
+      "pacote": "opentelemetry-api",
+      "versao": "1.33.0",
+      "motivo": "TraceState.from_header split em tracestate W3C; telemetria interna sem exposicao externa."
     }
   ]
 }

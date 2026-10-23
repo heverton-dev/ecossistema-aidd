@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "HandoffExecucaoSchema",
   "description": "Contrato canônico formal para orquestração e despacho determinístico de execução do ecossistema AIDD (Planos de Evolução e Tríade Canônica: pure, open, freedom).",
   "type": "object",
@@ -22,17 +22,32 @@
     },
     "origem_plano": {
       "type": "string",
-      "enum": ["evolucao", "criacao", "evolution", "creation"],
+      "enum": [
+        "evolucao",
+        "criacao",
+        "evolution",
+        "creation"
+      ],
       "description": "Origem da iniciativa: evolucao (aidd-plan/tickets) ou criacao (aidd-planner)."
     },
     "fluxo_alvo": {
       "type": "string",
-      "enum": ["evolution", "pure", "open", "freedom", "evolucao"],
+      "enum": [
+        "evolution",
+        "pure",
+        "open",
+        "freedom",
+        "evolucao"
+      ],
       "description": "Fluxo canônico de destino para despacho de execução."
     },
     "meta": {
       "type": "object",
-      "required": ["nome_projeto", "repositorio_alvo", "timestamp_execucao"],
+      "required": [
+        "nome_projeto",
+        "repositorio_alvo",
+        "timestamp_execucao"
+      ],
       "properties": {
         "nome_projeto": {
           "type": "string",
@@ -125,46 +140,80 @@
   },
   "anyOf": [
     {
-      "required": ["fase_paralela_assincrona"],
+      "required": [
+        "fase_paralela_assincrona"
+      ],
       "properties": {
-        "fase_paralela_assincrona": { "minItems": 1 }
+        "fase_paralela_assincrona": {
+          "minItems": 1
+        }
       }
     },
     {
-      "required": ["fase_sequencial_sincrona"],
+      "required": [
+        "fase_sequencial_sincrona"
+      ],
       "properties": {
-        "fase_sequencial_sincrona": { "minItems": 1 }
+        "fase_sequencial_sincrona": {
+          "minItems": 1
+        }
       }
     },
     {
-      "required": ["parallel_async_steps"],
+      "required": [
+        "parallel_async_steps"
+      ],
       "properties": {
-        "parallel_async_steps": { "minItems": 1 }
+        "parallel_async_steps": {
+          "minItems": 1
+        }
       }
     },
     {
-      "required": ["sequential_sync_steps"],
+      "required": [
+        "sequential_sync_steps"
+      ],
       "properties": {
-        "sequential_sync_steps": { "minItems": 1 }
+        "sequential_sync_steps": {
+          "minItems": 1
+        }
       }
     }
   ],
   "definitions": {
     "ticket": {
       "type": "object",
-      "required": ["id"],
+      "required": [
+        "id"
+      ],
       "anyOf": [
         {
-          "required": ["titulo", "arquivos_alvo", "comando_validacao"]
+          "required": [
+            "titulo",
+            "arquivos_alvo",
+            "comando_validacao"
+          ]
         },
         {
-          "required": ["title", "target_files", "validation_gate"]
+          "required": [
+            "title",
+            "target_files",
+            "validation_gate"
+          ]
         },
         {
-          "required": ["titulo", "arquivos_alvo", "validation_gate"]
+          "required": [
+            "titulo",
+            "arquivos_alvo",
+            "validation_gate"
+          ]
         },
         {
-          "required": ["title", "target_files", "comando_validacao"]
+          "required": [
+            "title",
+            "target_files",
+            "comando_validacao"
+          ]
         }
       ],
       "properties": {
@@ -244,13 +293,21 @@
         },
         "isolamento": {
           "type": "string",
-          "enum": ["git-worktree", "processo-isolado", "nenhum"],
+          "enum": [
+            "git-worktree",
+            "processo-isolado",
+            "nenhum"
+          ],
           "default": "git-worktree",
           "description": "Mecanismo de isolamento da execução."
         },
         "isolation": {
           "type": "string",
-          "enum": ["git-worktree", "isolated-process", "none"],
+          "enum": [
+            "git-worktree",
+            "isolated-process",
+            "none"
+          ],
           "description": "Alias para isolamento."
         },
         "blocked_by": {

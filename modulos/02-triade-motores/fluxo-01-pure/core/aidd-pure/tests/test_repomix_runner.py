@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 Testes do Repomix Runner (NIH #22) — Empacotamento de Contexto para LLM.
 Testes herméticos (subprocess mockado) e de integração real contra o repomix instalado.

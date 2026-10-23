@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "HandoffMasterToEnterpriseSchema",
   "description": "Contrato formal de transferência do Monolito Modular (C4) gerado pelo aidd-master para blindagem SHA-256 no aidd-enterprise.",
   "type": "object",
@@ -13,7 +13,9 @@
   "properties": {
     "versao_schema": {
       "type": "string",
-      "enum": ["1.0.0"]
+      "enum": [
+        "1.0.0"
+      ]
     },
     "diretorio_projeto": {
       "type": "string",
@@ -21,10 +23,19 @@
     },
     "servidor_sobe": {
       "type": "object",
-      "required": ["log_subida", "porta"],
+      "required": [
+        "log_subida",
+        "porta"
+      ],
       "properties": {
-        "log_subida": { "type": "string", "minLength": 1 },
-        "porta": { "type": "integer", "minimum": 1 }
+        "log_subida": {
+          "type": "string",
+          "minLength": 1
+        },
+        "porta": {
+          "type": "integer",
+          "minimum": 1
+        }
       },
       "description": "Evidência factual de subida do servidor com porta alocada e log capturado."
     },
@@ -33,7 +44,10 @@
       "minItems": 4,
       "items": {
         "type": "object",
-        "required": ["rota", "status_http_medido"],
+        "required": [
+          "rota",
+          "status_http_medido"
+        ],
         "properties": {
           "rota": {
             "type": "string"
@@ -52,16 +66,31 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["caminho_relativo", "sha256"],
+        "required": [
+          "caminho_relativo",
+          "sha256"
+        ],
         "properties": {
-          "tipo": { "type": "string", "enum": ["rule", "kernel", "slice", "security"] },
-          "caminho_relativo": { "type": "string" },
+          "tipo": {
+            "type": "string",
+            "enum": [
+              "rule",
+              "kernel",
+              "slice",
+              "security"
+            ]
+          },
+          "caminho_relativo": {
+            "type": "string"
+          },
           "sha256": {
             "type": "string",
             "pattern": "^[0-9a-f]{64}$",
             "description": "Hash SHA-256 do arquivo a ser blindado."
           },
-          "descricao": { "type": "string" }
+          "descricao": {
+            "type": "string"
+          }
         }
       }
     }
